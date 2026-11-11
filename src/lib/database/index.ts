@@ -9,6 +9,7 @@ import {
   QaSubmission,
   CreatorAgreement,
   FinancialLedgerRecord,
+  FinancialLedgerStatus,
   PlayerSession,
   AnalyticsEvent,
   GameAnalyticsSummary,
@@ -409,6 +410,7 @@ class GameVerseDatabase {
           events: parsed.events || INITIAL_DATABASE_STATE.events || [],
           referralLinks: parsed.referralLinks || INITIAL_DATABASE_STATE.referralLinks || [],
           adImpressions: parsed.adImpressions || INITIAL_DATABASE_STATE.adImpressions || [],
+          financialRecords: parsed.financialRecords || INITIAL_DATABASE_STATE.financialRecords || [],
         };
       }
     } catch (e) {
@@ -1250,6 +1252,76 @@ class GameVerseDatabase {
       creatorEarnings: Math.round(creatorEarnings * 10000) / 10000,
       byFormat,
     };
+  }
+
+  // ================= FINANCIAL LEDGER & PAYOUTS =================
+  getFinancialRecords(filter?: {
+    creatorId?: string;
+    gameId?: string;
+    status?: FinancialLedgerStatus;
+    period?: string;
+  }): FinancialLedgerRecord[] {
+    if (!this.state.financialRecords) return [];
+    let list = [...this.state.financialRecords];
+
+    if (filter?.creatorId) {
+      list = list.filter((r) => r.creatorId === filter.creatorId);
+    }
+    if (filter?.gameId) {
+      list = list.filter((r) => r.gameId === filter.gameId);
+    }
+    if (filter?.status) {
+      list = list.filter((r) => r.status === filter.status);
+    }
+    if (filter?.period) {
+      list = list.filter((r) => r.period === filter.period);
+    }
+    return list;
+  }
+
+  getFinancialRecordById(id: string): FinancialLedgerRecord | undefined {
+    if (!this.state.financialRecords) return undefined;
+    return this.state.financialRecords.find((r) => r.id === id);
+  }
+
+  createFinancialRecord(
+    data: Omit<FinancialLedgerRecord, 'id' | 'createdAt'> & { id?: string; createdAt?: string }
+  ): FinancialLedgerRecord {
+    if (!this.state.financialRecords) {
+      this.state.financialRecords = [];
+    }
+
+    const record: FinancialLedgerRecord = {
+      id: data.id || `led-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      creatorId: data.creatorId,
+      gameId: data.gameId,
+      gameTitle: data.gameTitle,
+      period: data.period,
+      grossRevenue: Math.round(data.grossRevenue * 100) / 100,
+      deductions: Math.round(data.deductions * 100) / 100,
+      netRevenue: Math.round(data.netRevenue * 100) / 100,
+      creatorShare: Math.round(data.creatorShare * 100) / 100,
+      status: data.status,
+      payoutMethod: data.payoutMethod,
+      payoutReference: data.payoutReference,
+      finalizedAt: data.finalizedAt,
+      paidAt: data.paidAt,
+      createdAt: data.createdAt || new Date().toISOString(),
+    };
+
+    this.state.financialRecords.unshift(record);
+    this.persistState();
+    return record;
+  }
+
+  updateFinancialRecord(id: string, updates: Partial<FinancialLedgerRecord>): FinancialLedgerRecord | undefined {
+    if (!this.state.financialRecords) return undefined;
+    const record = this.state.financialRecords.find((r) => r.id === id);
+    if (!record) return undefined;
+
+    Object.assign(record, updates);
+    this.persistState();
+    return record;
   }
 }
 

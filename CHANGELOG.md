@@ -5,6 +5,18 @@ All notable changes to the GameVerse project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.12.0] - 2026-11-11
+### Added - Phase 12 (Earnings & Double-Entry Financial Ledger)
+- Double-entry financial ledger architecture (`src/lib/ledger.ts`, `src/lib/database/index.ts`) tracking gross revenue, platform deductions (10%), net revenue, and creator share.
+- State machine lifecycle for financial records: `ESTIMATED` (real-time MTD), `FINALIZED` (Net-30 verified), `PROCESSING` (requested batch), `PAID` (disbursed), and `ON_HOLD`.
+- Minimum payout threshold rules enforcing a strict $50.00 accumulated balance and validated payout method before disbursement.
+- Net-30 monthly settlement engine transitioning closed period estimates to finalized records.
+- Batch disbursement system processing payments with immutable transaction/batch reference IDs.
+- Interactive Studio Payouts Hub (`/developer/payouts`) with real-time balance cards, threshold progress bar, payout method details, status filters, and instant withdrawal request modal.
+- Creator Payouts APIs (`GET /api/developer/payouts` and `POST /api/developer/payouts/request`) with strict tenant isolation.
+- Admin Financial Reconciliation APIs (`GET /api/admin/finance` and `POST /api/admin/finance/settle`) with RBAC enforcement.
+- Comprehensive Phase 12 automated test suite (`tests/ledger_phase12.test.ts`).
+
 ## [0.11.0] - 2026-11-11
 ### Added - Phase 11 (Advertising & Monetization Integration)
 - HTML5 Ad Engine & Monetization Architecture (`src/lib/ads.ts`) supporting PREROLL ($4.50 eCPM), INTERSTITIAL ($6.00 eCPM), and REWARDED ($8.00 eCPM) formats.

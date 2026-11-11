@@ -220,6 +220,8 @@ export interface DeveloperAnalytics {
   period: string;
 }
 
+export type FinancialLedgerStatus = 'ESTIMATED' | 'FINALIZED' | 'PROCESSING' | 'PAID' | 'ON_HOLD';
+
 export interface FinancialLedgerRecord {
   id: string;
   creatorId: string;
@@ -230,6 +232,40 @@ export interface FinancialLedgerRecord {
   deductions: number;
   netRevenue: number;
   creatorShare: number;
-  status: 'ESTIMATED' | 'FINALIZED' | 'PAID';
+  status: FinancialLedgerStatus;
+  payoutMethod?: string;
+  payoutReference?: string;
+  finalizedAt?: string;
   paidAt?: string;
+  createdAt?: string;
+}
+
+export interface PayoutSummary {
+  availableBalance: number;
+  estimatedBalance: number;
+  lifetimeEarnings: number;
+  lifetimePaid: number;
+  threshold: number;
+  thresholdMet: boolean;
+  thresholdProgress: number;
+  payoutMethod?: {
+    method: 'BANK_WIRE' | 'UPI' | 'PAYPAL';
+    details: Record<string, string>;
+    isConfigured: boolean;
+  };
+}
+
+export interface PayoutBatch {
+  id: string;
+  batchNumber: string;
+  period: string;
+  totalGross: number;
+  totalDeductions: number;
+  totalNet: number;
+  totalCreatorPayout: number;
+  creatorCount: number;
+  recordCount: number;
+  status: 'PENDING' | 'PROCESSING' | 'PAID';
+  createdAt: string;
+  disbursedAt?: string;
 }

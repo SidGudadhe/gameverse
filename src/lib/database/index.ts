@@ -108,8 +108,7 @@ const DATA_DIR = path.join(process.cwd(), '.data');
 const DATA_FILE = path.join(DATA_DIR, 'gameverse_db.json');
 
 // Initial seed data with hashed password for "Password123!"
-// Hash for "Password123!" using bcryptjs is deterministic:
-const DEFAULT_PASSWORD_HASH = '$2a$10$wE43rWk1H6q0E8.s2M0xse1nLpTqgS4hV7aA.nC.y9nE3c1sI3gS6';
+const DEFAULT_PASSWORD_HASH = '$2a$10$xwgNcEA.gPkAUr9ig8Tmb.LBWkWxnfHB479NuHg8MgeMwzAbwlxum';
 
 export const INITIAL_DATABASE_STATE: DatabaseState = {
   users: [

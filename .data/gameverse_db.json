@@ -1,0 +1,611 @@
+{
+  "users": [
+    {
+      "id": "usr-admin-1",
+      "email": "admin@gameverse.com",
+      "name": "System Admin",
+      "role": "ADMIN",
+      "emailVerified": true,
+      "passwordHash": "$2a$10$wE43rWk1H6q0E8.s2M0xse1nLpTqgS4hV7aA.nC.y9nE3c1sI3gS6",
+      "twoFactorEnabled": true,
+      "twoFactorSecret": "JBSWY3DPEHPK3PXP",
+      "createdAt": "2026-11-01T00:00:00.000Z"
+    },
+    {
+      "id": "usr-dev-1",
+      "email": "creator@pixelstudio.com",
+      "name": "PixelForge Studios",
+      "role": "DEVELOPER",
+      "emailVerified": true,
+      "passwordHash": "$2a$10$wE43rWk1H6q0E8.s2M0xse1nLpTqgS4hV7aA.nC.y9nE3c1sI3gS6",
+      "createdAt": "2026-11-02T00:00:00.000Z"
+    },
+    {
+      "id": "usr-dev-2",
+      "email": "indie@voxelgames.com",
+      "name": "Voxel Games LLC",
+      "role": "DEVELOPER",
+      "emailVerified": true,
+      "passwordHash": "$2a$10$wE43rWk1H6q0E8.s2M0xse1nLpTqgS4hV7aA.nC.y9nE3c1sI3gS6",
+      "createdAt": "2026-11-03T00:00:00.000Z"
+    },
+    {
+      "id": "usr-player-1",
+      "email": "player@gamer.com",
+      "name": "NeoGamer99",
+      "role": "PLAYER",
+      "emailVerified": true,
+      "passwordHash": "$2a$10$wE43rWk1H6q0E8.s2M0xse1nLpTqgS4hV7aA.nC.y9nE3c1sI3gS6",
+      "createdAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "usr-1794367349572-18qo9",
+      "email": "test_dev_1794367349572@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$aj4EjxH3BQctrPGKlLCJwuWY5usGh32nOyEBY3QHAY4FaFy4TxCkm",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:22:29.572Z"
+    },
+    {
+      "id": "usr-1794367349586-gnjy3",
+      "email": "test_player_1794367349586@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$aj4EjxH3BQctrPGKlLCJwuWY5usGh32nOyEBY3QHAY4FaFy4TxCkm",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:22:29.586Z"
+    },
+    {
+      "id": "usr-1794367350073-pqip7",
+      "email": "test_dev_1794367350073@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$PEOoF2xnGk0wdgvbrZ1MKu7EPX8qe/.cgxJJwIt5/FWOdacCeScDW",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:22:30.073Z"
+    },
+    {
+      "id": "usr-1794367350074-i62p6",
+      "email": "test_player_1794367350074@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$PEOoF2xnGk0wdgvbrZ1MKu7EPX8qe/.cgxJJwIt5/FWOdacCeScDW",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:22:30.074Z"
+    },
+    {
+      "id": "usr-1794367350074-smzo8",
+      "email": "unique_1794367350074@test.com",
+      "name": "First User",
+      "role": "PLAYER",
+      "passwordHash": "hash1",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:22:30.074Z"
+    },
+    {
+      "id": "usr-1794367350174-m6hn7",
+      "email": "test_dev_1794367350174@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$CR/nR3xzz0TPMBIeFrOgIOGUny1TgzowqH4s5MjHV17vrdLxhwjxe",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:22:30.174Z"
+    },
+    {
+      "id": "usr-1794367350174-urp83",
+      "email": "test_player_1794367350174@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$CR/nR3xzz0TPMBIeFrOgIOGUny1TgzowqH4s5MjHV17vrdLxhwjxe",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:22:30.174Z"
+    },
+    {
+      "id": "usr-1794367350310-8m7n0",
+      "email": "test_dev_1794367350310@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$MV9vVyK8YDVVpUGnsxOjDuWWWhnut.Qhk5qVy6/FRB5i4ijaQzBry",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:22:30.310Z"
+    },
+    {
+      "id": "usr-1794367350311-z3j3a",
+      "email": "test_player_1794367350311@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$MV9vVyK8YDVVpUGnsxOjDuWWWhnut.Qhk5qVy6/FRB5i4ijaQzBry",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:22:30.311Z"
+    },
+    {
+      "id": "usr-1794367350438-x47rm",
+      "email": "test_dev_1794367350438@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$UCnnMUW5SpAmIKqA2v7Li.952dkAa6YNk4KeNk9y.JZbHIcsB5c42",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:22:30.438Z"
+    },
+    {
+      "id": "usr-1794367350439-shelb",
+      "email": "test_player_1794367350439@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$UCnnMUW5SpAmIKqA2v7Li.952dkAa6YNk4KeNk9y.JZbHIcsB5c42",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:22:30.439Z"
+    },
+    {
+      "id": "usr-1794367350524-p018i",
+      "email": "test_dev_1794367350524@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$aZU2V2JA/N2MCwnZ4CO.I.VJTWAmQVryfq/.emX1U1ina2qlo0tSy",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:22:30.524Z"
+    },
+    {
+      "id": "usr-1794367350525-k34jv",
+      "email": "test_player_1794367350525@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$aZU2V2JA/N2MCwnZ4CO.I.VJTWAmQVryfq/.emX1U1ina2qlo0tSy",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:22:30.525Z"
+    },
+    {
+      "id": "usr-1794367350608-tuqqw",
+      "email": "test_dev_1794367350608@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$kaQ5ua4rC21hNjyDJ4C2buySd92nZdMzdltBeQ6Wz2o0UxlOqhR1K",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:22:30.608Z"
+    },
+    {
+      "id": "usr-1794367350608-f9xkd",
+      "email": "test_player_1794367350608@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$kaQ5ua4rC21hNjyDJ4C2buySd92nZdMzdltBeQ6Wz2o0UxlOqhR1K",
+      "emailVerified": true,
+      "createdAt": "2026-11-11T03:22:30.608Z"
+    },
+    {
+      "id": "usr-1794367350789-0jdk0",
+      "email": "test_dev_1794367350789@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$tdEEvuIvra9aJSjrvNmqNu7Aqst3BGrFe.ENVHIyNNYfb6GPHaUC6",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:22:30.789Z"
+    },
+    {
+      "id": "usr-1794367350790-0a83l",
+      "email": "test_player_1794367350790@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$HQpOV2ESNkjLTcmfhJ4RzOrdxCNI9eOUt1P8uBvkhYTAQc.I4DFSG",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:22:30.790Z"
+    },
+    {
+      "id": "usr-1794367351042-xblq2",
+      "email": "test_dev_1794367351042@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$JoIE5RCbUzmHXoTF2CRLp.Kwz3k2imgpOtRSKAOZWTXAOrMe1OYpK",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:22:31.042Z"
+    },
+    {
+      "id": "usr-1794367351043-nlye2",
+      "email": "test_player_1794367351043@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$JoIE5RCbUzmHXoTF2CRLp.Kwz3k2imgpOtRSKAOZWTXAOrMe1OYpK",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:22:31.043Z"
+    }
+  ],
+  "profiles": [
+    {
+      "id": "prof-1",
+      "userId": "usr-admin-1",
+      "username": "admin",
+      "displayName": "System Admin"
+    },
+    {
+      "id": "prof-2",
+      "userId": "usr-dev-1",
+      "username": "pixelforge",
+      "displayName": "PixelForge Studios",
+      "studioName": "PixelForge Studios"
+    },
+    {
+      "id": "prof-3",
+      "userId": "usr-dev-2",
+      "username": "voxelgames",
+      "displayName": "Voxel Games LLC",
+      "studioName": "Voxel Games LLC"
+    },
+    {
+      "id": "prof-4",
+      "userId": "usr-player-1",
+      "username": "neogamer",
+      "displayName": "NeoGamer99"
+    },
+    {
+      "id": "prof-1794367349574",
+      "userId": "usr-1794367349572-18qo9",
+      "username": "test_dev_1794367349572",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794367349586",
+      "userId": "usr-1794367349586-gnjy3",
+      "username": "test_player_1794367349586",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794367350073",
+      "userId": "usr-1794367350073-pqip7",
+      "username": "test_dev_1794367350073",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794367350074",
+      "userId": "usr-1794367350074-i62p6",
+      "username": "test_player_1794367350074",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794367350074",
+      "userId": "usr-1794367350074-smzo8",
+      "username": "unique_1794367350074",
+      "displayName": "First User"
+    },
+    {
+      "id": "prof-1794367350174",
+      "userId": "usr-1794367350174-m6hn7",
+      "username": "test_dev_1794367350174",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794367350174",
+      "userId": "usr-1794367350174-urp83",
+      "username": "test_player_1794367350174",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794367350310",
+      "userId": "usr-1794367350310-8m7n0",
+      "username": "test_dev_1794367350310",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794367350311",
+      "userId": "usr-1794367350311-z3j3a",
+      "username": "test_player_1794367350311",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794367350438",
+      "userId": "usr-1794367350438-x47rm",
+      "username": "test_dev_1794367350438",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794367350439",
+      "userId": "usr-1794367350439-shelb",
+      "username": "test_player_1794367350439",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794367350524",
+      "userId": "usr-1794367350524-p018i",
+      "username": "test_dev_1794367350524",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794367350525",
+      "userId": "usr-1794367350525-k34jv",
+      "username": "test_player_1794367350525",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794367350608",
+      "userId": "usr-1794367350608-tuqqw",
+      "username": "test_dev_1794367350608",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794367350608",
+      "userId": "usr-1794367350608-f9xkd",
+      "username": "test_player_1794367350608",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794367350789",
+      "userId": "usr-1794367350789-0jdk0",
+      "username": "test_dev_1794367350789",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794367350790",
+      "userId": "usr-1794367350790-0a83l",
+      "username": "test_player_1794367350790",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794367351042",
+      "userId": "usr-1794367351042-xblq2",
+      "username": "test_dev_1794367351042",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794367351043",
+      "userId": "usr-1794367351043-nlye2",
+      "username": "test_player_1794367351043",
+      "displayName": "GamerX"
+    }
+  ],
+  "categories": [
+    {
+      "id": "cat-action",
+      "name": "Action",
+      "slug": "action",
+      "description": "Fast-paced reflexes and combat",
+      "icon": "Swords",
+      "count": 12
+    },
+    {
+      "id": "cat-puzzle",
+      "name": "Puzzle",
+      "slug": "puzzle",
+      "description": "Brain teasers, logic, and match-3",
+      "icon": "Puzzle",
+      "count": 18
+    },
+    {
+      "id": "cat-arcade",
+      "name": "Arcade",
+      "slug": "arcade",
+      "description": "Classic 2D retro and endless runners",
+      "icon": "Gamepad2",
+      "count": 24
+    },
+    {
+      "id": "cat-strategy",
+      "name": "Strategy",
+      "slug": "strategy",
+      "description": "Tactical planning and tower defense",
+      "icon": "Crown",
+      "count": 8
+    },
+    {
+      "id": "cat-rpg",
+      "name": "RPG",
+      "slug": "rpg",
+      "description": "Character progression and adventures",
+      "icon": "Shield",
+      "count": 7
+    },
+    {
+      "id": "cat-sports",
+      "name": "Sports",
+      "slug": "sports",
+      "description": "Soccer, basketball, and racing",
+      "icon": "Trophy",
+      "count": 11
+    },
+    {
+      "id": "cat-casual",
+      "name": "Casual",
+      "slug": "casual",
+      "description": "Relaxing and accessible instant games",
+      "icon": "Sparkles",
+      "count": 30
+    }
+  ],
+  "games": [
+    {
+      "id": "game-neon-runner",
+      "developerId": "usr-dev-1",
+      "developerName": "PixelForge Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "neon-runner",
+      "title": "Neon Cyber Runner 2088",
+      "shortDescription": "Dash, jump, and dodge laser barriers in this synthwave endless runner.",
+      "fullDescription": "Sprint across neo-Tokyo rooftops while evading rogue security drones. Time your high jumps and slide under magnetic beams to rack up the ultimate high score in full retro-futuristic audio.",
+      "controlsGuide": "Space / Up Arrow: Jump (Double tap for double jump)\nDown Arrow: Slide\nP: Pause Game",
+      "engine": "Phaser 3 / HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "PUBLISHED",
+      "isFeatured": true,
+      "thumbnailUrl": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80",
+      "bannerUrl": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80",
+      "screenshots": [
+        "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80"
+      ],
+      "currentVersionId": "ver-neon-1",
+      "totalPlays": 14280,
+      "rating": 4.8,
+      "publishedAt": "2026-11-04T12:00:00.000Z",
+      "createdAt": "2026-11-03T10:00:00.000Z",
+      "updatedAt": "2026-11-04T12:00:00.000Z"
+    },
+    {
+      "id": "game-voxel-quest",
+      "developerId": "usr-dev-2",
+      "developerName": "Voxel Games LLC",
+      "categoryId": "cat-rpg",
+      "categoryName": "RPG",
+      "slug": "voxel-quest",
+      "title": "Voxel Dungeons",
+      "shortDescription": "Procedural voxel dungeon crawler with loot and monsters.",
+      "fullDescription": "Explore subterranean mazes, collect magic weapons, and defeat skeleton kings in real-time isometric perspective.",
+      "controlsGuide": "WASD: Move\nLeft Click: Attack\nI: Inventory",
+      "engine": "Three.js / WebGL",
+      "orientation": "LANDSCAPE",
+      "status": "PUBLISHED",
+      "isFeatured": false,
+      "thumbnailUrl": "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80",
+      "bannerUrl": "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1600&q=80",
+      "screenshots": [],
+      "currentVersionId": "ver-voxel-1",
+      "totalPlays": 6540,
+      "rating": 4.6,
+      "publishedAt": "2026-11-05T10:00:00.000Z",
+      "createdAt": "2026-11-04T12:00:00.000Z",
+      "updatedAt": "2026-11-05T10:00:00.000Z"
+    }
+  ],
+  "versions": [
+    {
+      "id": "ver-neon-1",
+      "gameId": "game-neon-runner",
+      "versionNumber": "1.0.4",
+      "changelog": "Initial public launch with 6 synthwave tracks and 60fps physics.",
+      "entryFile": "index.html",
+      "archiveChecksum": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archiveSizeBytes": 14205000,
+      "status": "PUBLISHED",
+      "scanResults": {
+        "passed": true,
+        "extractedFilesCount": 42,
+        "uncompressedSizeBytes": 18400000,
+        "hasEntryFile": true,
+        "suspiciousFilesDetected": []
+      },
+      "createdAt": "2026-11-03T11:00:00.000Z",
+      "publishedAt": "2026-11-04T12:00:00.000Z"
+    }
+  ],
+  "submissions": [
+    {
+      "id": "sub-neon-1",
+      "versionId": "ver-neon-1",
+      "gameId": "game-neon-runner",
+      "gameTitle": "Neon Cyber Runner 2088",
+      "developerName": "PixelForge Studios",
+      "status": "PUBLISHED",
+      "automatedChecks": {
+        "entryPageLoads": true,
+        "consoleErrorsCount": 0,
+        "loadTimeMs": 420,
+        "responsiveViewportOk": true,
+        "cspViolationsCount": 0
+      },
+      "manualNotes": "Passed QA inspection. Flawless audio sync.",
+      "reviewedBy": "System Admin",
+      "reviewedAt": "2026-11-04T11:45:00.000Z",
+      "submittedAt": "2026-11-03T11:15:00.000Z"
+    }
+  ],
+  "agreements": [
+    {
+      "id": "agr-001",
+      "userId": "usr-dev-1",
+      "agreementVersion": "v1.0-2026",
+      "acceptedAt": "2026-11-02T10:00:00.000Z",
+      "ipAddress": "127.0.0.1",
+      "accountStatus": "ACTIVE"
+    },
+    {
+      "id": "agr-002",
+      "userId": "usr-dev-2",
+      "agreementVersion": "v1.0-2026",
+      "acceptedAt": "2026-11-03T09:30:00.000Z",
+      "ipAddress": "127.0.0.1",
+      "accountStatus": "ACTIVE"
+    }
+  ],
+  "sessions": [],
+  "financialRecords": [
+    {
+      "id": "led-001",
+      "creatorId": "usr-dev-1",
+      "gameId": "game-neon-runner",
+      "gameTitle": "Neon Cyber Runner 2088",
+      "period": "October 2026",
+      "grossRevenue": 480.5,
+      "deductions": 32.2,
+      "netRevenue": 448.3,
+      "creatorShare": 224.15,
+      "status": "FINALIZED",
+      "paidAt": "2026-11-01T00:00:00.000Z"
+    },
+    {
+      "id": "led-002",
+      "creatorId": "usr-dev-1",
+      "gameId": "game-neon-runner",
+      "gameTitle": "Neon Cyber Runner 2088",
+      "period": "November 2026 (MTD)",
+      "grossRevenue": 310.8,
+      "deductions": 18.4,
+      "netRevenue": 292.4,
+      "creatorShare": 146.2,
+      "status": "ESTIMATED"
+    }
+  ],
+  "auditLogs": [
+    {
+      "id": "log-1794367351044",
+      "actorId": "usr-1794367351042-xblq2",
+      "actorName": "Alpha Studio",
+      "action": "SUBMIT_GAME_VERSION",
+      "targetType": "GAME_VERSION",
+      "targetId": "ver-test-1",
+      "details": {
+        "version": "1.0.0"
+      },
+      "ipAddress": "127.0.0.1",
+      "createdAt": "2026-11-11T03:22:31.044Z"
+    },
+    {
+      "id": "log-001",
+      "actorId": "usr-admin-1",
+      "actorName": "System Admin",
+      "action": "APPROVE_GAME",
+      "targetType": "GAME_VERSION",
+      "targetId": "ver-neon-1",
+      "details": {
+        "title": "Neon Cyber Runner 2088",
+        "version": "1.0.4"
+      },
+      "ipAddress": "127.0.0.1",
+      "createdAt": "2026-11-04T11:45:00.000Z"
+    }
+  ],
+  "resetTokens": [
+    {
+      "id": "prt-1794367350791",
+      "email": "test_player_1794367350790@gamer.com",
+      "token": "rst_1794367350791_yajfy908ae",
+      "expiresAt": "2026-11-11T03:37:30.791Z",
+      "used": true
+    }
+  ],
+  "verificationTokens": [
+    {
+      "id": "evt-1794367350609",
+      "userId": "usr-1794367350608-f9xkd",
+      "token": "verify_1794367350609_l7fmrpcd",
+      "expiresAt": "2026-11-12T03:22:30.609Z"
+    }
+  ]
+}

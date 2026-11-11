@@ -31,6 +31,8 @@ export interface User {
   role: UserRole;
   avatarUrl?: string;
   emailVerified: boolean;
+  twoFactorEnabled?: boolean;
+  twoFactorSecret?: string;
   createdAt: string;
 }
 

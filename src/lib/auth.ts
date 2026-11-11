@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { User, UserRole } from '@/types';
+import { User, UserRole } from '../types';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'gameverse-secure-production-jwt-key-2026';
 

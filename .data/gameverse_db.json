@@ -1747,6 +1747,177 @@
       "passwordHash": "$2a$10$0Z8iIoAL.uJAbuGw9c.Eietv48CqogAM0NXUeBFsiBHtKte3roKdi",
       "emailVerified": false,
       "createdAt": "2026-11-11T03:54:47.596Z"
+    },
+    {
+      "id": "usr-1794369687399-vwggu",
+      "email": "test_dev_1794369687399@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$8JM7PexKfq252IsVM2zYoe57DpLYheAFDteGmXulhOB.TuvA4SsLy",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:01:27.399Z"
+    },
+    {
+      "id": "usr-1794369687403-sj123",
+      "email": "test_player_1794369687403@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$8JM7PexKfq252IsVM2zYoe57DpLYheAFDteGmXulhOB.TuvA4SsLy",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:01:27.403Z"
+    },
+    {
+      "id": "usr-1794369688235-l02gr",
+      "email": "test_dev_1794369688235@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$shbqfFSJMW3mM8o2UxcBFufIGVAkR7cxBf1.hS82ZBqoCbUH0FsYa",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:01:28.235Z"
+    },
+    {
+      "id": "usr-1794369688236-zghsm",
+      "email": "test_player_1794369688236@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$shbqfFSJMW3mM8o2UxcBFufIGVAkR7cxBf1.hS82ZBqoCbUH0FsYa",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:01:28.236Z"
+    },
+    {
+      "id": "usr-1794369688242-f7pvf",
+      "email": "unique_1794369688242@test.com",
+      "name": "First User",
+      "role": "PLAYER",
+      "passwordHash": "hash1",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:01:28.242Z"
+    },
+    {
+      "id": "usr-1794369688418-kom3m",
+      "email": "test_dev_1794369688418@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$pOF/tgDnvzPxGgxn.6oKceRbslw.mrmpc6Vfa.XK1/Hmd7V.sOZXa",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:01:28.418Z"
+    },
+    {
+      "id": "usr-1794369688426-9cho8",
+      "email": "test_player_1794369688426@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$pOF/tgDnvzPxGgxn.6oKceRbslw.mrmpc6Vfa.XK1/Hmd7V.sOZXa",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:01:28.426Z"
+    },
+    {
+      "id": "usr-1794369688616-p3d9h",
+      "email": "test_dev_1794369688616@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$ft5umYY4EyDgcxevFVlrvubuuZq7mpOAjVloia1h3JF0QypVmAlTy",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:01:28.616Z"
+    },
+    {
+      "id": "usr-1794369688618-vgjav",
+      "email": "test_player_1794369688618@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$ft5umYY4EyDgcxevFVlrvubuuZq7mpOAjVloia1h3JF0QypVmAlTy",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:01:28.618Z"
+    },
+    {
+      "id": "usr-1794369688809-qboj0",
+      "email": "test_dev_1794369688809@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$Z/Mgi910RyIg1JSIkMvqweAl0eFX72pS2wxAcTERhcaO11JuVWvJC",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:01:28.809Z"
+    },
+    {
+      "id": "usr-1794369688811-38l8e",
+      "email": "test_player_1794369688811@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$Z/Mgi910RyIg1JSIkMvqweAl0eFX72pS2wxAcTERhcaO11JuVWvJC",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:01:28.811Z"
+    },
+    {
+      "id": "usr-1794369688970-lk3re",
+      "email": "test_dev_1794369688970@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$zHf9XC6lAauoERKwSqZF4ut4HKsLJRigxBye6QxCOShtZj7FL0QSy",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:01:28.970Z"
+    },
+    {
+      "id": "usr-1794369688973-6vk4n",
+      "email": "test_player_1794369688973@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$zHf9XC6lAauoERKwSqZF4ut4HKsLJRigxBye6QxCOShtZj7FL0QSy",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:01:28.973Z"
+    },
+    {
+      "id": "usr-1794369689081-cystp",
+      "email": "test_dev_1794369689081@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$OGReyBkl0.9ROsyTxoLmsOC9U6C3mGcaRhPjaaf.Dh6ZtJ8glES.a",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:01:29.081Z"
+    },
+    {
+      "id": "usr-1794369689083-tpp1b",
+      "email": "test_player_1794369689083@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$OGReyBkl0.9ROsyTxoLmsOC9U6C3mGcaRhPjaaf.Dh6ZtJ8glES.a",
+      "emailVerified": true,
+      "createdAt": "2026-11-11T04:01:29.083Z"
+    },
+    {
+      "id": "usr-1794369689196-o6t44",
+      "email": "test_dev_1794369689196@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$FuT9gmfBRiC70qbTZRqDVeLhZotx8fD9RdnPVaSutmhmSvHyIsyaO",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:01:29.196Z"
+    },
+    {
+      "id": "usr-1794369689198-bq4th",
+      "email": "test_player_1794369689198@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$lgcQSmBzIpQYW6EC4gjmKeug7ZWM3ojI6meMP8iHX34KRj/WxAeUa",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:01:29.198Z"
+    },
+    {
+      "id": "usr-1794369689518-lmtan",
+      "email": "test_dev_1794369689518@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$uARAKnL6Mens2INpXsObMeiq9l1fQWiF41slgoxKFtM5pWpdznFUy",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:01:29.518Z"
+    },
+    {
+      "id": "usr-1794369689520-h1ctr",
+      "email": "test_player_1794369689520@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$uARAKnL6Mens2INpXsObMeiq9l1fQWiF41slgoxKFtM5pWpdznFUy",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:01:29.520Z"
     }
   ],
   "profiles": [
@@ -3005,6 +3176,129 @@
       "userId": "usr-1794369287596-2qpo6",
       "username": "test_player_1794369287596",
       "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794369687401",
+      "userId": "usr-1794369687399-vwggu",
+      "username": "test_dev_1794369687399",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794369687403",
+      "userId": "usr-1794369687403-sj123",
+      "username": "test_player_1794369687403",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794369688235",
+      "userId": "usr-1794369688235-l02gr",
+      "username": "test_dev_1794369688235",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794369688236",
+      "userId": "usr-1794369688236-zghsm",
+      "username": "test_player_1794369688236",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794369688242",
+      "userId": "usr-1794369688242-f7pvf",
+      "username": "unique_1794369688242",
+      "displayName": "First User"
+    },
+    {
+      "id": "prof-1794369688418",
+      "userId": "usr-1794369688418-kom3m",
+      "username": "test_dev_1794369688418",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794369688426",
+      "userId": "usr-1794369688426-9cho8",
+      "username": "test_player_1794369688426",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794369688616",
+      "userId": "usr-1794369688616-p3d9h",
+      "username": "test_dev_1794369688616",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794369688618",
+      "userId": "usr-1794369688618-vgjav",
+      "username": "test_player_1794369688618",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794369688809",
+      "userId": "usr-1794369688809-qboj0",
+      "username": "test_dev_1794369688809",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794369688811",
+      "userId": "usr-1794369688811-38l8e",
+      "username": "test_player_1794369688811",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794369688970",
+      "userId": "usr-1794369688970-lk3re",
+      "username": "test_dev_1794369688970",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794369688973",
+      "userId": "usr-1794369688973-6vk4n",
+      "username": "test_player_1794369688973",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794369689081",
+      "userId": "usr-1794369689081-cystp",
+      "username": "test_dev_1794369689081",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794369689083",
+      "userId": "usr-1794369689083-tpp1b",
+      "username": "test_player_1794369689083",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794369689196",
+      "userId": "usr-1794369689196-o6t44",
+      "username": "test_dev_1794369689196",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794369689198",
+      "userId": "usr-1794369689198-bq4th",
+      "username": "test_player_1794369689198",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794369689518",
+      "userId": "usr-1794369689518-lmtan",
+      "username": "test_dev_1794369689518",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794369689520",
+      "userId": "usr-1794369689520-h1ctr",
+      "username": "test_player_1794369689520",
+      "displayName": "GamerX"
     }
   ],
   "categories": [
@@ -3118,6 +3412,151 @@
       "publishedAt": "2026-11-05T10:00:00.000Z",
       "createdAt": "2026-11-04T12:00:00.000Z",
       "updatedAt": "2026-11-05T10:00:00.000Z"
+    },
+    {
+      "id": "game-qa-test-1794369686290",
+      "developerId": "usr-dev-1",
+      "developerName": "PixelForge Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "qa-test-runner-1794369686290",
+      "title": "QA Test Runner",
+      "shortDescription": "Game for QA review testing.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "SUBMITTED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "currentVersionId": "ver-qa-test-1794369686290",
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:01:26.290Z",
+      "updatedAt": "2026-11-11T04:01:26.290Z"
+    },
+    {
+      "id": "game-qa-test-1794369686300",
+      "developerId": "usr-dev-1",
+      "developerName": "PixelForge Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "qa-test-runner-1794369686300",
+      "title": "QA Test Runner",
+      "shortDescription": "Game for QA review testing.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "SUBMITTED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "currentVersionId": "ver-qa-test-1794369686300",
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:01:26.300Z",
+      "updatedAt": "2026-11-11T04:01:26.300Z"
+    },
+    {
+      "id": "game-qa-test-1794369686308",
+      "developerId": "usr-dev-1",
+      "developerName": "PixelForge Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "qa-test-runner-1794369686309",
+      "title": "QA Test Runner",
+      "shortDescription": "Game for QA review testing.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "PUBLISHED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "currentVersionId": "ver-qa-test-1794369686308",
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:01:26.309Z",
+      "updatedAt": "2026-11-11T04:01:26.317Z",
+      "publishedAt": "2026-11-11T04:01:26.317Z"
+    },
+    {
+      "id": "game-qa-test-1794369686322",
+      "developerId": "usr-dev-1",
+      "developerName": "PixelForge Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "qa-test-runner-1794369686322",
+      "title": "QA Test Runner",
+      "shortDescription": "Game for QA review testing.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "CHANGES_REQUESTED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "currentVersionId": "ver-qa-test-1794369686322",
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:01:26.322Z",
+      "updatedAt": "2026-11-11T04:01:26.331Z"
+    },
+    {
+      "id": "game-qa-test-1794369686334",
+      "developerId": "usr-dev-1",
+      "developerName": "PixelForge Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "qa-test-runner-1794369686334",
+      "title": "QA Test Runner",
+      "shortDescription": "Game for QA review testing.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "REJECTED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "currentVersionId": "ver-qa-test-1794369686334",
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:01:26.334Z",
+      "updatedAt": "2026-11-11T04:01:26.344Z"
+    },
+    {
+      "id": "game-qa-test-1794369686348",
+      "developerId": "usr-dev-1",
+      "developerName": "PixelForge Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "qa-test-runner-1794369686348",
+      "title": "QA Test Runner",
+      "shortDescription": "Game for QA review testing.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "SUBMITTED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "currentVersionId": "ver-qa-test-1794369686348",
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:01:26.348Z",
+      "updatedAt": "2026-11-11T04:01:26.348Z"
     }
   ],
   "versions": [
@@ -3139,9 +3578,227 @@
       },
       "createdAt": "2026-11-03T11:00:00.000Z",
       "publishedAt": "2026-11-04T12:00:00.000Z"
+    },
+    {
+      "id": "ver-qa-test-1794369686290",
+      "gameId": "game-qa-test-1794369686290",
+      "versionNumber": "1.0.0",
+      "changelog": "Initial build release.",
+      "entryFile": "index.html",
+      "archiveChecksum": "a1b2c3d4e5f6",
+      "archiveSizeBytes": 1048576,
+      "status": "SUBMITTED",
+      "scanResults": {
+        "passed": true,
+        "extractedFilesCount": 0,
+        "uncompressedSizeBytes": 0,
+        "hasEntryFile": true,
+        "suspiciousFilesDetected": []
+      },
+      "createdAt": "2026-11-11T04:01:26.294Z"
+    },
+    {
+      "id": "ver-qa-test-1794369686300",
+      "gameId": "game-qa-test-1794369686300",
+      "versionNumber": "1.0.0",
+      "changelog": "Initial build release.",
+      "entryFile": "index.html",
+      "archiveChecksum": "a1b2c3d4e5f6",
+      "archiveSizeBytes": 1048576,
+      "status": "SUBMITTED",
+      "scanResults": {
+        "passed": true,
+        "extractedFilesCount": 0,
+        "uncompressedSizeBytes": 0,
+        "hasEntryFile": true,
+        "suspiciousFilesDetected": []
+      },
+      "createdAt": "2026-11-11T04:01:26.302Z"
+    },
+    {
+      "id": "ver-qa-test-1794369686308",
+      "gameId": "game-qa-test-1794369686308",
+      "versionNumber": "1.0.0",
+      "changelog": "Initial build release.",
+      "entryFile": "index.html",
+      "archiveChecksum": "a1b2c3d4e5f6",
+      "archiveSizeBytes": 1048576,
+      "status": "PUBLISHED",
+      "scanResults": {
+        "passed": true,
+        "extractedFilesCount": 0,
+        "uncompressedSizeBytes": 0,
+        "hasEntryFile": true,
+        "suspiciousFilesDetected": []
+      },
+      "createdAt": "2026-11-11T04:01:26.310Z",
+      "publishedAt": "2026-11-11T04:01:26.315Z"
+    },
+    {
+      "id": "ver-qa-test-1794369686322",
+      "gameId": "game-qa-test-1794369686322",
+      "versionNumber": "1.0.0",
+      "changelog": "Initial build release.",
+      "entryFile": "index.html",
+      "archiveChecksum": "a1b2c3d4e5f6",
+      "archiveSizeBytes": 1048576,
+      "status": "CHANGES_REQUESTED",
+      "scanResults": {
+        "passed": true,
+        "extractedFilesCount": 0,
+        "uncompressedSizeBytes": 0,
+        "hasEntryFile": true,
+        "suspiciousFilesDetected": []
+      },
+      "createdAt": "2026-11-11T04:01:26.324Z"
+    },
+    {
+      "id": "ver-qa-test-1794369686334",
+      "gameId": "game-qa-test-1794369686334",
+      "versionNumber": "1.0.0",
+      "changelog": "Initial build release.",
+      "entryFile": "index.html",
+      "archiveChecksum": "a1b2c3d4e5f6",
+      "archiveSizeBytes": 1048576,
+      "status": "REJECTED",
+      "scanResults": {
+        "passed": true,
+        "extractedFilesCount": 0,
+        "uncompressedSizeBytes": 0,
+        "hasEntryFile": true,
+        "suspiciousFilesDetected": []
+      },
+      "createdAt": "2026-11-11T04:01:26.336Z"
+    },
+    {
+      "id": "ver-qa-test-1794369686348",
+      "gameId": "game-qa-test-1794369686348",
+      "versionNumber": "1.0.0",
+      "changelog": "Initial build release.",
+      "entryFile": "index.html",
+      "archiveChecksum": "a1b2c3d4e5f6",
+      "archiveSizeBytes": 1048576,
+      "status": "SUBMITTED",
+      "scanResults": {
+        "passed": true,
+        "extractedFilesCount": 0,
+        "uncompressedSizeBytes": 0,
+        "hasEntryFile": true,
+        "suspiciousFilesDetected": []
+      },
+      "createdAt": "2026-11-11T04:01:26.350Z"
     }
   ],
   "submissions": [
+    {
+      "id": "sub-1794369686351-5qif",
+      "versionId": "ver-qa-test-1794369686348",
+      "gameId": "game-qa-test-1794369686348",
+      "gameTitle": "QA Test Runner",
+      "developerName": "PixelForge Studios",
+      "status": "SUBMITTED",
+      "automatedChecks": {
+        "entryPageLoads": true,
+        "consoleErrorsCount": 0,
+        "loadTimeMs": 0,
+        "responsiveViewportOk": true,
+        "cspViolationsCount": 0
+      },
+      "manualNotes": "Initial QA build for Phase 5 verification",
+      "submittedAt": "2026-11-11T04:01:26.351Z"
+    },
+    {
+      "id": "sub-1794369686338-nyzk",
+      "versionId": "ver-qa-test-1794369686334",
+      "gameId": "game-qa-test-1794369686334",
+      "gameTitle": "QA Test Runner",
+      "developerName": "PixelForge Studios",
+      "status": "REJECTED",
+      "automatedChecks": {
+        "entryPageLoads": true,
+        "consoleErrorsCount": 0,
+        "loadTimeMs": 0,
+        "responsiveViewportOk": true,
+        "cspViolationsCount": 0
+      },
+      "manualNotes": "Third party analytics endpoint blocked by CSP.",
+      "submittedAt": "2026-11-11T04:01:26.338Z",
+      "reviewedBy": "Lead QA Admin",
+      "rejectionReason": "Violates platform safety policy: External unauthorized tracking script detected.",
+      "reviewedAt": "2026-11-11T04:01:26.341Z"
+    },
+    {
+      "id": "sub-1794369686326-jf0b",
+      "versionId": "ver-qa-test-1794369686322",
+      "gameId": "game-qa-test-1794369686322",
+      "gameTitle": "QA Test Runner",
+      "developerName": "PixelForge Studios",
+      "status": "CHANGES_REQUESTED",
+      "automatedChecks": {
+        "entryPageLoads": true,
+        "consoleErrorsCount": 0,
+        "loadTimeMs": 0,
+        "responsiveViewportOk": true,
+        "cspViolationsCount": 0
+      },
+      "manualNotes": "Audio is missing in Chrome due to unhandled AudioContext resume. Please fix and resubmit.",
+      "submittedAt": "2026-11-11T04:01:26.326Z",
+      "reviewedBy": "Lead QA Admin",
+      "reviewedAt": "2026-11-11T04:01:26.328Z"
+    },
+    {
+      "id": "sub-1794369686312-nz1c",
+      "versionId": "ver-qa-test-1794369686308",
+      "gameId": "game-qa-test-1794369686308",
+      "gameTitle": "QA Test Runner",
+      "developerName": "PixelForge Studios",
+      "status": "APPROVED",
+      "automatedChecks": {
+        "entryPageLoads": true,
+        "consoleErrorsCount": 0,
+        "loadTimeMs": 0,
+        "responsiveViewportOk": true,
+        "cspViolationsCount": 0
+      },
+      "manualNotes": "Controls verified at 60 FPS. Zero CSP issues.",
+      "submittedAt": "2026-11-11T04:01:26.312Z",
+      "reviewedBy": "Lead QA Admin",
+      "reviewedAt": "2026-11-11T04:01:26.314Z"
+    },
+    {
+      "id": "sub-1794369686306-tvgn",
+      "versionId": "ver-qa-test-1794369686300",
+      "gameId": "game-qa-test-1794369686300",
+      "gameTitle": "QA Test Runner",
+      "developerName": "PixelForge Studios",
+      "status": "SUBMITTED",
+      "automatedChecks": {
+        "entryPageLoads": true,
+        "consoleErrorsCount": 0,
+        "loadTimeMs": 0,
+        "responsiveViewportOk": true,
+        "cspViolationsCount": 0
+      },
+      "manualNotes": "Initial QA build for Phase 5 verification",
+      "submittedAt": "2026-11-11T04:01:26.306Z"
+    },
+    {
+      "id": "sub-1794369686296-fq0p",
+      "versionId": "ver-qa-test-1794369686290",
+      "gameId": "game-qa-test-1794369686290",
+      "gameTitle": "QA Test Runner",
+      "developerName": "PixelForge Studios",
+      "status": "SUBMITTED",
+      "automatedChecks": {
+        "entryPageLoads": true,
+        "consoleErrorsCount": 0,
+        "loadTimeMs": 0,
+        "responsiveViewportOk": true,
+        "cspViolationsCount": 0
+      },
+      "manualNotes": "Initial QA build for Phase 5 verification",
+      "submittedAt": "2026-11-11T04:01:26.296Z"
+    },
     {
       "id": "sub-neon-1",
       "versionId": "ver-neon-1",
@@ -3209,6 +3866,46 @@
     }
   ],
   "auditLogs": [
+    {
+      "id": "log-1794369689523",
+      "actorId": "usr-1794369689518-lmtan",
+      "actorName": "Alpha Studio",
+      "action": "SUBMIT_GAME_VERSION",
+      "targetType": "GAME_VERSION",
+      "targetId": "ver-test-1",
+      "details": {
+        "version": "1.0.0"
+      },
+      "ipAddress": "127.0.0.1",
+      "createdAt": "2026-11-11T04:01:29.523Z"
+    },
+    {
+      "id": "log-1794369686346",
+      "actorId": "usr-admin-1",
+      "actorName": "System Admin",
+      "action": "REJECT_GAME",
+      "targetType": "GAME_SUBMISSION",
+      "targetId": "sub-1794369686338-nyzk",
+      "details": {
+        "reason": "Policy violation"
+      },
+      "ipAddress": "127.0.0.1",
+      "createdAt": "2026-11-11T04:01:26.346Z"
+    },
+    {
+      "id": "log-1794369686319",
+      "actorId": "usr-admin-1",
+      "actorName": "System Admin",
+      "action": "APPROVE_GAME",
+      "targetType": "GAME_SUBMISSION",
+      "targetId": "sub-1794369686312-nz1c",
+      "details": {
+        "title": "QA Test Runner",
+        "version": "1.0.0"
+      },
+      "ipAddress": "127.0.0.1",
+      "createdAt": "2026-11-11T04:01:26.319Z"
+    },
     {
       "id": "log-1794369287598",
       "actorId": "usr-1794369287593-omscc",
@@ -3424,6 +4121,13 @@
       "token": "rst_1794369286868_sdzfhodpgu",
       "expiresAt": "2026-11-11T04:09:46.868Z",
       "used": true
+    },
+    {
+      "id": "prt-1794369689200",
+      "email": "test_player_1794369689198@gamer.com",
+      "token": "rst_1794369689200_y9a9xsapcf",
+      "expiresAt": "2026-11-11T04:16:29.200Z",
+      "used": true
     }
   ],
   "verificationTokens": [
@@ -3486,6 +4190,12 @@
       "userId": "usr-1794369286655-88evn",
       "token": "verify_1794369286663_fen8xsck",
       "expiresAt": "2026-11-12T03:54:46.663Z"
+    },
+    {
+      "id": "evt-1794369689085",
+      "userId": "usr-1794369689083-tpp1b",
+      "token": "verify_1794369689085_tp43tr6h",
+      "expiresAt": "2026-11-12T04:01:29.085Z"
     }
   ],
   "developerSettings": [

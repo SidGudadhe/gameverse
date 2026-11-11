@@ -5,6 +5,16 @@ All notable changes to the GameVerse project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-11-11
+### Added - Phase 7 (Game Player & Sandboxed Fullscreen)
+- Interactive Game Player component (`src/components/GamePlayer.tsx`) featuring 16:9 letterbox scaling, pre-boot poster thumbnail state for bandwidth conservation, and theater mode.
+- Strict iframe multi-origin sandbox policy (`sandbox="allow-scripts allow-same-origin allow-pointer-lock"`, `allow="fullscreen; autoplay; gamepad; focus-without-user-activation"`) prohibiting top navigation and DOM escalations.
+- Parent-level floating HUD overlay with 3-second auto-hide in fullscreen, audio mute/unmute toggle ('M' key), restart action, theater mode toggle, and browser Fullscreen API toggle ('F' key).
+- Tab visibility manager listening to `document.visibilitychange` to automatically pause game loop and mute audio on backgrounding.
+- Sandboxed HTML5 canvas runner (`src/app/sandbox/[gameId]/[versionId]/page.tsx`) with bidirectional `postMessage` protocol and WebAudio synthesizer.
+- Secure static file delivery server (`/api/sandbox/files/[gameId]/[versionId]/[...file]`) enforcing strict Zip Slip path traversal defenses and isolated Content-Security-Policy headers.
+- Comprehensive Phase 7 automated test suite (`tests/player_phase7.test.ts`).
+
 ## [0.6.0] - 2026-11-11
 ### Added - Phase 6 (Main Gaming Website & Public Catalog)
 - Revamped homepage (`/`) featuring Hero Carousel, live category quick chips, Trending Right Now, Hall of Fame, and Fresh Releases sections.

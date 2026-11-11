@@ -1,128 +1,309 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { Maximize2, Minimize2, Play, ArrowLeft, Share2, Flag, RotateCcw, Volume2 } from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import {
+  Maximize2,
+  Minimize2,
+  Play,
+  ArrowLeft,
+  Share2,
+  Flag,
+  RotateCcw,
+  Volume2,
+  VolumeX,
+  Tv,
+  HelpCircle,
+  Sparkles,
+} from 'lucide-react';
 import { Game } from '@/types';
 
 interface GamePlayerProps {
   game: Game;
   sandboxUrl?: string;
+  onFullscreenChange?: (isFullscreen: boolean) => void;
 }
 
-export default function GamePlayer({ game, sandboxUrl }: GamePlayerProps) {
+export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: GamePlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isTheater, setIsTheater] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [showHud, setShowHud] = useState(true);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const hudTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Default fallback sandbox game runner if no external build URL
+  // Resolved sandbox runner route
   const resolvedUrl = sandboxUrl || `/sandbox/${game.id}/${game.currentVersionId || 'v1'}`;
 
-  // Handle Fullscreen toggle
+  // ================= POSTMESSAGE COMMUNICATION TO RUNNER =================
+  const sendToRunner = useCallback((action: string, payload?: any) => {
+    if (iframeRef.current && iframeRef.current.contentWindow) {
+      iframeRef.current.contentWindow.postMessage({ type: action, ...payload }, '*');
+    }
+  }, []);
+
+  // Handle Fullscreen Toggle
   const toggleFullscreen = async () => {
     if (!containerRef.current) return;
 
     try {
       if (!document.fullscreenElement) {
-        await containerRef.current.requestFullscreen();
+        if (containerRef.current.requestFullscreen) {
+          await containerRef.current.requestFullscreen();
+        } else if ((containerRef.current as any).webkitRequestFullscreen) {
+          await (containerRef.current as any).webkitRequestFullscreen();
+        }
         setIsFullscreen(true);
+        onFullscreenChange?.(true);
       } else {
-        await document.exitFullscreen();
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        } else if ((document as any).webkitExitFullscreen) {
+          await (document as any).webkitExitFullscreen();
+        }
         setIsFullscreen(false);
+        onFullscreenChange?.(false);
       }
     } catch (err) {
-      console.error('Fullscreen request failed:', err);
+      console.warn('Fullscreen API request prevented or unsupported:', err);
+      // Fallback: emulate CSS fullscreen
+      setIsFullscreen(!isFullscreen);
+      onFullscreenChange?.(!isFullscreen);
     }
   };
 
-  // Listen for fullscreen change events (e.g. user pressed Escape)
+  // Handle Mute Toggle
+  const toggleMute = () => {
+    const newMuted = !isMuted;
+    setIsMuted(newMuted);
+    sendToRunner(newMuted ? 'GV_MUTE' : 'GV_UNMUTE');
+  };
+
+  // Handle Restart
+  const handleRestart = () => {
+    sendToRunner('GV_RESTART');
+  };
+
+  // Auto-hide HUD in fullscreen after 3 seconds of inactivity
+  const handleMouseMove = () => {
+    setShowHud(true);
+    if (hudTimerRef.current) clearTimeout(hudTimerRef.current);
+
+    if (isFullscreen) {
+      hudTimerRef.current = setTimeout(() => {
+        setShowHud(false);
+      }, 3000);
+    }
+  };
+
+  // Native Fullscreen Event Listener & Escape Key Sync
   useEffect(() => {
     const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
+      const active = !!document.fullscreenElement;
+      setIsFullscreen(active);
+      onFullscreenChange?.(active);
+      if (!active) {
+        setShowHud(true);
+      }
     };
 
     document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+
     return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
     };
-  }, []);
+  }, [onFullscreenChange]);
+
+  // Window Focus & Tab Visibility Change (Pauses runner when tab backgrounded)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setIsPaused(true);
+        sendToRunner('GV_PAUSE');
+      } else {
+        setIsPaused(false);
+        sendToRunner('GV_RESUME');
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [sendToRunner]);
+
+  // Keyboard Shortcuts (F for fullscreen, M for mute)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger if user is typing in an input/textarea
+      const tag = (e.target as HTMLElement)?.tagName?.toLowerCase();
+      if (tag === 'input' || tag === 'textarea') return;
+
+      if ((e.key === 'f' || e.key === 'F') && isPlaying) {
+        e.preventDefault();
+        toggleFullscreen();
+      } else if ((e.key === 'm' || e.key === 'M') && isPlaying) {
+        e.preventDefault();
+        toggleMute();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isPlaying, isFullscreen, isMuted]);
 
   return (
     <div
       ref={containerRef}
-      className={`relative w-full overflow-hidden bg-black transition-all ${
-        isFullscreen ? 'fixed inset-0 z-50 h-screen w-screen flex flex-col justify-center' : 'rounded-3xl border border-white/10 shadow-2xl'
+      onMouseMove={handleMouseMove}
+      className={`relative w-full overflow-hidden bg-black transition-all select-none ${
+        isFullscreen
+          ? 'fixed inset-0 z-50 h-screen w-screen flex flex-col justify-center'
+          : isTheater
+          ? 'max-w-none rounded-2xl border border-white/10 shadow-2xl'
+          : 'rounded-3xl border border-white/10 shadow-2xl'
       }`}
     >
-      {/* Floating Parent-level HUD Overlay (Outside iframe canvas) */}
-      <div className="absolute top-3 left-3 right-3 z-30 flex items-center justify-between pointer-events-none">
-        <div className="flex items-center gap-2 pointer-events-auto">
-          {isFullscreen && (
+      {/* ================= PARENT-LEVEL FLOATING HUD OVERLAY ================= */}
+      {isPlaying && (
+        <div
+          className={`absolute top-3 left-3 right-3 z-30 flex items-center justify-between pointer-events-none transition-opacity duration-300 ${
+            showHud ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          {/* Left HUD Controls */}
+          <div className="flex items-center gap-2 pointer-events-auto">
+            {isFullscreen && (
+              <button
+                onClick={toggleFullscreen}
+                className="flex items-center gap-1.5 bg-black/80 hover:bg-black text-white text-xs font-semibold px-3 py-1.5 rounded-xl border border-white/20 shadow-lg backdrop-blur-md transition-all active:scale-95"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Exit Fullscreen</span>
+              </button>
+            )}
+
+            <span className="hidden sm:inline-flex items-center gap-1.5 bg-black/70 backdrop-blur-md text-gray-200 text-xs px-3 py-1.5 rounded-xl border border-white/10">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>{game.title}</span>
+            </span>
+
+            {isPaused && (
+              <span className="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-md">
+                PAUSED
+              </span>
+            )}
+          </div>
+
+          {/* Right HUD Controls */}
+          <div className="flex items-center gap-2 pointer-events-auto">
+            {/* Audio Mute / Unmute */}
+            <button
+              onClick={toggleMute}
+              title={isMuted ? 'Unmute Audio (M)' : 'Mute Audio (M)'}
+              className={`w-9 h-9 rounded-xl backdrop-blur-md flex items-center justify-center border transition-all active:scale-95 ${
+                isMuted
+                  ? 'bg-rose-500/30 text-rose-300 border-rose-500/40'
+                  : 'bg-black/80 hover:bg-white/10 text-white border-white/20'
+              }`}
+            >
+              {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+            </button>
+
+            {/* Restart Game */}
+            <button
+              onClick={handleRestart}
+              title="Restart Game"
+              className="w-9 h-9 rounded-xl bg-black/80 hover:bg-white/10 text-white flex items-center justify-center border border-white/20 backdrop-blur-md shadow-lg transition-all active:scale-95"
+            >
+              <RotateCcw className="w-4 h-4" />
+            </button>
+
+            {/* Theater Mode (Only in non-fullscreen) */}
+            {!isFullscreen && (
+              <button
+                onClick={() => setIsTheater(!isTheater)}
+                title={isTheater ? 'Exit Theater Mode' : 'Theater Mode'}
+                className={`w-9 h-9 rounded-xl backdrop-blur-md flex items-center justify-center border transition-all active:scale-95 ${
+                  isTheater
+                    ? 'bg-indigo-600/40 text-indigo-300 border-indigo-500/50'
+                    : 'bg-black/80 hover:bg-white/10 text-white border-white/20'
+                }`}
+              >
+                <Tv className="w-4 h-4" />
+              </button>
+            )}
+
+            {/* Fullscreen Toggle */}
             <button
               onClick={toggleFullscreen}
-              className="flex items-center gap-1.5 bg-black/75 hover:bg-black/90 backdrop-blur-md text-white text-xs font-semibold px-3 py-1.5 rounded-xl border border-white/10 shadow-lg transition-all"
+              title={isFullscreen ? 'Exit Fullscreen (Esc / F)' : 'Fullscreen (F)'}
+              className="w-9 h-9 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center border border-indigo-400/40 shadow-lg shadow-indigo-600/40 backdrop-blur-md transition-all active:scale-95"
             >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Exit Fullscreen</span>
+              {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
             </button>
-          )}
-          <span className="hidden sm:inline-flex bg-black/60 backdrop-blur-md text-gray-300 text-xs px-2.5 py-1 rounded-lg border border-white/10">
-            {game.title}
-          </span>
+          </div>
         </div>
+      )}
 
-        <div className="flex items-center gap-2 pointer-events-auto">
-          <button
-            onClick={toggleFullscreen}
-            title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
-            className="w-9 h-9 rounded-xl bg-black/75 hover:bg-indigo-600/90 backdrop-blur-md text-white flex items-center justify-center border border-white/10 shadow-lg transition-colors"
-          >
-            {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-          </button>
-        </div>
-      </div>
-
-      {/* 16:9 Viewport Player Container */}
-      <div className={`relative w-full ${isFullscreen ? 'h-full' : 'aspect-video'}`}>
+      {/* ================= 16:9 VIEWPORT CONTAINER ================= */}
+      <div
+        className={`relative w-full ${
+          isFullscreen ? 'h-full flex items-center justify-center' : 'aspect-video'
+        }`}
+      >
         {!isPlaying ? (
-          /* Pre-Boot Thumbnail State (Zero bandwidth used until play click) */
+          /* ================= PRE-BOOT POSTER STATE ================= */
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center overflow-hidden bg-[#090D16]">
+            {/* Blurred Backdrop Artwork */}
             <img
               src={game.bannerUrl || game.thumbnailUrl}
               alt={game.title}
-              className="absolute inset-0 w-full h-full object-cover blur-sm opacity-40 scale-105"
+              className="absolute inset-0 w-full h-full object-cover blur-md opacity-35 scale-105 pointer-events-none"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
 
-            <div className="relative z-10 flex flex-col items-center text-center p-6 max-w-md">
+            {/* Center Play Button & Metadata */}
+            <div className="relative z-10 flex flex-col items-center text-center p-6 max-w-md space-y-4">
               <button
                 onClick={() => setIsPlaying(true)}
-                className="group relative w-20 h-20 rounded-full bg-gradient-to-tr from-indigo-600 to-cyan-400 p-1 flex items-center justify-center shadow-2xl shadow-indigo-600/50 hover:scale-110 active:scale-95 transition-all duration-300"
+                className="group relative w-20 h-20 rounded-full bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 p-1 flex items-center justify-center shadow-2xl shadow-indigo-600/60 hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer"
               >
                 <div className="w-full h-full rounded-full bg-[#090D16] flex items-center justify-center group-hover:bg-transparent transition-colors">
                   <Play className="w-8 h-8 fill-white text-white ml-1 group-hover:scale-110 transition-transform" />
                 </div>
               </button>
 
-              <h2 className="mt-5 font-heading font-black text-2xl sm:text-3xl text-white tracking-tight">
-                {game.title}
-              </h2>
-              <p className="mt-1 text-xs sm:text-sm text-gray-400">
-                Click to load game in instant sandboxed player
-              </p>
+              <div>
+                <h2 className="font-heading font-black text-2xl sm:text-3xl text-white tracking-tight">
+                  {game.title}
+                </h2>
+                <p className="mt-1 text-xs sm:text-sm text-gray-300">
+                  Instant playable in secure isolated sandbox
+                </p>
+              </div>
 
-              <div className="mt-4 flex items-center gap-2">
-                <span className="bg-white/10 text-gray-300 text-[11px] px-2.5 py-1 rounded-md">
-                  {game.orientation} Viewport
+              {/* Technical Spec Badges */}
+              <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+                <span className="bg-black/60 border border-white/10 text-gray-300 text-[11px] px-2.5 py-1 rounded-lg">
+                  {game.orientation} 16:9
                 </span>
-                <span className="bg-white/10 text-gray-300 text-[11px] px-2.5 py-1 rounded-md">
+                <span className="bg-black/60 border border-cyan-500/30 text-cyan-300 font-mono text-[11px] px-2.5 py-1 rounded-lg">
                   {game.engine}
+                </span>
+                <span className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-semibold px-2.5 py-1 rounded-lg">
+                  Zero Bandwidth Idle
                 </span>
               </div>
             </div>
           </div>
         ) : (
-          /* Sandboxed Iframe (Strict origin isolation and sandbox policy) */
+          /* ================= HARDENED MULTI-ORIGIN SANDBOX IFRAME ================= */
           <iframe
             ref={iframeRef}
             src={resolvedUrl}

@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Heart, Share2, Flag } from 'lucide-react';
 import SocialShareModal from './SocialShareModal';
 
 interface GameActionBarProps {
   gameTitle: string;
   gameSlug: string;
+  gameId?: string;
   referralToken: string;
   thumbnailUrl?: string;
 }
@@ -14,6 +15,7 @@ interface GameActionBarProps {
 export default function GameActionBar({
   gameTitle,
   gameSlug,
+  gameId,
   referralToken,
   thumbnailUrl,
 }: GameActionBarProps) {
@@ -21,8 +23,38 @@ export default function GameActionBar({
   const [isFavorited, setIsFavorited] = useState(false);
   const [reported, setReported] = useState(false);
 
-  const handleFavorite = () => {
-    setIsFavorited(!isFavorited);
+  useEffect(() => {
+    if (!gameId) return;
+    fetch(`/api/player/favorites/${gameId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.isFavorited !== undefined) {
+          setIsFavorited(data.isFavorited);
+        }
+      })
+      .catch(() => {});
+  }, [gameId]);
+
+  const handleFavorite = async () => {
+    const nextState = !isFavorited;
+    setIsFavorited(nextState);
+    if (!gameId) return;
+
+    try {
+      if (nextState) {
+        await fetch('/api/player/favorites', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ gameId }),
+        });
+      } else {
+        await fetch(`/api/player/favorites/${gameId}`, {
+          method: 'DELETE',
+        });
+      }
+    } catch (e) {
+      // Non-blocking
+    }
   };
 
   const handleReport = () => {

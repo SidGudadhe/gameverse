@@ -106,6 +106,7 @@ export interface Game {
   currentVersionId?: string;
   totalPlays: number;
   totalPlayMinutes?: number;
+  totalReviews?: number;
   rating: number;
   publishedAt?: string;
   createdAt: string;
@@ -269,3 +270,47 @@ export interface PayoutBatch {
   createdAt: string;
   disbursedAt?: string;
 }
+
+export interface PlayerProfile {
+  id: string;
+  userId: string;
+  username: string; // Unique alphanumeric + underscore handle (e.g. cyber_ninja)
+  displayName: string;
+  avatarUrl?: string;
+  bio?: string;
+  favoriteGenre?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PlayerFavorite {
+  id: string;
+  userId: string;
+  gameId: string;
+  createdAt: string;
+}
+
+export interface PlayerHistoryItem {
+  id: string;
+  userId: string;
+  gameId: string;
+  lastPlayedAt: string;
+  totalPlayMinutes: number;
+}
+
+export interface GameReview {
+  id: string;
+  gameId: string;
+  userId: string;
+  username: string;
+  displayName: string;
+  userAvatar?: string;
+  rating: number; // 1 to 5
+  comment: string;
+  isVerifiedPlayer: boolean; // active playtime >= 60 seconds
+  helpfulCount: number;
+  helpfulVoters?: string[];
+  createdAt: string;
+  updatedAt?: string;
+}
+

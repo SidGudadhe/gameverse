@@ -19,6 +19,9 @@ import {
   GameStatus,
   AdFormat,
   AdImpression,
+  PlayerFavorite,
+  PlayerHistoryItem,
+  GameReview,
 } from '../../types';
 
 export interface AuditLog {
@@ -81,6 +84,9 @@ export interface DatabaseState {
     studioName?: string;
     website?: string;
     portfolioUrl?: string;
+    favoriteGenre?: string;
+    createdAt?: string;
+    updatedAt?: string;
   }[];
   categories: Category[];
   games: Game[];
@@ -98,6 +104,9 @@ export interface DatabaseState {
   rightsDeclarations: RightsDeclaration[];
   referralLinks: ReferralLink[];
   adImpressions: AdImpression[];
+  favorites: PlayerFavorite[];
+  playHistory: PlayerHistoryItem[];
+  reviews: GameReview[];
 }
 
 const DATA_DIR = path.join(process.cwd(), '.data');
@@ -304,6 +313,9 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
   events: [],
   referralLinks: [],
   adImpressions: [],
+  favorites: [],
+  playHistory: [],
+  reviews: [],
   financialRecords: [
     {
       id: 'led-001',
@@ -410,6 +422,9 @@ class GameVerseDatabase {
           events: parsed.events || INITIAL_DATABASE_STATE.events || [],
           referralLinks: parsed.referralLinks || INITIAL_DATABASE_STATE.referralLinks || [],
           adImpressions: parsed.adImpressions || INITIAL_DATABASE_STATE.adImpressions || [],
+          favorites: parsed.favorites || INITIAL_DATABASE_STATE.favorites || [],
+          playHistory: parsed.playHistory || INITIAL_DATABASE_STATE.playHistory || [],
+          reviews: parsed.reviews || INITIAL_DATABASE_STATE.reviews || [],
           financialRecords: parsed.financialRecords || INITIAL_DATABASE_STATE.financialRecords || [],
         };
       }
@@ -782,9 +797,24 @@ class GameVerseDatabase {
     return sub;
   }
 
-  // ================= DEVELOPER PROFILES & ONBOARDING =================
+  // ================= PROFILES & HANDLES =================
   getProfileByUserId(userId: string) {
     return this.state.profiles.find((p) => p.userId === userId) || null;
+  }
+
+  getProfileByUsername(username: string) {
+    if (!this.state.profiles) return null;
+    const clean = username.trim().toLowerCase().replace(/^@/, '');
+    return this.state.profiles.find((p) => p.username.toLowerCase() === clean) || null;
+  }
+
+  isUsernameAvailable(username: string, excludeUserId?: string): boolean {
+    if (!this.state.profiles) return true;
+    const clean = username.trim().toLowerCase().replace(/^@/, '');
+    const match = this.state.profiles.find((p) => p.username.toLowerCase() === clean);
+    if (!match) return true;
+    if (excludeUserId && match.userId === excludeUserId) return true;
+    return false;
   }
 
   updateProfile(userId: string, data: Partial<DatabaseState['profiles'][0]>) {
@@ -793,11 +823,13 @@ class GameVerseDatabase {
       profile = {
         id: `prof-${Date.now()}`,
         userId,
-        username: `dev_${Date.now()}`,
-        displayName: 'Creator',
+        username: `player_${Date.now()}`,
+        displayName: 'Player',
+        createdAt: new Date().toISOString(),
       };
       this.state.profiles.push(profile);
     }
+    profile.updatedAt = new Date().toISOString();
     Object.assign(profile, data);
     this.persistState();
     return profile;
@@ -1322,6 +1354,198 @@ class GameVerseDatabase {
     Object.assign(record, updates);
     this.persistState();
     return record;
+  }
+
+  // ================= COMMUNITY: CLOUD FAVORITES =================
+  getFavoritesByUser(userId: string): PlayerFavorite[] {
+    if (!this.state.favorites) return [];
+    return this.state.favorites.filter((f) => f.userId === userId);
+  }
+
+  isGameFavorited(userId: string, gameId: string): boolean {
+    if (!this.state.favorites) return false;
+    return this.state.favorites.some((f) => f.userId === userId && f.gameId === gameId);
+  }
+
+  addFavorite(userId: string, gameId: string): PlayerFavorite {
+    if (!this.state.favorites) this.state.favorites = [];
+    const existing = this.state.favorites.find((f) => f.userId === userId && f.gameId === gameId);
+    if (existing) return existing;
+
+    const fav: PlayerFavorite = {
+      id: `fav-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      userId,
+      gameId,
+      createdAt: new Date().toISOString(),
+    };
+    this.state.favorites.push(fav);
+    this.persistState();
+    return fav;
+  }
+
+  removeFavorite(userId: string, gameId: string): boolean {
+    if (!this.state.favorites) return false;
+    const initialLen = this.state.favorites.length;
+    this.state.favorites = this.state.favorites.filter(
+      (f) => !(f.userId === userId && f.gameId === gameId)
+    );
+    const removed = this.state.favorites.length < initialLen;
+    if (removed) this.persistState();
+    return removed;
+  }
+
+  getFavoriteGames(userId: string): Game[] {
+    const favorites = this.getFavoritesByUser(userId);
+    const gameIds = new Set(favorites.map((f) => f.gameId));
+    return this.state.games.filter((g) => gameIds.has(g.id) && g.status === 'PUBLISHED');
+  }
+
+  // ================= COMMUNITY: PLAY HISTORY =================
+  recordPlayHistory(userId: string, gameId: string, playSeconds = 0): PlayerHistoryItem {
+    if (!this.state.playHistory) this.state.playHistory = [];
+    let item = this.state.playHistory.find((h) => h.userId === userId && h.gameId === gameId);
+
+    const now = new Date().toISOString();
+    const additionalMinutes = Math.round((playSeconds / 60) * 10) / 10;
+
+    if (item) {
+      item.lastPlayedAt = now;
+      item.totalPlayMinutes = Math.round((item.totalPlayMinutes + additionalMinutes) * 10) / 10;
+    } else {
+      item = {
+        id: `hist-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        userId,
+        gameId,
+        lastPlayedAt: now,
+        totalPlayMinutes: additionalMinutes,
+      };
+      this.state.playHistory.push(item);
+    }
+
+    this.persistState();
+    return item;
+  }
+
+  getPlayHistory(userId: string, limit = 20): (PlayerHistoryItem & { game?: Game })[] {
+    if (!this.state.playHistory) return [];
+    const userHistory = this.state.playHistory
+      .filter((h) => h.userId === userId)
+      .sort((a, b) => new Date(b.lastPlayedAt).getTime() - new Date(a.lastPlayedAt).getTime())
+      .slice(0, limit);
+
+    return userHistory.map((h) => ({
+      ...h,
+      game: this.getGameById(h.gameId),
+    }));
+  }
+
+  getTotalPlaytimeForGame(userId: string, gameId: string): number {
+    let totalSeconds = 0;
+    if (this.state.sessions) {
+      const userSessions = this.state.sessions.filter(
+        (s) => s.playerId === userId && s.gameId === gameId && !s.isIvt
+      );
+      totalSeconds = userSessions.reduce((acc, s) => acc + (s.activeSeconds || 0), 0);
+    }
+
+    if (totalSeconds === 0 && this.state.playHistory) {
+      const hist = this.state.playHistory.find((h) => h.userId === userId && h.gameId === gameId);
+      if (hist) {
+        totalSeconds = Math.round(hist.totalPlayMinutes * 60);
+      }
+    }
+
+    return totalSeconds;
+  }
+
+  // ================= COMMUNITY: REVIEWS & RATINGS =================
+  getReviewsByGame(gameId: string): GameReview[] {
+    if (!this.state.reviews) return [];
+    return this.state.reviews
+      .filter((r) => r.gameId === gameId)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  getReviewByUserAndGame(userId: string, gameId: string): GameReview | undefined {
+    if (!this.state.reviews) return undefined;
+    return this.state.reviews.find((r) => r.userId === userId && r.gameId === gameId);
+  }
+
+  createReview(
+    data: Omit<GameReview, 'id' | 'createdAt' | 'helpfulCount' | 'helpfulVoters'> & {
+      id?: string;
+      createdAt?: string;
+    }
+  ): GameReview {
+    if (!this.state.reviews) this.state.reviews = [];
+
+    let review = this.state.reviews.find(
+      (r) => r.userId === data.userId && r.gameId === data.gameId
+    );
+
+    if (review) {
+      review.rating = Math.max(1, Math.min(5, Math.round(data.rating)));
+      review.comment = data.comment;
+      review.isVerifiedPlayer = data.isVerifiedPlayer ?? review.isVerifiedPlayer;
+      review.updatedAt = new Date().toISOString();
+    } else {
+      review = {
+        id: data.id || `rev-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        gameId: data.gameId,
+        userId: data.userId,
+        username: data.username,
+        displayName: data.displayName,
+        userAvatar: data.userAvatar,
+        rating: Math.max(1, Math.min(5, Math.round(data.rating))),
+        comment: data.comment,
+        isVerifiedPlayer: Boolean(data.isVerifiedPlayer),
+        helpfulCount: 0,
+        helpfulVoters: [],
+        createdAt: data.createdAt || new Date().toISOString(),
+      };
+      this.state.reviews.unshift(review);
+    }
+
+    this.persistState();
+    this.updateGameRatingAggregate(data.gameId);
+    return review;
+  }
+
+  voteHelpfulReview(
+    reviewId: string,
+    userId: string
+  ): { success: boolean; review?: GameReview; error?: string } {
+    if (!this.state.reviews) return { success: false, error: 'Review not found' };
+    const review = this.state.reviews.find((r) => r.id === reviewId);
+    if (!review) return { success: false, error: 'Review not found' };
+
+    if (!review.helpfulVoters) review.helpfulVoters = [];
+    if (review.helpfulVoters.includes(userId)) {
+      return { success: false, error: 'You have already voted this review as helpful.' };
+    }
+
+    review.helpfulVoters.push(userId);
+    review.helpfulCount = (review.helpfulCount || 0) + 1;
+    this.persistState();
+    return { success: true, review };
+  }
+
+  updateGameRatingAggregate(gameId: string): { rating: number; totalReviews: number } {
+    const game = this.getGameById(gameId);
+    if (!game) return { rating: 0, totalReviews: 0 };
+
+    const reviews = this.getReviewsByGame(gameId);
+    if (reviews.length === 0) {
+      return { rating: game.rating, totalReviews: 0 };
+    }
+
+    const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
+    const avg = Math.round((sum / reviews.length) * 10) / 10;
+
+    game.rating = avg;
+    game.totalReviews = reviews.length;
+    this.persistState();
+    return { rating: avg, totalReviews: reviews.length };
   }
 }
 

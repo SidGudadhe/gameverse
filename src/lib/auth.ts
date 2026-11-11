@@ -20,8 +20,19 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
   return bcrypt.compare(password, hash);
 }
 
-export function generateToken(payload: TokenPayload): string {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+export function generateToken(payload: {
+  userId: string;
+  email: string;
+  role: UserRole;
+  name?: string;
+}): string {
+  const completePayload: TokenPayload = {
+    userId: payload.userId,
+    email: payload.email,
+    role: payload.role,
+    name: payload.name || payload.email.split('@')[0],
+  };
+  return jwt.sign(completePayload, JWT_SECRET, { expiresIn: '7d' });
 }
 
 export function verifyToken(token: string): TokenPayload | null {

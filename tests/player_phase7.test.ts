@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterAll, vi } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import path from 'path';
 import fs from 'fs';
 import { NextRequest } from 'next/server';
@@ -9,7 +9,7 @@ describe('Phase 7: Game Player, Sandboxed Runtime & HUD Fullscreen Controls', ()
   const TEST_VERSION_ID = 'v1-p7';
   const buildDir = path.resolve(process.cwd(), '.data', 'games', TEST_GAME_ID, TEST_VERSION_ID);
 
-  beforeEach(() => {
+  beforeAll(() => {
     // Setup mock game build directory
     if (!fs.existsSync(buildDir)) {
       fs.mkdirSync(buildDir, { recursive: true });

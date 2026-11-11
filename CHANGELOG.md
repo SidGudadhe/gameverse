@@ -5,6 +5,18 @@ All notable changes to the GameVerse project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.13.0] - 2026-11-11
+### Added - Phase 13 (Player Community, Profiles & Social)
+- Unique player handle validation system (`src/lib/community.ts`) enforcing format `^[a-zA-Z0-9_]{3,20}$`, uniqueness, and reserved username protection.
+- Public player profile pages (`/player/[username]`) displaying player avatar, bio, favorite genre, joined date, games played counter, reviews written counter, and public favorite games showcase.
+- Cloud favorites synchronization across devices (`/api/player/favorites`) integrated with `GameActionBar` heart toggle.
+- Play history tracker (`/api/player/history`) recording games, last played timestamp, and total accumulated playtime.
+- Verified Player review badges requiring at least 60 active seconds of recorded gameplay to combat review bombing.
+- Automated review commentary moderation screening out profanity, repetitive spam, and malicious links.
+- Interactive `GameReviewsSection` component on game pages with 5-star picker, review posting form, review cards, and helpful upvote buttons.
+- Community APIs for reviews (`/api/games/[slug]/reviews`), helpful votes (`/api/games/[slug]/reviews/[reviewId]/helpful`), favorites, history, and player profiles (`/api/player/profile`).
+- Comprehensive Phase 13 automated test suite (`tests/community_phase13.test.ts`).
+
 ## [0.12.0] - 2026-11-11
 ### Added - Phase 12 (Earnings & Double-Entry Financial Ledger)
 - Double-entry financial ledger architecture (`src/lib/ledger.ts`, `src/lib/database/index.ts`) tracking gross revenue, platform deductions (10%), net revenue, and creator share.

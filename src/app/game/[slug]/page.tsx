@@ -5,6 +5,7 @@ import { gvDb } from '@/lib/database';
 import GamePlayer from '@/components/GamePlayer';
 import GameCard from '@/components/GameCard';
 import GameActionBar from '@/components/GameActionBar';
+import GameReviewsSection from '@/components/GameReviewsSection';
 import { Star, ArrowLeft, Gamepad, Info, ShieldCheck, Check, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 
@@ -81,6 +82,7 @@ export default function GamePage({ params }: GamePageProps) {
         <GameActionBar
           gameTitle={game.title}
           gameSlug={game.slug}
+          gameId={game.id}
           referralToken={referralToken}
           thumbnailUrl={game.thumbnailUrl}
         />
@@ -153,6 +155,9 @@ export default function GamePage({ params }: GamePageProps) {
           </div>
         </div>
       </div>
+
+      {/* Community Ratings & Reviews */}
+      <GameReviewsSection gameSlug={game.slug} gameId={game.id} initialRating={game.rating} />
 
       {/* Related Games Carousel */}
       {relatedGames.length > 0 && (

@@ -5,6 +5,18 @@ All notable changes to the GameVerse project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.0] - 2026-11-11
+### Added - Phase 10 (Social Promotion & Referral Engine)
+- Opaque, tamper-proof creator referral token generator (`src/lib/referrals.ts`) preventing leakage of sensitive developer emails or internal database identifiers.
+- Anti-fraud attribution engine preventing self-referral bonus abuse and validating promotion tokens.
+- Tiered monetization bonus calculation boosting creator net revenue split from standard 50% to 70% on referral-attributed traffic.
+- SocialShareModal component with one-click link copying and pre-formatted community sharing for Twitter/X, Reddit, WhatsApp, and Discord.
+- GameActionBar client component integrating Favorite, Share & Refer, and Report triggers into game detail pages.
+- Creator Referral Campaign Manager (`/developer/referrals`) with custom campaign creator modal and performance tracking table.
+- Developer Referral APIs (`/api/developer/referrals`) for creating and listing tracked promotional campaigns.
+- Public Referral Token Resolution API (`/api/referrals/[token]`) with automatic click telemetry logging.
+- Comprehensive Phase 10 automated test suite (`tests/referrals_phase10.test.ts`).
+
 ## [0.9.0] - 2026-11-11
 ### Added - Phase 9 (Developer Analytics & Dashboards)
 - Developer Analytics Hub (`/developer/analytics`) providing studio-level telemetry overviews with timeframe filtering (7D, 30D, All Time) and multi-game selection.

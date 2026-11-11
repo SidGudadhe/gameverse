@@ -176,6 +176,19 @@ export interface GameAnalyticsSummary {
   referralStarts: number;
 }
 
+export interface ReferralLink {
+  id: string;
+  token: string;
+  gameId: string;
+  creatorId: string;
+  campaignName: string;
+  bonusPercent: number; // e.g. 20 (boosting creator split to 70%)
+  clicks: number;
+  uniquePlayers: number;
+  totalPlayMinutes: number;
+  createdAt: string;
+}
+
 export interface DeveloperAnalytics {
   totalStarts: number;
   uniquePlayers: number;

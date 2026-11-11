@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { gvDb } from '@/lib/database';
 import GamePlayer from '@/components/GamePlayer';
 import GameCard from '@/components/GameCard';
-import { Heart, Share2, Flag, Star, ArrowLeft, Gamepad, Info, ShieldCheck, Check, Sparkles } from 'lucide-react';
+import GameActionBar from '@/components/GameActionBar';
+import { Star, ArrowLeft, Gamepad, Info, ShieldCheck, Check, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 
 interface GamePageProps {
@@ -77,40 +78,12 @@ export default function GamePage({ params }: GamePageProps) {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2.5 w-full md:w-auto">
-          <button
-            className="flex-1 md:flex-initial flex items-center justify-center gap-2 bg-elevated hover:bg-white/10 text-gray-200 hover:text-white text-xs font-semibold px-4 py-2.5 rounded-xl border border-white/10 transition-all"
-          >
-            <Heart className="w-4 h-4 text-rose-500" />
-            <span>Favorite</span>
-          </button>
-
-          <button
-            onClick={() => {
-              if (typeof window !== 'undefined') {
-                const url = `${window.location.origin}/game/${game.slug}?ref=${referralToken}`;
-                navigator.clipboard.writeText(url);
-                alert(`Direct link copied with creator referral token:\n${url}`);
-              }
-            }}
-            className="flex-1 md:flex-initial flex items-center justify-center gap-2 bg-elevated hover:bg-white/10 text-gray-200 hover:text-white text-xs font-semibold px-4 py-2.5 rounded-xl border border-white/10 transition-all shadow-sm"
-          >
-            <Share2 className="w-4 h-4 text-cyan-400" />
-            <span>Share & Refer</span>
-          </button>
-
-          <button
-            onClick={() => {
-              if (typeof window !== 'undefined') {
-                alert('Thank you for your vigilance. Our moderation team has received the report for review.');
-              }
-            }}
-            className="p-2.5 bg-elevated hover:bg-rose-500/20 text-gray-400 hover:text-rose-400 rounded-xl border border-white/10 transition-colors"
-            title="Report build or content issue"
-          >
-            <Flag className="w-4 h-4" />
-          </button>
-        </div>
+        <GameActionBar
+          gameTitle={game.title}
+          gameSlug={game.slug}
+          referralToken={referralToken}
+          thumbnailUrl={game.thumbnailUrl}
+        />
       </div>
 
       {/* Details & Controls Grid */}

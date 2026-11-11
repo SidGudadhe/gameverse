@@ -13,6 +13,7 @@ import {
   AnalyticsEvent,
   GameAnalyticsSummary,
   RightsDeclaration,
+  ReferralLink,
   AIDisclosure,
   GameStatus,
 } from '../../types';
@@ -92,6 +93,7 @@ export interface DatabaseState {
   developerSettings: DeveloperSettings[];
   supportTickets: SupportTicket[];
   rightsDeclarations: RightsDeclaration[];
+  referralLinks: ReferralLink[];
 }
 
 const DATA_DIR = path.join(process.cwd(), '.data');
@@ -296,6 +298,7 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
   ],
   sessions: [],
   events: [],
+  referralLinks: [],
   financialRecords: [
     {
       id: 'led-001',
@@ -400,6 +403,7 @@ class GameVerseDatabase {
           agreements: parsed.agreements || INITIAL_DATABASE_STATE.agreements || [],
           sessions: parsed.sessions || INITIAL_DATABASE_STATE.sessions || [],
           events: parsed.events || INITIAL_DATABASE_STATE.events || [],
+          referralLinks: parsed.referralLinks || INITIAL_DATABASE_STATE.referralLinks || [],
         };
       }
     } catch (e) {
@@ -909,6 +913,10 @@ class GameVerseDatabase {
         game.totalPlays = (game.totalPlays || 0) + 1;
         game.updatedAt = new Date().toISOString();
       }
+
+      if (data.referralToken) {
+        this.recordReferralClick(data.referralToken, data.playerId);
+      }
     }
 
     this.persistState();
@@ -1050,6 +1058,72 @@ class GameVerseDatabase {
       retentionRate,
       referralStarts,
     };
+  }
+
+  // ================= REFERRAL ATTRIBUTION & CAMPAIGNS =================
+  createReferralLink(data: {
+    gameId: string;
+    creatorId: string;
+    campaignName?: string;
+    bonusPercent?: number;
+    customToken?: string;
+  }): ReferralLink {
+    if (!this.state.referralLinks) {
+      this.state.referralLinks = [];
+    }
+
+    const token =
+      data.customToken ||
+      `cr_${Math.random().toString(36).substring(2, 6)}_${Date.now().toString(36)}`;
+
+    // Ensure token uniqueness
+    const existing = this.state.referralLinks.find((r) => r.token === token);
+    if (existing) return existing;
+
+    const link: ReferralLink = {
+      id: `ref-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      token,
+      gameId: data.gameId,
+      creatorId: data.creatorId,
+      campaignName: data.campaignName || 'Direct Share',
+      bonusPercent: data.bonusPercent ?? 20,
+      clicks: 0,
+      uniquePlayers: 0,
+      totalPlayMinutes: 0,
+      createdAt: new Date().toISOString(),
+    };
+
+    this.state.referralLinks.push(link);
+    this.persistState();
+    return link;
+  }
+
+  getReferralLinkByToken(token: string): ReferralLink | null {
+    if (!this.state.referralLinks) return null;
+    return this.state.referralLinks.find((r) => r.token === token) || null;
+  }
+
+  getReferralLinksByCreator(creatorId: string): ReferralLink[] {
+    if (!this.state.referralLinks) return [];
+    return this.state.referralLinks.filter((r) => r.creatorId === creatorId);
+  }
+
+  getReferralLinksByGame(gameId: string): ReferralLink[] {
+    if (!this.state.referralLinks) return [];
+    return this.state.referralLinks.filter((r) => r.gameId === gameId);
+  }
+
+  recordReferralClick(token: string, playerId?: string): ReferralLink | null {
+    if (!this.state.referralLinks) return null;
+    const link = this.state.referralLinks.find((r) => r.token === token);
+    if (!link) return null;
+
+    link.clicks = (link.clicks || 0) + 1;
+    if (playerId) {
+      link.uniquePlayers = (link.uniquePlayers || 0) + 1;
+    }
+    this.persistState();
+    return link;
   }
 }
 

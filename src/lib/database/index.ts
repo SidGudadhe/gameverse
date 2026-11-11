@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 import {
   User,
   UserRole,
@@ -22,19 +23,12 @@ import {
   PlayerFavorite,
   PlayerHistoryItem,
   GameReview,
+  AuditLog,
+  CookieConsentPreferences,
 } from '../../types';
 
-export interface AuditLog {
-  id: string;
-  actorId: string;
-  actorName: string;
-  action: string;
-  targetType: string;
-  targetId: string;
-  details: Record<string, any>;
-  ipAddress: string;
-  createdAt: string;
-}
+export type { AuditLog };
+
 
 export interface PasswordResetToken {
   id: string;
@@ -399,7 +393,7 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
 };
 
 class GameVerseDatabase {
-  private state: DatabaseState;
+  public state: DatabaseState;
 
   constructor() {
     this.state = this.loadState();
@@ -434,7 +428,7 @@ class GameVerseDatabase {
     return JSON.parse(JSON.stringify(INITIAL_DATABASE_STATE));
   }
 
-  private persistState() {
+  public persistState() {
     try {
       if (!fs.existsSync(DATA_DIR)) {
         fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -445,6 +439,12 @@ class GameVerseDatabase {
     }
   }
 
+  // ================= STATE MANAGEMENT =================
+  resetToSeed() {
+    this.state = JSON.parse(JSON.stringify(INITIAL_DATABASE_STATE));
+    this.persistState();
+  }
+
   // ================= USERS & AUTH =================
   findUserByEmail(email: string) {
     return this.state.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
@@ -452,6 +452,10 @@ class GameVerseDatabase {
 
   findUserById(id: string) {
     return this.state.users.find((u) => u.id === id);
+  }
+
+  getUserById(id: string) {
+    return this.findUserById(id);
   }
 
   createUser(userData: {
@@ -541,19 +545,51 @@ class GameVerseDatabase {
   }
 
   // ================= AUDIT LOGGING =================
-  logAudit(entry: Omit<AuditLog, 'id' | 'createdAt'>) {
+  logAudit(entry: Omit<AuditLog, 'id' | 'createdAt'> & { id?: string; createdAt?: string }) {
+    const id = entry.id || `log-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const createdAt = entry.createdAt || new Date().toISOString();
+    const GENESIS_HASH = '0000000000000000000000000000000000000000000000000000000000000000';
+    const previousHash =
+      entry.previousHash ||
+      (this.state.auditLogs.length > 0
+        ? this.state.auditLogs[0].tamperHash || GENESIS_HASH
+        : GENESIS_HASH);
+
+    const payload = `${previousHash}|${id}|${createdAt}|${entry.action}|${entry.actorId}|${entry.targetId}|${JSON.stringify(entry.details || {})}`;
+    const tamperHash =
+      entry.tamperHash || crypto.createHash('sha256').update(payload).digest('hex');
+
     const log: AuditLog = {
-      id: `log-${Date.now()}`,
+      id,
+      createdAt,
+      previousHash,
+      tamperHash,
       ...entry,
-      createdAt: new Date().toISOString(),
     };
     this.state.auditLogs.unshift(log);
     this.persistState();
     return log;
   }
 
-  getAuditLogs(limit = 50) {
-    return this.state.auditLogs.slice(0, limit);
+  getAuditLogs(limit = 100, filter?: { action?: string; actorId?: string; search?: string }) {
+    let logs = [...this.state.auditLogs];
+    if (filter?.action && filter.action !== 'ALL') {
+      logs = logs.filter((l) => l.action.toLowerCase().includes(filter.action!.toLowerCase()));
+    }
+    if (filter?.actorId) {
+      logs = logs.filter((l) => l.actorId === filter.actorId);
+    }
+    if (filter?.search) {
+      const q = filter.search.toLowerCase();
+      logs = logs.filter(
+        (l) =>
+          l.action.toLowerCase().includes(q) ||
+          l.actorName.toLowerCase().includes(q) ||
+          l.targetId.toLowerCase().includes(q) ||
+          JSON.stringify(l.details).toLowerCase().includes(q)
+      );
+    }
+    return logs.slice(0, limit);
   }
 
   // ================= GAMES & TENANT ISOLATION =================
@@ -1362,6 +1398,10 @@ class GameVerseDatabase {
     return this.state.favorites.filter((f) => f.userId === userId);
   }
 
+  getPlayerFavorites(userId: string): PlayerFavorite[] {
+    return this.getFavoritesByUser(userId);
+  }
+
   isGameFavorited(userId: string, gameId: string): boolean {
     if (!this.state.favorites) return false;
     return this.state.favorites.some((f) => f.userId === userId && f.gameId === gameId);
@@ -1424,6 +1464,15 @@ class GameVerseDatabase {
 
     this.persistState();
     return item;
+  }
+
+  recordHistory(userId: string, gameId: string, playMinutesOrSeconds = 0): PlayerHistoryItem {
+    return this.recordPlayHistory(userId, gameId, playMinutesOrSeconds * 60);
+  }
+
+  getPlayerHistory(userId: string): PlayerHistoryItem[] {
+    if (!this.state.playHistory) return [];
+    return this.state.playHistory.filter((h) => h.userId === userId);
   }
 
   getPlayHistory(userId: string, limit = 20): (PlayerHistoryItem & { game?: Game })[] {

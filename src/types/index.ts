@@ -314,3 +314,28 @@ export interface GameReview {
   updatedAt?: string;
 }
 
+export interface AuditLog {
+  id: string;
+  actorId: string;
+  actorName: string;
+  actorRole?: UserRole | 'SYSTEM';
+  actorEmail?: string;
+  action: string;
+  targetType: string;
+  targetId: string;
+  details: Record<string, any>;
+  ipAddress: string;
+  previousHash?: string;
+  tamperHash?: string;
+  createdAt: string;
+}
+
+export interface CookieConsentPreferences {
+  necessary: boolean; // Always true
+  analytics: boolean;
+  marketing: boolean;
+  updatedAt: string;
+  version: string;
+}
+
+

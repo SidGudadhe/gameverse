@@ -5,6 +5,19 @@ All notable changes to the GameVerse project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.14.0] - 2026-11-11
+### Added - Phase 14 (Security Hardening, Privacy & Legal Compliance)
+- Subdomain origin isolation verifier (`src/lib/security.ts`) and sandbox attribute validator enforcing strict `allow-scripts allow-same-origin allow-pointer-lock` while blocking breakout flags.
+- Comprehensive HTTP security headers and CSP Level 3 policy configured in `next.config.mjs` and Next.js Edge middleware (`src/middleware.ts`).
+- Directory traversal URL screening preventing path escape attacks (`..`, `%2e%2e`).
+- GDPR Article 15/20 & India DPDP Section 11 Data Subject Access Request (DSAR) export API (`/api/user/privacy/export`) with SHA-256 data archive checksums.
+- GDPR Article 17 & India DPDP Section 12 Right to Erasure / Account Anonymization API (`/api/user/privacy/erasure`) wiping credentials, purging personal history, and pseudonymizing reviews to preserve game ratings without retaining PII.
+- Cyber-Slate floating cookie and consent manager (`src/components/CookieConsent.tsx`) with category toggles for Essential, Analytics, and Advertising.
+- Cryptographically chained SHA-256 audit logging engine (`src/lib/audit.ts`) and tamper detection verifier.
+- Admin security audit log dashboard (`/admin/audit-logs`, `/api/admin/audit-logs`) with real-time chain integrity verification badges and JSON inspection drawer.
+- Legally binding policy pages: Privacy Policy (`/privacy`), Terms of Service (`/terms`), and Creator Agreement (`/creator-agreement`).
+- Comprehensive Phase 14 automated test suite (`tests/security_phase14.test.ts`).
+
 ## [0.13.0] - 2026-11-11
 ### Added - Phase 13 (Player Community, Profiles & Social)
 - Unique player handle validation system (`src/lib/community.ts`) enforcing format `^[a-zA-Z0-9_]{3,20}$`, uniqueness, and reserved username protection.

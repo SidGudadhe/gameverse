@@ -52,8 +52,10 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
   isPlayingRef.current = isPlaying;
   isPausedRef.current = isPaused;
 
-  // Resolved sandbox runner route
-  const resolvedUrl = sandboxUrl || `/sandbox/${game.id}/${game.currentVersionId || 'v1'}`;
+  // Resolved sandbox runner route with optional isolated origin support
+  const sandboxOrigin = process.env.NEXT_PUBLIC_SANDBOX_ORIGIN || '';
+  const resolvedUrl =
+    sandboxUrl || `${sandboxOrigin}/sandbox/${game.id}/${game.currentVersionId || 'v1'}`;
 
   // ================= TELEMETRY PING PIPELINE =================
   const sendTelemetryPing = useCallback(

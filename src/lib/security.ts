@@ -167,3 +167,112 @@ export function extractArchiveSafely(
     return { success: false, filesExtracted: 0, error: err.message };
   }
 }
+
+// ================= PHASE 14: SANDBOX, CSP & ORIGIN ISOLATION =================
+
+export const PROHIBITED_SANDBOX_FLAGS = [
+  'allow-top-navigation',
+  'allow-top-navigation-by-user-activation',
+  'allow-modals',
+  'allow-popups',
+  'allow-popups-to-escape-sandbox',
+  'allow-same-origin-with-parent',
+];
+
+export const REQUIRED_SANDBOX_FLAGS = [
+  'allow-scripts',
+  'allow-same-origin',
+  'allow-pointer-lock',
+];
+
+/**
+ * Validates that an iframe sandbox attribute meets GameVerse security isolation directives.
+ * Strictly prevents top-navigation redirects, modal freezes, and popup escapes.
+ */
+export function validateSandboxFlags(sandboxAttribute: string): {
+  secure: boolean;
+  violations: string[];
+  allowedFlags: string[];
+} {
+  const flags = sandboxAttribute
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  const violations: string[] = [];
+
+  for (const dangerous of PROHIBITED_SANDBOX_FLAGS) {
+    if (flags.includes(dangerous)) {
+      violations.push(`Forbidden dangerous sandbox flag detected: "${dangerous}"`);
+    }
+  }
+
+  for (const required of REQUIRED_SANDBOX_FLAGS) {
+    if (!flags.includes(required)) {
+      violations.push(`Missing required sandbox security flag: "${required}"`);
+    }
+  }
+
+  return {
+    secure: violations.length === 0,
+    violations,
+    allowedFlags: flags,
+  };
+}
+
+/**
+ * Returns parent and sandbox origin configuration.
+ */
+export function getSandboxOriginConfig(): {
+  parentOrigin: string;
+  sandboxOrigin: string;
+  isOriginIsolated: boolean;
+} {
+  const parentOrigin = process.env.NEXT_PUBLIC_APP_ORIGIN || 'http://localhost:3000';
+  const sandboxOrigin = process.env.NEXT_PUBLIC_SANDBOX_ORIGIN || 'http://localhost:5001';
+
+  const isIsolated = verifyOriginIsolation(parentOrigin, sandboxOrigin);
+
+  return {
+    parentOrigin,
+    sandboxOrigin,
+    isOriginIsolated: isIsolated,
+  };
+}
+
+/**
+ * Verifies that the parent origin and untrusted iframe origin are strictly isolated.
+ * Disallows identical origin for untrusted user-submitted executable game code.
+ */
+export function verifyOriginIsolation(parentOrigin: string, iframeOrigin: string): boolean {
+  try {
+    const parentUrl = new URL(parentOrigin);
+    const iframeUrl = new URL(iframeOrigin);
+
+    // If hostnames or ports differ, origins are isolated
+    const isDifferentHost = parentUrl.hostname !== iframeUrl.hostname;
+    const isDifferentPort = parentUrl.port !== iframeUrl.port;
+    const isDifferentProtocol = parentUrl.protocol !== iframeUrl.protocol;
+
+    return isDifferentHost || isDifferentPort || isDifferentProtocol;
+  } catch {
+    // If not parseable as absolute URLs, check string equality
+    return parentOrigin.trim() !== iframeOrigin.trim();
+  }
+}
+
+/**
+ * Returns standard HTTP security headers for GameVerse.
+ */
+export function getStandardSecurityHeaders(): Record<string, string> {
+  return {
+    'Content-Security-Policy':
+      "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' blob: data:; connect-src 'self' https:; frame-src 'self' http://localhost:5001 https://*.gameverse.com; frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self';",
+    'X-Frame-Options': 'SAMEORIGIN',
+    'X-Content-Type-Options': 'nosniff',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
+    'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
+    'X-XSS-Protection': '1; mode=block',
+  };
+}
+

@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { globalIndexEngine } from '../performance';
 import {
   User,
   UserRole,
@@ -397,6 +398,7 @@ class GameVerseDatabase {
 
   constructor() {
     this.state = this.loadState();
+    globalIndexEngine.rebuildIndexes(this.state);
   }
 
   private loadState(): DatabaseState {
@@ -430,6 +432,7 @@ class GameVerseDatabase {
 
   public persistState() {
     try {
+      globalIndexEngine.rebuildIndexes(this.state);
       if (!fs.existsSync(DATA_DIR)) {
         fs.mkdirSync(DATA_DIR, { recursive: true });
       }
@@ -447,11 +450,14 @@ class GameVerseDatabase {
 
   // ================= USERS & AUTH =================
   findUserByEmail(email: string) {
-    return this.state.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+    return (
+      globalIndexEngine.getUserByEmail(email) ||
+      this.state.users.find((u) => u.email.toLowerCase() === email.toLowerCase())
+    );
   }
 
   findUserById(id: string) {
-    return this.state.users.find((u) => u.id === id);
+    return globalIndexEngine.getUserById(id) || this.state.users.find((u) => u.id === id);
   }
 
   getUserById(id: string) {
@@ -617,7 +623,7 @@ class GameVerseDatabase {
   }
 
   getGameById(id: string) {
-    return this.state.games.find((g) => g.id === id);
+    return globalIndexEngine.getGameById(id) || this.state.games.find((g) => g.id === id);
   }
 
   findGameById(id: string) {
@@ -625,7 +631,10 @@ class GameVerseDatabase {
   }
 
   getGameBySlug(slug: string) {
-    return this.state.games.find((g) => g.slug === slug);
+    return (
+      globalIndexEngine.getGameBySlug(slug) ||
+      this.state.games.find((g) => g.slug.toLowerCase() === slug.toLowerCase())
+    );
   }
 
   getCategories(): (Category & { count: number })[] {

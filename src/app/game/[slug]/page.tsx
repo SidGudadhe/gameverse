@@ -1,13 +1,33 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { gvDb } from '@/lib/database';
-import GamePlayer from '@/components/GamePlayer';
 import GameCard from '@/components/GameCard';
 import GameActionBar from '@/components/GameActionBar';
-import GameReviewsSection from '@/components/GameReviewsSection';
-import { Star, ArrowLeft, Gamepad, Info, ShieldCheck, Check, Sparkles } from 'lucide-react';
+import { Star, ArrowLeft, Gamepad, Info, ShieldCheck, Check, Sparkles, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
+
+// Dynamic code-splitting for heavy client components to optimize LCP & TTI
+const GamePlayer = dynamic(() => import('@/components/GamePlayer'), {
+  loading: () => (
+    <div className="w-full aspect-video rounded-3xl bg-[#090D16] border border-white/10 flex flex-col items-center justify-center text-center p-6 shadow-2xl relative overflow-hidden animate-pulse">
+      <div className="w-16 h-16 rounded-full bg-indigo-600/20 flex items-center justify-center mb-3">
+        <Loader2 className="w-8 h-8 text-indigo-400 animate-spin" />
+      </div>
+      <div className="h-4 w-48 bg-white/10 rounded-full" />
+      <div className="h-3 w-32 bg-white/5 rounded-full mt-2" />
+    </div>
+  ),
+  ssr: false,
+});
+
+const GameReviewsSection = dynamic(() => import('@/components/GameReviewsSection'), {
+  loading: () => (
+    <div className="w-full h-44 rounded-2xl bg-slate-900/40 border border-white/5 animate-pulse" />
+  ),
+  ssr: true,
+});
 
 interface GamePageProps {
   params: {

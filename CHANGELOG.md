@@ -5,6 +5,17 @@ All notable changes to the GameVerse project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.15.0] - 2026-11-11
+### Added - Phase 15 (Performance Optimization, CDN Edge Caching & Stress Testing)
+- Cloudflare & Edge CDN caching headers configured in `next.config.mjs` and `src/lib/performance.ts` for static assets (`immutable`), public game catalog, categories (`s-maxage=3600`, `stale-while-revalidate`), and game build archives.
+- Automated in-memory database index engine (`DatabaseIndexEngine`) converting game, user, and referral queries to $O(1)$ constant-time map lookups.
+- Dynamic component code-splitting with `next/dynamic` and cyber-slate skeletons for `GamePlayer` and `GameReviewsSection` on game landing pages.
+- Package import tree-shaking optimization for `lucide-react` icons.
+- Brotli and Gzip compression capability detection and payload size reduction heuristics.
+- High-concurrency worker-pool load testing engine (`runConcurrencyBenchmark`) evaluating latency percentiles (avg, P95, P99) and RPS across 100, 500, 1,000, and 5,000 concurrent player sessions with 0% failure rate.
+- Admin performance and stress testing metrics API (`GET /api/admin/performance`).
+- Comprehensive Phase 15 automated test suite (`tests/performance_phase15.test.ts`).
+
 ## [0.14.0] - 2026-11-11
 ### Added - Phase 14 (Security Hardening, Privacy & Legal Compliance)
 - Subdomain origin isolation verifier (`src/lib/security.ts`) and sandbox attribute validator enforcing strict `allow-scripts allow-same-origin allow-pointer-lock` while blocking breakout flags.

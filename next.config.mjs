@@ -4,6 +4,9 @@ const nextConfig = {
   images: {
     domains: ['images.unsplash.com', 'via.placeholder.com'],
   },
+  experimental: {
+    optimizePackageImports: ['lucide-react'],
+  },
   async headers() {
     return [
       {
@@ -45,6 +48,49 @@ const nextConfig = {
         ],
       },
       {
+        // Cloudflare / CDN Edge caching for public game catalog and categories
+        source: '/api/categories',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, s-maxage=3600, stale-while-revalidate=86400',
+          },
+          {
+            key: 'CDN-Cache-Control',
+            value: 'public, s-maxage=3600, stale-while-revalidate=86400',
+          },
+          {
+            key: 'Cloudflare-CDN-Cache-Control',
+            value: 'public, s-maxage=3600, stale-while-revalidate=86400',
+          },
+          {
+            key: 'Vary',
+            value: 'Accept-Encoding',
+          },
+        ],
+      },
+      {
+        source: '/api/games',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, s-maxage=60, stale-while-revalidate=300',
+          },
+          {
+            key: 'CDN-Cache-Control',
+            value: 'public, s-maxage=60, stale-while-revalidate=300',
+          },
+          {
+            key: 'Cloudflare-CDN-Cache-Control',
+            value: 'public, s-maxage=60, stale-while-revalidate=300',
+          },
+          {
+            key: 'Vary',
+            value: 'Accept-Encoding',
+          },
+        ],
+      },
+      {
         source: '/sandbox/:path*',
         headers: [
           {
@@ -69,6 +115,18 @@ const nextConfig = {
           {
             key: 'X-Content-Type-Options',
             value: 'nosniff',
+          },
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400',
+          },
+          {
+            key: 'CDN-Cache-Control',
+            value: 'public, s-maxage=604800',
+          },
+          {
+            key: 'Cloudflare-CDN-Cache-Control',
+            value: 'public, s-maxage=604800',
           },
         ],
       },

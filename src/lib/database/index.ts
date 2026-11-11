@@ -39,6 +39,27 @@ export interface EmailVerificationToken {
   expiresAt: string;
 }
 
+export interface DeveloperSettings {
+  id: string;
+  userId: string;
+  payoutMethod: 'BANK_WIRE' | 'UPI' | 'PAYPAL';
+  payoutDetails: Record<string, string>;
+  notifyOnQaUpdate: boolean;
+  notifyOnPayout: boolean;
+  notifyOnPlayerReport: boolean;
+  updatedAt: string;
+}
+
+export interface SupportTicket {
+  id: string;
+  creatorId: string;
+  subject: string;
+  category: 'PUBLISHING' | 'MONETIZATION' | 'TECHNICAL' | 'GENERAL';
+  message: string;
+  status: 'OPEN' | 'IN_PROGRESS' | 'RESOLVED';
+  createdAt: string;
+}
+
 export interface DatabaseState {
   users: (User & { passwordHash: string; twoFactorSecret?: string })[];
   profiles: {
@@ -49,6 +70,8 @@ export interface DatabaseState {
     avatarUrl?: string;
     bio?: string;
     studioName?: string;
+    website?: string;
+    portfolioUrl?: string;
   }[];
   categories: Category[];
   games: Game[];
@@ -60,6 +83,8 @@ export interface DatabaseState {
   auditLogs: AuditLog[];
   resetTokens: PasswordResetToken[];
   verificationTokens: EmailVerificationToken[];
+  developerSettings: DeveloperSettings[];
+  supportTickets: SupportTicket[];
 }
 
 const DATA_DIR = path.join(process.cwd(), '.data');
@@ -305,6 +330,33 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
   ],
   resetTokens: [],
   verificationTokens: [],
+  developerSettings: [
+    {
+      id: 'set-dev-1',
+      userId: 'usr-dev-1',
+      payoutMethod: 'BANK_WIRE',
+      payoutDetails: {
+        accountHolder: 'PixelForge Studios Ltd',
+        iban: 'GB29NWBK60161331926819',
+        swift: 'NWBKGB2L',
+      },
+      notifyOnQaUpdate: true,
+      notifyOnPayout: true,
+      notifyOnPlayerReport: false,
+      updatedAt: '2026-11-02T10:00:00.000Z',
+    },
+  ],
+  supportTickets: [
+    {
+      id: 'tkt-001',
+      creatorId: 'usr-dev-1',
+      subject: 'WebGL 2.0 compressed texture support',
+      category: 'TECHNICAL',
+      message: 'Does the sandbox runner support Basis Universal / KTX2 texture formats?',
+      status: 'RESOLVED',
+      createdAt: '2026-11-05T14:00:00.000Z',
+    },
+  ],
 };
 
 class GameVerseDatabase {
@@ -318,7 +370,15 @@ class GameVerseDatabase {
     try {
       if (fs.existsSync(DATA_FILE)) {
         const raw = fs.readFileSync(DATA_FILE, 'utf-8');
-        return JSON.parse(raw);
+        const parsed = JSON.parse(raw);
+        return {
+          ...INITIAL_DATABASE_STATE,
+          ...parsed,
+          developerSettings: parsed.developerSettings || INITIAL_DATABASE_STATE.developerSettings || [],
+          supportTickets: parsed.supportTickets || INITIAL_DATABASE_STATE.supportTickets || [],
+          profiles: parsed.profiles || INITIAL_DATABASE_STATE.profiles || [],
+          agreements: parsed.agreements || INITIAL_DATABASE_STATE.agreements || [],
+        };
       }
     } catch (e) {
       console.warn('Failed to load database file, using in-memory baseline:', e);
@@ -483,6 +543,110 @@ class GameVerseDatabase {
   // ================= SUBMISSIONS =================
   getSubmissions() {
     return [...this.state.submissions];
+  }
+
+  // ================= DEVELOPER PROFILES & ONBOARDING =================
+  getProfileByUserId(userId: string) {
+    return this.state.profiles.find((p) => p.userId === userId) || null;
+  }
+
+  updateProfile(userId: string, data: Partial<DatabaseState['profiles'][0]>) {
+    let profile = this.state.profiles.find((p) => p.userId === userId);
+    if (!profile) {
+      profile = {
+        id: `prof-${Date.now()}`,
+        userId,
+        username: `dev_${Date.now()}`,
+        displayName: 'Creator',
+      };
+      this.state.profiles.push(profile);
+    }
+    Object.assign(profile, data);
+    this.persistState();
+    return profile;
+  }
+
+  getAgreementByUserId(userId: string) {
+    return this.state.agreements.find((a) => a.userId === userId) || null;
+  }
+
+  saveAgreement(data: {
+    userId: string;
+    agreementVersion: string;
+    ipAddress: string;
+    accountStatus: 'ACTIVE' | 'SUSPENDED' | 'PENDING';
+  }) {
+    let agreement = this.state.agreements.find((a) => a.userId === data.userId);
+    if (agreement) {
+      agreement.agreementVersion = data.agreementVersion;
+      agreement.acceptedAt = new Date().toISOString();
+      agreement.ipAddress = data.ipAddress;
+      agreement.accountStatus = data.accountStatus;
+    } else {
+      agreement = {
+        id: `agr-${Date.now()}`,
+        userId: data.userId,
+        agreementVersion: data.agreementVersion,
+        acceptedAt: new Date().toISOString(),
+        ipAddress: data.ipAddress,
+        accountStatus: data.accountStatus,
+      };
+      this.state.agreements.push(agreement);
+    }
+    this.persistState();
+    return agreement;
+  }
+
+  // ================= DEVELOPER SETTINGS =================
+  getDeveloperSettings(userId: string): DeveloperSettings {
+    let settings = this.state.developerSettings.find((s) => s.userId === userId);
+    if (!settings) {
+      settings = {
+        id: `set-${Date.now()}`,
+        userId,
+        payoutMethod: 'BANK_WIRE',
+        payoutDetails: {},
+        notifyOnQaUpdate: true,
+        notifyOnPayout: true,
+        notifyOnPlayerReport: false,
+        updatedAt: new Date().toISOString(),
+      };
+      this.state.developerSettings.push(settings);
+      this.persistState();
+    }
+    return settings;
+  }
+
+  updateDeveloperSettings(userId: string, updates: Partial<DeveloperSettings>) {
+    const settings = this.getDeveloperSettings(userId);
+    Object.assign(settings, updates, { updatedAt: new Date().toISOString() });
+    this.persistState();
+    return settings;
+  }
+
+  // ================= SUPPORT TICKETS =================
+  createSupportTicket(data: {
+    creatorId: string;
+    subject: string;
+    category: SupportTicket['category'];
+    message: string;
+  }): SupportTicket {
+    const ticket: SupportTicket = {
+      id: `tkt-${Date.now()}`,
+      creatorId: data.creatorId,
+      subject: data.subject,
+      category: data.category,
+      message: data.message,
+      status: 'OPEN',
+      createdAt: new Date().toISOString(),
+    };
+    this.state.supportTickets.unshift(ticket);
+    this.persistState();
+    return ticket;
+  }
+
+  getSupportTicketsByCreator(creatorId: string): SupportTicket[] {
+    return this.state.supportTickets.filter((t) => t.creatorId === creatorId);
   }
 }
 

@@ -16,6 +16,8 @@ import {
   ReferralLink,
   AIDisclosure,
   GameStatus,
+  AdFormat,
+  AdImpression,
 } from '../../types';
 
 export interface AuditLog {
@@ -94,6 +96,7 @@ export interface DatabaseState {
   supportTickets: SupportTicket[];
   rightsDeclarations: RightsDeclaration[];
   referralLinks: ReferralLink[];
+  adImpressions: AdImpression[];
 }
 
 const DATA_DIR = path.join(process.cwd(), '.data');
@@ -299,6 +302,7 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
   sessions: [],
   events: [],
   referralLinks: [],
+  adImpressions: [],
   financialRecords: [
     {
       id: 'led-001',
@@ -404,6 +408,7 @@ class GameVerseDatabase {
           sessions: parsed.sessions || INITIAL_DATABASE_STATE.sessions || [],
           events: parsed.events || INITIAL_DATABASE_STATE.events || [],
           referralLinks: parsed.referralLinks || INITIAL_DATABASE_STATE.referralLinks || [],
+          adImpressions: parsed.adImpressions || INITIAL_DATABASE_STATE.adImpressions || [],
         };
       }
     } catch (e) {
@@ -560,6 +565,10 @@ class GameVerseDatabase {
 
   getGameById(id: string) {
     return this.state.games.find((g) => g.id === id);
+  }
+
+  findGameById(id: string) {
+    return this.getGameById(id);
   }
 
   getGameBySlug(slug: string) {
@@ -1067,6 +1076,7 @@ class GameVerseDatabase {
     campaignName?: string;
     bonusPercent?: number;
     customToken?: string;
+    token?: string;
   }): ReferralLink {
     if (!this.state.referralLinks) {
       this.state.referralLinks = [];
@@ -1074,6 +1084,7 @@ class GameVerseDatabase {
 
     const token =
       data.customToken ||
+      data.token ||
       `cr_${Math.random().toString(36).substring(2, 6)}_${Date.now().toString(36)}`;
 
     // Ensure token uniqueness
@@ -1124,6 +1135,121 @@ class GameVerseDatabase {
     }
     this.persistState();
     return link;
+  }
+
+  // ================= AD IMPRESSIONS & MONETIZATION =================
+  createAdImpression(data: Omit<AdImpression, 'id' | 'createdAt'> & { id?: string; createdAt?: string }): AdImpression {
+    if (!this.state.adImpressions) {
+      this.state.adImpressions = [];
+    }
+
+    const impression: AdImpression = {
+      id: data.id || `imp-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      gameId: data.gameId,
+      creatorId: data.creatorId,
+      sessionToken: data.sessionToken,
+      format: data.format,
+      durationSeconds: data.durationSeconds || 0,
+      completed: data.completed ?? true,
+      clicked: data.clicked ?? false,
+      isIvt: data.isIvt ?? false,
+      grossRevenue: data.grossRevenue || 0,
+      networkDeduction: data.networkDeduction || 0,
+      netRevenue: data.netRevenue || 0,
+      creatorShareRate: data.creatorShareRate ?? 0.50,
+      creatorShareAmount: data.creatorShareAmount || 0,
+      referralToken: data.referralToken,
+      createdAt: data.createdAt || new Date().toISOString(),
+    };
+
+    this.state.adImpressions.push(impression);
+    this.persistState();
+    return impression;
+  }
+
+  getAdImpressionsByGame(gameId: string): AdImpression[] {
+    if (!this.state.adImpressions) return [];
+    return this.state.adImpressions.filter((imp) => imp.gameId === gameId);
+  }
+
+  getAdImpressionsBySession(sessionToken: string): AdImpression[] {
+    if (!this.state.adImpressions) return [];
+    return this.state.adImpressions.filter((imp) => imp.sessionToken === sessionToken);
+  }
+
+  getRecentAdImpression(sessionToken: string, format?: AdFormat): AdImpression | undefined {
+    if (!this.state.adImpressions) return undefined;
+    const matches = this.state.adImpressions.filter(
+      (imp) => imp.sessionToken === sessionToken && (!format || imp.format === format)
+    );
+    if (matches.length === 0) return undefined;
+    return matches[matches.length - 1];
+  }
+
+  getAdStats(gameId?: string, creatorId?: string) {
+    if (!this.state.adImpressions) {
+      return {
+        totalImpressions: 0,
+        billableImpressions: 0,
+        grossRevenue: 0,
+        networkDeductions: 0,
+        netRevenue: 0,
+        creatorEarnings: 0,
+        byFormat: {
+          PREROLL: { impressions: 0, gross: 0, creatorShare: 0 },
+          INTERSTITIAL: { impressions: 0, gross: 0, creatorShare: 0 },
+          REWARDED: { impressions: 0, gross: 0, creatorShare: 0 },
+        },
+      };
+    }
+
+    let list = this.state.adImpressions;
+    if (gameId) {
+      list = list.filter((imp) => imp.gameId === gameId);
+    }
+    if (creatorId) {
+      list = list.filter((imp) => imp.creatorId === creatorId);
+    }
+
+    const byFormat: Record<AdFormat, { impressions: number; gross: number; creatorShare: number }> = {
+      PREROLL: { impressions: 0, gross: 0, creatorShare: 0 },
+      INTERSTITIAL: { impressions: 0, gross: 0, creatorShare: 0 },
+      REWARDED: { impressions: 0, gross: 0, creatorShare: 0 },
+    };
+
+    let totalImpressions = 0;
+    let billableImpressions = 0;
+    let grossRevenue = 0;
+    let networkDeductions = 0;
+    let netRevenue = 0;
+    let creatorEarnings = 0;
+
+    for (const imp of list) {
+      totalImpressions += 1;
+      if (!imp.isIvt && imp.completed) {
+        billableImpressions += 1;
+        grossRevenue += imp.grossRevenue;
+        networkDeductions += imp.networkDeduction;
+        netRevenue += imp.netRevenue;
+        creatorEarnings += imp.creatorShareAmount;
+
+        if (byFormat[imp.format]) {
+          byFormat[imp.format].impressions += 1;
+          byFormat[imp.format].gross += imp.grossRevenue;
+          byFormat[imp.format].creatorShare += imp.creatorShareAmount;
+        }
+      }
+    }
+
+    return {
+      totalImpressions,
+      billableImpressions,
+      grossRevenue: Math.round(grossRevenue * 10000) / 10000,
+      networkDeductions: Math.round(networkDeductions * 10000) / 10000,
+      netRevenue: Math.round(netRevenue * 10000) / 10000,
+      creatorEarnings: Math.round(creatorEarnings * 10000) / 10000,
+      byFormat,
+    };
   }
 }
 

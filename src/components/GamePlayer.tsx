@@ -14,8 +14,11 @@ import {
   Tv,
   HelpCircle,
   Sparkles,
+  Loader2,
 } from 'lucide-react';
-import { Game } from '@/types';
+import { Game, AdFormat } from '@/types';
+import AdOverlay from './AdOverlay';
+import { MockAdCreative } from '../lib/ads';
 
 interface GamePlayerProps {
   game: Game;
@@ -30,6 +33,11 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
   const [isMuted, setIsMuted] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [showHud, setShowHud] = useState(true);
+  const [activeAd, setActiveAd] = useState<{
+    ad: MockAdCreative;
+    format: AdFormat;
+  } | null>(null);
+  const [adLoading, setAdLoading] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -95,12 +103,62 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
     [game.id]
   );
 
-  const handleStartPlay = () => {
-    setIsPlaying(true);
+  const handleStartPlay = async () => {
     const newToken = `sess-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
     sessionTokenRef.current = newToken;
     activeSecondsRef.current = 0;
     sendTelemetryPing('SESSION_START');
+
+    setAdLoading(true);
+    try {
+      const res = await fetch(`/api/ads/slot?gameId=${game.id}&sessionToken=${newToken}&format=PREROLL`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.eligible && data.ad) {
+          setActiveAd({ ad: data.ad, format: 'PREROLL' });
+          setAdLoading(false);
+          return;
+        }
+      }
+    } catch (e) {
+      // Non-blocking fallback directly into gameplay
+    }
+    setAdLoading(false);
+    setIsPlaying(true);
+  };
+
+  const handleAdComplete = async (durationSeconds: number, skipped: boolean) => {
+    const format = activeAd?.format || 'PREROLL';
+    const currentSession = sessionTokenRef.current;
+    setActiveAd(null);
+    setIsPlaying(true);
+
+    if (currentSession) {
+      const referralToken =
+        typeof window !== 'undefined'
+          ? new URLSearchParams(window.location.search).get('ref') || undefined
+          : undefined;
+
+      try {
+        await fetch('/api/ads/impression', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            gameId: game.id,
+            sessionToken: currentSession,
+            format,
+            durationSeconds,
+            completed: !skipped || durationSeconds >= 3,
+            referralToken,
+          }),
+        });
+      } catch (e) {
+        // Non-blocking
+      }
+    }
+
+    sendToRunner('GV_AD_COMPLETED', { format, durationSeconds, skipped });
+    sendToRunner('GV_RESUME');
   };
 
   // ================= POSTMESSAGE COMMUNICATION TO RUNNER =================
@@ -253,6 +311,38 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isPlaying, isFullscreen, isMuted]);
 
+  // In-Game Ad Requests via postMessage from sandbox runner
+  useEffect(() => {
+    const handleMessage = async (e: MessageEvent) => {
+      if (!e.data || typeof e.data !== 'object') return;
+      if (e.data.type === 'GV_REQUEST_AD') {
+        const format = (e.data.format as AdFormat) || 'INTERSTITIAL';
+        const sessionToken = sessionTokenRef.current;
+        if (!sessionToken) return;
+
+        sendToRunner('GV_PAUSE');
+        try {
+          const res = await fetch(
+            `/api/ads/slot?gameId=${game.id}&sessionToken=${sessionToken}&format=${format}&activeSeconds=${activeSecondsRef.current}`
+          );
+          if (res.ok) {
+            const data = await res.json();
+            if (data.eligible && data.ad) {
+              setActiveAd({ ad: data.ad, format });
+              return;
+            }
+          }
+        } catch (err) {}
+        // Fallback: resume game if ad not available
+        sendToRunner('GV_AD_UNAVAILABLE', { format });
+        sendToRunner('GV_RESUME');
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [game.id, sendToRunner]);
+
   return (
     <div
       ref={containerRef}
@@ -353,6 +443,15 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
           isFullscreen ? 'h-full flex items-center justify-center' : 'aspect-video'
         }`}
       >
+        {/* Ad Overlay when active */}
+        {activeAd && (
+          <AdOverlay
+            ad={activeAd.ad}
+            format={activeAd.format}
+            onAdComplete={handleAdComplete}
+          />
+        )}
+
         {!isPlaying ? (
           /* ================= PRE-BOOT POSTER STATE ================= */
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center overflow-hidden bg-[#090D16]">
@@ -368,10 +467,15 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
             <div className="relative z-10 flex flex-col items-center text-center p-6 max-w-md space-y-4">
               <button
                 onClick={handleStartPlay}
-                className="group relative w-20 h-20 rounded-full bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 p-1 flex items-center justify-center shadow-2xl shadow-indigo-600/60 hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer"
+                disabled={adLoading}
+                className="group relative w-20 h-20 rounded-full bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 p-1 flex items-center justify-center shadow-2xl shadow-indigo-600/60 hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer disabled:opacity-75"
               >
                 <div className="w-full h-full rounded-full bg-[#090D16] flex items-center justify-center group-hover:bg-transparent transition-colors">
-                  <Play className="w-8 h-8 fill-white text-white ml-1 group-hover:scale-110 transition-transform" />
+                  {adLoading ? (
+                    <Loader2 className="w-8 h-8 text-white animate-spin" />
+                  ) : (
+                    <Play className="w-8 h-8 fill-white text-white ml-1 group-hover:scale-110 transition-transform" />
+                  )}
                 </div>
               </button>
 

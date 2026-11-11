@@ -5,6 +5,19 @@ All notable changes to the GameVerse project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.0] - 2026-11-11
+### Added - Phase 11 (Advertising & Monetization Integration)
+- HTML5 Ad Engine & Monetization Architecture (`src/lib/ads.ts`) supporting PREROLL ($4.50 eCPM), INTERSTITIAL ($6.00 eCPM), and REWARDED ($8.00 eCPM) formats.
+- Frequency capping and cooldown rules enforcing single preroll per session start, 180s active gameplay cooldown between interstitials, and 60s cooldown on rewarded ads.
+- Transparent revenue split math deducting 10% network/hosting fee and delivering 50% net revenue to standard plays, boosted to 70% net revenue on creator referral-attributed plays.
+- IVT ad suppression engine preventing bot traffic and automated scripts from registering billable ad impressions.
+- Minimum view duration verification ($\ge 3$ seconds) required to qualify as completed billable impression.
+- Cyber-slate themed `AdOverlay` component with animated progress bar, "Ad • GameVerse Network" badge, sponsor showcase, and dynamic 3-second skip countdown button.
+- In-Player Ad integration in `src/components/GamePlayer.tsx` displaying prerolls on game boot and handling `GV_REQUEST_AD` postMessage events from HTML5 games.
+- Ad slot eligibility check API (`GET /api/ads/slot`) and impression ingestion API (`POST /api/ads/impression`).
+- Database persistence for ad impressions and monetization stats integration in Developer Analytics API.
+- Comprehensive Phase 11 automated test suite (`tests/ads_phase11.test.ts`).
+
 ## [0.10.0] - 2026-11-11
 ### Added - Phase 10 (Social Promotion & Referral Engine)
 - Opaque, tamper-proof creator referral token generator (`src/lib/referrals.ts`) preventing leakage of sensitive developer emails or internal database identifiers.

@@ -189,6 +189,27 @@ export interface ReferralLink {
   createdAt: string;
 }
 
+export type AdFormat = 'PREROLL' | 'INTERSTITIAL' | 'REWARDED';
+
+export interface AdImpression {
+  id: string;
+  gameId: string;
+  creatorId: string;
+  sessionToken: string;
+  format: AdFormat;
+  durationSeconds: number;
+  completed: boolean;
+  clicked: boolean;
+  isIvt: boolean;
+  grossRevenue: number;
+  networkDeduction: number;
+  netRevenue: number;
+  creatorShareRate: number; // 0.50 or 0.70
+  creatorShareAmount: number;
+  referralToken?: string;
+  createdAt: string;
+}
+
 export interface DeveloperAnalytics {
   totalStarts: number;
   uniquePlayers: number;

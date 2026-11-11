@@ -192,6 +192,9 @@ export async function GET(req: NextRequest) {
         };
       });
 
+    // 10. Ad Monetization Breakdown
+    const adStats = gvDb.getAdStats(gameIdFilter || undefined, user!.userId);
+
     return NextResponse.json({
       success: true,
       timeframe,
@@ -205,7 +208,11 @@ export async function GET(req: NextRequest) {
         totalPlayMinutes,
         avgSessionSeconds,
         monetizableSessions: validSessions.length,
+        adImpressions: adStats.totalImpressions,
+        billableAdImpressions: adStats.billableImpressions,
+        estimatedAdEarnings: adStats.creatorEarnings,
       },
+      adMonetization: adStats,
       timeline,
       devices,
       acquisition,

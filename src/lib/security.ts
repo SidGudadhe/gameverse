@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import path from 'path';
+import fs from 'fs';
 import AdmZip from 'adm-zip';
 
 export interface ArchiveScanResult {
@@ -114,4 +115,55 @@ export function validateAndScanZip(buffer: Buffer): ArchiveScanResult {
     scanErrors,
     sha256,
   };
+}
+
+/**
+ * Safely extracts a validated ZIP archive buffer into targetDir.
+ * Fully protects against Zip Slip attacks by verifying all entry destinations.
+ */
+export function extractArchiveSafely(
+  buffer: Buffer,
+  targetDir: string
+): { success: boolean; filesExtracted: number; error?: string } {
+  try {
+    const scan = validateAndScanZip(buffer);
+    if (!scan.passed) {
+      return { success: false, filesExtracted: 0, error: scan.scanErrors.join('; ') };
+    }
+
+    const zip = new AdmZip(buffer);
+    const resolvedTarget = path.resolve(targetDir);
+
+    if (!fs.existsSync(resolvedTarget)) {
+      fs.mkdirSync(resolvedTarget, { recursive: true });
+    }
+
+    const entries = zip.getEntries();
+    let count = 0;
+
+    for (const entry of entries) {
+      // Zip Slip defense: verify destination is strictly within resolvedTarget
+      const entryDest = path.resolve(resolvedTarget, entry.entryName);
+      if (!entryDest.startsWith(resolvedTarget + path.sep) && entryDest !== resolvedTarget) {
+        throw new Error(`Zip slip path traversal detected: ${entry.entryName}`);
+      }
+
+      if (entry.isDirectory) {
+        if (!fs.existsSync(entryDest)) {
+          fs.mkdirSync(entryDest, { recursive: true });
+        }
+      } else {
+        const parent = path.dirname(entryDest);
+        if (!fs.existsSync(parent)) {
+          fs.mkdirSync(parent, { recursive: true });
+        }
+        fs.writeFileSync(entryDest, entry.getData());
+        count++;
+      }
+    }
+
+    return { success: true, filesExtracted: count };
+  } catch (err: any) {
+    return { success: false, filesExtracted: 0, error: err.message };
+  }
 }

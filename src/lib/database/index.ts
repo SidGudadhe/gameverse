@@ -10,6 +10,9 @@ import {
   CreatorAgreement,
   FinancialLedgerRecord,
   PlayerSession,
+  RightsDeclaration,
+  AIDisclosure,
+  GameStatus,
 } from '../../types';
 
 export interface AuditLog {
@@ -85,6 +88,7 @@ export interface DatabaseState {
   verificationTokens: EmailVerificationToken[];
   developerSettings: DeveloperSettings[];
   supportTickets: SupportTicket[];
+  rightsDeclarations: RightsDeclaration[];
 }
 
 const DATA_DIR = path.join(process.cwd(), '.data');
@@ -357,6 +361,17 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
       createdAt: '2026-11-05T14:00:00.000Z',
     },
   ],
+  rightsDeclarations: [
+    {
+      id: 'rgt-001',
+      versionId: 'ver-neon-1',
+      aiDisclosure: 'NONE_HUMAN_ONLY',
+      thirdPartyAssetsDeclared: true,
+      licensingNotes: 'Original synthwave soundtrack composed in-house. Free commercial font license.',
+      rightsConfirmed: true,
+      declaredAt: '2026-11-03T11:15:00.000Z',
+    },
+  ],
 };
 
 class GameVerseDatabase {
@@ -376,6 +391,7 @@ class GameVerseDatabase {
           ...parsed,
           developerSettings: parsed.developerSettings || INITIAL_DATABASE_STATE.developerSettings || [],
           supportTickets: parsed.supportTickets || INITIAL_DATABASE_STATE.supportTickets || [],
+          rightsDeclarations: parsed.rightsDeclarations || INITIAL_DATABASE_STATE.rightsDeclarations || [],
           profiles: parsed.profiles || INITIAL_DATABASE_STATE.profiles || [],
           agreements: parsed.agreements || INITIAL_DATABASE_STATE.agreements || [],
         };
@@ -535,6 +551,122 @@ class GameVerseDatabase {
     return this.state.games.find((g) => g.slug === slug);
   }
 
+  createGame(gameData: Partial<Game> & { title: string; developerId: string }): Game {
+    const id = gameData.id || `game-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const slug = gameData.slug || gameData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    const now = new Date().toISOString();
+
+    const newGame: Game = {
+      id,
+      developerId: gameData.developerId,
+      developerName: gameData.developerName || 'Independent Studio',
+      categoryId: gameData.categoryId || 'cat-arcade',
+      categoryName: gameData.categoryName || 'Arcade',
+      slug,
+      title: gameData.title,
+      shortDescription: gameData.shortDescription || '',
+      fullDescription: gameData.fullDescription || '',
+      controlsGuide: gameData.controlsGuide || '',
+      engine: gameData.engine || 'HTML5 Canvas',
+      orientation: gameData.orientation || 'LANDSCAPE',
+      status: gameData.status || 'SUBMITTED',
+      isFeatured: false,
+      thumbnailUrl: gameData.thumbnailUrl || '/images/placeholders/thumb.png',
+      bannerUrl: gameData.bannerUrl || '/images/placeholders/banner.png',
+      screenshots: gameData.screenshots || [],
+      currentVersionId: gameData.currentVersionId,
+      totalPlays: 0,
+      rating: 0,
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    this.state.games.push(newGame);
+    this.persistState();
+    return newGame;
+  }
+
+  updateGame(id: string, updates: Partial<Game>): Game | null {
+    const game = this.state.games.find((g) => g.id === id);
+    if (!game) return null;
+    Object.assign(game, updates, { updatedAt: new Date().toISOString() });
+    this.persistState();
+    return game;
+  }
+
+  // ================= GAME VERSIONS =================
+  createVersion(verData: Partial<GameVersion> & { gameId: string; versionNumber: string }): GameVersion {
+    const id = verData.id || `ver-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const now = new Date().toISOString();
+
+    const newVer: GameVersion = {
+      id,
+      gameId: verData.gameId,
+      versionNumber: verData.versionNumber,
+      changelog: verData.changelog || 'Initial build release.',
+      entryFile: verData.entryFile || 'index.html',
+      archiveChecksum: verData.archiveChecksum || '',
+      archiveSizeBytes: verData.archiveSizeBytes || 0,
+      status: verData.status || 'SUBMITTED',
+      scanResults: verData.scanResults || {
+        passed: true,
+        extractedFilesCount: 0,
+        uncompressedSizeBytes: 0,
+        hasEntryFile: true,
+        suspiciousFilesDetected: [],
+      },
+      createdAt: now,
+    };
+
+    this.state.versions.push(newVer);
+    this.persistState();
+    return newVer;
+  }
+
+  getVersionById(id: string): GameVersion | null {
+    return this.state.versions.find((v) => v.id === id) || null;
+  }
+
+  getVersionsByGameId(gameId: string): GameVersion[] {
+    return this.state.versions.filter((v) => v.gameId === gameId);
+  }
+
+  updateVersion(id: string, updates: Partial<GameVersion>): GameVersion | null {
+    const ver = this.state.versions.find((v) => v.id === id);
+    if (!ver) return null;
+    Object.assign(ver, updates);
+    this.persistState();
+    return ver;
+  }
+
+  // ================= RIGHTS DECLARATIONS =================
+  saveRightsDeclaration(rightsData: {
+    versionId: string;
+    aiDisclosure: AIDisclosure;
+    thirdPartyAssetsDeclared: boolean;
+    licensingNotes?: string;
+    rightsConfirmed: boolean;
+  }): RightsDeclaration {
+    const id = `rgt-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const entry: RightsDeclaration = {
+      id,
+      versionId: rightsData.versionId,
+      aiDisclosure: rightsData.aiDisclosure,
+      thirdPartyAssetsDeclared: rightsData.thirdPartyAssetsDeclared,
+      licensingNotes: rightsData.licensingNotes || '',
+      rightsConfirmed: rightsData.rightsConfirmed,
+      declaredAt: new Date().toISOString(),
+    };
+
+    this.state.rightsDeclarations.push(entry);
+    this.persistState();
+    return entry;
+  }
+
+  getRightsDeclarationByVersionId(versionId: string): RightsDeclaration | null {
+    return this.state.rightsDeclarations.find((r) => r.versionId === versionId) || null;
+  }
+
   // ================= FINANCIAL RECORDS & TENANT ISOLATION =================
   getFinancialRecordsByCreator(creatorId: string) {
     return this.state.financialRecords.filter((r) => r.creatorId === creatorId);
@@ -543,6 +675,68 @@ class GameVerseDatabase {
   // ================= SUBMISSIONS =================
   getSubmissions() {
     return [...this.state.submissions];
+  }
+
+  createSubmission(subData: {
+    versionId: string;
+    gameId: string;
+    gameTitle: string;
+    developerName: string;
+    automatedChecks?: Partial<QaSubmission['automatedChecks']>;
+    manualNotes?: string;
+  }): QaSubmission {
+    const id = `sub-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const now = new Date().toISOString();
+
+    const submission: QaSubmission = {
+      id,
+      versionId: subData.versionId,
+      gameId: subData.gameId,
+      gameTitle: subData.gameTitle,
+      developerName: subData.developerName,
+      status: 'SUBMITTED',
+      automatedChecks: {
+        entryPageLoads: true,
+        consoleErrorsCount: 0,
+        loadTimeMs: 0,
+        responsiveViewportOk: true,
+        cspViolationsCount: 0,
+        ...subData.automatedChecks,
+      },
+      manualNotes: subData.manualNotes,
+      submittedAt: now,
+    };
+
+    this.state.submissions.unshift(submission);
+    this.persistState();
+    return submission;
+  }
+
+  getSubmissionsByCreator(creatorId: string): QaSubmission[] {
+    const creatorGameIds = new Set(this.state.games.filter((g) => g.developerId === creatorId).map((g) => g.id));
+    return this.state.submissions.filter((s) => creatorGameIds.has(s.gameId));
+  }
+
+  getSubmissionById(id: string): QaSubmission | null {
+    return this.state.submissions.find((s) => s.id === id) || null;
+  }
+
+  updateSubmissionStatus(
+    id: string,
+    status: GameStatus,
+    reviewData?: { reviewedBy?: string; manualNotes?: string; rejectionReason?: string }
+  ): QaSubmission | null {
+    const sub = this.state.submissions.find((s) => s.id === id);
+    if (!sub) return null;
+    sub.status = status;
+    if (reviewData) {
+      if (reviewData.reviewedBy) sub.reviewedBy = reviewData.reviewedBy;
+      if (reviewData.manualNotes) sub.manualNotes = reviewData.manualNotes;
+      if (reviewData.rejectionReason) sub.rejectionReason = reviewData.rejectionReason;
+      sub.reviewedAt = new Date().toISOString();
+    }
+    this.persistState();
+    return sub;
   }
 
   // ================= DEVELOPER PROFILES & ONBOARDING =================

@@ -5,6 +5,16 @@ All notable changes to the GameVerse project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-11-11
+### Added - Phase 4 (Game Submission & Secure Archive Processing Pipeline)
+- Production-grade game submission wizard (`/developer/submit`) featuring 5 distinct steps (Build package, Discovery metadata, Technical specs & controls, Visual branding, and Legal & AI disclosures).
+- Real server-side ZIP archive upload, decompression analysis, and staging API (`POST /api/developer/upload`).
+- Production game submission endpoint (`POST /api/developer/submit`) validating metadata, checking Creator Agreement, creating Game/Version/Submission/RightsDeclaration entities, and extracting files to isolated disk storage.
+- Submissions retrieval and tenant-isolated inspection API (`GET /api/developer/submissions`).
+- Zip Slip protection and safe extraction engine (`extractArchiveSafely`) in `src/lib/security.ts`.
+- Database persistence extensions for game versions, submissions, and rights declarations in `src/lib/database/index.ts`.
+- Comprehensive Phase 4 automated test suite (`tests/submission_phase4.test.ts`) covering Zip Slip defense, prohibited executables, missing entry points, database records, and tenant isolation.
+
 ## [0.3.0] - 2026-11-11
 ### Added - Phase 3 (Developer Portal & Studio Onboarding)
 - Studio Portal layout and navigation shell (`/developer/layout.tsx`).

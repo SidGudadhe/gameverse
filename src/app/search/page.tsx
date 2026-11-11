@@ -1,40 +1,77 @@
 'use client';
 
-import React, { useState, Suspense } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { db } from '@/lib/db';
 import GameCard from '@/components/GameCard';
-import { Search as SearchIcon, Filter, Frown } from 'lucide-react';
+import { Search as SearchIcon, Filter, SlidersHorizontal, Sparkles, Gamepad2, Flame, Star, Clock } from 'lucide-react';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Badge } from '@/components/ui/Badge';
+
+const POPULAR_TAGS = ['Retro', 'Runner', 'Cyberpunk', 'Dungeon', 'Physics', 'Pixel', 'WebGL'];
 
 function SearchContent() {
   const searchParams = useSearchParams();
-  const initialQuery = searchParams.get('q') || '';
+  const initialQuery = searchParams.get('q') || searchParams.get('search') || '';
+  const initialSort = (searchParams.get('sort') as any) || 'trending';
+
   const [query, setQuery] = useState(initialQuery);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<'trending' | 'popular' | 'top_rated' | 'newest'>(initialSort);
+  const [games, setGames] = useState<any[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  const allGames = db.getGames({ status: 'PUBLISHED' });
-  const categories = db.categories;
+  // Fetch games from /api/games
+  const executeSearch = async () => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams();
+      if (query.trim()) params.set('search', query.trim());
+      if (selectedCategory !== 'all') params.set('category', selectedCategory);
+      params.set('sort', sortBy);
+      params.set('limit', '40');
 
-  const filteredGames = allGames.filter((g) => {
-    const matchesQuery =
-      query.trim() === '' ||
-      g.title.toLowerCase().includes(query.toLowerCase()) ||
-      g.shortDescription.toLowerCase().includes(query.toLowerCase()) ||
-      g.developerName.toLowerCase().includes(query.toLowerCase());
+      const res = await fetch(`/api/games?${params.toString()}`);
+      if (res.ok) {
+        const data = await res.json();
+        setGames(data.games || []);
+        setTotalCount(data.total || 0);
+      }
+    } catch (err) {
+      console.error('Search query failed:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const matchesCategory = selectedCategory === 'all' || g.categoryId === selectedCategory;
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      executeSearch();
+    }, 250);
 
-    return matchesQuery && matchesCategory;
-  });
+    return () => clearTimeout(handler);
+  }, [query, selectedCategory, sortBy]);
 
   return (
     <div className="space-y-8">
       {/* Header & Filter Controls */}
-      <div className="space-y-4 border-b border-white/10 pb-6">
-        <h1 className="font-heading font-black text-3xl text-white">
-          Discover Games
-        </h1>
+      <div className="space-y-5 border-b border-white/10 pb-6">
+        <div>
+          <div className="flex items-center gap-2">
+            <Badge variant="cyan">GLOBAL SEARCH</Badge>
+            <span className="text-xs text-gray-400 font-mono">
+              {totalCount} {totalCount === 1 ? 'game found' : 'games found'}
+            </span>
+          </div>
+          <h1 className="font-heading font-black text-3xl sm:text-4xl text-white mt-1">
+            Discover & Search Games
+          </h1>
+          <p className="text-gray-400 text-xs sm:text-sm mt-0.5">
+            Instant filter across verified HTML5, WebGL, and WASM browser titles.
+          </p>
+        </div>
 
+        {/* Search Bar + Controls */}
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
             <SearchIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -42,45 +79,79 @@ function SearchContent() {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by game name, creator, or mechanics..."
-              className="w-full bg-surface border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-500"
+              placeholder="Search by game title, mechanics, tags, or studio..."
+              className="w-full bg-slate-900/80 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-500 shadow-sm"
             />
           </div>
 
           <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-gray-400" />
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="bg-surface border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500"
+              className="bg-slate-900/80 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500"
             >
               <option value="all">All Categories</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
+              <option value="cat-arcade">Arcade</option>
+              <option value="cat-action">Action</option>
+              <option value="cat-puzzle">Puzzle</option>
+              <option value="cat-strategy">Strategy</option>
+              <option value="cat-rpg">RPG</option>
+              <option value="cat-sports">Sports</option>
+              <option value="cat-casual">Casual</option>
+            </select>
+
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="bg-slate-900/80 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500"
+            >
+              <option value="trending">Sort: Trending</option>
+              <option value="popular">Sort: Most Played</option>
+              <option value="top_rated">Sort: Top Rated</option>
+              <option value="newest">Sort: Newest</option>
             </select>
           </div>
+        </div>
+
+        {/* Quick Tag Suggestion Chips */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none text-xs text-gray-400">
+          <span className="font-semibold text-gray-400">Popular:</span>
+          {POPULAR_TAGS.map((tag) => (
+            <button
+              key={tag}
+              onClick={() => setQuery(tag)}
+              className={`px-2.5 py-1 rounded-lg border transition-colors ${
+                query.toLowerCase() === tag.toLowerCase()
+                  ? 'bg-indigo-600/30 text-indigo-300 border-indigo-500/40'
+                  : 'bg-white/5 border-white/10 text-gray-400 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              {tag}
+            </button>
+          ))}
         </div>
       </div>
 
       {/* Results Grid */}
-      {filteredGames.length > 0 ? (
+      {games.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {filteredGames.map((g) => (
+          {games.map((g) => (
             <GameCard key={g.id} game={g} />
           ))}
         </div>
       ) : (
-        <div className="py-16 text-center space-y-4 bg-surface/30 rounded-3xl border border-white/5 p-8 max-w-md mx-auto">
-          <div className="w-12 h-12 rounded-2xl bg-white/5 text-gray-400 flex items-center justify-center mx-auto">
-            <Frown className="w-6 h-6" />
-          </div>
-          <h3 className="font-heading font-bold text-lg text-white">No games found</h3>
-          <p className="text-gray-400 text-xs leading-relaxed">
-            We couldn't find any games matching &quot;<span className="text-white">{query}</span>&quot;. Try searching for &quot;runner&quot;, &quot;space&quot;, or &quot;puzzle&quot;.
-          </p>
+        <div className="p-16">
+          <EmptyState
+            icon={Gamepad2}
+            title="No Matching Games"
+            description={`We couldn't find any games matching "${query}". Try searching for popular genres like "Runner", "Retro", or "Dungeon".`}
+            actionLabel="Clear Search"
+            onAction={() => {
+              setQuery('');
+              setSelectedCategory('all');
+              setSortBy('trending');
+            }}
+          />
         </div>
       )}
     </div>

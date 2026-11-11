@@ -538,7 +538,12 @@ class GameVerseDatabase {
     }
     if (filter?.search) {
       const q = filter.search.toLowerCase();
-      result = result.filter((g) => g.title.toLowerCase().includes(q) || g.shortDescription.toLowerCase().includes(q));
+      result = result.filter(
+        (g) =>
+          g.title.toLowerCase().includes(q) ||
+          g.shortDescription.toLowerCase().includes(q) ||
+          (g.developerName && g.developerName.toLowerCase().includes(q))
+      );
     }
     return result;
   }
@@ -549,6 +554,23 @@ class GameVerseDatabase {
 
   getGameBySlug(slug: string) {
     return this.state.games.find((g) => g.slug === slug);
+  }
+
+  getCategories(): (Category & { count: number })[] {
+    const publishedGames = this.state.games.filter((g) => g.status === 'PUBLISHED');
+    return this.state.categories.map((cat) => {
+      const count = publishedGames.filter(
+        (g) => g.categoryId === cat.id || g.categoryName?.toLowerCase() === cat.name.toLowerCase()
+      ).length;
+      return {
+        ...cat,
+        count,
+      };
+    });
+  }
+
+  getCategoryBySlug(slug: string): Category | null {
+    return this.state.categories.find((c) => c.slug === slug || c.id === slug) || null;
   }
 
   createGame(gameData: Partial<Game> & { title: string; developerId: string }): Game {

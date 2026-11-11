@@ -5,6 +5,16 @@ All notable changes to the GameVerse project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-11-11
+### Added - Phase 6 (Main Gaming Website & Public Catalog)
+- Revamped homepage (`/`) featuring Hero Carousel, live category quick chips, Trending Right Now, Hall of Fame, and Fresh Releases sections.
+- Dynamic category browsing catalog (`/category/[slug]`) with multi-factor sorting (Popularity, Rating, Newest) and orientation filters.
+- Debounced global search experience (`/search`) with quick tag suggestion chips and real-time result counts.
+- Rich game detail pages (`/game/[slug]`) with pre-boot player viewport, verified technical specifications, player controls, related games carousel, and opaque creator referral links (`?ref=cr_...`).
+- Public RESTful APIs: `/api/games`, `/api/games/[slug]`, `/api/categories`.
+- Database search query enhancements for creator studio names in `src/lib/database/index.ts`.
+- Comprehensive Phase 6 automated test suite (`tests/catalog_phase6.test.ts`).
+
 ## [0.5.0] - 2026-11-11
 ### Added - Phase 5 (Admin Portal & QA Review Workspace)
 - Operations review queue dashboard (`/admin`) with real-time status filters (`ALL`, `SUBMITTED`, `QA_TESTING`, `CHANGES_REQUESTED`, `PUBLISHED`, `REJECTED`), metrics summary cards, and search.

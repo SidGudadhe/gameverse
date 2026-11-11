@@ -1,37 +1,57 @@
 import React from 'react';
 import Link from 'next/link';
-import { db } from '@/lib/db';
+import { gvDb } from '@/lib/database';
 import HeroCarousel from '@/components/HeroCarousel';
 import GameCard from '@/components/GameCard';
 import { Flame, Trophy, Sparkles, Gamepad2, ArrowRight } from 'lucide-react';
 
 export default function HomePage() {
-  const allGames = db.getGames({ status: 'PUBLISHED' });
+  const allGames = gvDb.getGames({ status: 'PUBLISHED' });
   const featuredGames = allGames.filter((g) => g.isFeatured);
-  const categories = db.categories;
+  const categories = gvDb.getCategories();
+
+  // Trending: ranked by engagement score
+  const trendingGames = [...allGames].sort((a, b) => {
+    const scoreA = (a.totalPlays || 0) * 0.5 + (a.rating || 0) * 1000;
+    const scoreB = (b.totalPlays || 0) * 0.5 + (b.rating || 0) * 1000;
+    return scoreB - scoreA;
+  });
+
+  // Most Played: ranked by totalPlays
+  const mostPlayedGames = [...allGames].sort((a, b) => b.totalPlays - a.totalPlays);
+
+  // New Releases: ranked by publication date
+  const newReleases = [...allGames].sort(
+    (a, b) =>
+      new Date(b.publishedAt || b.createdAt).getTime() -
+      new Date(a.publishedAt || a.createdAt).getTime()
+  );
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-12">
-      {/* Hero Carousel */}
+      {/* Featured Hero Carousel */}
       <HeroCarousel featuredGames={featuredGames.length > 0 ? featuredGames : allGames} />
 
-      {/* Category Pills Bar */}
+      {/* Category Navigation Quick Chips */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
         <Link
           href="/"
-          className="flex-shrink-0 flex items-center gap-2 bg-indigo-600 text-white font-semibold text-xs px-4 py-2 rounded-xl border border-indigo-500/40 shadow-sm"
+          className="flex-shrink-0 flex items-center gap-2 bg-indigo-600 text-white font-semibold text-xs px-4 py-2 rounded-xl border border-indigo-500/40 shadow-sm shadow-indigo-600/20"
         >
           <Gamepad2 className="w-3.5 h-3.5" />
           <span>All Games</span>
+          <span className="text-[10px] bg-white/20 px-1.5 py-0.2 rounded-full">
+            {allGames.length}
+          </span>
         </Link>
         {categories.map((cat) => (
           <Link
             key={cat.id}
             href={`/category/${cat.slug}`}
-            className="flex-shrink-0 flex items-center gap-2 bg-surface hover:bg-elevated text-gray-300 hover:text-white font-medium text-xs px-4 py-2 rounded-xl border border-white/5 hover:border-white/10 transition-all"
+            className="flex-shrink-0 flex items-center gap-2 bg-slate-900/60 hover:bg-white/10 text-gray-300 hover:text-white font-medium text-xs px-4 py-2 rounded-xl border border-white/5 hover:border-white/10 transition-all"
           >
             <span>{cat.name}</span>
-            <span className="text-[10px] text-gray-500">({cat.count})</span>
+            <span className="text-[10px] text-gray-500 font-mono">({cat.count})</span>
           </Link>
         ))}
       </div>
@@ -59,9 +79,9 @@ export default function HomePage() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-5">
-          {allGames.map((game) => (
-            <GameCard key={game.id} game={game} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {trendingGames.slice(0, 6).map((game) => (
+            <GameCard key={`trend-${game.id}`} game={game} />
           ))}
         </div>
       </section>
@@ -77,14 +97,51 @@ export default function HomePage() {
               <h2 className="font-heading font-black text-xl text-white tracking-wide">
                 Hall of Fame / Most Played
               </h2>
-              <p className="text-gray-400 text-xs">All-time player favorites with over 100k+ minutes played</p>
+              <p className="text-gray-400 text-xs">All-time player favorites ranked by community plays</p>
             </div>
           </div>
+          <Link
+            href="/search?sort=popular"
+            className="flex items-center gap-1 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
+          >
+            <span>View All</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {[...allGames].reverse().map((game) => (
+          {mostPlayedGames.slice(0, 6).map((game) => (
             <GameCard key={`most-${game.id}`} game={game} />
+          ))}
+        </div>
+      </section>
+
+      {/* Fresh Releases Section */}
+      <section className="space-y-4 pt-4 border-t border-white/5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+              <Sparkles className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="font-heading font-black text-xl text-white tracking-wide">
+                Fresh Releases
+              </h2>
+              <p className="text-gray-400 text-xs">Recently verified and approved browser games</p>
+            </div>
+          </div>
+          <Link
+            href="/search?sort=newest"
+            className="flex items-center gap-1 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
+          >
+            <span>View All</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {newReleases.slice(0, 6).map((game) => (
+            <GameCard key={`new-${game.id}`} game={game} />
           ))}
         </div>
       </section>

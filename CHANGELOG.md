@@ -5,6 +5,19 @@ All notable changes to the GameVerse project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0] - 2026-11-11
+### Added - Phase 9 (Developer Analytics & Dashboards)
+- Developer Analytics Hub (`/developer/analytics`) providing studio-level telemetry overviews with timeframe filtering (7D, 30D, All Time) and multi-game selection.
+- Interactive SVG timeline trend visualizer comparing daily gameplay starts and active play minutes with hover tooltips.
+- Device & platform distribution component showing desktop, mobile, and tablet proportions with percentage bars.
+- Player retention benchmark cards tracking Day 1, Day 7, and Day 30 retention curves.
+- Acquisition and creator referral attribution table tracking link clicks and unique players (?ref=cr_...).
+- Per-game deep dive analytics page (`/developer/analytics/[gameId]`) displaying detailed title-specific metrics and public page links.
+- Developer Analytics API (`GET /api/developer/analytics`) with role enforcement and strict tenant isolation.
+- Telemetry export API (`GET /api/developer/analytics/export`) supporting downloadable CSV and JSON formats.
+- Studio sub-navigation updated with direct link to Analytics dashboard.
+- Comprehensive Phase 9 automated test suite (`tests/analytics_phase9.test.ts`).
+
 ## [0.8.0] - 2026-11-11
 ### Added - Phase 8 (Player Analytics Pipeline & IVT Filtering)
 - Enterprise-grade player telemetry heartbeat ingestion API (`POST /api/analytics/ping`) processing `SESSION_START`, `HEARTBEAT`, `SESSION_PAUSE`, `SESSION_RESUME`, and `SESSION_END`.

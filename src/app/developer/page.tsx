@@ -1,11 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
-import { db } from '@/lib/db';
+import { gvDb } from '@/lib/database';
 import { Plus, BarChart3, Users, DollarSign, Clock, AlertCircle, CheckCircle2, ChevronRight } from 'lucide-react';
 
 export default function DeveloperDashboard() {
-  const games = db.games; // In production: db.getGamesByDeveloper(currentUserId)
-  const earnings = db.financialRecords;
+  const games = gvDb.getGames({ developerId: 'usr-dev-1' });
+  const earnings = gvDb.getFinancialRecordsByCreator('usr-dev-1');
 
   const totalPlays = games.reduce((acc, g) => acc + g.totalPlays, 0);
   const totalEarnings = earnings.reduce((acc, e) => acc + e.creatorShare, 0);

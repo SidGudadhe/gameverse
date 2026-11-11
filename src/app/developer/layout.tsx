@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
   Gamepad2,
+  BarChart3,
   UserCheck,
   Settings,
   HelpCircle,
@@ -19,6 +20,7 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
   const navLinks = [
     { href: '/developer', label: 'Overview', icon: LayoutDashboard, exact: true },
     { href: '/developer/games', label: 'My Games', icon: Gamepad2 },
+    { href: '/developer/analytics', label: 'Analytics', icon: BarChart3 },
     { href: '/developer/profile', label: 'Studio Profile', icon: UserCheck },
     { href: '/developer/settings', label: 'Settings', icon: Settings },
     { href: '/developer/payouts', label: 'Revenue Ledger', icon: DollarSign },

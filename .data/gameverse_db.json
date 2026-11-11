@@ -1234,6 +1234,177 @@
       "passwordHash": "$2a$10$yMgs/vM0cF5Fwt0pb4xENeuNbEhALr49DHTeKIZ8pWjZWaUD3.9cK",
       "emailVerified": false,
       "createdAt": "2026-11-11T03:43:35.692Z"
+    },
+    {
+      "id": "usr-1794368834100-ghxo8",
+      "email": "test_dev_1794368834100@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$XjSoncR1AQnQCFCXRmaaS..UQ1EOpp59r3ZNSWO9r7l9Js7Fqn2v6",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:47:14.100Z"
+    },
+    {
+      "id": "usr-1794368834106-5k578",
+      "email": "test_player_1794368834106@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$XjSoncR1AQnQCFCXRmaaS..UQ1EOpp59r3ZNSWO9r7l9Js7Fqn2v6",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:47:14.106Z"
+    },
+    {
+      "id": "usr-1794368834968-mcbmw",
+      "email": "test_dev_1794368834968@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$lrExmE5KC8Yhj2eWUKb/lezmx5WKUDO.LYjxxJdwgXqgVDZLyRpoi",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:47:14.968Z"
+    },
+    {
+      "id": "usr-1794368834983-7mgqw",
+      "email": "test_player_1794368834983@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$lrExmE5KC8Yhj2eWUKb/lezmx5WKUDO.LYjxxJdwgXqgVDZLyRpoi",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:47:14.983Z"
+    },
+    {
+      "id": "usr-1794368834985-kvtn0",
+      "email": "unique_1794368834985@test.com",
+      "name": "First User",
+      "role": "PLAYER",
+      "passwordHash": "hash1",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:47:14.985Z"
+    },
+    {
+      "id": "usr-1794368835176-mlvtx",
+      "email": "test_dev_1794368835176@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$dXB5JMsennDk7k31evB8VuUJHnfdz3mVCQUe45PScKfjOsPOHh3J.",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:47:15.176Z"
+    },
+    {
+      "id": "usr-1794368835178-xjxm9",
+      "email": "test_player_1794368835178@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$dXB5JMsennDk7k31evB8VuUJHnfdz3mVCQUe45PScKfjOsPOHh3J.",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:47:15.178Z"
+    },
+    {
+      "id": "usr-1794368835406-b9y99",
+      "email": "test_dev_1794368835406@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$ALOW6nHH5BUwij5YFxEXouK93kME/AJB0eA0MamaYX9BJlFUxysXe",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:47:15.406Z"
+    },
+    {
+      "id": "usr-1794368835410-0qn2l",
+      "email": "test_player_1794368835410@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$ALOW6nHH5BUwij5YFxEXouK93kME/AJB0eA0MamaYX9BJlFUxysXe",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:47:15.410Z"
+    },
+    {
+      "id": "usr-1794368835641-gelde",
+      "email": "test_dev_1794368835641@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$R5TMTJmjYSquZ5zTBheON.c9lCCyzxSpoxq59aKUBqqXgpNHZ0Pzq",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:47:15.641Z"
+    },
+    {
+      "id": "usr-1794368835642-znc57",
+      "email": "test_player_1794368835642@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$R5TMTJmjYSquZ5zTBheON.c9lCCyzxSpoxq59aKUBqqXgpNHZ0Pzq",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:47:15.642Z"
+    },
+    {
+      "id": "usr-1794368835862-1l1st",
+      "email": "test_dev_1794368835862@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$gQMWDpoUYS8v5xQFFtihPudeSvlAoqVUbkXhoqxe0QsK/Xa1riu7i",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:47:15.862Z"
+    },
+    {
+      "id": "usr-1794368835864-1o1e5",
+      "email": "test_player_1794368835864@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$gQMWDpoUYS8v5xQFFtihPudeSvlAoqVUbkXhoqxe0QsK/Xa1riu7i",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:47:15.864Z"
+    },
+    {
+      "id": "usr-1794368836068-c4xty",
+      "email": "test_dev_1794368836068@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$el/svP7j2p0G909TAb/d7.uosvIXkKC8KrOMb8CbHbIxprSghXuxu",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:47:16.068Z"
+    },
+    {
+      "id": "usr-1794368836070-yirz2",
+      "email": "test_player_1794368836070@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$el/svP7j2p0G909TAb/d7.uosvIXkKC8KrOMb8CbHbIxprSghXuxu",
+      "emailVerified": true,
+      "createdAt": "2026-11-11T03:47:16.070Z"
+    },
+    {
+      "id": "usr-1794368836281-7cgjq",
+      "email": "test_dev_1794368836281@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$CKJLiNZJ.314qRc/vDPCLOb1DC1Y50zbohFNuBZqtyPMiSMePk/cG",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:47:16.281Z"
+    },
+    {
+      "id": "usr-1794368836282-68isn",
+      "email": "test_player_1794368836282@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$/5151easAXozpLExrgSA0eTI26kH9S7D43TtwsGPUsjISJ0OhVg7e",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:47:16.283Z"
+    },
+    {
+      "id": "usr-1794368836893-0f4kq",
+      "email": "test_dev_1794368836893@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$ODHxVlB1Y1SAG6ziewqVR.LPhtbgkZfrvYUqqA2p8MvNjAIJ2J.oK",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:47:16.893Z"
+    },
+    {
+      "id": "usr-1794368836896-qkfzp",
+      "email": "test_player_1794368836896@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$ODHxVlB1Y1SAG6ziewqVR.LPhtbgkZfrvYUqqA2p8MvNjAIJ2J.oK",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T03:47:16.896Z"
     }
   ],
   "profiles": [
@@ -2123,6 +2294,129 @@
       "userId": "usr-1794368615692-3bgv1",
       "username": "test_player_1794368615692",
       "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794368834104",
+      "userId": "usr-1794368834100-ghxo8",
+      "username": "test_dev_1794368834100",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794368834106",
+      "userId": "usr-1794368834106-5k578",
+      "username": "test_player_1794368834106",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794368834968",
+      "userId": "usr-1794368834968-mcbmw",
+      "username": "test_dev_1794368834968",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794368834983",
+      "userId": "usr-1794368834983-7mgqw",
+      "username": "test_player_1794368834983",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794368834985",
+      "userId": "usr-1794368834985-kvtn0",
+      "username": "unique_1794368834985",
+      "displayName": "First User"
+    },
+    {
+      "id": "prof-1794368835176",
+      "userId": "usr-1794368835176-mlvtx",
+      "username": "test_dev_1794368835176",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794368835178",
+      "userId": "usr-1794368835178-xjxm9",
+      "username": "test_player_1794368835178",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794368835406",
+      "userId": "usr-1794368835406-b9y99",
+      "username": "test_dev_1794368835406",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794368835410",
+      "userId": "usr-1794368835410-0qn2l",
+      "username": "test_player_1794368835410",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794368835641",
+      "userId": "usr-1794368835641-gelde",
+      "username": "test_dev_1794368835641",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794368835642",
+      "userId": "usr-1794368835642-znc57",
+      "username": "test_player_1794368835642",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794368835862",
+      "userId": "usr-1794368835862-1l1st",
+      "username": "test_dev_1794368835862",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794368835864",
+      "userId": "usr-1794368835864-1o1e5",
+      "username": "test_player_1794368835864",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794368836068",
+      "userId": "usr-1794368836068-c4xty",
+      "username": "test_dev_1794368836068",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794368836070",
+      "userId": "usr-1794368836070-yirz2",
+      "username": "test_player_1794368836070",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794368836281",
+      "userId": "usr-1794368836281-7cgjq",
+      "username": "test_dev_1794368836281",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794368836283",
+      "userId": "usr-1794368836282-68isn",
+      "username": "test_player_1794368836282",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794368836893",
+      "userId": "usr-1794368836893-0f4kq",
+      "username": "test_dev_1794368836893",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794368836896",
+      "userId": "usr-1794368836896-qkfzp",
+      "username": "test_player_1794368836896",
+      "displayName": "GamerX"
     }
   ],
   "categories": [
@@ -2328,6 +2622,19 @@
   ],
   "auditLogs": [
     {
+      "id": "log-1794368836900",
+      "actorId": "usr-1794368836893-0f4kq",
+      "actorName": "Alpha Studio",
+      "action": "SUBMIT_GAME_VERSION",
+      "targetType": "GAME_VERSION",
+      "targetId": "ver-test-1",
+      "details": {
+        "version": "1.0.0"
+      },
+      "ipAddress": "127.0.0.1",
+      "createdAt": "2026-11-11T03:47:16.900Z"
+    },
+    {
       "id": "log-1794368615694",
       "actorId": "usr-1794368615688-zet7o",
       "actorName": "Alpha Studio",
@@ -2482,6 +2789,13 @@
       "token": "rst_1794368615061_t70gzyna0g",
       "expiresAt": "2026-11-11T03:58:35.061Z",
       "used": true
+    },
+    {
+      "id": "prt-1794368836286",
+      "email": "test_player_1794368836282@gamer.com",
+      "token": "rst_1794368836286_dsf4xe2xke",
+      "expiresAt": "2026-11-11T04:02:16.286Z",
+      "used": true
     }
   ],
   "verificationTokens": [
@@ -2526,6 +2840,12 @@
       "userId": "usr-1794368614875-vbdhu",
       "token": "verify_1794368614877_oxsc2hce",
       "expiresAt": "2026-11-12T03:43:34.877Z"
+    },
+    {
+      "id": "evt-1794368836072",
+      "userId": "usr-1794368836070-yirz2",
+      "token": "verify_1794368836072_ohncc9le",
+      "expiresAt": "2026-11-12T03:47:16.072Z"
     }
   ],
   "developerSettings": [

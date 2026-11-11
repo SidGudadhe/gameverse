@@ -5,6 +5,15 @@ All notable changes to the GameVerse project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-11-11
+### Added - Phase 5 (Admin Portal & QA Review Workspace)
+- Operations review queue dashboard (`/admin`) with real-time status filters (`ALL`, `SUBMITTED`, `QA_TESTING`, `CHANGES_REQUESTED`, `PUBLISHED`, `REJECTED`), metrics summary cards, and search.
+- Split-screen QA inspection workspace (`/admin/review/[id]`) featuring automated pre-flight security telemetry, AI disclosure review, operations checklist, and decision controls.
+- Embedded live sandbox runner executing on isolated origin with device viewport switcher (Desktop 16:9, Tablet 4:3, Mobile 9:16) and live telemetry console monitor.
+- Admin RESTful APIs: `/api/admin/submissions`, `/api/admin/submissions/[id]`, `/api/admin/submissions/[id]/review`.
+- State machine transition engine for Approve & Publish, Request Changes, and Reject actions with audit logging.
+- Comprehensive Phase 5 automated test suite (`tests/admin_phase5.test.ts`).
+
 ## [0.4.0] - 2026-11-11
 ### Added - Phase 4 (Game Submission & Secure Archive Processing Pipeline)
 - Production-grade game submission wizard (`/developer/submit`) featuring 5 distinct steps (Build package, Discovery metadata, Technical specs & controls, Visual branding, and Legal & AI disclosures).

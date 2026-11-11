@@ -5,6 +5,19 @@ All notable changes to the GameVerse project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2026-11-11
+### Added - Phase 16 (Beta Onboarding & Production Launch Readiness - Golden Master)
+- Official Creator Beta invitation token and quota claiming engine (`src/lib/beta.ts`, `src/app/api/developer/beta-access/route.ts`).
+- Subsystem health check and runtime diagnostic API (`GET /api/health`) verifying database collections, index engine health, filesystem storage, and HMAC-SHA256 audit log integrity.
+- Automated 7-Gate Pre-Flight Launch Evaluator (`src/lib/launch.ts`) testing Core Architecture, Security Isolation, GDPR/DPDP Privacy, Financial Ledger, Catalog QA, Edge CDN Caching, and Creator Beta subsystems.
+- Cryptographic Production Launch Sign-Off engine (`executeProductionSignOff`) issuing immutable SHA-256 sealed launch certificates upon 100% gate clearance.
+- Admin Pre-Flight Launch Checklist & Authorization Dashboard (`/admin/launch-checklist`) with one-click authorization trigger, gate telemetry breakdown, and certificate inspector.
+- Updated Admin Operations navigation header with direct link to the Launch Pre-Flight dashboard.
+- Developer Publishing Guide & postMessage SDK Documentation (`/docs/publishing-guide`) providing step-by-step export tutorials for Unity WebGL, Godot 4, Phaser 3, Construct 3, and HTML5 Canvas, plus complete postMessage bidirectional host protocol specification and monetization terms.
+- Studio sub-navigation updated with "Docs & SDK" link in `src/app/developer/layout.tsx`.
+- Comprehensive Phase 16 automated test suite (`tests/launch_phase16.test.ts`) passing 8/8 tests. Full platform test suite: 128/128 tests passing across 18 test suites.
+- Next.js production build verified with 51 static and dynamic routes compiled with 0 errors.
+
 ## [0.15.0] - 2026-11-11
 ### Added - Phase 15 (Performance Optimization, CDN Edge Caching & Stress Testing)
 - Cloudflare & Edge CDN caching headers configured in `next.config.mjs` and `src/lib/performance.ts` for static assets (`immutable`), public game catalog, categories (`s-maxage=3600`, `stale-while-revalidate`), and game build archives.

@@ -13,6 +13,7 @@ import {
   HelpCircle,
   Plus,
   DollarSign,
+  BookOpen,
 } from 'lucide-react';
 
 export default function DeveloperLayout({ children }: { children: React.ReactNode }) {
@@ -26,6 +27,7 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
     { href: '/developer/profile', label: 'Studio Profile', icon: UserCheck },
     { href: '/developer/settings', label: 'Settings', icon: Settings },
     { href: '/developer/payouts', label: 'Revenue Ledger', icon: DollarSign },
+    { href: '/docs/publishing-guide', label: 'Docs & SDK', icon: BookOpen },
     { href: '/developer/support', label: 'Developer Support', icon: HelpCircle },
   ];
 

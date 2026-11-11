@@ -5,6 +5,18 @@ All notable changes to the GameVerse project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-11-11
+### Added - Phase 8 (Player Analytics Pipeline & IVT Filtering)
+- Enterprise-grade player telemetry heartbeat ingestion API (`POST /api/analytics/ping`) processing `SESSION_START`, `HEARTBEAT`, `SESSION_PAUSE`, `SESSION_RESUME`, and `SESSION_END`.
+- Bot and Invalid Traffic (IVT) heuristic detection engine (`src/lib/analytics.ts`) blocking automated scripts and scrapers from earning monetization or falsifying play counts.
+- Salted SHA-256 IP anonymization for DPDP and GDPR privacy compliance.
+- Monotonic playtime progression validation and anomaly leap detection to prevent fraudulent duration spoofing.
+- Platform monetization threshold enforcement gating plays under 10 seconds and IVT traffic.
+- Real-time game analytics summary API (`GET /api/analytics/game/[gameId]`) calculating total starts, valid sessions, IVT counts, unique players, total play minutes, average session duration, and device breakdowns.
+- Client-side `GamePlayer` telemetry integration tracking true active gameplay seconds, automated 15-second heartbeats, tab visibility events, and beacon unload dispatch.
+- Database engine methods in `src/lib/database/index.ts` maintaining synchronized playtime and play counts across games and sessions.
+- Comprehensive Phase 8 automated test suite (`tests/analytics_phase8.test.ts`).
+
 ## [0.7.0] - 2026-11-11
 ### Added - Phase 7 (Game Player & Sandboxed Fullscreen)
 - Interactive Game Player component (`src/components/GamePlayer.tsx`) featuring 16:9 letterbox scaling, pre-boot poster thumbnail state for bandwidth conservation, and theater mode.

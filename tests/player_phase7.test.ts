@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterAll, vi } from 'vitest';
 import path from 'path';
 import fs from 'fs';
 import { NextRequest } from 'next/server';
@@ -29,10 +29,15 @@ describe('Phase 7: Game Player, Sandboxed Runtime & HUD Fullscreen Controls', ()
     );
   });
 
-  afterEach(() => {
+  afterAll(() => {
     // Clean up test files
-    if (fs.existsSync(buildDir)) {
-      fs.rmSync(path.resolve(process.cwd(), '.data', 'games', TEST_GAME_ID), { recursive: true, force: true });
+    try {
+      const rootDir = path.resolve(process.cwd(), '.data', 'games', TEST_GAME_ID);
+      if (fs.existsSync(rootDir)) {
+        fs.rmSync(rootDir, { recursive: true, force: true });
+      }
+    } catch {
+      // Ignore transient Windows file handle locks
     }
   });
 

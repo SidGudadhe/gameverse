@@ -35,8 +35,73 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const hudTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Telemetry session tracking refs
+  const sessionTokenRef = useRef<string | null>(null);
+  const activeSecondsRef = useRef<number>(0);
+  const isPlayingRef = useRef<boolean>(false);
+  const isPausedRef = useRef<boolean>(false);
+
+  isPlayingRef.current = isPlaying;
+  isPausedRef.current = isPaused;
+
   // Resolved sandbox runner route
   const resolvedUrl = sandboxUrl || `/sandbox/${game.id}/${game.currentVersionId || 'v1'}`;
+
+  // ================= TELEMETRY PING PIPELINE =================
+  const sendTelemetryPing = useCallback(
+    async (
+      eventType: 'SESSION_START' | 'HEARTBEAT' | 'SESSION_PAUSE' | 'SESSION_RESUME' | 'SESSION_END'
+    ) => {
+      if (!sessionTokenRef.current) return;
+
+      const deviceType =
+        typeof window !== 'undefined'
+          ? /tablet|ipad/i.test(navigator.userAgent)
+            ? 'TABLET'
+            : /mobile|android|iphone/i.test(navigator.userAgent)
+            ? 'MOBILE'
+            : 'DESKTOP'
+          : 'DESKTOP';
+
+      const referralToken =
+        typeof window !== 'undefined'
+          ? new URLSearchParams(window.location.search).get('ref') || undefined
+          : undefined;
+
+      try {
+        const payload = {
+          gameId: game.id,
+          sessionToken: sessionTokenRef.current,
+          eventType,
+          activeSeconds: activeSecondsRef.current,
+          deviceType,
+          referralToken,
+        };
+
+        if (eventType === 'SESSION_END' && typeof navigator !== 'undefined' && navigator.sendBeacon) {
+          navigator.sendBeacon('/api/analytics/ping', JSON.stringify(payload));
+        } else {
+          await fetch('/api/analytics/ping', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            keepalive: eventType === 'SESSION_END',
+          });
+        }
+      } catch (err) {
+        // Non-blocking telemetry
+      }
+    },
+    [game.id]
+  );
+
+  const handleStartPlay = () => {
+    setIsPlaying(true);
+    const newToken = `sess-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+    sessionTokenRef.current = newToken;
+    activeSecondsRef.current = 0;
+    sendTelemetryPing('SESSION_START');
+  };
 
   // ================= POSTMESSAGE COMMUNICATION TO RUNNER =================
   const sendToRunner = useCallback((action: string, payload?: any) => {
@@ -125,9 +190,15 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
       if (document.hidden) {
         setIsPaused(true);
         sendToRunner('GV_PAUSE');
+        if (isPlayingRef.current) {
+          sendTelemetryPing('SESSION_PAUSE');
+        }
       } else {
         setIsPaused(false);
         sendToRunner('GV_RESUME');
+        if (isPlayingRef.current) {
+          sendTelemetryPing('SESSION_RESUME');
+        }
       }
     };
 
@@ -135,7 +206,32 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [sendToRunner]);
+  }, [sendToRunner, sendTelemetryPing]);
+
+  // Periodic Telemetry Heartbeat (15s) and Active Playtime Accumulator
+  useEffect(() => {
+    if (!isPlaying) return;
+
+    // 1-second active ticker (only counts if game is not paused and tab is visible)
+    const tickInterval = setInterval(() => {
+      if (!isPausedRef.current && !document.hidden) {
+        activeSecondsRef.current += 1;
+      }
+    }, 1000);
+
+    // 15-second heartbeat ping to backend telemetry ingestion
+    const heartbeatInterval = setInterval(() => {
+      if (!document.hidden) {
+        sendTelemetryPing('HEARTBEAT');
+      }
+    }, 15000);
+
+    return () => {
+      clearInterval(tickInterval);
+      clearInterval(heartbeatInterval);
+      sendTelemetryPing('SESSION_END');
+    };
+  }, [isPlaying, sendTelemetryPing]);
 
   // Keyboard Shortcuts (F for fullscreen, M for mute)
   useEffect(() => {
@@ -271,7 +367,7 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
             {/* Center Play Button & Metadata */}
             <div className="relative z-10 flex flex-col items-center text-center p-6 max-w-md space-y-4">
               <button
-                onClick={() => setIsPlaying(true)}
+                onClick={handleStartPlay}
                 className="group relative w-20 h-20 rounded-full bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 p-1 flex items-center justify-center shadow-2xl shadow-indigo-600/60 hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer"
               >
                 <div className="w-full h-full rounded-full bg-[#090D16] flex items-center justify-center group-hover:bg-transparent transition-colors">

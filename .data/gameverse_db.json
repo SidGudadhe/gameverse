@@ -1918,6 +1918,690 @@
       "passwordHash": "$2a$10$uARAKnL6Mens2INpXsObMeiq9l1fQWiF41slgoxKFtM5pWpdznFUy",
       "emailVerified": false,
       "createdAt": "2026-11-11T04:01:29.520Z"
+    },
+    {
+      "id": "usr-1794370204489-5ye4r",
+      "email": "test_dev_1794370204489@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$NNWhm/aP2NQouWeXo41wBeFNu2Dpqs7NBb.BL2S9iXW9Q49lrCOEq",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:04.489Z"
+    },
+    {
+      "id": "usr-1794370204494-cko8c",
+      "email": "test_player_1794370204494@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$NNWhm/aP2NQouWeXo41wBeFNu2Dpqs7NBb.BL2S9iXW9Q49lrCOEq",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:04.494Z"
+    },
+    {
+      "id": "usr-1794370205304-kdd1w",
+      "email": "test_dev_1794370205304@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$IlhqcQReEVhRguw49kuQUu7WxX4DvdFGFDA9OyovNqvrm9Xn5bIhm",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:05.304Z"
+    },
+    {
+      "id": "usr-1794370205307-etaaa",
+      "email": "test_player_1794370205307@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$IlhqcQReEVhRguw49kuQUu7WxX4DvdFGFDA9OyovNqvrm9Xn5bIhm",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:05.307Z"
+    },
+    {
+      "id": "usr-1794370205309-bclez",
+      "email": "unique_1794370205309@test.com",
+      "name": "First User",
+      "role": "PLAYER",
+      "passwordHash": "hash1",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:05.309Z"
+    },
+    {
+      "id": "usr-1794370205507-hf39k",
+      "email": "test_dev_1794370205507@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$0FMYY/40UegG/0iKF6wZLOQO0eni.J5FJZ/ata8tseaPJsS14MtTi",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:05.507Z"
+    },
+    {
+      "id": "usr-1794370205510-jkpwn",
+      "email": "test_player_1794370205510@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$0FMYY/40UegG/0iKF6wZLOQO0eni.J5FJZ/ata8tseaPJsS14MtTi",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:05.510Z"
+    },
+    {
+      "id": "usr-1794370205725-5c087",
+      "email": "test_dev_1794370205725@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$F9kYlXzFIxOqCCBwnOuF2unU1IBycITKUeOJMRAGxJEV.YBkj3zKK",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:05.725Z"
+    },
+    {
+      "id": "usr-1794370205727-egjb6",
+      "email": "test_player_1794370205727@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$F9kYlXzFIxOqCCBwnOuF2unU1IBycITKUeOJMRAGxJEV.YBkj3zKK",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:05.727Z"
+    },
+    {
+      "id": "usr-1794370205989-hrccu",
+      "email": "test_dev_1794370205989@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$d/KIgHjoLTGoEEX96EoNzueVJ/s6HvVBQZEESATdNsyCwSDEz026m",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:05.989Z"
+    },
+    {
+      "id": "usr-1794370205992-22rmh",
+      "email": "test_player_1794370205992@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$d/KIgHjoLTGoEEX96EoNzueVJ/s6HvVBQZEESATdNsyCwSDEz026m",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:05.992Z"
+    },
+    {
+      "id": "usr-1794370206227-e3i3c",
+      "email": "test_dev_1794370206227@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$SFog32m7CP6/342ammNOb.z3J8mDkCub0C1It/otB/ZSjwVTAMz7C",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:06.227Z"
+    },
+    {
+      "id": "usr-1794370206229-cm5u2",
+      "email": "test_player_1794370206229@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$SFog32m7CP6/342ammNOb.z3J8mDkCub0C1It/otB/ZSjwVTAMz7C",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:06.229Z"
+    },
+    {
+      "id": "usr-1794370206406-s860j",
+      "email": "test_dev_1794370206406@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$UKfovv7RRRkT.N4akccPWug/tOb3nTK5Ix0Y/NbQ4eX8CjseJPHRe",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:06.406Z"
+    },
+    {
+      "id": "usr-1794370206409-kgmej",
+      "email": "test_player_1794370206409@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$UKfovv7RRRkT.N4akccPWug/tOb3nTK5Ix0Y/NbQ4eX8CjseJPHRe",
+      "emailVerified": true,
+      "createdAt": "2026-11-11T04:10:06.409Z"
+    },
+    {
+      "id": "usr-1794370206601-r6oav",
+      "email": "test_dev_1794370206601@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$IubieKU4IL6OXeEfY0RQz.65fTKkmqrA5M1QGEKIVEyT/fq/dp/Le",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:06.601Z"
+    },
+    {
+      "id": "usr-1794370206604-e709q",
+      "email": "test_player_1794370206604@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$ijdsYm0Xq9zrpNSRvL5tgu3Waz1thYmNBDM3YhCgTOCWYj6DuKGuu",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:06.604Z"
+    },
+    {
+      "id": "usr-1794370207150-ggmu0",
+      "email": "test_dev_1794370207150@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$5TNIE0o6oICRQ9iq81Bh2eEJ1bAYGBNj/FRAG74J3MckDo4lekffa",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:07.150Z"
+    },
+    {
+      "id": "usr-1794370207153-h9chq",
+      "email": "test_player_1794370207153@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$5TNIE0o6oICRQ9iq81Bh2eEJ1bAYGBNj/FRAG74J3MckDo4lekffa",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:07.153Z"
+    },
+    {
+      "id": "usr-1794370241801-k017r",
+      "email": "test_dev_1794370241801@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$IvcHJOnynuB8PdjSJ72YJOjQEIKgFfqcPBN.qsrB8s/SUwe32gLw6",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:41.801Z"
+    },
+    {
+      "id": "usr-1794370241810-ltil9",
+      "email": "test_player_1794370241810@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$IvcHJOnynuB8PdjSJ72YJOjQEIKgFfqcPBN.qsrB8s/SUwe32gLw6",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:41.810Z"
+    },
+    {
+      "id": "usr-1794370242843-m5smc",
+      "email": "test_dev_1794370242843@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$NiBLlKXUMkpl80m6I8jpyuhpZ7VJKd7Td/fkwIe/upq9.HEv6V1uG",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:42.843Z"
+    },
+    {
+      "id": "usr-1794370242857-1z6k1",
+      "email": "test_player_1794370242857@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$NiBLlKXUMkpl80m6I8jpyuhpZ7VJKd7Td/fkwIe/upq9.HEv6V1uG",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:42.857Z"
+    },
+    {
+      "id": "usr-1794370242860-eeski",
+      "email": "unique_1794370242860@test.com",
+      "name": "First User",
+      "role": "PLAYER",
+      "passwordHash": "hash1",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:42.860Z"
+    },
+    {
+      "id": "usr-1794370243113-l6nnj",
+      "email": "test_dev_1794370243113@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$FN3IKhe8XSMJyb.4FCRLjeaYoPVXhr9YdVcxkjhdURAK5IRbAHz3.",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:43.113Z"
+    },
+    {
+      "id": "usr-1794370243116-uhmb8",
+      "email": "test_player_1794370243116@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$FN3IKhe8XSMJyb.4FCRLjeaYoPVXhr9YdVcxkjhdURAK5IRbAHz3.",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:43.116Z"
+    },
+    {
+      "id": "usr-1794370243348-nozxr",
+      "email": "test_dev_1794370243348@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$CeDQOK2fK9ifDknS1znOz.vG2M9qvptaCzh7XiqCkjskSHQDUcqDi",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:43.348Z"
+    },
+    {
+      "id": "usr-1794370243351-lyjan",
+      "email": "test_player_1794370243351@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$CeDQOK2fK9ifDknS1znOz.vG2M9qvptaCzh7XiqCkjskSHQDUcqDi",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:43.351Z"
+    },
+    {
+      "id": "usr-1794370243608-jasox",
+      "email": "test_dev_1794370243608@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$aZrtutXPfxX7myd3vhH8oOLJ7nScoppyg0emt03PPZPm8KN.aFSgO",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:43.608Z"
+    },
+    {
+      "id": "usr-1794370243619-paf44",
+      "email": "test_player_1794370243619@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$aZrtutXPfxX7myd3vhH8oOLJ7nScoppyg0emt03PPZPm8KN.aFSgO",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:43.619Z"
+    },
+    {
+      "id": "usr-1794370243898-wwttd",
+      "email": "test_dev_1794370243898@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$7QG5LZKlmz/nV94blT5SG.D1XLpJCgSf77MBMn.rLh.6sfgR9mYFO",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:43.898Z"
+    },
+    {
+      "id": "usr-1794370243901-kxatt",
+      "email": "test_player_1794370243901@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$7QG5LZKlmz/nV94blT5SG.D1XLpJCgSf77MBMn.rLh.6sfgR9mYFO",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:43.901Z"
+    },
+    {
+      "id": "usr-1794370244199-irqa6",
+      "email": "test_dev_1794370244199@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$Lgh.HkKjxZmoj.667etWm.u6is2gWfsv574pCqNPKSd9xdeuz.7ha",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:44.199Z"
+    },
+    {
+      "id": "usr-1794370244204-yldgs",
+      "email": "test_player_1794370244204@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$Lgh.HkKjxZmoj.667etWm.u6is2gWfsv574pCqNPKSd9xdeuz.7ha",
+      "emailVerified": true,
+      "createdAt": "2026-11-11T04:10:44.204Z"
+    },
+    {
+      "id": "usr-1794370244514-rms2b",
+      "email": "test_dev_1794370244514@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$S/BDG/IKnL0FWnG3WqG0h.T6fR.ofTCSJAXKvoklb0MUioZkPg3fu",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:44.514Z"
+    },
+    {
+      "id": "usr-1794370244517-17iba",
+      "email": "test_player_1794370244517@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$JpScial3PuHKGsTG0jVwFe7QAnf16aAej72f.fUbGc6kbyQpvhAri",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:44.517Z"
+    },
+    {
+      "id": "usr-1794370245085-1sezp",
+      "email": "test_dev_1794370245085@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$v4A6Kcuv6JJ/af6SKTT.HuMxZs2EojKkXGKgqX.1y1nIVoQn9b77i",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:45.085Z"
+    },
+    {
+      "id": "usr-1794370245087-o4g8g",
+      "email": "test_player_1794370245087@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$v4A6Kcuv6JJ/af6SKTT.HuMxZs2EojKkXGKgqX.1y1nIVoQn9b77i",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:10:45.087Z"
+    },
+    {
+      "id": "usr-1794370286036-05pi5",
+      "email": "test_dev_1794370286036@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$n6JP7oF5gLBfIyvX3fO90OKwLZuxWEAVhtMGRy2gVVaCL7knYoWfO",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:11:26.036Z"
+    },
+    {
+      "id": "usr-1794370286046-q795y",
+      "email": "test_player_1794370286046@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$n6JP7oF5gLBfIyvX3fO90OKwLZuxWEAVhtMGRy2gVVaCL7knYoWfO",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:11:26.046Z"
+    },
+    {
+      "id": "usr-1794370287355-0rvf3",
+      "email": "test_dev_1794370287355@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$DzHKJa9.b4kx3WN9Nh9L2Oy4v0ciTjkSOblmPiviQsBehB7bWe9lW",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:11:27.355Z"
+    },
+    {
+      "id": "usr-1794370287357-6jjcz",
+      "email": "test_player_1794370287357@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$DzHKJa9.b4kx3WN9Nh9L2Oy4v0ciTjkSOblmPiviQsBehB7bWe9lW",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:11:27.357Z"
+    },
+    {
+      "id": "usr-1794370287363-tqawa",
+      "email": "unique_1794370287363@test.com",
+      "name": "First User",
+      "role": "PLAYER",
+      "passwordHash": "hash1",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:11:27.363Z"
+    },
+    {
+      "id": "usr-1794370287632-gim50",
+      "email": "test_dev_1794370287632@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$7AYAQJxV3FB74NujmjinaOOIvCo7CLhyDH2G9aZ.Okl1M4tZABwLm",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:11:27.632Z"
+    },
+    {
+      "id": "usr-1794370287636-cie8w",
+      "email": "test_player_1794370287636@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$7AYAQJxV3FB74NujmjinaOOIvCo7CLhyDH2G9aZ.Okl1M4tZABwLm",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:11:27.636Z"
+    },
+    {
+      "id": "usr-1794370287990-ifcvf",
+      "email": "test_dev_1794370287990@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$AVUkLRbjdF7v2E5Lf2lgtuxJG7cwqm4ZTBt9fnJA3N19QtpVpjtIy",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:11:27.990Z"
+    },
+    {
+      "id": "usr-1794370287997-l5vv4",
+      "email": "test_player_1794370287997@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$AVUkLRbjdF7v2E5Lf2lgtuxJG7cwqm4ZTBt9fnJA3N19QtpVpjtIy",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:11:27.997Z"
+    },
+    {
+      "id": "usr-1794370288251-s4w7d",
+      "email": "test_dev_1794370288251@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$t3fKJqgK/ikhoUD6YItbK.4CEIuVR6jprrR6BCeprZmkt8p3y.zrC",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:11:28.251Z"
+    },
+    {
+      "id": "usr-1794370288256-1tak5",
+      "email": "test_player_1794370288256@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$t3fKJqgK/ikhoUD6YItbK.4CEIuVR6jprrR6BCeprZmkt8p3y.zrC",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:11:28.256Z"
+    },
+    {
+      "id": "usr-1794370288493-3f5zd",
+      "email": "test_dev_1794370288493@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$yM4TV8RCGLFbyj0kGIEm.e2Bf915Sk4wLzuyjBssmpkYsjVEKqk4m",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:11:28.493Z"
+    },
+    {
+      "id": "usr-1794370288495-y1u2y",
+      "email": "test_player_1794370288495@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$yM4TV8RCGLFbyj0kGIEm.e2Bf915Sk4wLzuyjBssmpkYsjVEKqk4m",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:11:28.495Z"
+    },
+    {
+      "id": "usr-1794370288678-u1pv1",
+      "email": "test_dev_1794370288678@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$I2tshE1jWh1OaHeJMp89duedCkg9R5dVm6WszQOB73xs0DsaPboQy",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:11:28.678Z"
+    },
+    {
+      "id": "usr-1794370288681-yjunb",
+      "email": "test_player_1794370288681@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$I2tshE1jWh1OaHeJMp89duedCkg9R5dVm6WszQOB73xs0DsaPboQy",
+      "emailVerified": true,
+      "createdAt": "2026-11-11T04:11:28.681Z"
+    },
+    {
+      "id": "usr-1794370288884-6ozgs",
+      "email": "test_dev_1794370288884@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$QIWlxJsCb39jEgaD.scnbe5RHt5Nl0sV67K6.tXqOhMGma8shp7i6",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:11:28.884Z"
+    },
+    {
+      "id": "usr-1794370288887-cm7e1",
+      "email": "test_player_1794370288887@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$COrkjyiGNvgSvy3bV/UbveGN3cuwfDT1YzY2Tkw0EFx56G8uFVrYS",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:11:28.887Z"
+    },
+    {
+      "id": "usr-1794370289618-278np",
+      "email": "test_dev_1794370289618@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$d.9Mee.mwgjyKkBT7doio.x4G9ms7H8m81Ltido4oHSDkTyEjCl1e",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:11:29.618Z"
+    },
+    {
+      "id": "usr-1794370289623-kfo1o",
+      "email": "test_player_1794370289623@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$d.9Mee.mwgjyKkBT7doio.x4G9ms7H8m81Ltido4oHSDkTyEjCl1e",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:11:29.623Z"
+    },
+    {
+      "id": "usr-1794370327766-hjlpk",
+      "email": "test_dev_1794370327766@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$HjA0uDuWDmwX1HF1XL/Bb.dCJjfo6jYwXnKyCXPqmacS/BXyonD1K",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:12:07.766Z"
+    },
+    {
+      "id": "usr-1794370327775-nza64",
+      "email": "test_player_1794370327772@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$HjA0uDuWDmwX1HF1XL/Bb.dCJjfo6jYwXnKyCXPqmacS/BXyonD1K",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:12:07.775Z"
+    },
+    {
+      "id": "usr-1794370328802-de8cf",
+      "email": "test_dev_1794370328802@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$h2JkNXnInJkOeq9Amv3TD.Qk/saNRZAyei36tyAeSnWkG.EbGkLT2",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:12:08.802Z"
+    },
+    {
+      "id": "usr-1794370328810-wl4p1",
+      "email": "test_player_1794370328810@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$h2JkNXnInJkOeq9Amv3TD.Qk/saNRZAyei36tyAeSnWkG.EbGkLT2",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:12:08.810Z"
+    },
+    {
+      "id": "usr-1794370328814-ukcrh",
+      "email": "unique_1794370328814@test.com",
+      "name": "First User",
+      "role": "PLAYER",
+      "passwordHash": "hash1",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:12:08.814Z"
+    },
+    {
+      "id": "usr-1794370329099-09279",
+      "email": "test_dev_1794370329099@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$o1bAyXN.D/XEaqvB29DoJ.Dog7gkJbkBsAkxKcjvIhwQMtCZ75c0.",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:12:09.099Z"
+    },
+    {
+      "id": "usr-1794370329102-3baqf",
+      "email": "test_player_1794370329102@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$o1bAyXN.D/XEaqvB29DoJ.Dog7gkJbkBsAkxKcjvIhwQMtCZ75c0.",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:12:09.102Z"
+    },
+    {
+      "id": "usr-1794370329440-1k15z",
+      "email": "test_dev_1794370329440@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$.cD.ofv7sC1pYtSTJEH0ne1mZ6xF/HIhHQcY3RE447GIotlxvs2vO",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:12:09.440Z"
+    },
+    {
+      "id": "usr-1794370329443-9cxcl",
+      "email": "test_player_1794370329443@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$.cD.ofv7sC1pYtSTJEH0ne1mZ6xF/HIhHQcY3RE447GIotlxvs2vO",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:12:09.443Z"
+    },
+    {
+      "id": "usr-1794370329736-qtq34",
+      "email": "test_dev_1794370329736@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$v0I9XbOfLexc8RlDDQ65A.M6EB36EIFLDi/bDdPSomydrqS3Zts/2",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:12:09.736Z"
+    },
+    {
+      "id": "usr-1794370329743-2etam",
+      "email": "test_player_1794370329743@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$v0I9XbOfLexc8RlDDQ65A.M6EB36EIFLDi/bDdPSomydrqS3Zts/2",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:12:09.743Z"
+    },
+    {
+      "id": "usr-1794370329997-xzpyw",
+      "email": "test_dev_1794370329997@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$b6eLKAg1AdSg.dJzd.yA1.M9YSyqzO9gbPwR67s8iUMxADfNVTbCu",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:12:09.997Z"
+    },
+    {
+      "id": "usr-1794370330000-k7h5p",
+      "email": "test_player_1794370330000@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$b6eLKAg1AdSg.dJzd.yA1.M9YSyqzO9gbPwR67s8iUMxADfNVTbCu",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:12:10.000Z"
+    },
+    {
+      "id": "usr-1794370330219-abeuf",
+      "email": "test_dev_1794370330219@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$9UDH15da3ZpXOS/W67EU1.ejB4vmTjnWn.KOJrRM9BlhXDPI3dGRK",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:12:10.219Z"
+    },
+    {
+      "id": "usr-1794370330223-lgnz4",
+      "email": "test_player_1794370330223@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$9UDH15da3ZpXOS/W67EU1.ejB4vmTjnWn.KOJrRM9BlhXDPI3dGRK",
+      "emailVerified": true,
+      "createdAt": "2026-11-11T04:12:10.223Z"
+    },
+    {
+      "id": "usr-1794370330482-234j5",
+      "email": "test_dev_1794370330482@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$KgaxGvdYelcDHV47/94NnuzKIAzLBKwctSpREiUxt7mM/SPSdUo3e",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:12:10.482Z"
+    },
+    {
+      "id": "usr-1794370330485-i2e6e",
+      "email": "test_player_1794370330485@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$R8ksx94xegcx0rj/YJo.b.afKRPdfXQIn1xQhq2Ur8eON/kfEr/ri",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:12:10.485Z"
+    },
+    {
+      "id": "usr-1794370331071-n8bzj",
+      "email": "test_dev_1794370331071@studio.com",
+      "name": "Alpha Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$KIAkim2bL/nYqGyD4Jr26OwbJzbujOqgD.zExrIK0Xz9vBMXL4OsK",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:12:11.071Z"
+    },
+    {
+      "id": "usr-1794370331082-pt7v0",
+      "email": "test_player_1794370331081@gamer.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$KIAkim2bL/nYqGyD4Jr26OwbJzbujOqgD.zExrIK0Xz9vBMXL4OsK",
+      "emailVerified": false,
+      "createdAt": "2026-11-11T04:12:11.082Z"
     }
   ],
   "profiles": [
@@ -3299,6 +3983,498 @@
       "userId": "usr-1794369689520-h1ctr",
       "username": "test_player_1794369689520",
       "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370204491",
+      "userId": "usr-1794370204489-5ye4r",
+      "username": "test_dev_1794370204489",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370204494",
+      "userId": "usr-1794370204494-cko8c",
+      "username": "test_player_1794370204494",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370205304",
+      "userId": "usr-1794370205304-kdd1w",
+      "username": "test_dev_1794370205304",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370205307",
+      "userId": "usr-1794370205307-etaaa",
+      "username": "test_player_1794370205307",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370205309",
+      "userId": "usr-1794370205309-bclez",
+      "username": "unique_1794370205309",
+      "displayName": "First User"
+    },
+    {
+      "id": "prof-1794370205507",
+      "userId": "usr-1794370205507-hf39k",
+      "username": "test_dev_1794370205507",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370205510",
+      "userId": "usr-1794370205510-jkpwn",
+      "username": "test_player_1794370205510",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370205725",
+      "userId": "usr-1794370205725-5c087",
+      "username": "test_dev_1794370205725",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370205727",
+      "userId": "usr-1794370205727-egjb6",
+      "username": "test_player_1794370205727",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370205989",
+      "userId": "usr-1794370205989-hrccu",
+      "username": "test_dev_1794370205989",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370205992",
+      "userId": "usr-1794370205992-22rmh",
+      "username": "test_player_1794370205992",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370206227",
+      "userId": "usr-1794370206227-e3i3c",
+      "username": "test_dev_1794370206227",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370206229",
+      "userId": "usr-1794370206229-cm5u2",
+      "username": "test_player_1794370206229",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370206406",
+      "userId": "usr-1794370206406-s860j",
+      "username": "test_dev_1794370206406",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370206409",
+      "userId": "usr-1794370206409-kgmej",
+      "username": "test_player_1794370206409",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370206601",
+      "userId": "usr-1794370206601-r6oav",
+      "username": "test_dev_1794370206601",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370206604",
+      "userId": "usr-1794370206604-e709q",
+      "username": "test_player_1794370206604",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370207150",
+      "userId": "usr-1794370207150-ggmu0",
+      "username": "test_dev_1794370207150",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370207153",
+      "userId": "usr-1794370207153-h9chq",
+      "username": "test_player_1794370207153",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370241805",
+      "userId": "usr-1794370241801-k017r",
+      "username": "test_dev_1794370241801",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370241810",
+      "userId": "usr-1794370241810-ltil9",
+      "username": "test_player_1794370241810",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370242843",
+      "userId": "usr-1794370242843-m5smc",
+      "username": "test_dev_1794370242843",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370242857",
+      "userId": "usr-1794370242857-1z6k1",
+      "username": "test_player_1794370242857",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370242860",
+      "userId": "usr-1794370242860-eeski",
+      "username": "unique_1794370242860",
+      "displayName": "First User"
+    },
+    {
+      "id": "prof-1794370243113",
+      "userId": "usr-1794370243113-l6nnj",
+      "username": "test_dev_1794370243113",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370243116",
+      "userId": "usr-1794370243116-uhmb8",
+      "username": "test_player_1794370243116",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370243348",
+      "userId": "usr-1794370243348-nozxr",
+      "username": "test_dev_1794370243348",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370243351",
+      "userId": "usr-1794370243351-lyjan",
+      "username": "test_player_1794370243351",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370243608",
+      "userId": "usr-1794370243608-jasox",
+      "username": "test_dev_1794370243608",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370243620",
+      "userId": "usr-1794370243619-paf44",
+      "username": "test_player_1794370243619",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370243898",
+      "userId": "usr-1794370243898-wwttd",
+      "username": "test_dev_1794370243898",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370243901",
+      "userId": "usr-1794370243901-kxatt",
+      "username": "test_player_1794370243901",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370244199",
+      "userId": "usr-1794370244199-irqa6",
+      "username": "test_dev_1794370244199",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370244204",
+      "userId": "usr-1794370244204-yldgs",
+      "username": "test_player_1794370244204",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370244515",
+      "userId": "usr-1794370244514-rms2b",
+      "username": "test_dev_1794370244514",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370244517",
+      "userId": "usr-1794370244517-17iba",
+      "username": "test_player_1794370244517",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370245085",
+      "userId": "usr-1794370245085-1sezp",
+      "username": "test_dev_1794370245085",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370245087",
+      "userId": "usr-1794370245087-o4g8g",
+      "username": "test_player_1794370245087",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370286038",
+      "userId": "usr-1794370286036-05pi5",
+      "username": "test_dev_1794370286036",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370286046",
+      "userId": "usr-1794370286046-q795y",
+      "username": "test_player_1794370286046",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370287355",
+      "userId": "usr-1794370287355-0rvf3",
+      "username": "test_dev_1794370287355",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370287357",
+      "userId": "usr-1794370287357-6jjcz",
+      "username": "test_player_1794370287357",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370287363",
+      "userId": "usr-1794370287363-tqawa",
+      "username": "unique_1794370287363",
+      "displayName": "First User"
+    },
+    {
+      "id": "prof-1794370287632",
+      "userId": "usr-1794370287632-gim50",
+      "username": "test_dev_1794370287632",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370287636",
+      "userId": "usr-1794370287636-cie8w",
+      "username": "test_player_1794370287636",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370287990",
+      "userId": "usr-1794370287990-ifcvf",
+      "username": "test_dev_1794370287990",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370287997",
+      "userId": "usr-1794370287997-l5vv4",
+      "username": "test_player_1794370287997",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370288251",
+      "userId": "usr-1794370288251-s4w7d",
+      "username": "test_dev_1794370288251",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370288256",
+      "userId": "usr-1794370288256-1tak5",
+      "username": "test_player_1794370288256",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370288493",
+      "userId": "usr-1794370288493-3f5zd",
+      "username": "test_dev_1794370288493",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370288495",
+      "userId": "usr-1794370288495-y1u2y",
+      "username": "test_player_1794370288495",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370288678",
+      "userId": "usr-1794370288678-u1pv1",
+      "username": "test_dev_1794370288678",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370288681",
+      "userId": "usr-1794370288681-yjunb",
+      "username": "test_player_1794370288681",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370288884",
+      "userId": "usr-1794370288884-6ozgs",
+      "username": "test_dev_1794370288884",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370288887",
+      "userId": "usr-1794370288887-cm7e1",
+      "username": "test_player_1794370288887",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370289618",
+      "userId": "usr-1794370289618-278np",
+      "username": "test_dev_1794370289618",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370289623",
+      "userId": "usr-1794370289623-kfo1o",
+      "username": "test_player_1794370289623",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370327768",
+      "userId": "usr-1794370327766-hjlpk",
+      "username": "test_dev_1794370327766",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370327775",
+      "userId": "usr-1794370327775-nza64",
+      "username": "test_player_1794370327772",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370328802",
+      "userId": "usr-1794370328802-de8cf",
+      "username": "test_dev_1794370328802",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370328810",
+      "userId": "usr-1794370328810-wl4p1",
+      "username": "test_player_1794370328810",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370328814",
+      "userId": "usr-1794370328814-ukcrh",
+      "username": "unique_1794370328814",
+      "displayName": "First User"
+    },
+    {
+      "id": "prof-1794370329099",
+      "userId": "usr-1794370329099-09279",
+      "username": "test_dev_1794370329099",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370329102",
+      "userId": "usr-1794370329102-3baqf",
+      "username": "test_player_1794370329102",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370329440",
+      "userId": "usr-1794370329440-1k15z",
+      "username": "test_dev_1794370329440",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370329443",
+      "userId": "usr-1794370329443-9cxcl",
+      "username": "test_player_1794370329443",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370329736",
+      "userId": "usr-1794370329736-qtq34",
+      "username": "test_dev_1794370329736",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370329743",
+      "userId": "usr-1794370329743-2etam",
+      "username": "test_player_1794370329743",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370329997",
+      "userId": "usr-1794370329997-xzpyw",
+      "username": "test_dev_1794370329997",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370330000",
+      "userId": "usr-1794370330000-k7h5p",
+      "username": "test_player_1794370330000",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370330219",
+      "userId": "usr-1794370330219-abeuf",
+      "username": "test_dev_1794370330219",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370330223",
+      "userId": "usr-1794370330223-lgnz4",
+      "username": "test_player_1794370330223",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370330482",
+      "userId": "usr-1794370330482-234j5",
+      "username": "test_dev_1794370330482",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370330485",
+      "userId": "usr-1794370330485-i2e6e",
+      "username": "test_player_1794370330485",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794370331071",
+      "userId": "usr-1794370331071-n8bzj",
+      "username": "test_dev_1794370331071",
+      "displayName": "Alpha Studio",
+      "studioName": "Alpha Studio"
+    },
+    {
+      "id": "prof-1794370331082",
+      "userId": "usr-1794370331082-pt7v0",
+      "username": "test_player_1794370331081",
+      "displayName": "GamerX"
     }
   ],
   "categories": [
@@ -3557,6 +4733,425 @@
       "rating": 0,
       "createdAt": "2026-11-11T04:01:26.348Z",
       "updatedAt": "2026-11-11T04:01:26.348Z"
+    },
+    {
+      "id": "game-retro-strike-1794370203095",
+      "developerId": "usr-dev-1",
+      "developerName": "PixelForge Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "retro-strike-1794370203095",
+      "title": "Retro Strike 2026",
+      "shortDescription": "Fast arcade shooter with retro synthwave music.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "Phaser 3 / HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "SUBMITTED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "currentVersionId": "ver-retro-strike-1_0_0-1794370203095",
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:10:03.095Z",
+      "updatedAt": "2026-11-11T04:10:03.095Z"
+    },
+    {
+      "id": "game-analytics-1794370239705",
+      "developerId": "usr-dev-analytics",
+      "developerName": "Quantum Pixel Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "telemetry-runner-1794370239706",
+      "title": "Neon Telemetry Runner",
+      "shortDescription": "High speed analytics verification game.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "PUBLISHED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:10:39.706Z",
+      "updatedAt": "2026-11-11T04:10:39.706Z"
+    },
+    {
+      "id": "game-analytics-1794370239717",
+      "developerId": "usr-dev-analytics",
+      "developerName": "Quantum Pixel Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "telemetry-runner-1794370239717",
+      "title": "Neon Telemetry Runner",
+      "shortDescription": "High speed analytics verification game.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "PUBLISHED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:10:39.717Z",
+      "updatedAt": "2026-11-11T04:10:39.717Z"
+    },
+    {
+      "id": "game-analytics-1794370239722",
+      "developerId": "usr-dev-analytics",
+      "developerName": "Quantum Pixel Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "telemetry-runner-1794370239722",
+      "title": "Neon Telemetry Runner",
+      "shortDescription": "High speed analytics verification game.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "PUBLISHED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:10:39.722Z",
+      "updatedAt": "2026-11-11T04:10:39.722Z"
+    },
+    {
+      "id": "game-analytics-1794370239725",
+      "developerId": "usr-dev-analytics",
+      "developerName": "Quantum Pixel Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "telemetry-runner-1794370239725",
+      "title": "Neon Telemetry Runner",
+      "shortDescription": "High speed analytics verification game.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "PUBLISHED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:10:39.725Z",
+      "updatedAt": "2026-11-11T04:10:39.725Z"
+    },
+    {
+      "id": "game-analytics-1794370239731",
+      "developerId": "usr-dev-analytics",
+      "developerName": "Quantum Pixel Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "telemetry-runner-1794370239731",
+      "title": "Neon Telemetry Runner",
+      "shortDescription": "High speed analytics verification game.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "PUBLISHED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "totalPlays": 1,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:10:39.731Z",
+      "updatedAt": "2026-11-11T04:10:39.750Z"
+    },
+    {
+      "id": "game-analytics-1794370239766",
+      "developerId": "usr-dev-analytics",
+      "developerName": "Quantum Pixel Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "telemetry-runner-1794370239766",
+      "title": "Neon Telemetry Runner",
+      "shortDescription": "High speed analytics verification game.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "PUBLISHED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:10:39.766Z",
+      "updatedAt": "2026-11-11T04:10:39.766Z"
+    },
+    {
+      "id": "game-analytics-1794370239782",
+      "developerId": "usr-dev-analytics",
+      "developerName": "Quantum Pixel Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "telemetry-runner-1794370239782",
+      "title": "Neon Telemetry Runner",
+      "shortDescription": "High speed analytics verification game.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "PUBLISHED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "totalPlays": 1,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:10:39.782Z",
+      "updatedAt": "2026-11-11T04:10:39.786Z",
+      "totalPlayMinutes": 1
+    },
+    {
+      "id": "game-analytics-1794370239825",
+      "developerId": "usr-dev-analytics",
+      "developerName": "Quantum Pixel Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "telemetry-runner-1794370239825",
+      "title": "Neon Telemetry Runner",
+      "shortDescription": "High speed analytics verification game.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "PUBLISHED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:10:39.825Z",
+      "updatedAt": "2026-11-11T04:10:39.825Z"
+    },
+    {
+      "id": "game-retro-strike-1794370283518",
+      "developerId": "usr-dev-1",
+      "developerName": "PixelForge Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "retro-strike-1794370283518",
+      "title": "Retro Strike 2026",
+      "shortDescription": "Fast arcade shooter with retro synthwave music.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "Phaser 3 / HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "SUBMITTED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "currentVersionId": "ver-retro-strike-1_0_0-1794370283518",
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:11:23.518Z",
+      "updatedAt": "2026-11-11T04:11:23.518Z"
+    },
+    {
+      "id": "game-analytics-1794370325866",
+      "developerId": "usr-dev-analytics",
+      "developerName": "Quantum Pixel Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "telemetry-runner-1794370325866",
+      "title": "Neon Telemetry Runner",
+      "shortDescription": "High speed analytics verification game.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "PUBLISHED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:12:05.867Z",
+      "updatedAt": "2026-11-11T04:12:05.867Z"
+    },
+    {
+      "id": "game-analytics-1794370325878",
+      "developerId": "usr-dev-analytics",
+      "developerName": "Quantum Pixel Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "telemetry-runner-1794370325878",
+      "title": "Neon Telemetry Runner",
+      "shortDescription": "High speed analytics verification game.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "PUBLISHED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:12:05.878Z",
+      "updatedAt": "2026-11-11T04:12:05.878Z"
+    },
+    {
+      "id": "game-analytics-1794370325883",
+      "developerId": "usr-dev-analytics",
+      "developerName": "Quantum Pixel Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "telemetry-runner-1794370325883",
+      "title": "Neon Telemetry Runner",
+      "shortDescription": "High speed analytics verification game.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "PUBLISHED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:12:05.883Z",
+      "updatedAt": "2026-11-11T04:12:05.883Z"
+    },
+    {
+      "id": "game-analytics-1794370325887",
+      "developerId": "usr-dev-analytics",
+      "developerName": "Quantum Pixel Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "telemetry-runner-1794370325887",
+      "title": "Neon Telemetry Runner",
+      "shortDescription": "High speed analytics verification game.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "PUBLISHED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:12:05.887Z",
+      "updatedAt": "2026-11-11T04:12:05.887Z"
+    },
+    {
+      "id": "game-analytics-1794370325891",
+      "developerId": "usr-dev-analytics",
+      "developerName": "Quantum Pixel Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "telemetry-runner-1794370325891",
+      "title": "Neon Telemetry Runner",
+      "shortDescription": "High speed analytics verification game.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "PUBLISHED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "totalPlays": 1,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:12:05.891Z",
+      "updatedAt": "2026-11-11T04:12:05.912Z"
+    },
+    {
+      "id": "game-analytics-1794370325921",
+      "developerId": "usr-dev-analytics",
+      "developerName": "Quantum Pixel Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "telemetry-runner-1794370325921",
+      "title": "Neon Telemetry Runner",
+      "shortDescription": "High speed analytics verification game.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "PUBLISHED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:12:05.921Z",
+      "updatedAt": "2026-11-11T04:12:05.921Z"
+    },
+    {
+      "id": "game-analytics-1794370325939",
+      "developerId": "usr-dev-analytics",
+      "developerName": "Quantum Pixel Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "telemetry-runner-1794370325939",
+      "title": "Neon Telemetry Runner",
+      "shortDescription": "High speed analytics verification game.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "PUBLISHED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "totalPlays": 1,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:12:05.939Z",
+      "updatedAt": "2026-11-11T04:12:05.946Z",
+      "totalPlayMinutes": 1
+    },
+    {
+      "id": "game-analytics-1794370325985",
+      "developerId": "usr-dev-analytics",
+      "developerName": "Quantum Pixel Studios",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "telemetry-runner-1794370325985",
+      "title": "Neon Telemetry Runner",
+      "shortDescription": "High speed analytics verification game.",
+      "fullDescription": "",
+      "controlsGuide": "",
+      "engine": "HTML5 Canvas",
+      "orientation": "LANDSCAPE",
+      "status": "PUBLISHED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "totalPlays": 1,
+      "rating": 0,
+      "createdAt": "2026-11-11T04:12:05.985Z",
+      "updatedAt": "2026-11-11T04:12:05.988Z",
+      "totalPlayMinutes": 0.8
     }
   ],
   "versions": [
@@ -3687,9 +5282,79 @@
         "suspiciousFilesDetected": []
       },
       "createdAt": "2026-11-11T04:01:26.350Z"
+    },
+    {
+      "id": "ver-retro-strike-1_0_0-1794370203095",
+      "gameId": "game-retro-strike-1794370203095",
+      "versionNumber": "1.0.0",
+      "changelog": "Initial public alpha release",
+      "entryFile": "index.html",
+      "archiveChecksum": "0220904f4987fb99489778cc250e72a263a45239ac706b1b4e6c9de1cdc6d8b6",
+      "archiveSizeBytes": 2048,
+      "status": "SUBMITTED",
+      "scanResults": {
+        "passed": true,
+        "extractedFilesCount": 5,
+        "uncompressedSizeBytes": 10240,
+        "hasEntryFile": true,
+        "suspiciousFilesDetected": []
+      },
+      "createdAt": "2026-11-11T04:10:03.098Z"
+    },
+    {
+      "id": "ver-retro-strike-1_0_0-1794370283518",
+      "gameId": "game-retro-strike-1794370283518",
+      "versionNumber": "1.0.0",
+      "changelog": "Initial public alpha release",
+      "entryFile": "index.html",
+      "archiveChecksum": "0220904f4987fb99489778cc250e72a263a45239ac706b1b4e6c9de1cdc6d8b6",
+      "archiveSizeBytes": 2048,
+      "status": "SUBMITTED",
+      "scanResults": {
+        "passed": true,
+        "extractedFilesCount": 5,
+        "uncompressedSizeBytes": 10240,
+        "hasEntryFile": true,
+        "suspiciousFilesDetected": []
+      },
+      "createdAt": "2026-11-11T04:11:23.525Z"
     }
   ],
   "submissions": [
+    {
+      "id": "sub-1794370283536-ix8a",
+      "versionId": "ver-retro-strike-1_0_0-1794370283518",
+      "gameId": "game-retro-strike-1794370283518",
+      "gameTitle": "Retro Strike 2026",
+      "developerName": "PixelForge Studios",
+      "status": "SUBMITTED",
+      "automatedChecks": {
+        "entryPageLoads": true,
+        "consoleErrorsCount": 0,
+        "loadTimeMs": 0,
+        "responsiveViewportOk": true,
+        "cspViolationsCount": 0
+      },
+      "manualNotes": "Ready for operations QA review.",
+      "submittedAt": "2026-11-11T04:11:23.536Z"
+    },
+    {
+      "id": "sub-1794370203103-slnf",
+      "versionId": "ver-retro-strike-1_0_0-1794370203095",
+      "gameId": "game-retro-strike-1794370203095",
+      "gameTitle": "Retro Strike 2026",
+      "developerName": "PixelForge Studios",
+      "status": "SUBMITTED",
+      "automatedChecks": {
+        "entryPageLoads": true,
+        "consoleErrorsCount": 0,
+        "loadTimeMs": 0,
+        "responsiveViewportOk": true,
+        "cspViolationsCount": 0
+      },
+      "manualNotes": "Ready for operations QA review.",
+      "submittedAt": "2026-11-11T04:10:03.103Z"
+    },
     {
       "id": "sub-1794369686351-5qif",
       "versionId": "ver-qa-test-1794369686348",
@@ -3837,7 +5502,246 @@
       "accountStatus": "ACTIVE"
     }
   ],
-  "sessions": [],
+  "sessions": [
+    {
+      "id": "sess-1794370239750-xs3ej",
+      "gameId": "game-analytics-1794370239731",
+      "sessionToken": "test-sess-1794370239734-1",
+      "ipHash": "09ecaa72d5afde0e7fc5796793615e6554b2a4b376581113f08e4a930095c908",
+      "deviceType": "DESKTOP",
+      "referralToken": "cr_pixel123",
+      "isIvt": false,
+      "startTime": "2026-11-11T04:10:39.750Z",
+      "lastHeartbeat": "2026-11-11T04:10:39.750Z",
+      "activeSeconds": 0
+    },
+    {
+      "id": "sess-1794370239773-xsqak",
+      "gameId": "game-analytics-1794370239766",
+      "sessionToken": "bot-sess-1794370239771",
+      "ipHash": "09ecaa72d5afde0e7fc5796793615e6554b2a4b376581113f08e4a930095c908",
+      "deviceType": "DESKTOP",
+      "isIvt": true,
+      "ivtReason": "Matched bot signature: python",
+      "startTime": "2026-11-11T04:10:39.773Z",
+      "lastHeartbeat": "2026-11-11T04:10:39.773Z",
+      "activeSeconds": 0
+    },
+    {
+      "id": "sess-1794370239786-yg7cg",
+      "gameId": "game-analytics-1794370239782",
+      "sessionToken": "sess-flow-1794370239784",
+      "ipHash": "09ecaa72d5afde0e7fc5796793615e6554b2a4b376581113f08e4a930095c908",
+      "deviceType": "DESKTOP",
+      "isIvt": false,
+      "startTime": "2026-11-11T04:10:39.786Z",
+      "lastHeartbeat": "2026-11-11T04:10:39.819Z",
+      "activeSeconds": 60,
+      "endTime": "2026-11-11T04:10:39.818Z"
+    },
+    {
+      "id": "sess-1794370325912-tagc7",
+      "gameId": "game-analytics-1794370325891",
+      "sessionToken": "test-sess-1794370325896-1",
+      "ipHash": "09ecaa72d5afde0e7fc5796793615e6554b2a4b376581113f08e4a930095c908",
+      "deviceType": "DESKTOP",
+      "referralToken": "cr_pixel123",
+      "isIvt": false,
+      "startTime": "2026-11-11T04:12:05.912Z",
+      "lastHeartbeat": "2026-11-11T04:12:05.912Z",
+      "activeSeconds": 0
+    },
+    {
+      "id": "sess-1794370325929-llfb5",
+      "gameId": "game-analytics-1794370325921",
+      "sessionToken": "bot-sess-1794370325927",
+      "ipHash": "09ecaa72d5afde0e7fc5796793615e6554b2a4b376581113f08e4a930095c908",
+      "deviceType": "DESKTOP",
+      "isIvt": true,
+      "ivtReason": "Matched bot signature: python",
+      "startTime": "2026-11-11T04:12:05.929Z",
+      "lastHeartbeat": "2026-11-11T04:12:05.929Z",
+      "activeSeconds": 0
+    },
+    {
+      "id": "sess-1794370325946-ki92u",
+      "gameId": "game-analytics-1794370325939",
+      "sessionToken": "sess-flow-1794370325944",
+      "ipHash": "09ecaa72d5afde0e7fc5796793615e6554b2a4b376581113f08e4a930095c908",
+      "deviceType": "DESKTOP",
+      "isIvt": false,
+      "startTime": "2026-11-11T04:12:05.946Z",
+      "lastHeartbeat": "2026-11-11T04:12:05.976Z",
+      "activeSeconds": 60,
+      "endTime": "2026-11-11T04:12:05.976Z"
+    },
+    {
+      "id": "sess-1794370325988-fqd3h",
+      "gameId": "game-analytics-1794370325985",
+      "sessionToken": "agg-sess-1-1794370325988",
+      "playerId": "usr-p1",
+      "ipHash": "anon",
+      "deviceType": "DESKTOP",
+      "isIvt": false,
+      "startTime": "2026-11-11T04:12:05.988Z",
+      "lastHeartbeat": "2026-11-11T04:12:05.995Z",
+      "activeSeconds": 45
+    },
+    {
+      "id": "sess-1794370325998-q7zpe",
+      "gameId": "game-analytics-1794370325985",
+      "sessionToken": "agg-bot-1-1794370325988",
+      "ipHash": "anon",
+      "deviceType": "MOBILE",
+      "isIvt": true,
+      "ivtReason": "Crawler bot detected",
+      "startTime": "2026-11-11T04:12:05.998Z",
+      "lastHeartbeat": "2026-11-11T04:12:05.998Z",
+      "activeSeconds": 0
+    }
+  ],
+  "events": [
+    {
+      "id": "evt-1794370239753-7i7xy",
+      "sessionId": "sess-1794370239750-xs3ej",
+      "gameId": "game-analytics-1794370239731",
+      "eventType": "SESSION_START",
+      "activeSeconds": 0,
+      "metadata": {
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "deviceType": "DESKTOP",
+        "referralToken": "cr_pixel123"
+      },
+      "timestamp": "2026-11-11T04:10:39.753Z"
+    },
+    {
+      "id": "evt-1794370239775-3u9p3",
+      "sessionId": "sess-1794370239773-xsqak",
+      "gameId": "game-analytics-1794370239766",
+      "eventType": "SESSION_START",
+      "activeSeconds": 0,
+      "metadata": {
+        "userAgent": "python-requests/2.28.1",
+        "deviceType": "DESKTOP"
+      },
+      "timestamp": "2026-11-11T04:10:39.775Z"
+    },
+    {
+      "id": "evt-1794370239788-dog75",
+      "sessionId": "sess-1794370239786-yg7cg",
+      "gameId": "game-analytics-1794370239782",
+      "eventType": "SESSION_START",
+      "activeSeconds": 0,
+      "metadata": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "deviceType": "DESKTOP"
+      },
+      "timestamp": "2026-11-11T04:10:39.788Z"
+    },
+    {
+      "id": "evt-1794370239796-zar0s",
+      "sessionId": "sess-1794370239786-yg7cg",
+      "gameId": "game-analytics-1794370239782",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 15,
+      "metadata": {
+        "timestamp": "2026-11-11T04:10:39.796Z"
+      },
+      "timestamp": "2026-11-11T04:10:39.796Z"
+    },
+    {
+      "id": "evt-1794370239813-a25fj",
+      "sessionId": "sess-1794370239786-yg7cg",
+      "gameId": "game-analytics-1794370239782",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 30,
+      "metadata": {
+        "timestamp": "2026-11-11T04:10:39.813Z"
+      },
+      "timestamp": "2026-11-11T04:10:39.813Z"
+    },
+    {
+      "id": "evt-1794370239821-2ueb7",
+      "sessionId": "sess-1794370239786-yg7cg",
+      "gameId": "game-analytics-1794370239782",
+      "eventType": "SESSION_END",
+      "activeSeconds": 60,
+      "metadata": {
+        "finalDuration": 60
+      },
+      "timestamp": "2026-11-11T04:10:39.821Z"
+    },
+    {
+      "id": "evt-1794370325915-lgjgx",
+      "sessionId": "sess-1794370325912-tagc7",
+      "gameId": "game-analytics-1794370325891",
+      "eventType": "SESSION_START",
+      "activeSeconds": 0,
+      "metadata": {
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "deviceType": "DESKTOP",
+        "referralToken": "cr_pixel123"
+      },
+      "timestamp": "2026-11-11T04:12:05.915Z"
+    },
+    {
+      "id": "evt-1794370325935-ooebq",
+      "sessionId": "sess-1794370325929-llfb5",
+      "gameId": "game-analytics-1794370325921",
+      "eventType": "SESSION_START",
+      "activeSeconds": 0,
+      "metadata": {
+        "userAgent": "python-requests/2.28.1",
+        "deviceType": "DESKTOP"
+      },
+      "timestamp": "2026-11-11T04:12:05.935Z"
+    },
+    {
+      "id": "evt-1794370325948-bf653",
+      "sessionId": "sess-1794370325946-ki92u",
+      "gameId": "game-analytics-1794370325939",
+      "eventType": "SESSION_START",
+      "activeSeconds": 0,
+      "metadata": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "deviceType": "DESKTOP"
+      },
+      "timestamp": "2026-11-11T04:12:05.948Z"
+    },
+    {
+      "id": "evt-1794370325959-0kmjp",
+      "sessionId": "sess-1794370325946-ki92u",
+      "gameId": "game-analytics-1794370325939",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 15,
+      "metadata": {
+        "timestamp": "2026-11-11T04:12:05.959Z"
+      },
+      "timestamp": "2026-11-11T04:12:05.959Z"
+    },
+    {
+      "id": "evt-1794370325967-ecirn",
+      "sessionId": "sess-1794370325946-ki92u",
+      "gameId": "game-analytics-1794370325939",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 30,
+      "metadata": {
+        "timestamp": "2026-11-11T04:12:05.967Z"
+      },
+      "timestamp": "2026-11-11T04:12:05.967Z"
+    },
+    {
+      "id": "evt-1794370325980-2xwfw",
+      "sessionId": "sess-1794370325946-ki92u",
+      "gameId": "game-analytics-1794370325939",
+      "eventType": "SESSION_END",
+      "activeSeconds": 60,
+      "metadata": {
+        "finalDuration": 60
+      },
+      "timestamp": "2026-11-11T04:12:05.980Z"
+    }
+  ],
   "financialRecords": [
     {
       "id": "led-001",
@@ -3866,6 +5770,86 @@
     }
   ],
   "auditLogs": [
+    {
+      "id": "log-1794370331085",
+      "actorId": "usr-1794370331071-n8bzj",
+      "actorName": "Alpha Studio",
+      "action": "SUBMIT_GAME_VERSION",
+      "targetType": "GAME_VERSION",
+      "targetId": "ver-test-1",
+      "details": {
+        "version": "1.0.0"
+      },
+      "ipAddress": "127.0.0.1",
+      "createdAt": "2026-11-11T04:12:11.085Z"
+    },
+    {
+      "id": "log-1794370289634",
+      "actorId": "usr-1794370289618-278np",
+      "actorName": "Alpha Studio",
+      "action": "SUBMIT_GAME_VERSION",
+      "targetType": "GAME_VERSION",
+      "targetId": "ver-test-1",
+      "details": {
+        "version": "1.0.0"
+      },
+      "ipAddress": "127.0.0.1",
+      "createdAt": "2026-11-11T04:11:29.634Z"
+    },
+    {
+      "id": "log-1794370283542",
+      "actorId": "usr-dev-1",
+      "actorName": "PixelForge Studios",
+      "action": "SUBMIT_GAME",
+      "targetType": "GAME_SUBMISSION",
+      "targetId": "sub-test-audit",
+      "details": {
+        "title": "Audit Test Game",
+        "version": "1.0.0"
+      },
+      "ipAddress": "127.0.0.1",
+      "createdAt": "2026-11-11T04:11:23.542Z"
+    },
+    {
+      "id": "log-1794370245090",
+      "actorId": "usr-1794370245085-1sezp",
+      "actorName": "Alpha Studio",
+      "action": "SUBMIT_GAME_VERSION",
+      "targetType": "GAME_VERSION",
+      "targetId": "ver-test-1",
+      "details": {
+        "version": "1.0.0"
+      },
+      "ipAddress": "127.0.0.1",
+      "createdAt": "2026-11-11T04:10:45.090Z"
+    },
+    {
+      "id": "log-1794370207155",
+      "actorId": "usr-1794370207150-ggmu0",
+      "actorName": "Alpha Studio",
+      "action": "SUBMIT_GAME_VERSION",
+      "targetType": "GAME_VERSION",
+      "targetId": "ver-test-1",
+      "details": {
+        "version": "1.0.0"
+      },
+      "ipAddress": "127.0.0.1",
+      "createdAt": "2026-11-11T04:10:07.155Z"
+    },
+    {
+      "id": "log-1794370203108",
+      "actorId": "usr-dev-1",
+      "actorName": "PixelForge Studios",
+      "action": "SUBMIT_GAME",
+      "targetType": "GAME_SUBMISSION",
+      "targetId": "sub-test-audit",
+      "details": {
+        "title": "Audit Test Game",
+        "version": "1.0.0"
+      },
+      "ipAddress": "127.0.0.1",
+      "createdAt": "2026-11-11T04:10:03.108Z"
+    },
     {
       "id": "log-1794369689523",
       "actorId": "usr-1794369689518-lmtan",
@@ -4128,6 +6112,34 @@
       "token": "rst_1794369689200_y9a9xsapcf",
       "expiresAt": "2026-11-11T04:16:29.200Z",
       "used": true
+    },
+    {
+      "id": "prt-1794370206607",
+      "email": "test_player_1794370206604@gamer.com",
+      "token": "rst_1794370206607_sxrjnqfxm2",
+      "expiresAt": "2026-11-11T04:25:06.607Z",
+      "used": true
+    },
+    {
+      "id": "prt-1794370244520",
+      "email": "test_player_1794370244517@gamer.com",
+      "token": "rst_1794370244520_sijnqibs7x",
+      "expiresAt": "2026-11-11T04:25:44.520Z",
+      "used": true
+    },
+    {
+      "id": "prt-1794370288890",
+      "email": "test_player_1794370288887@gamer.com",
+      "token": "rst_1794370288890_va6p3y2vu0",
+      "expiresAt": "2026-11-11T04:26:28.890Z",
+      "used": true
+    },
+    {
+      "id": "prt-1794370330489",
+      "email": "test_player_1794370330485@gamer.com",
+      "token": "rst_1794370330489_f6xsniar00",
+      "expiresAt": "2026-11-11T04:27:10.489Z",
+      "used": true
     }
   ],
   "verificationTokens": [
@@ -4196,6 +6208,30 @@
       "userId": "usr-1794369689083-tpp1b",
       "token": "verify_1794369689085_tp43tr6h",
       "expiresAt": "2026-11-12T04:01:29.085Z"
+    },
+    {
+      "id": "evt-1794370206411",
+      "userId": "usr-1794370206409-kgmej",
+      "token": "verify_1794370206411_1bd5p50d",
+      "expiresAt": "2026-11-12T04:10:06.411Z"
+    },
+    {
+      "id": "evt-1794370244216",
+      "userId": "usr-1794370244204-yldgs",
+      "token": "verify_1794370244216_wujb9lok",
+      "expiresAt": "2026-11-12T04:10:44.216Z"
+    },
+    {
+      "id": "evt-1794370288684",
+      "userId": "usr-1794370288681-yjunb",
+      "token": "verify_1794370288684_ly9p3tgs",
+      "expiresAt": "2026-11-12T04:11:28.684Z"
+    },
+    {
+      "id": "evt-1794370330227",
+      "userId": "usr-1794370330223-lgnz4",
+      "token": "verify_1794370330227_vbmh3bpr",
+      "expiresAt": "2026-11-12T04:12:10.227Z"
     }
   ],
   "developerSettings": [
@@ -4234,6 +6270,24 @@
       "licensingNotes": "Original synthwave soundtrack composed in-house. Free commercial font license.",
       "rightsConfirmed": true,
       "declaredAt": "2026-11-03T11:15:00.000Z"
+    },
+    {
+      "id": "rgt-1794370203101-wc9g",
+      "versionId": "ver-retro-strike-1_0_0-1794370203095",
+      "aiDisclosure": "AI_ASSISTED",
+      "thirdPartyAssetsDeclared": true,
+      "licensingNotes": "Music from Incompetech CC-BY 3.0",
+      "rightsConfirmed": true,
+      "declaredAt": "2026-11-11T04:10:03.101Z"
+    },
+    {
+      "id": "rgt-1794370283532-p45c",
+      "versionId": "ver-retro-strike-1_0_0-1794370283518",
+      "aiDisclosure": "AI_ASSISTED",
+      "thirdPartyAssetsDeclared": true,
+      "licensingNotes": "Music from Incompetech CC-BY 3.0",
+      "rightsConfirmed": true,
+      "declaredAt": "2026-11-11T04:11:23.532Z"
     }
   ]
 }

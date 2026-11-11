@@ -10,6 +10,8 @@ import {
   CreatorAgreement,
   FinancialLedgerRecord,
   PlayerSession,
+  AnalyticsEvent,
+  GameAnalyticsSummary,
   RightsDeclaration,
   AIDisclosure,
   GameStatus,
@@ -82,6 +84,7 @@ export interface DatabaseState {
   submissions: QaSubmission[];
   agreements: CreatorAgreement[];
   sessions: PlayerSession[];
+  events: AnalyticsEvent[];
   financialRecords: FinancialLedgerRecord[];
   auditLogs: AuditLog[];
   resetTokens: PasswordResetToken[];
@@ -292,6 +295,7 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
     },
   ],
   sessions: [],
+  events: [],
   financialRecords: [
     {
       id: 'led-001',
@@ -394,6 +398,8 @@ class GameVerseDatabase {
           rightsDeclarations: parsed.rightsDeclarations || INITIAL_DATABASE_STATE.rightsDeclarations || [],
           profiles: parsed.profiles || INITIAL_DATABASE_STATE.profiles || [],
           agreements: parsed.agreements || INITIAL_DATABASE_STATE.agreements || [],
+          sessions: parsed.sessions || INITIAL_DATABASE_STATE.sessions || [],
+          events: parsed.events || INITIAL_DATABASE_STATE.events || [],
         };
       }
     } catch (e) {
@@ -863,6 +869,187 @@ class GameVerseDatabase {
 
   getSupportTicketsByCreator(creatorId: string): SupportTicket[] {
     return this.state.supportTickets.filter((t) => t.creatorId === creatorId);
+  }
+
+  // ================= PLAYER SESSIONS & ANALYTICS PIPELINE =================
+  createSession(data: {
+    gameId: string;
+    sessionToken: string;
+    playerId?: string;
+    ipHash?: string;
+    deviceType?: 'DESKTOP' | 'MOBILE' | 'TABLET';
+    referralToken?: string;
+    isIvt?: boolean;
+    ivtReason?: string;
+  }): PlayerSession {
+    const existing = this.state.sessions.find((s) => s.sessionToken === data.sessionToken);
+    if (existing) return existing;
+
+    const newSession: PlayerSession = {
+      id: `sess-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      gameId: data.gameId,
+      sessionToken: data.sessionToken,
+      playerId: data.playerId,
+      ipHash: data.ipHash || 'anon',
+      deviceType: data.deviceType || 'DESKTOP',
+      referralToken: data.referralToken,
+      isIvt: !!data.isIvt,
+      ivtReason: data.ivtReason,
+      startTime: new Date().toISOString(),
+      lastHeartbeat: new Date().toISOString(),
+      activeSeconds: 0,
+    };
+
+    this.state.sessions.push(newSession);
+
+    // If legitimate start, increment totalPlays on game
+    if (!newSession.isIvt) {
+      const game = this.getGameById(data.gameId);
+      if (game) {
+        game.totalPlays = (game.totalPlays || 0) + 1;
+        game.updatedAt = new Date().toISOString();
+      }
+    }
+
+    this.persistState();
+    return newSession;
+  }
+
+  getSessionByToken(token: string): PlayerSession | null {
+    return this.state.sessions.find((s) => s.sessionToken === token) || null;
+  }
+
+  updateSessionHeartbeat(
+    token: string,
+    activeSeconds: number,
+    isIvt?: boolean,
+    ivtReason?: string
+  ): PlayerSession | null {
+    const session = this.state.sessions.find((s) => s.sessionToken === token);
+    if (!session) return null;
+
+    if (isIvt) {
+      session.isIvt = true;
+      if (ivtReason) session.ivtReason = ivtReason;
+    }
+
+    session.activeSeconds = Math.max(session.activeSeconds, activeSeconds);
+    session.lastHeartbeat = new Date().toISOString();
+
+    // Recalculate game totalPlayMinutes
+    this.recalculateGamePlayTime(session.gameId);
+
+    this.persistState();
+    return session;
+  }
+
+  endSession(token: string, activeSeconds?: number): PlayerSession | null {
+    const session = this.state.sessions.find((s) => s.sessionToken === token);
+    if (!session) return null;
+
+    if (typeof activeSeconds === 'number') {
+      session.activeSeconds = Math.max(session.activeSeconds, activeSeconds);
+    }
+    session.endTime = new Date().toISOString();
+    session.lastHeartbeat = new Date().toISOString();
+
+    this.recalculateGamePlayTime(session.gameId);
+
+    this.persistState();
+    return session;
+  }
+
+  private recalculateGamePlayTime(gameId: string) {
+    const game = this.getGameById(gameId);
+    if (!game) return;
+
+    // Sum active seconds of all non-IVT sessions
+    const validSessions = this.state.sessions.filter((s) => s.gameId === gameId && !s.isIvt);
+    const totalSeconds = validSessions.reduce((acc, s) => acc + (s.activeSeconds || 0), 0);
+    game.totalPlayMinutes = Math.round((totalSeconds / 60) * 10) / 10;
+  }
+
+  recordAnalyticsEvent(data: {
+    sessionId: string;
+    gameId: string;
+    eventType: 'SESSION_START' | 'HEARTBEAT' | 'SESSION_PAUSE' | 'SESSION_RESUME' | 'SESSION_END' | 'CUSTOM';
+    activeSeconds: number;
+    metadata?: Record<string, any>;
+  }): AnalyticsEvent {
+    const newEvent: AnalyticsEvent = {
+      id: `evt-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      sessionId: data.sessionId,
+      gameId: data.gameId,
+      eventType: data.eventType,
+      activeSeconds: data.activeSeconds || 0,
+      metadata: data.metadata,
+      timestamp: new Date().toISOString(),
+    };
+
+    if (!this.state.events) {
+      this.state.events = [];
+    }
+    this.state.events.push(newEvent);
+    this.persistState();
+    return newEvent;
+  }
+
+  getSessionsByGameId(gameId: string): PlayerSession[] {
+    return this.state.sessions.filter((s) => s.gameId === gameId);
+  }
+
+  getGameAnalytics(gameId: string): GameAnalyticsSummary {
+    const sessions = this.state.sessions.filter((s) => s.gameId === gameId);
+    const totalStarts = sessions.length;
+
+    const validSessions = sessions.filter((s) => !s.isIvt && s.activeSeconds >= 10);
+    const ivtSessionsCount = sessions.filter((s) => s.isIvt).length;
+
+    // Unique players: unique playerIds + unique guest ipHashes
+    const playerIds = new Set<string>();
+    const guestIps = new Set<string>();
+    sessions.forEach((s) => {
+      if (s.playerId) playerIds.add(s.playerId);
+      else if (s.ipHash) guestIps.add(s.ipHash);
+    });
+    const uniquePlayers = playerIds.size + guestIps.size || (totalStarts > 0 ? 1 : 0);
+
+    const totalSeconds = validSessions.reduce((acc, s) => acc + s.activeSeconds, 0);
+    const totalPlayMinutes = Math.round((totalSeconds / 60) * 10) / 10;
+    const avgSessionSeconds =
+      validSessions.length > 0 ? Math.round(totalSeconds / validSessions.length) : 0;
+
+    const deviceBreakdown = {
+      desktop: sessions.filter((s) => s.deviceType === 'DESKTOP').length,
+      mobile: sessions.filter((s) => s.deviceType === 'MOBILE').length,
+      tablet: sessions.filter((s) => s.deviceType === 'TABLET').length,
+    };
+
+    // Retention rate: count of players who had > 1 session
+    const playerSessionCounts: Record<string, number> = {};
+    sessions.forEach((s) => {
+      const key = s.playerId || s.ipHash || 'anon';
+      playerSessionCounts[key] = (playerSessionCounts[key] || 0) + 1;
+    });
+    const returningCount = Object.values(playerSessionCounts).filter((c) => c > 1).length;
+    const totalUniqueKeys = Object.keys(playerSessionCounts).length;
+    const retentionRate =
+      totalUniqueKeys > 0 ? Math.round((returningCount / totalUniqueKeys) * 1000) / 10 : 0;
+
+    const referralStarts = sessions.filter((s) => !!s.referralToken).length;
+
+    return {
+      gameId,
+      totalStarts,
+      validSessions: validSessions.length,
+      ivtSessionsCount,
+      uniquePlayers,
+      totalPlayMinutes,
+      avgSessionSeconds,
+      deviceBreakdown,
+      retentionRate,
+      referralStarts,
+    };
   }
 }
 

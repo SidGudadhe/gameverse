@@ -105,6 +105,7 @@ export interface Game {
   screenshots: string[];
   currentVersionId?: string;
   totalPlays: number;
+  totalPlayMinutes?: number;
   rating: number;
   publishedAt?: string;
   createdAt: string;
@@ -140,8 +141,39 @@ export interface PlayerSession {
   startTime: string;
   endTime?: string;
   activeSeconds: number;
+  lastHeartbeat?: string;
   referralToken?: string;
   deviceType: 'DESKTOP' | 'MOBILE' | 'TABLET';
+  ipHash?: string;
+  isIvt?: boolean;
+  ivtReason?: string;
+}
+
+export interface AnalyticsEvent {
+  id: string;
+  sessionId: string;
+  gameId: string;
+  eventType: 'SESSION_START' | 'HEARTBEAT' | 'SESSION_PAUSE' | 'SESSION_RESUME' | 'SESSION_END' | 'CUSTOM';
+  activeSeconds: number;
+  metadata?: Record<string, any>;
+  timestamp: string;
+}
+
+export interface GameAnalyticsSummary {
+  gameId: string;
+  totalStarts: number;
+  validSessions: number;
+  ivtSessionsCount: number;
+  uniquePlayers: number;
+  totalPlayMinutes: number;
+  avgSessionSeconds: number;
+  deviceBreakdown: {
+    desktop: number;
+    mobile: number;
+    tablet: number;
+  };
+  retentionRate: number;
+  referralStarts: number;
 }
 
 export interface DeveloperAnalytics {

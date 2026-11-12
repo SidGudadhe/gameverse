@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   Gamepad2,
@@ -14,10 +14,21 @@ import {
   Plus,
   DollarSign,
   BookOpen,
+  Lock,
+  ArrowRight,
+  Sparkles,
+  Loader2,
+  ShieldAlert,
 } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { useAuth } from '@/context/AuthContext';
 
 export default function DeveloperLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { user, isAuthenticated, role, loading } = useAuth();
+
+  // Allow open access to onboarding page so players can apply
+  const isOnboardPage = pathname === '/developer/onboard';
 
   const navLinks = [
     { href: '/developer', label: 'Overview', icon: LayoutDashboard, exact: true },
@@ -30,6 +41,86 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
     { href: '/docs/publishing-guide', label: 'Docs & SDK', icon: BookOpen },
     { href: '/developer/support', label: 'Developer Support', icon: HelpCircle },
   ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#090D16] flex flex-col items-center justify-center">
+        <Loader2 className="w-8 h-8 text-cyan-400 animate-spin mb-3" />
+        <span className="text-xs font-mono text-gray-400">Verifying Creator Studio Credentials...</span>
+      </div>
+    );
+  }
+
+  // If on onboarding page, allow rendering without blocking
+  if (isOnboardPage) {
+    return <div className="min-h-screen bg-[#090D16]">{children}</div>;
+  }
+
+  // Not logged in -> Prompt login
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#090D16] flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-slate-900/80 border border-cyan-500/30 rounded-3xl p-8 text-center shadow-2xl backdrop-blur-xl">
+          <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mx-auto mb-5 text-cyan-400">
+            <Lock className="w-8 h-8" />
+          </div>
+          <h1 className="text-2xl font-black text-white tracking-tight mb-2">
+            Developer Studio Sign-In Required
+          </h1>
+          <p className="text-sm text-gray-400 leading-relaxed mb-6">
+            You must be signed in with a GameVerse Developer account to access the studio, upload game builds, and inspect telemetry analytics.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link href="/">
+              <Button variant="outline" className="w-full">
+                Player Catalog
+              </Button>
+            </Link>
+            <Link href="/auth/login?redirect=/developer">
+              <Button variant="primary" className="w-full bg-cyan-600 hover:bg-cyan-500">
+                Sign In to Studio
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Logged in as Player (Not a Developer or Admin) -> Gate with Creator Onboarding
+  const isAuthorized = role === 'DEVELOPER' || role === 'ADMIN' || role === 'SUPER_ADMIN';
+
+  if (!isAuthorized) {
+    return (
+      <div className="min-h-screen bg-[#090D16] flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-slate-900/80 border border-cyan-500/30 rounded-3xl p-8 text-center shadow-2xl backdrop-blur-xl">
+          <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mx-auto mb-5 text-cyan-400">
+            <Sparkles className="w-8 h-8" />
+          </div>
+          <h1 className="text-2xl font-black text-white tracking-tight mb-2">
+            Creator Onboarding Required
+          </h1>
+          <p className="text-sm text-gray-400 leading-relaxed mb-6">
+            Your current account is registered as a <span className="font-mono text-cyan-300 font-bold">PLAYER</span>.
+            To publish HTML5/WebGL games, manage versions, and earn revenue, you must complete the Creator Agreement onboarding.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link href="/">
+              <Button variant="outline" className="w-full">
+                Keep Playing
+              </Button>
+            </Link>
+            <Link href="/developer/onboard">
+              <Button variant="primary" className="w-full bg-cyan-600 hover:bg-cyan-500 flex items-center justify-center gap-1.5">
+                <span>Enroll as Creator</span>
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#090D16]">
@@ -49,7 +140,7 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
                   href={item.href}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors ${
                     isActive
-                      ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30'
+                      ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
                       : 'hover:text-white hover:bg-white/5'
                   }`}
                 >
@@ -62,7 +153,7 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
 
           <Link
             href="/developer/submit"
-            className="flex-shrink-0 flex items-center gap-1.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg border border-indigo-400/30 shadow-sm"
+            className="flex-shrink-0 flex items-center gap-1.5 bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 text-white text-xs font-bold px-3 py-1.5 rounded-lg border border-cyan-400/30 shadow-sm transition-transform active:scale-95"
           >
             <Plus className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Upload Build</span>

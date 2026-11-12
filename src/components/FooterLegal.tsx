@@ -4,9 +4,11 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ShieldCheck, Cookie } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 export default function FooterLegal() {
   const pathname = usePathname();
+  const { role } = useAuth();
 
   // Hide footer inside sandboxed game runner iframes
   if (pathname.startsWith('/sandbox')) {
@@ -49,12 +51,20 @@ export default function FooterLegal() {
             <Cookie className="w-3.5 h-3.5" />
             <span>Cookie Settings</span>
           </button>
-          <Link href="/developer" className="hover:text-indigo-400 transition-colors">
-            Developer Portal
-          </Link>
-          <Link href="/admin" className="hover:text-indigo-400 transition-colors">
-            Admin Portal
-          </Link>
+
+          {/* Only show Developer link if user is DEVELOPER */}
+          {role === 'DEVELOPER' && (
+            <Link href="/developer" className="hover:text-cyan-400 transition-colors font-semibold">
+              Developer Studio
+            </Link>
+          )}
+
+          {/* Only show Admin link if user is ADMIN or MODERATOR */}
+          {(role === 'ADMIN' || role === 'SUPER_ADMIN' || role === 'MODERATOR') && (
+            <Link href="/admin" className="hover:text-rose-400 transition-colors font-semibold">
+              Admin Console
+            </Link>
+          )}
         </div>
       </div>
     </footer>

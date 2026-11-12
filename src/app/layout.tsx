@@ -3,6 +3,7 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import CookieConsent from '@/components/CookieConsent';
 import FooterLegal from '@/components/FooterLegal';
+import { AuthProvider } from '@/context/AuthContext';
 
 export const metadata: Metadata = {
   title: 'GameVerse — Play Free Instant Browser Games (HTML5 & WebGL)',
@@ -25,10 +26,12 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-[#090D16] text-gray-100 flex flex-col selection:bg-indigo-500 selection:text-white">
-        <Navbar />
-        <main className="flex-1 w-full">{children}</main>
-        <CookieConsent />
-        <FooterLegal />
+        <AuthProvider>
+          <Navbar />
+          <main className="flex-1 w-full">{children}</main>
+          <CookieConsent />
+          <FooterLegal />
+        </AuthProvider>
       </body>
     </html>
   );

@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { email, password, name, role = 'PLAYER' } = body;
+    const { email, password, name, role = 'PLAYER', portal, adminSecurityKey } = body;
 
     if (!email || !password || !name) {
       return NextResponse.json(
@@ -32,6 +32,30 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Portal-based role assignment & security checks
+    let assignedRole: 'PLAYER' | 'DEVELOPER' | 'ADMIN' = 'PLAYER';
+
+    if (portal === 'PLAYER') {
+      // Player portal strictly forces PLAYER role regardless of any payload tampering
+      assignedRole = 'PLAYER';
+    } else if (portal === 'DEVELOPER' || (!portal && role === 'DEVELOPER')) {
+      assignedRole = 'DEVELOPER';
+    } else if (portal === 'ADMIN' || (!portal && role === 'ADMIN')) {
+      const validAdminKey = process.env.ADMIN_INVITE_KEY || 'gv-admin-ops-2026';
+      if (!adminSecurityKey || adminSecurityKey !== validAdminKey) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Invalid or missing Admin Authorization Security Key. Staff credentials required.',
+          },
+          { status: 403 }
+        );
+      }
+      assignedRole = 'ADMIN';
+    } else {
+      assignedRole = 'PLAYER';
+    }
+
     // Check if user already exists
     const existing = gvDb.findUserByEmail(email);
     if (existing) {
@@ -42,7 +66,6 @@ export async function POST(req: NextRequest) {
     }
 
     const passwordHash = await hashPassword(password);
-    const assignedRole = role === 'DEVELOPER' ? 'DEVELOPER' : 'PLAYER';
 
     const newUser = gvDb.createUser({
       email,

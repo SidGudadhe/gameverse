@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { email, password } = body;
+    const { email, password, portal } = body;
 
     if (!email || !password) {
       return NextResponse.json(
@@ -39,6 +39,63 @@ export async function POST(req: NextRequest) {
         { success: false, error: 'Invalid email or password.' },
         { status: 401 }
       );
+    }
+
+    // ================= STRICT PORTAL ISOLATION CHECKS =================
+    // 1. Player Portal Isolation: Only Gamers allowed to log in at /auth/login
+    if (portal === 'PLAYER') {
+      if (user.role === 'DEVELOPER') {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'This is a Developer Studio account. Please sign in via the dedicated Developer Portal.',
+            portalMismatch: 'DEVELOPER',
+            redirectUrl: '/developer/auth/login',
+          },
+          { status: 403 }
+        );
+      }
+      if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN' || user.role === 'MODERATOR') {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'This is an Admin Staff account. Please sign in via the dedicated Admin Operations Portal.',
+            portalMismatch: 'ADMIN',
+            redirectUrl: '/admin/auth/login',
+          },
+          { status: 403 }
+        );
+      }
+    }
+
+    // 2. Developer Studio Portal Isolation: Only Developers / Admins allowed at /developer/auth/login
+    if (portal === 'DEVELOPER') {
+      if (user.role === 'PLAYER') {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Access Denied: Player accounts cannot access Developer Studio. Sign in at the Gamer Portal or register as a Game Studio.',
+            portalMismatch: 'PLAYER',
+            redirectUrl: '/auth/login',
+          },
+          { status: 403 }
+        );
+      }
+    }
+
+    // 3. Admin Operations Portal Isolation: Only Admin / Staff allowed at /admin/auth/login
+    if (portal === 'ADMIN') {
+      if (user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN' && user.role !== 'MODERATOR') {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Access Denied (403 Forbidden): Unauthorized. This portal is strictly restricted to GameVerse Administrative Staff.',
+            portalMismatch: 'UNAUTHORIZED',
+            redirectUrl: '/auth/login',
+          },
+          { status: 403 }
+        );
+      }
     }
 
     // Check if user requires 2FA (e.g. Admin role with twoFactorEnabled)

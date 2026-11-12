@@ -42,6 +42,11 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
     { href: '/developer/support', label: 'Developer Support', icon: HelpCircle },
   ];
 
+  // Allow open access to developer auth pages (login & signup)
+  if (pathname.startsWith('/developer/auth')) {
+    return <div className="min-h-screen bg-[#090D16]">{children}</div>;
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#090D16] flex flex-col items-center justify-center">
@@ -76,7 +81,7 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
                 Player Catalog
               </Button>
             </Link>
-            <Link href="/auth/login?redirect=/developer">
+            <Link href="/developer/auth/login">
               <Button variant="primary" className="w-full bg-cyan-600 hover:bg-cyan-500">
                 Sign In to Studio
               </Button>

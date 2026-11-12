@@ -45,6 +45,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: '/admin/launch-checklist', label: 'Production Launch Checklist', icon: CheckCircle2 },
   ];
 
+  // Allow open access to admin auth pages (login & signup)
+  if (pathname.startsWith('/admin/auth')) {
+    return <div className="min-h-screen bg-[#090D16]">{children}</div>;
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#090D16] flex flex-col items-center justify-center">
@@ -88,7 +93,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <span>Return to Catalog</span>
               </Button>
             </Link>
-            <Link href="/auth/login?redirect=/admin">
+            <Link href="/admin/auth/login">
               <Button variant="primary" className="w-full">
                 Log In as Admin
               </Button>

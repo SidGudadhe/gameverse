@@ -38,13 +38,25 @@ export function middleware(request: NextRequest) {
   // 2. Subdomain Routing: Support dedicated domains (e.g. admin.gameverse.com, studio.gameverse.com)
   if (host.startsWith('admin.') && !pathname.startsWith('/admin') && !pathname.startsWith('/api') && !pathname.startsWith('/_next')) {
     const url = request.nextUrl.clone();
-    url.pathname = `/admin${pathname === '/' ? '' : pathname}`;
+    if (pathname === '/auth/login') {
+      url.pathname = '/admin/auth/login';
+    } else if (pathname === '/auth/signup') {
+      url.pathname = '/admin/auth/signup';
+    } else {
+      url.pathname = `/admin${pathname === '/' ? '' : pathname}`;
+    }
     return NextResponse.rewrite(url);
   }
 
   if ((host.startsWith('studio.') || host.startsWith('dev.')) && !pathname.startsWith('/developer') && !pathname.startsWith('/api') && !pathname.startsWith('/_next')) {
     const url = request.nextUrl.clone();
-    url.pathname = `/developer${pathname === '/' ? '' : pathname}`;
+    if (pathname === '/auth/login') {
+      url.pathname = '/developer/auth/login';
+    } else if (pathname === '/auth/signup') {
+      url.pathname = '/developer/auth/signup';
+    } else {
+      url.pathname = `/developer${pathname === '/' ? '' : pathname}`;
+    }
     return NextResponse.rewrite(url);
   }
 
@@ -52,7 +64,8 @@ export function middleware(request: NextRequest) {
   const userRole = getSessionRole(request);
 
   // 4. Strict Role Gate for Admin Operations Suite (/admin and /api/admin)
-  const isAdminPath = pathname.startsWith('/admin');
+  const isAdminAuthRoute = pathname.startsWith('/admin/auth');
+  const isAdminPath = pathname.startsWith('/admin') && !isAdminAuthRoute;
   const isAdminApi = pathname.startsWith('/api/admin');
 
   if (isAdminPath || isAdminApi) {
@@ -71,8 +84,8 @@ export function middleware(request: NextRequest) {
           { status: userRole ? 403 : 401 }
         );
       } else {
-        // Redirect browser to login with return path
-        const loginUrl = new URL('/auth/login', request.url);
+        // Redirect browser to dedicated admin login
+        const loginUrl = new URL('/admin/auth/login', request.url);
         loginUrl.searchParams.set('redirect', pathname);
         loginUrl.searchParams.set('error', 'admin_required');
         return NextResponse.redirect(loginUrl);
@@ -81,7 +94,8 @@ export function middleware(request: NextRequest) {
   }
 
   // 5. Strict Role Gate for Developer Studio Portal (/developer and /api/developer)
-  const isDevPath = pathname.startsWith('/developer');
+  const isDevAuthRoute = pathname.startsWith('/developer/auth');
+  const isDevPath = pathname.startsWith('/developer') && !isDevAuthRoute;
   const isDevApi = pathname.startsWith('/api/developer');
   const isOnboardRoute = pathname === '/developer/onboard' || pathname === '/api/developer/onboard';
 
@@ -105,7 +119,7 @@ export function middleware(request: NextRequest) {
         }
       } else {
         if (!userRole) {
-          const loginUrl = new URL('/auth/login', request.url);
+          const loginUrl = new URL('/developer/auth/login', request.url);
           loginUrl.searchParams.set('redirect', pathname);
           return NextResponse.redirect(loginUrl);
         } else if (userRole === 'PLAYER') {

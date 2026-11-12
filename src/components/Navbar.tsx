@@ -109,22 +109,39 @@ export default function Navbar() {
               <span className="hidden sm:inline">Switch to Gamer Site</span>
             </Link>
 
-            <Link
-              href="/developer/submit"
-              className="hidden sm:flex items-center gap-1.5 bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-md transition-all active:scale-95"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Upload Build</span>
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <Link
+                  href="/developer/submit"
+                  className="hidden sm:flex items-center gap-1.5 bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-md transition-all active:scale-95"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Upload Build</span>
+                </Link>
 
-            {isAuthenticated && (
-              <button
-                onClick={logout}
-                title="Log Out of Studio"
-                className="w-9 h-9 rounded-xl bg-surface hover:bg-rose-500/20 text-gray-400 hover:text-rose-300 border border-white/10 flex items-center justify-center transition-colors"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
+                <button
+                  onClick={logout}
+                  title="Log Out of Studio"
+                  className="w-9 h-9 rounded-xl bg-surface hover:bg-rose-500/20 text-gray-400 hover:text-rose-300 border border-white/10 flex items-center justify-center transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/developer/auth/login"
+                  className="text-xs font-semibold text-cyan-300 hover:text-white px-3 py-2 rounded-xl hover:bg-white/5 transition-colors"
+                >
+                  Studio Sign In
+                </Link>
+                <Link
+                  href="/developer/auth/signup"
+                  className="bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-md transition-all active:scale-95"
+                >
+                  Join as Creator
+                </Link>
+              </div>
             )}
           </div>
         </div>
@@ -199,7 +216,7 @@ export default function Navbar() {
               <span className="hidden sm:inline">Gamer Site</span>
             </Link>
 
-            {isAuthenticated && (
+            {isAuthenticated ? (
               <button
                 onClick={logout}
                 title="Log Out of Admin"
@@ -207,6 +224,13 @@ export default function Navbar() {
               >
                 <LogOut className="w-4 h-4" />
               </button>
+            ) : (
+              <Link
+                href="/admin/auth/login"
+                className="bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-md transition-all active:scale-95"
+              >
+                Staff Sign In
+              </Link>
             )}
           </div>
         </div>

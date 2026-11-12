@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import {
   ShieldCheck,
   Cookie,
@@ -17,10 +18,16 @@ const STORAGE_KEY = 'gv_consent_preferences';
 const CURRENT_VERSION = '2026.1';
 
 export default function CookieConsent() {
+  const pathname = usePathname();
   const [isVisible, setIsVisible] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
   const [marketingEnabled, setMarketingEnabled] = useState(false);
+
+  // Suppress cookie banner inside sandboxed game runner iframes
+  if (pathname.startsWith('/sandbox')) {
+    return null;
+  }
 
   useEffect(() => {
     try {

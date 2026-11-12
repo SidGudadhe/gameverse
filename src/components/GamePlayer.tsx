@@ -55,7 +55,7 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
   // Resolved sandbox runner route with optional isolated origin support
   const sandboxOrigin = process.env.NEXT_PUBLIC_SANDBOX_ORIGIN || '';
   const resolvedUrl =
-    sandboxUrl || `${sandboxOrigin}/sandbox/${game.id}/${game.currentVersionId || 'v1'}`;
+    sandboxUrl || `${sandboxOrigin}/api/sandbox/files/${game.id}/${game.currentVersionId || 'v1'}/index.html`;
 
   // ================= TELEMETRY PING PIPELINE =================
   const sendTelemetryPing = useCallback(

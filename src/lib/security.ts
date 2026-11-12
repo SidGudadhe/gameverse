@@ -141,9 +141,30 @@ export function extractArchiveSafely(
     const entries = zip.getEntries();
     let count = 0;
 
+    // Detect if all non-empty entries share a single common directory prefix (e.g. "MyGame/")
+    const rootDirs = new Set<string>();
+    let hasDirectRootFiles = false;
     for (const entry of entries) {
+      const normalizedName = entry.entryName.replace(/\\/g, '/').replace(/^\/+/, '');
+      if (!normalizedName) continue;
+      const parts = normalizedName.split('/').filter(Boolean);
+      if (parts.length > 1) {
+        rootDirs.add(parts[0]);
+      } else if (!entry.isDirectory) {
+        hasDirectRootFiles = true;
+      }
+    }
+    const commonPrefix = (!hasDirectRootFiles && rootDirs.size === 1) ? Array.from(rootDirs)[0] + '/' : '';
+
+    for (const entry of entries) {
+      let relativeEntryName = entry.entryName.replace(/\\/g, '/');
+      if (commonPrefix && relativeEntryName.startsWith(commonPrefix)) {
+        relativeEntryName = relativeEntryName.slice(commonPrefix.length);
+      }
+      if (!relativeEntryName) continue;
+
       // Zip Slip defense: verify destination is strictly within resolvedTarget
-      const entryDest = path.resolve(resolvedTarget, entry.entryName);
+      const entryDest = path.resolve(resolvedTarget, relativeEntryName);
       if (!entryDest.startsWith(resolvedTarget + path.sep) && entryDest !== resolvedTarget) {
         throw new Error(`Zip slip path traversal detected: ${entry.entryName}`);
       }

@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Voxel Dungeons</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #06050c;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    #game-canvas {
+      width: 100vw;
+      height: 100vh;
+      display: block;
+      cursor: crosshair;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="game-canvas"></canvas>
+
+  <script>
+    (function () {
+      const canvas = document.getElementById('game-canvas');
+      const ctx = canvas.getContext('2d');
+
+      let audioCtx = null;
+      let isMuted = false;
+      let isPaused = false;
+
+      function getAudioContext() {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        return audioCtx;
+      }
+
+      function playSynthSound(freq, type, duration, vol = 0.15) {
+        if (isMuted) return;
+        try {
+          const actx = getAudioContext();
+          const osc = actx.createOscillator();
+          const gain = actx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, actx.currentTime);
+          gain.gain.setValueAtTime(vol, actx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(actx.destination);
+          osc.start();
+          osc.stop(actx.currentTime + duration);
+        } catch (e) {}
+      }
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      // Isometric projection math
+      const TILE_W = 64;
+      const TILE_H = 32;
+
+      function toIso(x, y) {
+        return {
+          isoX: (x - y) * (TILE_W / 2) + canvas.width / 2,
+          isoY: (x + y) * (TILE_H / 2) + 120
+        };
+      }
+
+      // Dungeon Map (12x12)
+      const MAP_SIZE = 12;
+      const map = [];
+      for (let y = 0; y < MAP_SIZE; y++) {
+        const row = [];
+        for (let x = 0; x < MAP_SIZE; x++) {
+          if (x === 0 || x === MAP_SIZE - 1 || y === 0 || y === MAP_SIZE - 1) {
+            row.push(1); // Wall
+          } else if ((x === 3 && y < 7) || (x === 8 && y > 4)) {
+            row.push(1); // Pillar
+          } else {
+            row.push(0); // Floor
+          }
+        }
+        map.push(row);
+      }
+
+      // Entities
+      let gameStarted = false;
+      let playerHealth = 5;
+      let maxHealth = 5;
+      let gold = 0;
+      let isDead = false;
+      let dungeonLevel = 1;
+
+      const player = {
+        x: 2.5,
+        y: 2.5,
+        angle: 0,
+        isAttacking: false,
+        attackTimer: 0,
+        speed: 0.08,
+      };
+
+      const keys = {};
+      window.addEventListener('keydown', (e) => {
+        keys[e.code] = true;
+        getAudioContext();
+        if (e.code === 'Space') {
+          e.preventDefault();
+          attack();
+        }
+      });
+      window.addEventListener('keyup', (e) => {
+        keys[e.code] = false;
+      });
+
+      canvas.addEventListener('click', () => {
+        getAudioContext();
+        if (!gameStarted) {
+          gameStarted = true;
+          playSynthSound(440, 'triangle', 0.2);
+          return;
+        }
+        if (isDead) {
+          restartGame();
+          return;
+        }
+        attack();
+      });
+
+      function restartGame() {
+        player.x = 2.5;
+        player.y = 2.5;
+        playerHealth = 5;
+        gold = 0;
+        isDead = false;
+        gameStarted = true;
+        initMonsters();
+        playSynthSound(520, 'sine', 0.3);
+      }
+
+      function attack() {
+        if (!gameStarted || isDead || isPaused) return;
+        if (!player.isAttacking) {
+          player.isAttacking = true;
+          player.attackTimer = 14;
+          playSynthSound(350, 'sawtooth', 0.12, 0.2);
+
+          // Hit detection on monsters
+          for (const m of monsters) {
+            if (!m.alive) continue;
+            const dist = Math.hypot(m.x - player.x, m.y - player.y);
+            if (dist < 1.6) {
+              m.health--;
+              playSynthSound(180, 'square', 0.15, 0.25);
+              if (m.health <= 0) {
+                m.alive = false;
+                gold += 25;
+                playSynthSound(680, 'triangle', 0.25, 0.2);
+              }
+            }
+          }
+        }
+      }
+
+      // Skeletons
+      let monsters = [];
+      function initMonsters() {
+        monsters = [
+          { x: 6.5, y: 3.5, health: 3, maxH: 3, alive: true, step: 0 },
+          { x: 4.5, y: 8.5, health: 3, maxH: 3, alive: true, step: 0 },
+          { x: 9.5, y: 7.5, health: 3, maxH: 3, alive: true, step: 0 },
+          { x: 7.5, y: 9.5, health: 4, maxH: 4, alive: true, step: 0 },
+        ];
+      }
+      initMonsters();
+
+      // Chests
+      const chests = [
+        { x: 5, y: 5, opened: false, gold: 50 },
+        { x: 10, y: 2, opened: false, gold: 100 },
+        { x: 2, y: 10, opened: false, gold: 75 },
+      ];
+
+      // Host postMessage Communication
+      window.addEventListener('message', (e) => {
+        const msg = e.data || {};
+        if (msg.type === 'GV_MUTE') isMuted = true;
+        if (msg.type === 'GV_UNMUTE') isMuted = false;
+        if (msg.type === 'GV_PAUSE') isPaused = true;
+        if (msg.type === 'GV_RESUME') isPaused = false;
+        if (msg.type === 'GV_RESTART') restartGame();
+      });
+
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({ type: 'GV_READY' }, '*');
+      }
+
+      function drawCube(isoX, isoY, w, h, depth, topColor, leftColor, rightColor) {
+        // Top Face
+        ctx.fillStyle = topColor;
+        ctx.beginPath();
+        ctx.moveTo(isoX, isoY - depth);
+        ctx.lineTo(isoX + w / 2, isoY - h / 2 - depth);
+        ctx.lineTo(isoX, isoY - h - depth);
+        ctx.lineTo(isoX - w / 2, isoY - h / 2 - depth);
+        ctx.closePath();
+        ctx.fill();
+
+        // Left Face
+        ctx.fillStyle = leftColor;
+        ctx.beginPath();
+        ctx.moveTo(isoX - w / 2, isoY - h / 2 - depth);
+        ctx.lineTo(isoX, isoY - depth);
+        ctx.lineTo(isoX, isoY);
+        ctx.lineTo(isoX - w / 2, isoY - h / 2);
+        ctx.closePath();
+        ctx.fill();
+
+        // Right Face
+        ctx.fillStyle = rightColor;
+        ctx.beginPath();
+        ctx.moveTo(isoX, isoY - depth);
+        ctx.lineTo(isoX + w / 2, isoY - h / 2 - depth);
+        ctx.lineTo(isoX + w / 2, isoY - h / 2);
+        ctx.lineTo(isoX, isoY);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      let frame = 0;
+      function loop() {
+        requestAnimationFrame(loop);
+        frame++;
+
+        // Clear canvas
+        ctx.fillStyle = '#080512';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Movement input
+        if (gameStarted && !isDead && !isPaused) {
+          let dx = 0;
+          let dy = 0;
+          if (keys['KeyW'] || keys['ArrowUp']) { dx -= player.speed; dy -= player.speed; }
+          if (keys['KeyS'] || keys['ArrowDown']) { dx += player.speed; dy += player.speed; }
+          if (keys['KeyA'] || keys['ArrowLeft']) { dx -= player.speed; dy += player.speed; }
+          if (keys['KeyD'] || keys['ArrowRight']) { dx += player.speed; dy -= player.speed; }
+
+          const nextX = player.x + dx;
+          const nextY = player.y + dy;
+
+          if (map[Math.floor(nextY)] && map[Math.floor(nextY)][Math.floor(nextX)] === 0) {
+            player.x = nextX;
+            player.y = nextY;
+          }
+
+          if (player.isAttacking) {
+            player.attackTimer--;
+            if (player.attackTimer <= 0) player.isAttacking = false;
+          }
+
+          // Check Chests
+          for (const c of chests) {
+            if (!c.opened && Math.hypot(c.x - player.x, c.y - player.y) < 1.0) {
+              c.opened = true;
+              gold += c.gold;
+              playSynthSound(740, 'triangle', 0.3, 0.2);
+            }
+          }
+
+          // Monsters AI (Walk toward player)
+          for (const m of monsters) {
+            if (!m.alive) continue;
+            const dist = Math.hypot(player.x - m.x, player.y - m.y);
+            if (dist < 5.5 && dist > 0.8) {
+              m.x += ((player.x - m.x) / dist) * 0.025;
+              m.y += ((player.y - m.y) / dist) * 0.025;
+            } else if (dist <= 0.8 && frame % 45 === 0) {
+              // Attack player
+              playerHealth--;
+              playSynthSound(130, 'sawtooth', 0.25, 0.3);
+              if (playerHealth <= 0) {
+                isDead = true;
+                playSynthSound(90, 'sawtooth', 0.5, 0.4);
+                if (window.parent && window.parent !== window) {
+                  window.parent.postMessage({ type: 'GV_GAME_OVER', score: gold }, '*');
+                }
+              }
+            }
+          }
+        }
+
+        // Draw Isometric Dungeon Floor & Walls
+        for (let y = 0; y < MAP_SIZE; y++) {
+          for (let x = 0; x < MAP_SIZE; x++) {
+            const iso = toIso(x, y);
+            const tile = map[y][x];
+
+            if (tile === 1) {
+              // 3D Stone Voxel Wall
+              drawCube(iso.isoX, iso.isoY, TILE_W, TILE_H, 48, '#334155', '#1e293b', '#0f172a');
+            } else {
+              // Floor Tile
+              const isAlt = (x + y) % 2 === 0;
+              ctx.fillStyle = isAlt ? '#1e1b2e' : '#171424';
+              ctx.beginPath();
+              ctx.moveTo(iso.isoX, iso.isoY);
+              ctx.lineTo(iso.isoX + TILE_W / 2, iso.isoY - TILE_H / 2);
+              ctx.lineTo(iso.isoX, iso.isoY - TILE_H);
+              ctx.lineTo(iso.isoX - TILE_W / 2, iso.isoY - TILE_H / 2);
+              ctx.closePath();
+              ctx.fill();
+
+              ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+              ctx.stroke();
+            }
+          }
+        }
+
+        // Draw Chests
+        for (const c of chests) {
+          const iso = toIso(c.x, c.y);
+          if (c.opened) {
+            drawCube(iso.isoX, iso.isoY, 26, 14, 12, '#713f12', '#451a03', '#290f02');
+          } else {
+            drawCube(iso.isoX, iso.isoY, 26, 14, 16, '#facc15', '#ca8a04', '#a16207');
+          }
+        }
+
+        // Draw Monsters (Skeletons)
+        for (const m of monsters) {
+          if (!m.alive) continue;
+          const iso = toIso(m.x, m.y);
+          const bob = Math.sin(frame * 0.15) * 3;
+
+          // Skeleton Voxel Body
+          drawCube(iso.isoX, iso.isoY + bob, 22, 12, 34, '#e2e8f0', '#94a3b8', '#64748b');
+          // Glowing Red Eye
+          ctx.fillStyle = '#ef4444';
+          ctx.fillRect(iso.isoX - 2, iso.isoY - 30 + bob, 5, 4);
+
+          // Health bar
+          ctx.fillStyle = 'rgba(0,0,0,0.6)';
+          ctx.fillRect(iso.isoX - 16, iso.isoY - 44 + bob, 32, 5);
+          ctx.fillStyle = '#ef4444';
+          ctx.fillRect(iso.isoX - 16, iso.isoY - 44 + bob, (m.health / m.maxH) * 32, 5);
+        }
+
+        // Draw Player Voxel Knight
+        const pIso = toIso(player.x, player.y);
+        const pBob = Math.sin(frame * 0.2) * 2;
+
+        // Player Body
+        drawCube(pIso.isoX, pIso.isoY + pBob, 26, 14, 38, '#6366f1', '#4338ca', '#312e81');
+
+        // Golden Helmet
+        drawCube(pIso.isoX, pIso.isoY - 24 + pBob, 20, 10, 16, '#38bdf8', '#0284c7', '#0369a1');
+
+        // Sword Swing
+        if (player.isAttacking) {
+          ctx.save();
+          ctx.strokeStyle = '#fef08a';
+          ctx.shadowColor = '#fef08a';
+          ctx.shadowBlur = 15;
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.arc(pIso.isoX, pIso.isoY - 20, 36, -0.6, 1.2);
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // Top UI HUD
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 20px monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText(`GOLD: ${gold}`, 30, 45);
+
+        // Hearts
+        for (let h = 0; h < maxHealth; h++) {
+          ctx.fillStyle = h < playerHealth ? '#f43f5e' : '#334155';
+          ctx.font = '22px sans-serif';
+          ctx.fillText('♥', 30 + (h * 24), 78);
+        }
+
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = '14px monospace';
+        ctx.fillText('DUNGEON B1', 30, 105);
+
+        // Start Overlay
+        if (!gameStarted) {
+          ctx.fillStyle = 'rgba(0,0,0,0.7)';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          ctx.fillStyle = '#38bdf8';
+          ctx.font = '900 42px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('VOXEL DUNGEONS 3D', canvas.width / 2, canvas.height / 2 - 30);
+
+          ctx.fillStyle = '#fef08a';
+          ctx.font = 'bold 20px monospace';
+          ctx.fillText('CLICK TO ENTER THE DUNGEON', canvas.width / 2, canvas.height / 2 + 25);
+
+          ctx.fillStyle = '#94a3b8';
+          ctx.font = '14px sans-serif';
+          ctx.fillText('WASD / ARROWS: Move  •  SPACE / CLICK: Attack Skeletons', canvas.width / 2, canvas.height / 2 + 65);
+        }
+
+        // Game Over Overlay
+        if (isDead) {
+          ctx.fillStyle = 'rgba(15,0,5,0.85)';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          ctx.fillStyle = '#ef4444';
+          ctx.font = '900 48px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('YOU HAVE FALLEN', canvas.width / 2, canvas.height / 2 - 25);
+
+          ctx.fillStyle = '#fef08a';
+          ctx.font = 'bold 22px monospace';
+          ctx.fillText(`TOTAL LOOT COLLECTED: ${gold} GOLD`, canvas.width / 2, canvas.height / 2 + 25);
+
+          ctx.fillStyle = '#38bdf8';
+          ctx.font = '16px monospace';
+          ctx.fillText('CLICK OR PRESS SPACE TO RESPAWN', canvas.width / 2, canvas.height / 2 + 65);
+        }
+      }
+
+      loop();
+    })();
+  </script>
+</body>
+</html>

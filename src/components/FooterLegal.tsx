@@ -2,9 +2,17 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { ShieldCheck, Cookie } from 'lucide-react';
 
 export default function FooterLegal() {
+  const pathname = usePathname();
+
+  // Hide footer inside sandboxed game runner iframes
+  if (pathname.startsWith('/sandbox')) {
+    return null;
+  }
+
   const openCookiePreferences = () => {
     window.dispatchEvent(new CustomEvent('gv-open-cookie-settings'));
   };

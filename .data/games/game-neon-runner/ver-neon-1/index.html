@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Neon Cyber Runner 2088</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #080318;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    #game-canvas {
+      width: 100vw;
+      height: 100vh;
+      display: block;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="game-canvas"></canvas>
+
+  <script>
+    (function () {
+      const canvas = document.getElementById('game-canvas');
+      const ctx = canvas.getContext('2d');
+
+      // Audio Synthesizer
+      let audioCtx = null;
+      let isMuted = false;
+      let isPaused = false;
+
+      function getAudioContext() {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        return audioCtx;
+      }
+
+      function playSynthSound(freq, type, duration, vol = 0.15) {
+        if (isMuted) return;
+        try {
+          const actx = getAudioContext();
+          const osc = actx.createOscillator();
+          const gain = actx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, actx.currentTime);
+          gain.gain.setValueAtTime(vol, actx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(actx.destination);
+          osc.start();
+          osc.stop(actx.currentTime + duration);
+        } catch (e) {}
+      }
+
+      // Responsive canvas resizing
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+
+      // Game state
+      let gameStarted = false;
+      let isDead = false;
+      let score = 0;
+      let highScore = 0;
+      let frameCount = 0;
+
+      // Player state
+      const player = {
+        x: 120,
+        y: 0,
+        w: 36,
+        h: 52,
+        vy: 0,
+        jumpPower: -13,
+        doubleJumpPower: -11,
+        canDoubleJump: true,
+        isGrounded: false,
+        isSliding: false,
+        slideTimer: 0,
+        trail: [],
+      };
+
+      const gravity = 0.65;
+      let groundY = 0;
+      let obstacles = [];
+      let baseSpeed = 7.5;
+
+      function updateGround() {
+        groundY = Math.floor(canvas.height * 0.72);
+        if (!player.isGrounded && !player.isSliding) {
+          player.y = groundY - player.h;
+        }
+      }
+      updateGround();
+      window.addEventListener('resize', updateGround);
+
+      function resetGame() {
+        score = 0;
+        isDead = false;
+        gameStarted = true;
+        obstacles = [];
+        player.y = groundY - player.h;
+        player.vy = 0;
+        player.isGrounded = true;
+        player.canDoubleJump = true;
+        player.isSliding = false;
+        player.trail = [];
+        playSynthSound(520, 'triangle', 0.2);
+      }
+
+      function jump() {
+        getAudioContext();
+        if (!gameStarted) {
+          resetGame();
+          return;
+        }
+        if (isDead) {
+          resetGame();
+          return;
+        }
+        if (isPaused) return;
+
+        if (player.isGrounded) {
+          player.vy = player.jumpPower;
+          player.isGrounded = false;
+          player.canDoubleJump = true;
+          player.isSliding = false;
+          playSynthSound(580, 'square', 0.12);
+        } else if (player.canDoubleJump) {
+          player.vy = player.doubleJumpPower;
+          player.canDoubleJump = false;
+          playSynthSound(780, 'triangle', 0.15);
+        }
+      }
+
+      function slide() {
+        if (!gameStarted || isDead || isPaused) return;
+        if (player.isGrounded && !player.isSliding) {
+          player.isSliding = true;
+          player.slideTimer = 28;
+          playSynthSound(280, 'sawtooth', 0.1, 0.08);
+        }
+      }
+
+      // Input handlers
+      window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' || e.code === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+          e.preventDefault();
+          jump();
+        } else if (e.code === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+          e.preventDefault();
+          slide();
+        } else if (e.code === 'KeyP') {
+          isPaused = !isPaused;
+        }
+      });
+
+      canvas.addEventListener('click', (e) => {
+        jump();
+      });
+
+      canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        jump();
+      }, { passive: false });
+
+      // Host postMessage Communication
+      window.addEventListener('message', (e) => {
+        const msg = e.data || {};
+        if (msg.type === 'GV_MUTE') isMuted = true;
+        if (msg.type === 'GV_UNMUTE') isMuted = false;
+        if (msg.type === 'GV_PAUSE') isPaused = true;
+        if (msg.type === 'GV_RESUME') isPaused = false;
+        if (msg.type === 'GV_RESTART') resetGame();
+      });
+
+      // Notify parent host that engine is ready
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({ type: 'GV_READY' }, '*');
+      }
+
+      // Main Loop
+      function loop() {
+        requestAnimationFrame(loop);
+
+        if (isPaused) {
+          // Draw pause overlay
+          ctx.fillStyle = 'rgba(0,0,0,0.4)';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = '#f59e0b';
+          ctx.font = 'bold 32px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('PAUSED', canvas.width / 2, canvas.height / 2);
+          return;
+        }
+
+        frameCount++;
+        const currentSpeed = baseSpeed + Math.min(8, score / 600);
+
+        // 1. Synthwave Sky Gradient
+        const skyGrad = ctx.createLinearGradient(0, 0, 0, groundY);
+        skyGrad.addColorStop(0, '#050212');
+        skyGrad.addColorStop(0.5, '#160832');
+        skyGrad.addColorStop(0.85, '#3b074a');
+        skyGrad.addColorStop(1, '#660b54');
+        ctx.fillStyle = skyGrad;
+        ctx.fillRect(0, 0, canvas.width, groundY);
+
+        // Retro Glowing Sun
+        const sunRadius = Math.min(70, canvas.height * 0.14);
+        const sunX = canvas.width / 2;
+        const sunY = groundY - 20;
+
+        const sunGrad = ctx.createLinearGradient(sunX, sunY - sunRadius, sunX, sunY + sunRadius);
+        sunGrad.addColorStop(0, '#fef08a');
+        sunGrad.addColorStop(0.4, '#f43f5e');
+        sunGrad.addColorStop(1, '#831843');
+
+        ctx.save();
+        ctx.fillStyle = sunGrad;
+        ctx.shadowColor = '#f43f5e';
+        ctx.shadowBlur = 35;
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, sunRadius, Math.PI, 0);
+        ctx.fill();
+
+        // Horizontal sun horizontal laser cuts
+        ctx.fillStyle = '#160832';
+        for (let i = 1; i <= 6; i++) {
+          const cutH = i * 1.5;
+          const cutY = sunY - (i * (sunRadius / 7.5));
+          ctx.fillRect(sunX - sunRadius - 10, cutY, (sunRadius + 10) * 2, cutH);
+        }
+        ctx.restore();
+
+        // Distant Cyber Mountains
+        ctx.fillStyle = '#13042b';
+        ctx.beginPath();
+        ctx.moveTo(0, groundY);
+        ctx.lineTo(canvas.width * 0.15, groundY - 60);
+        ctx.lineTo(canvas.width * 0.3, groundY);
+        ctx.lineTo(canvas.width * 0.5, groundY - 95);
+        ctx.lineTo(canvas.width * 0.7, groundY);
+        ctx.lineTo(canvas.width * 0.85, groundY - 70);
+        ctx.lineTo(canvas.width, groundY);
+        ctx.closePath();
+        ctx.fill();
+
+        // 2. Animated Cyber Grid Floor
+        const floorGrad = ctx.createLinearGradient(0, groundY, 0, canvas.height);
+        floorGrad.addColorStop(0, '#0a0320');
+        floorGrad.addColorStop(1, '#020008');
+        ctx.fillStyle = floorGrad;
+        ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
+
+        // Horizontal horizon glow
+        ctx.strokeStyle = '#ec4899';
+        ctx.shadowColor = '#ec4899';
+        ctx.shadowBlur = 10;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(0, groundY);
+        ctx.lineTo(canvas.width, groundY);
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Animated Perspective Lines
+        const gridOffset = (frameCount * (currentSpeed * 0.9)) % 45;
+        ctx.strokeStyle = 'rgba(99, 102, 241, 0.35)';
+        ctx.lineWidth = 1.2;
+
+        for (let x = -gridOffset; x < canvas.width + 100; x += 45) {
+          ctx.beginPath();
+          ctx.moveTo(x, groundY);
+          ctx.lineTo(x - (canvas.width * 0.25), canvas.height);
+          ctx.stroke();
+        }
+
+        // Horizontal grid rows with exponential perspective
+        for (let r = 1; r <= 8; r++) {
+          const rowY = groundY + Math.pow(r / 8, 1.8) * (canvas.height - groundY);
+          ctx.strokeStyle = `rgba(168, 85, 247, ${0.15 + (r * 0.05)})`;
+          ctx.beginPath();
+          ctx.moveTo(0, rowY);
+          ctx.lineTo(canvas.width, rowY);
+          ctx.stroke();
+        }
+
+        // 3. Gameplay Logic
+        if (gameStarted && !isDead) {
+          score++;
+          if (score > highScore) highScore = score;
+
+          // Milestone chime
+          if (score % 600 === 0) {
+            playSynthSound(880, 'sine', 0.2);
+          }
+
+          // Player Physics
+          player.y += player.vy;
+          player.vy += gravity;
+
+          const currentH = player.isSliding ? 28 : 52;
+          const currentYLimit = groundY - currentH;
+
+          if (player.y >= currentYLimit) {
+            player.y = currentYLimit;
+            player.vy = 0;
+            player.isGrounded = true;
+          }
+
+          // Slide timer
+          if (player.isSliding) {
+            player.slideTimer--;
+            if (player.slideTimer <= 0) {
+              player.isSliding = false;
+              player.y = groundY - player.h;
+            }
+          }
+
+          // Particle Trail
+          if (frameCount % 3 === 0) {
+            player.trail.unshift({
+              x: player.x,
+              y: player.y,
+              w: player.w,
+              h: currentH,
+              alpha: 0.6
+            });
+            if (player.trail.length > 6) player.trail.pop();
+          }
+
+          // Spawn Obstacles
+          const minSpawnInterval = Math.max(50, 95 - Math.floor(score / 300));
+          if (frameCount % minSpawnInterval === 0 && Math.random() > 0.15) {
+            const isAerial = Math.random() > 0.65;
+            if (isAerial) {
+              // Floating drone or laser beam requiring slide
+              obstacles.push({
+                x: canvas.width + 40,
+                y: groundY - 65,
+                w: 36,
+                h: 24,
+                type: 'AERIAL',
+                color: '#38bdf8',
+              });
+            } else {
+              // Ground neon barrier
+              const h = 42 + Math.random() * 26;
+              obstacles.push({
+                x: canvas.width + 40,
+                y: groundY - h,
+                w: 26,
+                h: h,
+                type: 'GROUND',
+                color: '#f43f5e',
+              });
+            }
+          }
+
+          // Update & Check Obstacles
+          for (let i = obstacles.length - 1; i >= 0; i--) {
+            const obs = obstacles[i];
+            obs.x -= currentSpeed;
+
+            // Draw Obstacle
+            ctx.save();
+            ctx.fillStyle = obs.color;
+            ctx.shadowColor = obs.color;
+            ctx.shadowBlur = 18;
+            ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
+            ctx.restore();
+
+            // Collision Detection
+            const px = player.x;
+            const py = player.y;
+            const pw = player.w;
+            const ph = player.isSliding ? 28 : player.h;
+
+            if (
+              px < obs.x + obs.w &&
+              px + pw > obs.x &&
+              py < obs.y + obs.h &&
+              py + ph > obs.y
+            ) {
+              isDead = true;
+              playSynthSound(140, 'sawtooth', 0.45, 0.25);
+              if (window.parent && window.parent !== window) {
+                window.parent.postMessage({ type: 'GV_GAME_OVER', score: Math.floor(score / 10) }, '*');
+              }
+            }
+
+            if (obs.x + obs.w < -20) {
+              obstacles.splice(i, 1);
+            }
+          }
+        }
+
+        // Draw Player Trail
+        for (const t of player.trail) {
+          ctx.fillStyle = `rgba(6, 182, 212, ${t.alpha})`;
+          ctx.fillRect(t.x, t.y, t.w, t.h);
+          t.alpha *= 0.7;
+        }
+
+        // Draw Player
+        const currentH = player.isSliding ? 28 : 52;
+        ctx.save();
+        ctx.fillStyle = '#06b6d4';
+        ctx.shadowColor = '#06b6d4';
+        ctx.shadowBlur = 22;
+        ctx.fillRect(player.x, player.y, player.w, currentH);
+
+        // Cyber visor
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(player.x + 18, player.y + 8, 14, 10);
+        ctx.restore();
+
+        // 4. In-Game HUD
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 22px monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText(`SCORE: ${Math.floor(score / 10)}`, 30, 45);
+
+        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        ctx.font = '14px monospace';
+        ctx.fillText(`BEST: ${Math.floor(highScore / 10)}`, 30, 70);
+
+        // Title / Start Splash
+        if (!gameStarted) {
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          ctx.fillStyle = '#a855f7';
+          ctx.font = '900 42px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.shadowColor = '#a855f7';
+          ctx.shadowBlur = 25;
+          ctx.fillText('NEON CYBER RUNNER 2088', canvas.width / 2, canvas.height / 2 - 30);
+          ctx.shadowBlur = 0;
+
+          ctx.fillStyle = '#38bdf8';
+          ctx.font = 'bold 20px monospace';
+          ctx.fillText('CLICK OR PRESS SPACE TO START', canvas.width / 2, canvas.height / 2 + 25);
+
+          ctx.fillStyle = 'rgba(255,255,255,0.7)';
+          ctx.font = '13px sans-serif';
+          ctx.fillText('SPACE / UP: Jump & Double Jump  •  DOWN: Slide Under Beams', canvas.width / 2, canvas.height / 2 + 65);
+        }
+
+        // Game Over Splash
+        if (isDead) {
+          ctx.fillStyle = 'rgba(10, 0, 15, 0.78)';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          ctx.fillStyle = '#f43f5e';
+          ctx.font = '900 48px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.shadowColor = '#f43f5e';
+          ctx.shadowBlur = 30;
+          ctx.fillText('SYSTEM OVERRIDE: CRASHED', canvas.width / 2, canvas.height / 2 - 25);
+          ctx.shadowBlur = 0;
+
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 22px monospace';
+          ctx.fillText(`FINAL SCORE: ${Math.floor(score / 10)}`, canvas.width / 2, canvas.height / 2 + 25);
+
+          ctx.fillStyle = '#38bdf8';
+          ctx.font = '16px monospace';
+          ctx.fillText('PRESS SPACE OR CLICK TO REBOOT RUNNER', canvas.width / 2, canvas.height / 2 + 65);
+        }
+      }
+
+      loop();
+    })();
+  </script>
+</body>
+</html>

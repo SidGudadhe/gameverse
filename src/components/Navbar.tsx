@@ -21,6 +21,11 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Hide Navbar completely inside sandboxed game runner iframes
+  if (pathname.startsWith('/sandbox')) {
+    return null;
+  }
+
   const isDev = pathname.startsWith('/developer');
   const isAdmin = pathname.startsWith('/admin');
   const isDesign = pathname.startsWith('/design-system');

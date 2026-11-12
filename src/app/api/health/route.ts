@@ -33,6 +33,9 @@ export async function GET() {
   // 2. In-Memory Index Engine Check
   try {
     const idxStart = Date.now();
+    if (!globalIndexEngine.getIndexStats().isBuilt) {
+      globalIndexEngine.rebuildIndexes(gvDb.state);
+    }
     const stats = globalIndexEngine.getIndexStats();
     checks.indexes = {
       status: stats.isBuilt ? 'UP' : 'DOWN',

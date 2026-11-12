@@ -36,6 +36,16 @@ describe('Player Portal Routes & Integration Tests', () => {
     }
 
     gvDb.deletePlayerPayoutMethod(TEST_USER.userId);
+    if (gvDb.state.playerPayoutRequests) {
+      gvDb.state.playerPayoutRequests = gvDb.state.playerPayoutRequests.filter(
+        (r) => r.userId !== TEST_USER.userId
+      );
+    }
+    if (gvDb.state.playerWallets) {
+      gvDb.state.playerWallets = gvDb.state.playerWallets.filter(
+        (w) => w.userId !== TEST_USER.userId
+      );
+    }
 
     token = generateToken({
       userId: TEST_USER.userId,
@@ -191,6 +201,73 @@ describe('Player Portal Routes & Integration Tests', () => {
     });
     const res2 = await requestPayout(badReq2);
     expect(res2.status).toBe(400);
+
+    // Below minimum threshold of ₹500
+    const badReq3 = new NextRequest('http://localhost:3000/api/player/payouts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ method: 'UPI', accountDetails: 'user@okhdfcbank', amount: 250 }),
+    });
+    const res3 = await requestPayout(badReq3);
+    expect(res3.status).toBe(400);
+    const data3 = await res3.json();
+    expect(data3.error).toContain('500');
+  });
+
+  it('9b. POST /api/player/payouts should reject requests if user balance is below ₹500', async () => {
+    const lowUser = {
+      userId: 'usr_low_balance_test',
+      email: 'lowbal@gameverse.test',
+      name: 'LowBal',
+      role: 'PLAYER' as UserRole,
+    };
+    gvDb.createUser({
+      id: lowUser.userId,
+      email: lowUser.email,
+      name: lowUser.name,
+      passwordHash: 'hash',
+      role: 'PLAYER',
+      createdAt: new Date().toISOString(),
+    });
+    const lowToken = generateToken(lowUser);
+
+    // Record past payout so remaining balance is only ₹200 (less than 500)
+    if (!gvDb.state.playerPayoutRequests) gvDb.state.playerPayoutRequests = [];
+    gvDb.state.playerPayoutRequests = gvDb.state.playerPayoutRequests.filter(
+      (r) => r.userId !== lowUser.userId
+    );
+    gvDb.state.playerPayoutRequests.push({
+      id: 'past-paid-1',
+      userId: lowUser.userId,
+      amount: 1300,
+      currency: 'INR',
+      method: 'UPI',
+      accountDetails: 'lowbal@upi',
+      status: 'PAID',
+      requestedAt: new Date().toISOString(),
+      transactionRef: 'TXN-PAID-1',
+    });
+
+    const lowReq = new NextRequest('http://localhost:3000/api/player/payouts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${lowToken}`,
+      },
+      body: JSON.stringify({
+        method: 'UPI',
+        accountDetails: 'lowbal@upi',
+        amount: 500,
+      }),
+    });
+    const lowRes = await requestPayout(lowReq);
+    expect(lowRes.status).toBe(400);
+    const lowData = await lowRes.json();
+    expect(lowData.error).toContain('500');
+    expect(lowData.needed).toBe(300);
   });
 
   it('10. POST /api/player/payouts should create a pending payout request for valid submission', async () => {
@@ -434,6 +511,16 @@ describe('Player Portal Routes & Integration Tests', () => {
   it('14. Player Multi-UPI Support (Allows up to 4 UPI IDs, rejects 5th, supports switching active)', async () => {
     // Clear existing methods for test user
     gvDb.deletePlayerPayoutMethod(TEST_USER.userId);
+    if (gvDb.state.playerPayoutRequests) {
+      gvDb.state.playerPayoutRequests = gvDb.state.playerPayoutRequests.filter(
+        (r) => r.userId !== TEST_USER.userId
+      );
+    }
+    if (gvDb.state.playerWallets) {
+      gvDb.state.playerWallets = gvDb.state.playerWallets.filter(
+        (w) => w.userId !== TEST_USER.userId
+      );
+    }
 
     // 14a. Add UPI #1 (Google Pay)
     const upi1Res = await requestPayout(

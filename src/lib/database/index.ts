@@ -1826,7 +1826,7 @@ class GameVerseDatabase {
     const computedEarned = 1500 + Math.round(totalPlayMinutes * 5) + history.length * 50;
 
     if (!wallet) {
-      const totalEarned = Math.max(computedEarned, lifetimeWithdrawn + inProcessing + 500);
+      const totalEarned = Math.max(computedEarned, lifetimeWithdrawn + inProcessing);
       const availableBalance = Math.max(0, totalEarned - lifetimeWithdrawn - inProcessing);
       wallet = {
         userId,

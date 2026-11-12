@@ -21,9 +21,16 @@ export async function GET(req: NextRequest) {
     const savedMethod = gvDb.getPlayerPayoutMethod(authUser.userId) || null;
     const wallet = gvDb.getPlayerWallet(authUser.userId);
 
+    const minWithdrawal = 500;
+    const thresholdMet = wallet.availableBalance >= minWithdrawal;
+    const neededToUnlock = Math.max(0, minWithdrawal - wallet.availableBalance);
+
     return NextResponse.json({
       success: true,
       wallet,
+      minWithdrawal,
+      thresholdMet,
+      neededToUnlock,
       stats: {
         gamesPlayed: history.length,
         totalPlayMinutes: totalMinutes,
@@ -176,10 +183,39 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const numAmount = amount ? Number(amount) : 100;
-    if (isNaN(numAmount) || numAmount <= 0) {
+    const MINIMUM_PAYOUT = 500;
+    const wallet = gvDb.getPlayerWallet(user!.userId);
+
+    // Rule: Agar account me kam paise hai to 500 complete karne honge, uske baad hi withdrawal hoga
+    if (wallet.availableBalance < MINIMUM_PAYOUT) {
+      const needed = Math.max(0, MINIMUM_PAYOUT - wallet.availableBalance);
       return NextResponse.json(
-        { error: 'Please enter a valid payout amount greater than 0.' },
+        {
+          error: `Aapke account me sirf ₹${wallet.availableBalance.toFixed(2)} hain. Withdraw karne ke liye aapko kam se kam ₹${MINIMUM_PAYOUT} balance complete karna hoga (Remaining needed: ₹${needed.toFixed(2)}). Games khel kar ₹${MINIMUM_PAYOUT} pura karein!`,
+          threshold: MINIMUM_PAYOUT,
+          currentBalance: wallet.availableBalance,
+          needed,
+        },
+        { status: 400 }
+      );
+    }
+
+    const numAmount = amount !== undefined && amount !== null && amount !== '' ? Number(amount) : MINIMUM_PAYOUT;
+    if (isNaN(numAmount) || numAmount < MINIMUM_PAYOUT) {
+      return NextResponse.json(
+        {
+          error: `Minimum withdrawal amount is ₹${MINIMUM_PAYOUT}. Aap ₹${MINIMUM_PAYOUT} ke niche withdrawal nahi kar sakte.`,
+          threshold: MINIMUM_PAYOUT,
+        },
+        { status: 400 }
+      );
+    }
+
+    if (numAmount > wallet.availableBalance) {
+      return NextResponse.json(
+        {
+          error: `Withdrawal amount cannot exceed your available balance of ₹${wallet.availableBalance.toFixed(2)}.`,
+        },
         { status: 400 }
       );
     }

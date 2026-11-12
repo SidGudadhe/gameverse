@@ -4,7 +4,7 @@ import { gvDb } from '@/lib/database';
 import HeroCarousel from '@/components/HeroCarousel';
 import GameCard from '@/components/GameCard';
 import AdaptiveRecommendations from '@/components/AdaptiveRecommendations';
-import { Flame, Trophy, Gamepad2, ArrowRight } from 'lucide-react';
+import { Flame, Trophy, Sparkles, Gamepad2, ArrowRight } from 'lucide-react';
 
 export default function HomePage() {
   const allGames = gvDb.getGames({ status: 'PUBLISHED' });

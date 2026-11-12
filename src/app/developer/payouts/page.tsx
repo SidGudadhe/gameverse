@@ -386,22 +386,22 @@ export default function PayoutsPage() {
 
       {/* Payout Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {/* Card 1: Payout Option Status */}
+        {/* Card 1: Available Creator Balance */}
         <div className="bg-[#0B0F19] rounded-2xl p-6 border border-slate-800 shadow-xl relative overflow-hidden flex flex-col justify-between">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                Payout Engine
+                Available Balance
               </span>
               <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-[10px] font-bold text-emerald-400">
-                Option Enabled
+                Ready to Withdraw
               </span>
             </div>
-            <div className="font-heading font-black text-2xl text-white">
-              Payout Requests Open
+            <div className="font-heading font-black text-3xl text-emerald-400 font-mono">
+              ${(summary?.availableBalance ?? 0).toFixed(2)}
             </div>
             <p className="text-[11px] text-slate-400">
-              Payout option active hai. Rate calculation formula jald add kiya jayega.
+              Payout option active hai. Rate calculation formula jald finalize kiya jayega.
             </p>
           </div>
 
@@ -710,9 +710,26 @@ export default function PayoutsPage() {
 
         <form onSubmit={handleSubmitPayoutRequest} className="space-y-6">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-              Enter Withdrawal Amount ($)
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                Enter Withdrawal Amount ($)
+              </label>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-slate-400">
+                  Available:{' '}
+                  <strong className="text-emerald-400 font-mono">
+                    ${(summary?.availableBalance ?? 0).toFixed(2)}
+                  </strong>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setAmount(String(summary?.availableBalance ?? 0))}
+                  className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition-colors cursor-pointer"
+                >
+                  Use Max
+                </button>
+              </div>
+            </div>
             <div className="relative max-w-md">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-base">
                 $
@@ -782,7 +799,12 @@ export default function PayoutsPage() {
           <div className="flex items-center justify-end pt-2">
             <button
               type="submit"
-              disabled={submittingPayout || !isMethodConfigured}
+              disabled={
+                submittingPayout ||
+                !isMethodConfigured ||
+                !amount ||
+                Number(amount) <= 0
+              }
               className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold text-xs px-7 py-3 rounded-xl shadow-lg shadow-emerald-600/30 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             >
               <Send className="w-3.5 h-3.5" />

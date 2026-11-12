@@ -35,6 +35,8 @@ describe('Player Portal Routes & Integration Tests', () => {
       });
     }
 
+    gvDb.deletePlayerPayoutMethod(TEST_USER.userId);
+
     token = generateToken({
       userId: TEST_USER.userId,
       email: TEST_USER.email,

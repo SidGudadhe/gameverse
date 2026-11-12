@@ -326,6 +326,16 @@ export interface PlayerPayoutRequest {
   note?: string;
 }
 
+export interface PlayerWallet {
+  userId: string;
+  availableBalance: number;
+  inProcessing: number;
+  lifetimeWithdrawn: number;
+  totalEarned: number;
+  currency: string;
+  updatedAt: string;
+}
+
 export interface GameReview {
   id: string;
   gameId: string;

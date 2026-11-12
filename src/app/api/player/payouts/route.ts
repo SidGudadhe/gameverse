@@ -19,9 +19,11 @@ export async function GET(req: NextRequest) {
     const requests = gvDb.getPlayerPayoutRequests(authUser.userId);
     const savedMethods = gvDb.getPlayerPayoutMethods(authUser.userId);
     const savedMethod = gvDb.getPlayerPayoutMethod(authUser.userId) || null;
+    const wallet = gvDb.getPlayerWallet(authUser.userId);
 
     return NextResponse.json({
       success: true,
+      wallet,
       stats: {
         gamesPlayed: history.length,
         totalPlayMinutes: totalMinutes,

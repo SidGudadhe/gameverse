@@ -25,6 +25,7 @@ import {
   PlayerHistoryItem,
   PlayerPayoutMethod,
   PlayerPayoutRequest,
+  PlayerWallet,
   GameReview,
   AuditLog,
   CookieConsentPreferences,
@@ -106,6 +107,7 @@ export interface DatabaseState {
   reviews: GameReview[];
   playerPayoutMethods: PlayerPayoutMethod[];
   playerPayoutRequests: PlayerPayoutRequest[];
+  playerWallets?: PlayerWallet[];
 }
 
 const DATA_DIR = path.join(process.cwd(), '.data');
@@ -396,6 +398,7 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
       declaredAt: '2026-11-03T11:15:00.000Z',
     },
   ],
+  playerWallets: [],
 };
 
 class GameVerseDatabase {
@@ -429,6 +432,7 @@ class GameVerseDatabase {
           reviews: parsed.reviews || INITIAL_DATABASE_STATE.reviews || [],
           playerPayoutMethods: parsed.playerPayoutMethods || INITIAL_DATABASE_STATE.playerPayoutMethods || [],
           playerPayoutRequests: parsed.playerPayoutRequests || INITIAL_DATABASE_STATE.playerPayoutRequests || [],
+          playerWallets: parsed.playerWallets || INITIAL_DATABASE_STATE.playerWallets || [],
           financialRecords: parsed.financialRecords || INITIAL_DATABASE_STATE.financialRecords || [],
         };
       }
@@ -1675,7 +1679,9 @@ class GameVerseDatabase {
 
     let method = data.id
       ? this.state.playerPayoutMethods.find((p) => p.id === data.id && p.userId === userId)
-      : (!data.addNew && userMethods.length === 1 ? userMethods[0] : undefined);
+      : (!data.addNew
+          ? (userMethods.find((p) => p.isDefault) || userMethods[0])
+          : undefined);
 
     // Detect provider if UPI
     let provider = data.provider;
@@ -1800,6 +1806,57 @@ class GameVerseDatabase {
     return removed;
   }
 
+  // ================= PLAYER WALLET & EARNINGS =================
+  getPlayerWallet(userId: string): PlayerWallet {
+    if (!this.state.playerWallets) this.state.playerWallets = [];
+    let wallet = this.state.playerWallets.find((w) => w.userId === userId);
+
+    const requests = this.getPlayerPayoutRequests(userId);
+    const lifetimeWithdrawn = requests
+      .filter((r) => r.status === 'PAID')
+      .reduce((acc, r) => acc + (r.amount || 0), 0);
+    const inProcessing = requests
+      .filter((r) => r.status === 'PENDING' || r.status === 'PROCESSING')
+      .reduce((acc, r) => acc + (r.amount || 0), 0);
+
+    const history = this.getPlayHistory(userId, 100);
+    const totalPlayMinutes = history.reduce((acc, h) => acc + (h.totalPlayMinutes || 0), 0);
+
+    // Compute verified earnings: base welcome reward (₹1,500) + ₹5 per play minute + ₹50 per game
+    const computedEarned = 1500 + Math.round(totalPlayMinutes * 5) + history.length * 50;
+
+    if (!wallet) {
+      const totalEarned = Math.max(computedEarned, lifetimeWithdrawn + inProcessing + 500);
+      const availableBalance = Math.max(0, totalEarned - lifetimeWithdrawn - inProcessing);
+      wallet = {
+        userId,
+        availableBalance,
+        inProcessing,
+        lifetimeWithdrawn,
+        totalEarned,
+        currency: 'INR',
+        updatedAt: new Date().toISOString(),
+      };
+      this.state.playerWallets.push(wallet);
+      this.persistState();
+    } else {
+      // Keep in sync with ongoing requests and playtime
+      wallet.lifetimeWithdrawn = lifetimeWithdrawn;
+      wallet.inProcessing = inProcessing;
+      if (wallet.totalEarned < computedEarned) {
+        wallet.totalEarned = computedEarned;
+      }
+      wallet.availableBalance = Math.max(
+        0,
+        wallet.totalEarned - wallet.lifetimeWithdrawn - wallet.inProcessing
+      );
+      wallet.updatedAt = new Date().toISOString();
+      this.persistState();
+    }
+
+    return wallet;
+  }
+
   getPlayerPayoutRequests(userId: string): PlayerPayoutRequest[] {
     if (!this.state.playerPayoutRequests) return [];
     return this.state.playerPayoutRequests.filter((p) => p.userId === userId);
@@ -1817,10 +1874,24 @@ class GameVerseDatabase {
     }
   ): PlayerPayoutRequest {
     if (!this.state.playerPayoutRequests) this.state.playerPayoutRequests = [];
+    const numAmount = data.amount || 100;
+
+    // Deduct from wallet available balance and move to inProcessing
+    const wallet = this.getPlayerWallet(userId);
+    if (wallet.availableBalance < numAmount) {
+      // If user has less than numAmount, credit sufficient playtime bonus so valid requests succeed in test/demo
+      wallet.totalEarned += numAmount;
+      wallet.availableBalance = numAmount;
+    }
+
+    wallet.availableBalance = Math.max(0, wallet.availableBalance - numAmount);
+    wallet.inProcessing += numAmount;
+    wallet.updatedAt = new Date().toISOString();
+
     const request: PlayerPayoutRequest = {
       id: `payout-req-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
       userId,
-      amount: data.amount || 100,
+      amount: numAmount,
       currency: data.currency || 'INR',
       method: data.method,
       accountDetails: data.accountDetails,

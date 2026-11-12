@@ -96,6 +96,9 @@ export default function PlayerPayoutsPage() {
   const [requests, setRequests] = useState<PayoutRequestItem[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Pop-up modal state for selecting payment method (up to 4 UPI IDs)
+  const [isSelectMethodModalOpen, setIsSelectMethodModalOpen] = useState(false);
+
   // Modal / Drawer state for adding or editing account
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMethodId, setEditingMethodId] = useState<string | null>(null);
@@ -436,8 +439,7 @@ export default function PlayerPayoutsPage() {
         <div className="animate-pulse space-y-6">
           <div className="h-6 w-36 bg-slate-800 rounded-md" />
           <div className="h-28 bg-[#121826] rounded-2xl border border-slate-800" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="h-24 bg-[#121826] rounded-2xl border border-slate-800" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="h-24 bg-[#121826] rounded-2xl border border-slate-800" />
             <div className="h-24 bg-[#121826] rounded-2xl border border-slate-800" />
           </div>
@@ -594,7 +596,7 @@ export default function PlayerPayoutsPage() {
       </div>
 
       {/* Hero Metric Cards (Stripe / Deel Style) */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="bg-[#121826] rounded-2xl p-5 border border-slate-800 flex items-center justify-between shadow-sm">
           <div>
             <span className="text-xs font-medium text-slate-400 block uppercase tracking-wider">
@@ -627,23 +629,6 @@ export default function PlayerPayoutsPage() {
           </div>
           <div className="w-11 h-11 rounded-xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-center text-slate-300">
             <Clock className="w-5 h-5 text-amber-400" />
-          </div>
-        </div>
-
-        <div className="bg-[#121826] rounded-2xl p-5 border border-slate-800 flex items-center justify-between shadow-sm">
-          <div>
-            <span className="text-xs font-medium text-slate-400 block uppercase tracking-wider">
-              Saved Payout Accounts
-            </span>
-            <div className="text-2xl font-bold text-white mt-1 font-mono">
-              {savedMethods.length} <span className="text-sm font-normal text-slate-400">/ 4 Slots</span>
-            </div>
-            <span className="text-[11px] text-cyan-400 font-medium mt-1 block">
-              {savedMethods.length === 4 ? 'All slots linked' : `${4 - savedMethods.length} slots available`}
-            </span>
-          </div>
-          <div className="w-11 h-11 rounded-xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-center text-slate-300">
-            <Coins className="w-5 h-5 text-emerald-400" />
           </div>
         </div>
       </div>
@@ -681,192 +666,128 @@ export default function PlayerPayoutsPage() {
 
       {/* MAIN TWO-COLUMN WORKFLOW SECTION */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* LEFT COLUMN: MULTI-UPI DESTINATIONS (UP TO 4) & WITHDRAWAL FORM */}
+        {/* LEFT COLUMN: WITHDRAWAL FORM */}
         <div className="lg:col-span-8 space-y-6">
-          {/* 1. SAVED UPI DESTINATIONS (MAX 4 SLOTS) */}
-          <div className="bg-[#121826] rounded-2xl p-6 border border-slate-800 shadow-sm space-y-4">
+          {/* WITHDRAWAL ACTION PANEL */}
+          <div className="bg-[#121826] rounded-2xl p-6 border border-slate-800 shadow-sm space-y-5">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
               <div>
                 <h2 className="text-base font-semibold text-white flex items-center gap-2">
-                  <Coins className="w-4 h-4 text-emerald-400" />
-                  <span>Withdrawal Destinations (Up to 4 UPI IDs)</span>
+                  <Wallet className="w-4 h-4 text-emerald-400" />
+                  <span>Withdraw Rewards</span>
                 </h2>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  Select which UPI ID will receive your withdrawal, or add up to 4 accounts (Google Pay, PhonePe, Paytm, BHIM).
+                  Funds are disbursed directly to your active UPI ID via IMPS instant clearing.
                 </p>
               </div>
 
-              {savedMethods.length < 4 && (
-                <button
-                  type="button"
-                  onClick={handleOpenAddModal}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold transition-all active:scale-95 cursor-pointer shrink-0"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>Add UPI ID ({savedMethods.length}/4)</span>
-                </button>
-              )}
-            </div>
-
-            {/* List of Slots / Account Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
-              {savedMethods.map((m) => {
-                const info = getProviderInfo(m);
-                const ProviderIcon = info.icon;
-                const isSelected = selectedMethodId === m.id;
-
-                return (
-                  <div
-                    key={m.id}
-                    onClick={() => setSelectedMethodId(m.id)}
-                    className={`relative p-4 rounded-xl border transition-all cursor-pointer flex flex-col justify-between space-y-3 ${
-                      isSelected
-                        ? 'bg-slate-900/90 border-emerald-500/50 shadow-md shadow-emerald-500/5 ring-1 ring-emerald-500/40'
-                        : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 text-slate-300'
-                    }`}
-                  >
-                    {/* Header Row: Provider Badge + Primary Tag */}
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
-                            isSelected
-                              ? 'border-emerald-400 bg-emerald-400 text-slate-950'
-                              : 'border-slate-600 bg-transparent'
-                          }`}
-                        >
-                          {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-slate-950" />}
-                        </div>
-
-                        <span
-                          className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md border ${info.badgeClass}`}
-                        >
-                          <ProviderIcon className="w-3 h-3" />
-                          <span>{info.brand}</span>
-                        </span>
-                      </div>
-
-                      {m.isDefault ? (
-                        <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                          Primary
-                        </span>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleSetPrimary(m.id);
-                          }}
-                          className="text-[10px] font-medium text-slate-400 hover:text-slate-200 transition-colors"
-                        >
-                          Make Primary
-                        </button>
-                      )}
-                    </div>
-
-                    {/* Body: VPA & Name */}
-                    <div className="space-y-0.5">
-                      <div className="text-xs font-semibold text-white font-mono truncate">
-                        {m.accountDetails}
-                      </div>
-                      <div className="text-[11px] text-slate-400 truncate">
-                        {m.label || m.beneficiaryName || 'Verified Payout Account'}
-                      </div>
-                    </div>
-
-                    {/* Footer Actions */}
-                    <div className="flex items-center justify-between pt-2 border-t border-slate-800/80 text-[11px]">
-                      <span className="text-[10px] text-slate-500">
-                        {isSelected ? 'Active for withdrawal' : 'Click to select'}
-                      </span>
-
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleOpenEditModal(m);
-                          }}
-                          title="Edit Account Details"
-                          className="text-slate-400 hover:text-cyan-300 transition-colors p-1"
-                        >
-                          <Edit3 className="w-3.5 h-3.5" />
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteMethod(m.id, m.label || m.accountDetails);
-                          }}
-                          title="Remove Account"
-                          className="text-slate-400 hover:text-rose-400 transition-colors p-1"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-
-              {/* Empty Slot Card if less than 4 accounts */}
-              {savedMethods.length < 4 && (
-                <div
-                  onClick={handleOpenAddModal}
-                  className="p-5 rounded-xl border border-dashed border-slate-800 hover:border-slate-700 bg-slate-950/30 text-center flex flex-col items-center justify-center space-y-2 cursor-pointer transition-all hover:bg-slate-900/40 min-h-[140px]"
-                >
-                  <div className="w-9 h-9 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center">
-                    <Plus className="w-4 h-4 text-emerald-400" />
-                  </div>
-                  <div>
-                    <div className="text-xs font-semibold text-slate-300">
-                      Link UPI ID (Slot {savedMethods.length + 1} of 4)
-                    </div>
-                    <div className="text-[11px] text-slate-500 mt-0.5">
-                      Google Pay, PhonePe, Paytm, BHIM
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* 2. WITHDRAWAL ACTION PANEL (FINTECH STYLE) */}
-          <div className="bg-[#121826] rounded-2xl p-6 border border-slate-800 shadow-sm space-y-5">
-            <div className="border-b border-slate-800 pb-3">
-              <h2 className="text-base font-semibold text-white flex items-center gap-2">
-                <Wallet className="w-4 h-4 text-cyan-400" />
-                <span>Withdraw Rewards</span>
-              </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Funds are disbursed directly to your active UPI ID via IMPS instant clearing.
-              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  if (savedMethods.length === 0) {
+                    handleOpenAddModal();
+                  } else {
+                    setIsSelectMethodModalOpen(true);
+                  }
+                }}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold transition-all active:scale-95 cursor-pointer self-start sm:self-auto"
+              >
+                <Coins className="w-3.5 h-3.5" />
+                <span>Select Payment Method ({savedMethods.length}/4)</span>
+              </button>
             </div>
 
             <form onSubmit={handleSubmitPayoutRequest} className="space-y-5">
-              {/* Selected Destination Indicator Strip */}
-              {selectedMethod ? (
-                <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                    <span className="text-slate-400">Withdrawing to:</span>
-                    <span className="font-mono text-white font-semibold">
-                      {selectedMethod.accountDetails}
-                    </span>
-                    <span className="text-[10px] text-slate-400 bg-slate-800 px-2 py-0.5 rounded">
-                      {selectedMethod.label || selectedMethod.method}
-                    </span>
-                  </div>
+              {/* Payment Method Selector Card (Triggers Pop-up Modal) */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                    Receiving Account
+                  </label>
+                  <span className="text-[11px] text-slate-400 font-mono">
+                    {savedMethods.length}/4 UPI IDs linked
+                  </span>
+                </div>
 
-                  <span className="text-[11px] text-emerald-400 font-medium">Ready</span>
-                </div>
-              ) : (
-                <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300 flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 shrink-0" />
-                  <span>Please add your first UPI ID above to unlock withdrawal requests.</span>
-                </div>
-              )}
+                {selectedMethod ? (
+                  <div
+                    onClick={() => setIsSelectMethodModalOpen(true)}
+                    className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 hover:border-slate-700 transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 group"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${getProviderInfo(selectedMethod).badgeClass}`}>
+                        {React.createElement(getProviderInfo(selectedMethod).icon, { className: 'w-5 h-5' })}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-bold text-white font-mono truncate">
+                            {selectedMethod.accountDetails}
+                          </span>
+                          {selectedMethod.isDefault && (
+                            <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 shrink-0">
+                              Primary
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-slate-400 truncate">
+                          {getProviderInfo(selectedMethod).brand} &bull; {selectedMethod.label || selectedMethod.beneficiaryName || 'Verified Payout Account'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsSelectMethodModalOpen(true);
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-slate-900 group-hover:bg-slate-800 border border-slate-700 text-xs font-medium text-cyan-300 group-hover:text-cyan-200 transition-colors cursor-pointer"
+                      >
+                        <Coins className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Select Payment Method</span>
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    onClick={() => {
+                      if (savedMethods.length === 0) {
+                        handleOpenAddModal();
+                      } else {
+                        setIsSelectMethodModalOpen(true);
+                      }
+                    }}
+                    className="p-4 rounded-xl border border-dashed border-amber-500/40 bg-amber-500/5 hover:bg-amber-500/10 transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+                        <AlertCircle className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="text-xs sm:text-sm font-semibold text-amber-300">
+                          No Payout Method Selected
+                        </div>
+                        <div className="text-[11px] text-slate-400 mt-0.5">
+                          Click to select or link up to 4 UPI IDs (Google Pay, PhonePe, Paytm, BHIM)
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenAddModal();
+                      }}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition-colors shrink-0 cursor-pointer shadow-sm shadow-emerald-500/20"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Link UPI ID</span>
+                    </button>
+                  </div>
+                )}
+              </div>
 
               {/* Amount Input */}
               <div className="space-y-2">
@@ -1239,7 +1160,196 @@ export default function PlayerPayoutsPage() {
         </div>
       </div>
 
-      {/* 4. MODAL / DIALOG: ADD OR EDIT PAYOUT ACCOUNT (UP TO 4 SLOTS) */}
+      {/* 4. POP-UP MODAL: SELECT PAYMENT METHOD (UP TO 4 UPI IDs) */}
+      {isSelectMethodModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
+          <div className="bg-[#121826] border border-slate-700/80 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden space-y-4 p-6 animate-scale-up">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-base font-bold text-white flex items-center gap-2">
+                    <Coins className="w-4 h-4 text-emerald-400" />
+                    <span>Select Payment Method</span>
+                  </h3>
+                  <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-cyan-300 border border-slate-700">
+                    {savedMethods.length}/4 Linked
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  Choose which UPI ID will receive your withdrawal, or manage up to 4 accounts.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsSelectMethodModalOpen(false)}
+                className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Body: List of Saved Accounts */}
+            <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
+              {savedMethods.length === 0 ? (
+                <div className="p-6 rounded-xl border border-dashed border-slate-800 bg-slate-950/40 text-center space-y-3">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mx-auto">
+                    <AlertCircle className="w-6 h-6" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-semibold text-white">No Payout Accounts Linked</p>
+                    <p className="text-xs text-slate-400 max-w-xs mx-auto">
+                      Link your first Google Pay, PhonePe, Paytm, BHIM, or Bank Account to withdraw your earnings.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsSelectMethodModalOpen(false);
+                      handleOpenAddModal();
+                    }}
+                    className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs px-5 py-2.5 rounded-xl transition-all shadow-md shadow-emerald-500/20 cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Link First UPI ID (Slot 1 of 4)</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2.5">
+                  {savedMethods.map((m) => {
+                    const info = getProviderInfo(m);
+                    const ProviderIcon = info.icon;
+                    const isSelected = selectedMethodId === m.id || (!selectedMethodId && m.isDefault);
+
+                    return (
+                      <div
+                        key={m.id}
+                        onClick={() => setSelectedMethodId(m.id)}
+                        className={`p-3.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                          isSelected
+                            ? 'bg-slate-900 border-emerald-500/60 shadow-md shadow-emerald-500/5 ring-1 ring-emerald-500/40'
+                            : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 text-slate-300'
+                        }`}
+                      >
+                        {/* Left: Radio indicator + Provider badge + Details */}
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div
+                            className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
+                              isSelected
+                                ? 'border-emerald-400 bg-emerald-400 text-slate-950'
+                                : 'border-slate-600 bg-transparent'
+                            }`}
+                          >
+                            {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-slate-950" />}
+                          </div>
+
+                          <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border ${info.badgeClass}`}>
+                            <ProviderIcon className="w-4 h-4" />
+                          </div>
+
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs sm:text-sm font-semibold text-white font-mono truncate">
+                                {m.accountDetails}
+                              </span>
+                              {m.isDefault && (
+                                <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 shrink-0">
+                                  Primary
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-[11px] text-slate-400 truncate">
+                              {info.brand} &bull; {m.label || m.beneficiaryName || 'Verified Payout Account'}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Right: Actions (Set Primary, Edit, Delete) */}
+                        <div className="flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
+                          {!m.isDefault && (
+                            <button
+                              type="button"
+                              onClick={() => handleSetPrimary(m.id)}
+                              className="text-[10px] font-medium text-slate-400 hover:text-slate-200 bg-slate-900 hover:bg-slate-800 border border-slate-800 px-2 py-1 rounded transition-colors cursor-pointer"
+                            >
+                              Make Primary
+                            </button>
+                          )}
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsSelectMethodModalOpen(false);
+                              handleOpenEditModal(m);
+                            }}
+                            title="Edit Account Details"
+                            className="w-7 h-7 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-cyan-300 flex items-center justify-center transition-colors cursor-pointer"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteMethod(m.id, m.label || m.accountDetails)}
+                            title="Remove Account"
+                            className="w-7 h-7 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-rose-400 flex items-center justify-center transition-colors cursor-pointer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  {/* Add New Slot inside Modal if < 4 */}
+                  {savedMethods.length < 4 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsSelectMethodModalOpen(false);
+                        handleOpenAddModal();
+                      }}
+                      className="w-full p-3 rounded-xl border border-dashed border-slate-800 hover:border-slate-700 bg-slate-950/30 hover:bg-slate-900/40 text-slate-400 hover:text-white transition-all flex items-center justify-center gap-2 text-xs font-semibold cursor-pointer"
+                    >
+                      <Plus className="w-4 h-4 text-emerald-400" />
+                      <span>Add Another UPI ID (Slot {savedMethods.length + 1} of 4)</span>
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex items-center justify-between pt-3 border-t border-slate-800 text-xs">
+              <span className="text-slate-500 text-[11px]">
+                {savedMethods.length < 4
+                  ? `${4 - savedMethods.length} empty slot(s) remaining`
+                  : 'All 4 payout slots linked'}
+              </span>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsSelectMethodModalOpen(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsSelectMethodModalOpen(false)}
+                  className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition-all shadow-md shadow-emerald-500/20 active:scale-95 cursor-pointer"
+                >
+                  Confirm Selection
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 5. MODAL / DIALOG: ADD OR EDIT PAYOUT ACCOUNT (UP TO 4 SLOTS) */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
           <div className="bg-[#121826] border border-slate-700/80 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden space-y-5 p-6 animate-scale-up">

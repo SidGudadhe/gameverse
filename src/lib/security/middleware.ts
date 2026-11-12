@@ -31,6 +31,42 @@ export function checkRateLimit(
   return { allowed: true, remaining: limit - record.count, resetAt: record.resetAt };
 }
 
+export function resetRateLimit(identifier?: string): void {
+  if (identifier) {
+    rateLimitMap.delete(identifier);
+  } else {
+    rateLimitMap.clear();
+  }
+}
+
+// Tiered Role / Portal Login Rate Limits Configuration
+export interface RoleRateLimitConfig {
+  maxAttempts: number;
+  windowMs: number;
+  label: string;
+}
+
+export const ROLE_LOGIN_RATE_LIMITS: Record<
+  'PLAYER' | 'DEVELOPER' | 'ADMIN',
+  RoleRateLimitConfig
+> = {
+  PLAYER: {
+    maxAttempts: 10,       // 10 attempts per minute for Gamers
+    windowMs: 60 * 1000,
+    label: 'Gamer Portal',
+  },
+  DEVELOPER: {
+    maxAttempts: 5,        // 5 attempts per minute for Creator Studios (high-value targets)
+    windowMs: 60 * 1000,
+    label: 'Developer Studio',
+  },
+  ADMIN: {
+    maxAttempts: 5,        // 5 attempts per minute for Admin & Staff Operations Suite
+    windowMs: 60 * 1000,
+    label: 'Admin Operations Suite',
+  },
+};
+
 export function extractAuth(req: NextRequest): TokenPayload | null {
   // Check Authorization: Bearer <token>
   const authHeader = req.headers.get('authorization');

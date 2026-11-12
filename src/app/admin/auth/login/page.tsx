@@ -15,6 +15,7 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [errorTitle, setErrorTitle] = useState('Incorrect Credentials');
   const [showErrorPopup, setShowErrorPopup] = useState(false);
 
   // 2FA state
@@ -40,7 +41,13 @@ export default function AdminLoginPage() {
       setLoading(false);
 
       if (!res.ok) {
-        setError(data.error || 'Invalid email or password.');
+        if (res.status === 429) {
+          setErrorTitle('Rate Limit Exceeded');
+          setError(data.error || 'Too many login attempts on the Admin Operations Suite. Please wait a minute before trying again.');
+        } else {
+          setErrorTitle('Incorrect Credentials');
+          setError(data.error || 'Invalid email or password.');
+        }
         setShowErrorPopup(true);
         return;
       }
@@ -54,6 +61,7 @@ export default function AdminLoginPage() {
       router.push('/admin');
     } catch {
       setLoading(false);
+      setErrorTitle('Connection Error');
       setError('Network connection error. Please try again.');
       setShowErrorPopup(true);
     }
@@ -107,7 +115,7 @@ export default function AdminLoginPage() {
             <AlertCircle className="w-5 h-5" />
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="text-sm font-bold text-white">Incorrect Credentials</h4>
+            <h4 className="text-sm font-bold text-white">{errorTitle}</h4>
             <p className="text-xs text-rose-300/90 mt-0.5">{error || 'Invalid email or password.'}</p>
           </div>
           <button

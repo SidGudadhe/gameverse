@@ -14,6 +14,7 @@ export default function GamerLoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [errorTitle, setErrorTitle] = useState('Incorrect Credentials');
   const [showErrorPopup, setShowErrorPopup] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -33,7 +34,13 @@ export default function GamerLoginPage() {
       setLoading(false);
 
       if (!res.ok) {
-        setError(data.error || 'Invalid email or password.');
+        if (res.status === 429) {
+          setErrorTitle('Rate Limit Exceeded');
+          setError(data.error || 'Too many login attempts on the Gamer Portal. Please wait a minute before trying again.');
+        } else {
+          setErrorTitle('Incorrect Credentials');
+          setError(data.error || 'Invalid email or password.');
+        }
         setShowErrorPopup(true);
         return;
       }
@@ -41,6 +48,7 @@ export default function GamerLoginPage() {
       router.push('/');
     } catch {
       setLoading(false);
+      setErrorTitle('Connection Error');
       setError('Network error occurred. Please try again.');
       setShowErrorPopup(true);
     }
@@ -63,7 +71,7 @@ export default function GamerLoginPage() {
             <AlertCircle className="w-5 h-5" />
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="text-sm font-bold text-white">Incorrect Credentials</h4>
+            <h4 className="text-sm font-bold text-white">{errorTitle}</h4>
             <p className="text-xs text-rose-300/90 mt-0.5">{error || 'Invalid email or password.'}</p>
           </div>
           <button

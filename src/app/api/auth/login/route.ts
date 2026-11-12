@@ -1,23 +1,82 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { gvDb } from '@/lib/database';
 import { verifyPassword, generateToken } from '@/lib/auth';
-import { checkRateLimit } from '@/lib/security/middleware';
+import { checkRateLimit, ROLE_LOGIN_RATE_LIMITS } from '@/lib/security/middleware';
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
-  const rateLimit = checkRateLimit(`login_${ip}`, 10, 60000); // 10 login attempts / min
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || '127.0.0.1';
 
-  if (!rateLimit.allowed) {
+  let body: any;
+  try {
+    body = await req.json();
+  } catch {
     return NextResponse.json(
-      { success: false, error: 'Too many login attempts. Please wait 60 seconds before trying again.' },
-      { status: 429 }
+      { success: false, error: 'Invalid JSON request payload.' },
+      { status: 400 }
     );
   }
 
-  try {
-    const body = await req.json();
-    const { email, password, portal } = body;
+  const { email, password, portal: rawPortal } = body || {};
+  const portal: 'PLAYER' | 'DEVELOPER' | 'ADMIN' =
+    rawPortal === 'DEVELOPER' || rawPortal === 'ADMIN' ? rawPortal : 'PLAYER';
 
+  const rateConfig = ROLE_LOGIN_RATE_LIMITS[portal] || ROLE_LOGIN_RATE_LIMITS.PLAYER;
+
+  // ================= TIERED RATE LIMITING PER ROLE / PORTAL =================
+  // 1. Per-IP & Portal tracking
+  const ipLimitKey = `login_portal_${portal.toLowerCase()}_ip_${ip}`;
+  const ipRateLimit = checkRateLimit(ipLimitKey, rateConfig.maxAttempts, rateConfig.windowMs);
+
+  // 2. Per-Email & Portal tracking (prevents distributed brute force against a specific account)
+  const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+  let emailRateLimit = { allowed: true, remaining: rateConfig.maxAttempts, resetAt: ipRateLimit.resetAt };
+  if (normalizedEmail) {
+    const emailLimitKey = `login_portal_${portal.toLowerCase()}_email_${normalizedEmail}`;
+    emailRateLimit = checkRateLimit(emailLimitKey, rateConfig.maxAttempts, rateConfig.windowMs);
+  }
+
+  const isRateLimited = !ipRateLimit.allowed || !emailRateLimit.allowed;
+  const resetAt = Math.max(ipRateLimit.resetAt, emailRateLimit.resetAt);
+  const retryAfterSeconds = Math.max(1, Math.ceil((resetAt - Date.now()) / 1000));
+
+  if (isRateLimited) {
+    gvDb.logAudit({
+      actorId: normalizedEmail || 'anonymous',
+      actorName: 'Unauthenticated Attacker',
+      action: 'RATE_LIMIT_EXCEEDED',
+      targetType: 'SYSTEM',
+      targetId: `portal-${portal.toLowerCase()}`,
+      details: {
+        portal,
+        portalLabel: rateConfig.label,
+        ip,
+        email: normalizedEmail,
+        maxAttempts: rateConfig.maxAttempts,
+        windowMs: rateConfig.windowMs,
+        retryAfterSeconds,
+      },
+      ipAddress: ip,
+    });
+
+    const res = NextResponse.json(
+      {
+        success: false,
+        error: `Too many login attempts on the ${rateConfig.label}. Please wait ${retryAfterSeconds} seconds before trying again.`,
+        portal,
+        retryAfter: retryAfterSeconds,
+      },
+      { status: 429 }
+    );
+
+    res.headers.set('Retry-After', retryAfterSeconds.toString());
+    res.headers.set('X-RateLimit-Limit', rateConfig.maxAttempts.toString());
+    res.headers.set('X-RateLimit-Remaining', '0');
+    res.headers.set('X-RateLimit-Reset', resetAt.toString());
+
+    return res;
+  }
+
+  try {
     if (!email || !password) {
       return NextResponse.json(
         { success: false, error: 'Email and password are required.' },

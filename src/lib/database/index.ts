@@ -23,6 +23,7 @@ import {
   AdImpression,
   PlayerFavorite,
   PlayerHistoryItem,
+  PlayerPayoutMethod,
   PlayerPayoutRequest,
   GameReview,
   AuditLog,
@@ -103,6 +104,7 @@ export interface DatabaseState {
   favorites: PlayerFavorite[];
   playHistory: PlayerHistoryItem[];
   reviews: GameReview[];
+  playerPayoutMethods: PlayerPayoutMethod[];
   playerPayoutRequests: PlayerPayoutRequest[];
 }
 
@@ -312,6 +314,7 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
   favorites: [],
   playHistory: [],
   reviews: [],
+  playerPayoutMethods: [],
   playerPayoutRequests: [],
   financialRecords: [
     {
@@ -424,6 +427,7 @@ class GameVerseDatabase {
           favorites: parsed.favorites || INITIAL_DATABASE_STATE.favorites || [],
           playHistory: parsed.playHistory || INITIAL_DATABASE_STATE.playHistory || [],
           reviews: parsed.reviews || INITIAL_DATABASE_STATE.reviews || [],
+          playerPayoutMethods: parsed.playerPayoutMethods || INITIAL_DATABASE_STATE.playerPayoutMethods || [],
           playerPayoutRequests: parsed.playerPayoutRequests || INITIAL_DATABASE_STATE.playerPayoutRequests || [],
           financialRecords: parsed.financialRecords || INITIAL_DATABASE_STATE.financialRecords || [],
         };
@@ -1639,6 +1643,50 @@ class GameVerseDatabase {
   }
 
   // ================= PLAYER PAYOUTS & REWARDS =================
+  getPlayerPayoutMethod(userId: string): PlayerPayoutMethod | undefined {
+    if (!this.state.playerPayoutMethods) return undefined;
+    return this.state.playerPayoutMethods.find((p) => p.userId === userId);
+  }
+
+  savePlayerPayoutMethod(
+    userId: string,
+    data: {
+      method: 'UPI' | 'BANK_TRANSFER' | 'PAYPAL' | 'GIFT_CARD';
+      accountDetails: string;
+      beneficiaryName?: string;
+    }
+  ): PlayerPayoutMethod {
+    if (!this.state.playerPayoutMethods) this.state.playerPayoutMethods = [];
+    let method = this.state.playerPayoutMethods.find((p) => p.userId === userId);
+    if (!method) {
+      method = {
+        id: `ppm-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        userId,
+        method: data.method,
+        accountDetails: data.accountDetails,
+        beneficiaryName: data.beneficiaryName,
+        updatedAt: new Date().toISOString(),
+      };
+      this.state.playerPayoutMethods.push(method);
+    } else {
+      method.method = data.method;
+      method.accountDetails = data.accountDetails;
+      method.beneficiaryName = data.beneficiaryName;
+      method.updatedAt = new Date().toISOString();
+    }
+    this.persistState();
+    return method;
+  }
+
+  deletePlayerPayoutMethod(userId: string): boolean {
+    if (!this.state.playerPayoutMethods) return false;
+    const initialLen = this.state.playerPayoutMethods.length;
+    this.state.playerPayoutMethods = this.state.playerPayoutMethods.filter((p) => p.userId !== userId);
+    const removed = this.state.playerPayoutMethods.length < initialLen;
+    if (removed) this.persistState();
+    return removed;
+  }
+
   getPlayerPayoutRequests(userId: string): PlayerPayoutRequest[] {
     if (!this.state.playerPayoutRequests) return [];
     return this.state.playerPayoutRequests.filter((p) => p.userId === userId);
@@ -1647,8 +1695,11 @@ class GameVerseDatabase {
   createPlayerPayoutRequest(
     userId: string,
     data: {
+      amount?: number;
+      currency?: string;
       method: 'UPI' | 'BANK_TRANSFER' | 'PAYPAL' | 'GIFT_CARD';
       accountDetails: string;
+      beneficiaryName?: string;
       note?: string;
     }
   ): PlayerPayoutRequest {
@@ -1656,10 +1707,14 @@ class GameVerseDatabase {
     const request: PlayerPayoutRequest = {
       id: `payout-req-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
       userId,
+      amount: data.amount || 100,
+      currency: data.currency || 'INR',
       method: data.method,
       accountDetails: data.accountDetails,
+      beneficiaryName: data.beneficiaryName,
       status: 'PENDING',
       requestedAt: new Date().toISOString(),
+      transactionRef: `TXN-GV-${Date.now().toString(36).toUpperCase()}`,
       note: data.note,
     };
     this.state.playerPayoutRequests.unshift(request);

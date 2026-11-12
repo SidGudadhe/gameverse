@@ -5,6 +5,8 @@ import { DELETE as removeFavorite } from '../src/app/api/player/favorites/[gameI
 import { GET as getHistory } from '../src/app/api/player/history/route';
 import { GET as getProfile, PUT as updateProfile } from '../src/app/api/player/profile/route';
 import { GET as getPayouts, POST as requestPayout } from '../src/app/api/player/payouts/route';
+import { GET as getDeveloperPayouts } from '../src/app/api/developer/payouts/route';
+import { POST as requestDeveloperPayout } from '../src/app/api/developer/payouts/request/route';
 import { gvDb } from '../src/lib/database';
 import { generateToken } from '../src/lib/auth';
 import { UserRole } from '../src/types';
@@ -243,5 +245,187 @@ describe('Player Portal Routes & Integration Tests', () => {
     const getRes = await getProfile(getReq);
     const getData = await getRes.json();
     expect(getData.profile.avatarUrl).toBe(sampleBase64Avatar);
+  });
+
+  it('12. Player Payout Method Management: Save, Update, Delete and Amount-Only Payout Request', async () => {
+    // 12a. Save Method (UPI)
+    const saveReq = new NextRequest('http://localhost:3000/api/player/payouts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        action: 'SAVE_METHOD',
+        method: 'UPI',
+        accountDetails: 'player_gaming@okhdfcbank',
+        beneficiaryName: 'Pro Gamer',
+      }),
+    });
+    const saveRes = await requestPayout(saveReq);
+    expect(saveRes.status).toBe(200);
+    const saveData = await saveRes.json();
+    expect(saveData.success).toBe(true);
+    expect(saveData.savedMethod.method).toBe('UPI');
+    expect(saveData.savedMethod.accountDetails).toBe('player_gaming@okhdfcbank');
+
+    // 12b. Update Method (to Bank Account)
+    const updateReq = new NextRequest('http://localhost:3000/api/player/payouts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        action: 'SAVE_METHOD',
+        method: 'BANK_TRANSFER',
+        accountDetails: 'ACC987654321 IFSC:HDFC0001234',
+        beneficiaryName: 'Pro Gamer Studio',
+      }),
+    });
+    const updateRes = await requestPayout(updateReq);
+    expect(updateRes.status).toBe(200);
+    const updateData = await updateRes.json();
+    expect(updateData.savedMethod.method).toBe('BANK_TRANSFER');
+
+    // 12c. Request Payout with Amount only (uses saved method automatically)
+    const amountOnlyReq = new NextRequest('http://localhost:3000/api/player/payouts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        action: 'REQUEST_PAYOUT',
+        amount: 750,
+        note: 'Tournament play reward withdrawal',
+      }),
+    });
+    const amountRes = await requestPayout(amountOnlyReq);
+    expect(amountRes.status).toBe(200);
+    const amountData = await amountRes.json();
+    expect(amountData.success).toBe(true);
+    expect(amountData.request.amount).toBe(750);
+    expect(amountData.request.method).toBe('BANK_TRANSFER');
+    expect(amountData.request.status).toBe('PENDING');
+
+    // 12d. Verify GET /api/player/payouts returns savedMethod, stats, and request history
+    const getPayoutsReq = new NextRequest('http://localhost:3000/api/player/payouts', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const listRes = await getPayouts(getPayoutsReq);
+    expect(listRes.status).toBe(200);
+    const listData = await listRes.json();
+    expect(listData.savedMethod).toBeDefined();
+    expect(listData.savedMethod.method).toBe('BANK_TRANSFER');
+    expect(listData.requests.length).toBeGreaterThan(0);
+    expect(listData.requests[0].amount).toBe(750);
+    expect(listData.requests[0].status).toBe('PENDING');
+
+    // 12e. Delete Method
+    const deleteReq = new NextRequest('http://localhost:3000/api/player/payouts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ action: 'DELETE_METHOD' }),
+    });
+    const deleteRes = await requestPayout(deleteReq);
+    expect(deleteRes.status).toBe(200);
+    const deleteData = await deleteRes.json();
+    expect(deleteData.success).toBe(true);
+  });
+
+  it('13. Developer Payout Method Management: Save, Update, Delete and Amount Payout Request', async () => {
+    const devUser = {
+      userId: 'usr_dev_payout_test',
+      email: 'devpayout@gameverse.test',
+      name: 'Studio Developer',
+      role: 'DEVELOPER' as UserRole,
+    };
+    const devToken = generateToken(devUser);
+
+    // 13a. Save Developer Payout Method (UPI)
+    const saveReq = new NextRequest('http://localhost:3000/api/developer/payouts/request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${devToken}`,
+      },
+      body: JSON.stringify({
+        action: 'SAVE_METHOD',
+        payoutMethod: 'UPI',
+        accountDetails: 'gamestudio@okaxis',
+        beneficiaryName: 'Game Studio Labs',
+      }),
+    });
+    const saveRes = await requestDeveloperPayout(saveReq);
+    expect(saveRes.status).toBe(200);
+    const saveData = await saveRes.json();
+    expect(saveData.success).toBe(true);
+    expect(saveData.settings.payoutMethod).toBe('UPI');
+
+    // 13b. Update Developer Payout Method (Bank Wire)
+    const updateReq = new NextRequest('http://localhost:3000/api/developer/payouts/request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${devToken}`,
+      },
+      body: JSON.stringify({
+        action: 'SAVE_METHOD',
+        payoutMethod: 'BANK_WIRE',
+        accountDetails: 'IBAN GB29NWBK60161331926819',
+        beneficiaryName: 'Game Studio Global Inc',
+      }),
+    });
+    const updateRes = await requestDeveloperPayout(updateReq);
+    expect(updateRes.status).toBe(200);
+    const updateData = await updateRes.json();
+    expect(updateData.settings.payoutMethod).toBe('BANK_WIRE');
+
+    // 13c. Submit Payout Request with Amount only
+    const requestReq = new NextRequest('http://localhost:3000/api/developer/payouts/request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${devToken}`,
+      },
+      body: JSON.stringify({
+        action: 'REQUEST_PAYOUT',
+        amount: 250.0,
+      }),
+    });
+    const reqRes = await requestDeveloperPayout(requestReq);
+    expect(reqRes.status).toBe(200);
+    const reqData = await reqRes.json();
+    expect(reqData.success).toBe(true);
+    expect(reqData.amount).toBe(250.0);
+    expect(reqData.payoutReference).toBeDefined();
+
+    // 13d. Verify GET /api/developer/payouts returns settings and records with status
+    const getDevPayoutsReq = new NextRequest('http://localhost:3000/api/developer/payouts', {
+      headers: { Authorization: `Bearer ${devToken}` },
+    });
+    const devListRes = await getDeveloperPayouts(getDevPayoutsReq);
+    expect(devListRes.status).toBe(200);
+    const devListData = await devListRes.json();
+    expect(devListData.settings.payoutMethod).toBe('BANK_WIRE');
+    expect(devListData.records.some((r: any) => r.creatorShare === 250.0)).toBe(true);
+
+    // 13e. Delete Developer Payout Method
+    const deleteReq = new NextRequest('http://localhost:3000/api/developer/payouts/request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${devToken}`,
+      },
+      body: JSON.stringify({ action: 'DELETE_METHOD' }),
+    });
+    const deleteRes = await requestDeveloperPayout(deleteReq);
+    expect(deleteRes.status).toBe(200);
+    const deleteData = await deleteRes.json();
+    expect(deleteData.success).toBe(true);
   });
 });

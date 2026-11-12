@@ -12,11 +12,13 @@ export async function GET(req: NextRequest) {
 
     const summary = getCreatorPayoutSummary(user!.userId);
     const records = gvDb.getFinancialRecords({ creatorId: user!.userId });
+    const settings = gvDb.getDeveloperSettings(user!.userId);
 
     return NextResponse.json({
       success: true,
       summary,
       records,
+      settings,
     });
   } catch (err: any) {
     console.error('Error fetching creator payouts:', err);

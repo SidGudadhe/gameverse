@@ -298,13 +298,27 @@ export interface PlayerHistoryItem {
   totalPlayMinutes: number;
 }
 
-export interface PlayerPayoutRequest {
+export interface PlayerPayoutMethod {
   id: string;
   userId: string;
   method: 'UPI' | 'BANK_TRANSFER' | 'PAYPAL' | 'GIFT_CARD';
   accountDetails: string;
+  beneficiaryName?: string;
+  updatedAt: string;
+}
+
+export interface PlayerPayoutRequest {
+  id: string;
+  userId: string;
+  amount: number;
+  currency?: string;
+  method: 'UPI' | 'BANK_TRANSFER' | 'PAYPAL' | 'GIFT_CARD';
+  accountDetails: string;
+  beneficiaryName?: string;
   status: 'PENDING' | 'PROCESSING' | 'PAID' | 'REJECTED';
   requestedAt: string;
+  paidAt?: string;
+  transactionRef?: string;
   note?: string;
 }
 

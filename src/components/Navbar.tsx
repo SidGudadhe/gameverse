@@ -265,7 +265,7 @@ export default function Navbar() {
             </Link>
 
             <Link
-              href="/category/cat-arcade"
+              href="/category"
               prefetch={true}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-colors ${
                 pathname.startsWith('/category')
@@ -431,7 +431,7 @@ export default function Navbar() {
             </Link>
 
             <Link
-              href="/category/cat-arcade"
+              href="/category"
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-white/5"
             >

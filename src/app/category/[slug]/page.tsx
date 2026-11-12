@@ -18,6 +18,7 @@ import {
   Trophy,
 } from 'lucide-react';
 import GameCard from '@/components/GameCard';
+import CategoryNavChips from '@/components/CategoryNavChips';
 import { Badge } from '@/components/ui/Badge';
 import { EmptyState } from '@/components/ui/EmptyState';
 
@@ -109,7 +110,7 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
   }, [games, orientationFilter]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* Breadcrumb Navigation */}
       <div className="flex items-center gap-2 text-xs text-gray-400">
         <Link href="/" className="hover:text-white transition-colors flex items-center gap-1">
@@ -117,8 +118,15 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
           <span>Catalog Home</span>
         </Link>
         <span>/</span>
-        <span className="text-gray-200">{meta.name}</span>
+        <Link href="/category" className="hover:text-white transition-colors">
+          <span>Categories</span>
+        </Link>
+        <span>/</span>
+        <span className="text-gray-200 font-medium">{meta.name}</span>
       </div>
+
+      {/* Category Navigation Quick Chips */}
+      <CategoryNavChips activeSlug={params.slug} />
 
       {/* Hero Category Banner */}
       <div className={`relative rounded-3xl p-6 sm:p-8 border border-white/10 overflow-hidden bg-gradient-to-r ${meta.gradient}`}>

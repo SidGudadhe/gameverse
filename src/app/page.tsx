@@ -4,23 +4,11 @@ import { gvDb } from '@/lib/database';
 import HeroCarousel from '@/components/HeroCarousel';
 import GameCard from '@/components/GameCard';
 import AdaptiveRecommendations from '@/components/AdaptiveRecommendations';
-import { Flame, Trophy, Sparkles, Gamepad2, ArrowRight } from 'lucide-react';
-
-const CATEGORY_ICONS: Record<string, string> = {
-  'cat-action': '⚡',
-  'cat-puzzle': '🧩',
-  'cat-arcade': '🕹️',
-  'cat-racing': '🏎️',
-  'cat-casual': '🎯',
-  'cat-rpg': '⚔️',
-  'cat-strategy': '🧠',
-  'cat-sports': '⚽',
-};
+import { Flame, Trophy, Gamepad2, ArrowRight } from 'lucide-react';
 
 export default function HomePage() {
   const allGames = gvDb.getGames({ status: 'PUBLISHED' });
   const featuredGames = allGames.filter((g) => g.isFeatured);
-  const categories = gvDb.getCategories();
 
   // Trending: ranked by engagement score
   const trendingGames = [...allGames].sort((a, b) => {
@@ -43,31 +31,6 @@ export default function HomePage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-12">
       {/* Featured Hero Showcase */}
       <HeroCarousel featuredGames={featuredGames.length > 0 ? featuredGames : allGames} />
-
-      {/* Category Navigation Quick Chips (Poki / CrazyGames Style) */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-        <Link
-          href="/"
-          className="flex-shrink-0 flex items-center gap-2 bg-indigo-600 text-white font-semibold text-xs px-4 py-2 rounded-xl shadow-sm shadow-indigo-600/30"
-        >
-          <span>🎮</span>
-          <span>All Games</span>
-          <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full font-mono">
-            {allGames.length}
-          </span>
-        </Link>
-        {categories.map((cat) => (
-          <Link
-            key={cat.id}
-            href={`/category/${cat.slug}`}
-            className="flex-shrink-0 flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-gray-300 hover:text-white font-medium text-xs px-4 py-2 rounded-xl border border-white/5 hover:border-white/15 transition-all"
-          >
-            <span>{CATEGORY_ICONS[cat.id] || '🎯'}</span>
-            <span>{cat.name}</span>
-            <span className="text-[10px] text-gray-500 font-mono">({cat.count})</span>
-          </Link>
-        ))}
-      </div>
 
       {/* Recommended For You Section */}
       <AdaptiveRecommendations

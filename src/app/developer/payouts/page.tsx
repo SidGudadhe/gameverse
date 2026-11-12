@@ -93,9 +93,21 @@ export default function PayoutsPage() {
   const [requestNote, setRequestNote] = useState('');
   const [submittingPayout, setSubmittingPayout] = useState(false);
 
+  // Table filters & copy
+  const [searchQuery, setSearchQuery] = useState('');
+  const [copiedRef, setCopiedRef] = useState<string | null>(null);
+
   // Feedback notifications
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const handleCopyRef = (refText: string) => {
+    navigator.clipboard.writeText(refText);
+    setCopiedRef(refText);
+    setTimeout(() => {
+      setCopiedRef((prev) => (prev === refText ? null : prev));
+    }, 2000);
+  };
 
   const fetchPayoutData = async () => {
     try {
@@ -265,8 +277,15 @@ export default function PayoutsPage() {
   };
 
   const filteredRecords = records.filter((r) => {
-    if (statusFilter === 'ALL') return true;
-    return r.status === statusFilter;
+    if (statusFilter !== 'ALL' && r.status !== statusFilter) return false;
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      const matchRef = r.payoutReference?.toLowerCase().includes(q);
+      const matchGame = r.gameTitle?.toLowerCase().includes(q);
+      const matchAmt = r.creatorShare?.toString().includes(q);
+      return matchRef || matchGame || matchAmt;
+    }
+    return true;
   });
 
   const isMethodConfigured =
@@ -790,21 +809,31 @@ export default function PayoutsPage() {
             </p>
           </div>
 
-          {/* Status Filter Tabs */}
-          <div className="flex flex-wrap items-center gap-1.5 bg-slate-900 p-1 rounded-xl border border-slate-800">
-            {['ALL', 'FINALIZED', 'ESTIMATED', 'PROCESSING', 'PAID'].map((status) => (
-              <button
-                key={status}
-                onClick={() => setStatusFilter(status)}
-                className={`text-[11px] font-semibold px-3 py-1 rounded-lg transition-all cursor-pointer ${
-                  statusFilter === status
-                    ? 'bg-indigo-600 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                {status}
-              </button>
-            ))}
+          {/* Search + Status Filter Tabs */}
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search reference or game..."
+              className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-slate-700 w-44"
+            />
+
+            <div className="flex flex-wrap items-center gap-1.5 bg-slate-900 p-1 rounded-xl border border-slate-800">
+              {['ALL', 'FINALIZED', 'ESTIMATED', 'PROCESSING', 'PAID'].map((status) => (
+                <button
+                  key={status}
+                  onClick={() => setStatusFilter(status)}
+                  className={`text-[11px] font-semibold px-3 py-1 rounded-lg transition-all cursor-pointer ${
+                    statusFilter === status
+                      ? 'bg-indigo-600 text-white shadow-sm'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  {status}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -834,6 +863,8 @@ export default function PayoutsPage() {
                   const isProcessing = r.status === 'PROCESSING';
                   const isPending = r.status === 'ESTIMATED';
                   const isOnHold = r.status === 'ON_HOLD';
+                  const refId = r.payoutReference || (r.paidAt ? 'PO-DEV-VERIFIED' : 'Pending Cycle Close');
+                  const isCopied = copiedRef === refId;
 
                   return (
                     <tr key={r.id} className="hover:bg-slate-800/20 transition-colors">
@@ -863,13 +894,23 @@ export default function PayoutsPage() {
                         {r.gameTitle || 'Studio Creator Share'}
                       </td>
 
-                      <td className="px-5 py-4 font-mono text-slate-400 text-[11px] whitespace-nowrap">
+                      <td className="px-5 py-4 whitespace-nowrap">
                         {r.payoutReference || r.paidAt ? (
-                          <span className="text-cyan-300">
-                            {r.payoutReference || 'PO-DEV-VERIFIED'}
-                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleCopyRef(refId)}
+                            title="Click to copy payout reference"
+                            className="inline-flex items-center gap-1.5 font-mono text-[11px] text-slate-300 hover:text-white bg-slate-950 px-2 py-0.5 rounded border border-slate-800 hover:border-slate-700 transition-colors cursor-pointer"
+                          >
+                            <span>{refId}</span>
+                            {isCopied ? (
+                              <Check className="w-3 h-3 text-emerald-400" />
+                            ) : (
+                              <span className="text-slate-500 text-[10px]">copy</span>
+                            )}
+                          </button>
                         ) : (
-                          <span className="text-slate-500">Pending Cycle Close</span>
+                          <span className="text-slate-500 font-mono text-[11px]">Pending Cycle Close</span>
                         )}
                       </td>
 

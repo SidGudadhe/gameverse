@@ -8,7 +8,6 @@ import {
   ArrowLeft,
   CheckCircle2,
   Clock,
-  Sparkles,
   Gamepad2,
   Coins,
   Shield,
@@ -23,19 +22,30 @@ import {
   Plus,
   Check,
   X,
+  Copy,
+  Smartphone,
+  ExternalLink,
+  ChevronRight,
+  Info,
+  RefreshCw,
+  Search,
+  Filter,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
-interface SavedPayoutMethod {
+export interface PlayerPayoutMethod {
   id: string;
   userId: string;
   method: 'UPI' | 'BANK_TRANSFER' | 'PAYPAL' | 'GIFT_CARD';
   accountDetails: string;
   beneficiaryName?: string;
+  label?: string;
+  provider?: 'GPAY' | 'PHONEPE' | 'PAYTM' | 'BHIM' | 'GENERIC_UPI' | 'BANK' | 'PAYPAL' | 'GIFT';
+  isDefault?: boolean;
   updatedAt: string;
 }
 
-interface PayoutRequestItem {
+export interface PayoutRequestItem {
   id: string;
   userId: string;
   amount: number;
@@ -58,59 +68,42 @@ interface PlayerStats {
   notice: string;
 }
 
-const PAYMENT_METHODS = [
-  {
-    id: 'UPI',
-    name: 'UPI (GPay / PhonePe / Paytm / BHIM)',
-    description: 'Instant transfer directly to your UPI ID (VPA)',
-    icon: Coins,
-    placeholder: 'e.g. gamer@okhdfcbank or 9876543210@paytm',
-    fieldLabel: 'UPI ID (VPA)',
-  },
-  {
-    id: 'BANK_TRANSFER',
-    name: 'Direct Bank Account Transfer (IMPS / NEFT)',
-    description: 'Transfer directly into your savings/current bank account',
-    icon: Building,
-    placeholder: 'Account No., IFSC Code, Beneficiary Name',
-    fieldLabel: 'Bank Account Details & IFSC',
-  },
-  {
-    id: 'PAYPAL',
-    name: 'PayPal Global',
-    description: 'Direct international transfer to your PayPal email',
-    icon: CreditCard,
-    placeholder: 'e.g. yourname@gmail.com',
-    fieldLabel: 'PayPal Email Address',
-  },
-  {
-    id: 'GIFT_CARD',
-    name: 'Gaming Gift Card (Steam / Google Play)',
-    description: 'Digital gift card voucher sent to your email',
-    icon: Gift,
-    placeholder: 'Preferred Brand (e.g. Steam / Google Play) & Delivery Email',
-    fieldLabel: 'Voucher Preference & Email',
-  },
+const COMMON_UPI_HANDLES = [
+  { handle: '@okhdfcbank', label: 'GPay (HDFC)' },
+  { handle: '@okaxis', label: 'GPay (Axis)' },
+  { handle: '@oksbi', label: 'GPay (SBI)' },
+  { handle: '@ybl', label: 'PhonePe (Yes Bank)' },
+  { handle: '@paytm', label: 'Paytm Payments' },
+  { handle: '@upi', label: 'BHIM UPI' },
 ];
 
 export default function PlayerPayoutsPage() {
   const { user, isAuthenticated, loading: authLoading } = useAuth();
   const [stats, setStats] = useState<PlayerStats | null>(null);
-  const [savedMethod, setSavedMethod] = useState<SavedPayoutMethod | null>(null);
+  const [savedMethods, setSavedMethods] = useState<PlayerPayoutMethod[]>([]);
+  const [selectedMethodId, setSelectedMethodId] = useState<string>('');
   const [requests, setRequests] = useState<PayoutRequestItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Method Modal / Form state
-  const [isEditingMethod, setIsEditingMethod] = useState(false);
+  // Modal / Drawer state for adding or editing account
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingMethodId, setEditingMethodId] = useState<string | null>(null);
   const [methodType, setMethodType] = useState<'UPI' | 'BANK_TRANSFER' | 'PAYPAL' | 'GIFT_CARD'>('UPI');
   const [accountDetails, setAccountDetails] = useState('');
   const [beneficiaryName, setBeneficiaryName] = useState('');
+  const [accountLabel, setAccountLabel] = useState('');
+  const [setAsDefault, setSetAsDefault] = useState(false);
   const [savingMethod, setSavingMethod] = useState(false);
 
-  // Payout Request Form state (Amount only)
+  // Amount-Only Payout Request State
   const [amount, setAmount] = useState<string>('500');
   const [requestNote, setRequestNote] = useState('');
   const [submittingPayout, setSubmittingPayout] = useState(false);
+
+  // Table filter and clipboard
+  const [statusFilter, setStatusFilter] = useState<string>('ALL');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [copiedRef, setCopiedRef] = useState<string | null>(null);
 
   // Notification banners
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -123,13 +116,16 @@ export default function PlayerPayoutsPage() {
       if (res.ok) {
         const data = await res.json();
         setStats(data.stats);
-        setSavedMethod(data.savedMethod || null);
+        const methods: PlayerPayoutMethod[] = data.savedMethods || (data.savedMethod ? [data.savedMethod] : []);
+        setSavedMethods(methods);
         setRequests(data.requests || []);
 
-        if (data.savedMethod) {
-          setMethodType(data.savedMethod.method);
-          setAccountDetails(data.savedMethod.accountDetails);
-          setBeneficiaryName(data.savedMethod.beneficiaryName || '');
+        // Default to primary method or first method if not yet selected
+        const defaultMethod = methods.find((m) => m.isDefault) || methods[0];
+        if (defaultMethod && !selectedMethodId) {
+          setSelectedMethodId(defaultMethod.id);
+        } else if (defaultMethod && !methods.some((m) => m.id === selectedMethodId)) {
+          setSelectedMethodId(defaultMethod.id);
         }
       }
     } catch (err) {
@@ -147,11 +143,48 @@ export default function PlayerPayoutsPage() {
     }
   }, [isAuthenticated, authLoading]);
 
-  // 1. Save or Update Payout Method
+  // Copy reference with feedback
+  const handleCopyRef = (refText: string) => {
+    navigator.clipboard.writeText(refText);
+    setCopiedRef(refText);
+    setTimeout(() => {
+      setCopiedRef((prev) => (prev === refText ? null : prev));
+    }, 2000);
+  };
+
+  // Open Modal for New Method
+  const handleOpenAddModal = () => {
+    if (savedMethods.length >= 4) {
+      setErrorMessage('Maximum 4 payout accounts / UPI IDs can be linked at a time. Please remove or update an existing account.');
+      return;
+    }
+    setEditingMethodId(null);
+    setMethodType('UPI');
+    setAccountDetails('');
+    setBeneficiaryName('');
+    setAccountLabel('');
+    setSetAsDefault(savedMethods.length === 0);
+    setIsModalOpen(true);
+    setErrorMessage(null);
+  };
+
+  // Open Modal for Editing Existing Method
+  const handleOpenEditModal = (method: PlayerPayoutMethod) => {
+    setEditingMethodId(method.id);
+    setMethodType(method.method);
+    setAccountDetails(method.accountDetails);
+    setBeneficiaryName(method.beneficiaryName || '');
+    setAccountLabel(method.label || '');
+    setSetAsDefault(Boolean(method.isDefault));
+    setIsModalOpen(true);
+    setErrorMessage(null);
+  };
+
+  // Save / Update Payout Method
   const handleSaveMethod = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!accountDetails.trim()) {
-      setErrorMessage('Please enter your payout account details.');
+      setErrorMessage('Please enter valid payout account details.');
       return;
     }
 
@@ -165,17 +198,28 @@ export default function PlayerPayoutsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'SAVE_METHOD',
+          id: editingMethodId || undefined,
+          addNew: !editingMethodId,
           method: methodType,
           accountDetails: accountDetails.trim(),
           beneficiaryName: beneficiaryName.trim() || undefined,
+          label: accountLabel.trim() || undefined,
+          isDefault: setAsDefault,
         }),
       });
 
       const data = await res.json();
       if (res.ok) {
-        setSavedMethod(data.savedMethod);
-        setIsEditingMethod(false);
-        setSuccessMessage('Payout method successfully saved! Ab aapko baar-baar details dalne ki zaroorat nahi hai.');
+        setIsModalOpen(false);
+        setSuccessMessage(
+          editingMethodId
+            ? 'Payout account successfully updated!'
+            : 'New payout account linked successfully! You can select this account for instant withdrawals.'
+        );
+        await fetchPayoutData();
+        if (data.savedMethod?.id) {
+          setSelectedMethodId(data.savedMethod.id);
+        }
       } else {
         setErrorMessage(data.error || 'Failed to save payout method.');
       }
@@ -186,49 +230,65 @@ export default function PlayerPayoutsPage() {
     }
   };
 
-  // 2. Delete Payout Method
-  const handleDeleteMethod = async () => {
-    if (!window.confirm('Are you sure you want to remove your saved payout method?')) return;
+  // Make an account the primary default
+  const handleSetPrimary = async (methodId: string) => {
+    try {
+      const res = await fetch('/api/player/payouts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'SET_DEFAULT',
+          methodId,
+        }),
+      });
+      if (res.ok) {
+        setSelectedMethodId(methodId);
+        setSuccessMessage('Primary payout account updated.');
+        await fetchPayoutData();
+      }
+    } catch (err: any) {
+      setErrorMessage('Could not update primary account.');
+    }
+  };
 
-    setSavingMethod(true);
-    setSuccessMessage(null);
-    setErrorMessage(null);
+  // Delete a specific method
+  const handleDeleteMethod = async (methodId: string, label: string) => {
+    if (!window.confirm(`Are you sure you want to remove this payout account (${label})?`)) return;
 
     try {
       const res = await fetch('/api/player/payouts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'DELETE_METHOD' }),
+        body: JSON.stringify({
+          action: 'DELETE_METHOD',
+          methodId,
+        }),
       });
 
       if (res.ok) {
-        setSavedMethod(null);
-        setAccountDetails('');
-        setBeneficiaryName('');
-        setSuccessMessage('Saved payout method deleted successfully.');
+        setSuccessMessage('Payout account removed.');
+        await fetchPayoutData();
       } else {
         const data = await res.json();
-        setErrorMessage(data.error || 'Failed to delete method.');
+        setErrorMessage(data.error || 'Failed to remove payout account.');
       }
     } catch (err: any) {
-      setErrorMessage(err.message || 'Error deleting method.');
-    } finally {
-      setSavingMethod(false);
+      setErrorMessage('Error removing payout account.');
     }
   };
 
-  // 3. Submit Payout Request (Amount only)
+  // Submit Payout Request
   const handleSubmitPayoutRequest = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!savedMethod) {
-      setErrorMessage('Please save your payout method first before requesting a payout.');
-      setIsEditingMethod(true);
+    if (savedMethods.length === 0) {
+      setErrorMessage('Please link at least one UPI ID or payout account before requesting a withdrawal.');
+      handleOpenAddModal();
       return;
     }
 
     const numAmount = Number(amount);
     if (!numAmount || numAmount <= 0) {
-      setErrorMessage('Please enter a valid withdrawal amount greater than 0.');
+      setErrorMessage('Please enter a valid withdrawal amount greater than ₹0.');
       return;
     }
 
@@ -242,6 +302,7 @@ export default function PlayerPayoutsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'REQUEST_PAYOUT',
+          methodId: selectedMethodId || undefined,
           amount: numAmount,
           note: requestNote.trim() || undefined,
         }),
@@ -249,14 +310,14 @@ export default function PlayerPayoutsPage() {
 
       const data = await res.json();
       if (res.ok) {
-        setSuccessMessage(`Payout request for ₹${numAmount} successfully submitted! Aapka request history table me add ho gaya hai.`);
+        setSuccessMessage(`Withdrawal request for ₹${numAmount} submitted successfully! Your settlement is queued for instant processing.`);
         setRequestNote('');
-        fetchPayoutData();
+        await fetchPayoutData();
       } else {
-        setErrorMessage(data.error || 'Failed to submit payout request.');
+        setErrorMessage(data.error || 'Failed to submit withdrawal request.');
       }
     } catch (err: any) {
-      setErrorMessage(err.message || 'Error submitting payout request.');
+      setErrorMessage(err.message || 'Error processing payout request.');
     } finally {
       setSubmittingPayout(false);
     }
@@ -265,18 +326,108 @@ export default function PlayerPayoutsPage() {
   const formatPlaytime = (minutes: number) => {
     if (!minutes || minutes < 1) return '0 min';
     if (minutes < 60) return `${minutes} mins`;
-    const hours = (minutes / 60).toFixed(1);
-    return `${hours} hrs`;
+    const hours = Math.floor(minutes / 60);
+    const remainingMins = Math.round(minutes % 60);
+    return `${hours}h ${remainingMins}m`;
   };
 
-  // Loading state
+  // Helper for provider branding
+  const getProviderInfo = (method: PlayerPayoutMethod) => {
+    if (method.method === 'UPI') {
+      const details = method.accountDetails.toLowerCase();
+      if (details.includes('@okhdfcbank') || details.includes('@okaxis') || details.includes('@oksbi') || details.includes('@okicici')) {
+        return {
+          brand: 'Google Pay',
+          badgeClass: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+          dotClass: 'bg-emerald-400',
+          icon: Smartphone,
+        };
+      }
+      if (details.includes('@ybl') || details.includes('@ibl') || details.includes('@axl')) {
+        return {
+          brand: 'PhonePe',
+          badgeClass: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30',
+          dotClass: 'bg-indigo-400',
+          icon: Smartphone,
+        };
+      }
+      if (details.includes('@paytm')) {
+        return {
+          brand: 'Paytm',
+          badgeClass: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30',
+          dotClass: 'bg-cyan-400',
+          icon: Smartphone,
+        };
+      }
+      if (details.includes('@upi')) {
+        return {
+          brand: 'BHIM UPI',
+          badgeClass: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
+          dotClass: 'bg-amber-400',
+          icon: Coins,
+        };
+      }
+      return {
+        brand: 'UPI',
+        badgeClass: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30',
+        dotClass: 'bg-emerald-400',
+        icon: Coins,
+      };
+    }
+
+    if (method.method === 'BANK_TRANSFER') {
+      return {
+        brand: 'Bank Wire',
+        badgeClass: 'bg-blue-500/10 text-blue-400 border-blue-500/30',
+        dotClass: 'bg-blue-400',
+        icon: Building,
+      };
+    }
+
+    if (method.method === 'PAYPAL') {
+      return {
+        brand: 'PayPal',
+        badgeClass: 'bg-sky-500/10 text-sky-400 border-sky-500/30',
+        dotClass: 'bg-sky-400',
+        icon: CreditCard,
+      };
+    }
+
+    return {
+      brand: 'Gift Card',
+      badgeClass: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
+      dotClass: 'bg-purple-400',
+      icon: Gift,
+    };
+  };
+
+  const selectedMethod = savedMethods.find((m) => m.id === selectedMethodId) || savedMethods[0];
+
+  const filteredRequests = requests.filter((r) => {
+    if (statusFilter !== 'ALL' && r.status !== statusFilter) return false;
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      const matchRef = r.transactionRef?.toLowerCase().includes(q);
+      const matchAcc = r.accountDetails.toLowerCase().includes(q);
+      const matchAmt = r.amount.toString().includes(q);
+      return matchRef || matchAcc || matchAmt;
+    }
+    return true;
+  });
+
+  // LOADING SKELETON
   if (authLoading || (loading && isAuthenticated)) {
     return (
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="animate-pulse space-y-8">
-          <div className="h-8 w-48 bg-white/5 rounded-xl" />
-          <div className="h-64 bg-surface rounded-3xl border border-white/5" />
-          <div className="h-96 bg-surface rounded-3xl border border-white/5" />
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="animate-pulse space-y-6">
+          <div className="h-6 w-36 bg-slate-800 rounded-md" />
+          <div className="h-28 bg-[#121826] rounded-2xl border border-slate-800" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="h-24 bg-[#121826] rounded-2xl border border-slate-800" />
+            <div className="h-24 bg-[#121826] rounded-2xl border border-slate-800" />
+            <div className="h-24 bg-[#121826] rounded-2xl border border-slate-800" />
+          </div>
+          <div className="h-80 bg-[#121826] rounded-2xl border border-slate-800" />
         </div>
       </div>
     );
@@ -285,47 +436,38 @@ export default function PlayerPayoutsPage() {
   // LOCKED STATE: For guests who haven't logged in
   if (!isAuthenticated) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 animate-fade-in space-y-8">
-        <div className="bg-[#0B0F19] rounded-3xl p-8 sm:p-12 border border-amber-500/20 shadow-2xl relative overflow-hidden text-center space-y-6">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 blur-3xl pointer-events-none" />
-
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider">
-            <Lock className="w-3.5 h-3.5" />
-            <span>Member Access Only &bull; Page Locked</span>
+      <div className="max-w-3xl mx-auto px-4 py-16 animate-fade-in">
+        <div className="bg-[#121826] rounded-2xl p-8 sm:p-12 border border-slate-800 shadow-2xl text-center space-y-6">
+          <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mx-auto">
+            <Lock className="w-7 h-7" />
           </div>
 
-          <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-amber-600/30 to-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto shadow-xl text-amber-400">
-            <Lock className="w-10 h-10" />
-          </div>
-
-          <div className="max-w-xl mx-auto space-y-2">
-            <h1 className="font-heading font-black text-2xl sm:text-3xl text-white">
-              Gameplay Rewards & Payouts is Locked
+          <div className="space-y-2 max-w-lg mx-auto">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-medium">
+              <span>Verified Gamer Access</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+              Player Rewards & Payouts is Locked
             </h1>
-            <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
-              GameVerse par game khelne ke paise sirf registered gamers ko milte hain.
-              Bina account banaye game khelne wale users ke liye ye page locked rehta hai.
-            </p>
-            <p className="text-gray-400 text-xs sm:text-sm">
-              Turant apna free gamer account banayein ya sign in karein aur game khelkar paise kamana shuru karein!
+            <p className="text-slate-400 text-sm leading-relaxed">
+              GameVerse par games khelne ke rewards aur instant UPI withdrawals sirf registered gamer accounts ke liye available hain.
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
               href="/auth/signup"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-sm px-6 py-3 rounded-xl shadow-lg shadow-amber-500/20 transition-all active:scale-95"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-sm px-6 py-2.5 rounded-xl transition-all shadow-md shadow-emerald-500/20"
             >
-              <Sparkles className="w-4 h-4" />
-              <span>Create Free Account & Unlock Payouts</span>
+              <span>Create Free Gamer Account</span>
+              <ArrowRight className="w-4 h-4" />
             </Link>
 
             <Link
               href="/auth/login"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white font-semibold text-sm px-6 py-3 rounded-xl border border-white/10 transition-all active:scale-95"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-sm px-6 py-2.5 rounded-xl border border-slate-700 transition-all"
             >
-              <span>Sign In as Gamer</span>
-              <ArrowRight className="w-4 h-4" />
+              <span>Sign In</span>
             </Link>
           </div>
         </div>
@@ -333,520 +475,629 @@ export default function PlayerPayoutsPage() {
     );
   }
 
-  const selectedMethodObj = PAYMENT_METHODS.find((m) => m.id === (savedMethod ? savedMethod.method : methodType));
-
-  // UNLOCKED STATE: For Registered Gamers
+  // UNLOCKED STATE: Real SaaS FinTech Layout
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 animate-fade-in text-slate-100">
       {/* Breadcrumb Navigation */}
-      <div className="flex items-center gap-2 text-xs text-gray-400">
-        <Link href="/" className="hover:text-white transition-colors flex items-center gap-1">
+      <div className="flex items-center gap-2 text-xs text-slate-400">
+        <Link href="/" className="hover:text-slate-200 transition-colors flex items-center gap-1">
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Home</span>
         </Link>
         <span>/</span>
-        <span className="text-gray-200 font-medium">Gamer Payouts</span>
+        <span className="text-slate-300 font-medium">Rewards & Payouts</span>
       </div>
 
-      {/* Header Banner */}
-      <div className="bg-[#0B0F19] rounded-3xl p-6 sm:p-8 border border-white/10 shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-amber-500/10 via-indigo-600/10 to-transparent blur-3xl pointer-events-none" />
+      {/* Top Header & Platform Gateway Status */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white flex items-center gap-2.5">
+            <span>Rewards & Payouts</span>
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+            Link up to 4 UPI IDs or accounts, transfer your gameplay earnings, and track real-time settlement status.
+          </p>
+        </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
-          <div>
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
-                <Coins className="w-4 h-4" />
-              </div>
-              <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">
-                Play-to-Earn Rewards
-              </span>
-            </div>
-            <h1 className="font-heading font-black text-2xl sm:text-3xl text-white mt-1">
-              Gamer Rewards & Payouts
-            </h1>
-            <p className="text-gray-400 text-xs sm:text-sm mt-0.5">
-              Apna payout method ek baar save karein, aur amount enter karke turant withdrawal request dalein.
-            </p>
+        <div className="flex items-center gap-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="font-mono text-[11px] text-slate-300">Instant UPI Network: Active</span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Gamer Payout Active</span>
+          <button
+            onClick={fetchPayoutData}
+            title="Refresh Payout Data"
+            className="w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
+      </div>
+
+      {/* Hero Metric Cards (Stripe / Deel Style) */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-[#121826] rounded-2xl p-5 border border-slate-800 flex items-center justify-between shadow-sm">
+          <div>
+            <span className="text-xs font-medium text-slate-400 block uppercase tracking-wider">
+              Games Played
             </span>
+            <div className="text-2xl font-bold text-white mt-1 font-mono">
+              {stats?.gamesPlayed ?? 0}
+            </div>
+            <span className="text-[11px] text-emerald-400 flex items-center gap-1 mt-1 font-medium">
+              <Check className="w-3.5 h-3.5" />
+              <span>Verified Gameplay History</span>
+            </span>
+          </div>
+          <div className="w-11 h-11 rounded-xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-center text-slate-300">
+            <Gamepad2 className="w-5 h-5 text-cyan-400" />
           </div>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-white/5">
-          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1">
-            <div className="flex items-center gap-1.5 text-xs text-gray-400">
-              <Gamepad2 className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Games Played</span>
-            </div>
-            <div className="text-2xl font-black text-white">{stats?.gamesPlayed ?? 0}</div>
-            <div className="text-[10px] text-gray-500">Tracked in history</div>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1">
-            <div className="flex items-center gap-1.5 text-xs text-gray-400">
-              <Clock className="w-3.5 h-3.5 text-amber-400" />
-              <span>Active Playtime</span>
-            </div>
-            <div className="text-2xl font-black text-white">
+        <div className="bg-[#121826] rounded-2xl p-5 border border-slate-800 flex items-center justify-between shadow-sm">
+          <div>
+            <span className="text-xs font-medium text-slate-400 block uppercase tracking-wider">
+              Tracked Playtime
+            </span>
+            <div className="text-2xl font-bold text-white mt-1 font-mono">
               {formatPlaytime(stats?.totalPlayMinutes ?? 0)}
             </div>
-            <div className="text-[10px] text-gray-500">Verified duration</div>
+            <span className="text-[11px] text-slate-400 mt-1 block">
+              Active session duration
+            </span>
           </div>
-
-          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1">
-            <div className="flex items-center gap-1.5 text-xs text-gray-400">
-              <Wallet className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Payout Method</span>
-            </div>
-            <div className="text-base font-bold text-emerald-400 pt-1">
-              {savedMethod ? savedMethod.method : 'Not Configured'}
-            </div>
-            <div className="text-[10px] text-gray-500">
-              {savedMethod ? 'Saved & Ready' : 'Setup Required'}
-            </div>
+          <div className="w-11 h-11 rounded-xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-center text-slate-300">
+            <Clock className="w-5 h-5 text-amber-400" />
           </div>
+        </div>
 
-          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1">
-            <div className="flex items-center gap-1.5 text-xs text-gray-400">
-              <Shield className="w-3.5 h-3.5 text-indigo-400" />
-              <span>Account Status</span>
+        <div className="bg-[#121826] rounded-2xl p-5 border border-slate-800 flex items-center justify-between shadow-sm">
+          <div>
+            <span className="text-xs font-medium text-slate-400 block uppercase tracking-wider">
+              Saved Payout Accounts
+            </span>
+            <div className="text-2xl font-bold text-white mt-1 font-mono">
+              {savedMethods.length} <span className="text-sm font-normal text-slate-400">/ 4 Slots</span>
             </div>
-            <div className="text-base font-bold text-indigo-300 pt-1">
-              Verified Gamer
-            </div>
-            <div className="text-[10px] text-gray-500">Withdrawals open</div>
+            <span className="text-[11px] text-cyan-400 font-medium mt-1 block">
+              {savedMethods.length === 4 ? 'All slots linked' : `${4 - savedMethods.length} slots available`}
+            </span>
+          </div>
+          <div className="w-11 h-11 rounded-xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-center text-slate-300">
+            <Coins className="w-5 h-5 text-emerald-400" />
           </div>
         </div>
       </div>
 
       {/* Global Alerts */}
       {successMessage && (
-        <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs sm:text-sm flex items-center justify-between">
+        <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs sm:text-sm flex items-center justify-between shadow-sm animate-fade-in">
           <div className="flex items-center gap-2.5">
             <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
             <span>{successMessage}</span>
           </div>
-          <button onClick={() => setSuccessMessage(null)} className="text-emerald-400 hover:text-white font-bold ml-4">
+          <button
+            onClick={() => setSuccessMessage(null)}
+            className="text-emerald-400 hover:text-white font-bold ml-4 cursor-pointer"
+          >
             ✕
           </button>
         </div>
       )}
 
       {errorMessage && (
-        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs sm:text-sm flex items-center justify-between">
+        <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs sm:text-sm flex items-center justify-between shadow-sm animate-fade-in">
           <div className="flex items-center gap-2.5">
             <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
             <span>{errorMessage}</span>
           </div>
-          <button onClick={() => setErrorMessage(null)} className="text-rose-400 hover:text-white font-bold ml-4">
+          <button
+            onClick={() => setErrorMessage(null)}
+            className="text-rose-400 hover:text-white font-bold ml-4 cursor-pointer"
+          >
             ✕
           </button>
         </div>
       )}
 
-      {/* STEP 1: CHOOSE, SAVE, UPDATE & DELETE PAYOUT METHOD */}
-      <div className="bg-surface rounded-3xl p-6 sm:p-8 border border-white/10 shadow-xl space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
+      {/* MAIN TWO-COLUMN WORKFLOW SECTION */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* LEFT COLUMN: MULTI-UPI DESTINATIONS (UP TO 4) & WITHDRAWAL FORM */}
+        <div className="lg:col-span-8 space-y-6">
+          {/* 1. SAVED UPI DESTINATIONS (MAX 4 SLOTS) */}
+          <div className="bg-[#121826] rounded-2xl p-6 border border-slate-800 shadow-sm space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+              <div>
+                <h2 className="text-base font-semibold text-white flex items-center gap-2">
+                  <Coins className="w-4 h-4 text-emerald-400" />
+                  <span>Withdrawal Destinations (Up to 4 UPI IDs)</span>
+                </h2>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Select which UPI ID will receive your withdrawal, or add up to 4 accounts (Google Pay, PhonePe, Paytm, BHIM).
+                </p>
+              </div>
+
+              {savedMethods.length < 4 && (
+                <button
+                  type="button"
+                  onClick={handleOpenAddModal}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold transition-all active:scale-95 cursor-pointer shrink-0"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add UPI ID ({savedMethods.length}/4)</span>
+                </button>
+              )}
+            </div>
+
+            {/* List of Slots / Account Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+              {savedMethods.map((m) => {
+                const info = getProviderInfo(m);
+                const ProviderIcon = info.icon;
+                const isSelected = selectedMethodId === m.id;
+
+                return (
+                  <div
+                    key={m.id}
+                    onClick={() => setSelectedMethodId(m.id)}
+                    className={`relative p-4 rounded-xl border transition-all cursor-pointer flex flex-col justify-between space-y-3 ${
+                      isSelected
+                        ? 'bg-slate-900/90 border-emerald-500/50 shadow-md shadow-emerald-500/5 ring-1 ring-emerald-500/40'
+                        : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 text-slate-300'
+                    }`}
+                  >
+                    {/* Header Row: Provider Badge + Primary Tag */}
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
+                            isSelected
+                              ? 'border-emerald-400 bg-emerald-400 text-slate-950'
+                              : 'border-slate-600 bg-transparent'
+                          }`}
+                        >
+                          {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-slate-950" />}
+                        </div>
+
+                        <span
+                          className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md border ${info.badgeClass}`}
+                        >
+                          <ProviderIcon className="w-3 h-3" />
+                          <span>{info.brand}</span>
+                        </span>
+                      </div>
+
+                      {m.isDefault ? (
+                        <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                          Primary
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSetPrimary(m.id);
+                          }}
+                          className="text-[10px] font-medium text-slate-400 hover:text-slate-200 transition-colors"
+                        >
+                          Make Primary
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Body: VPA & Name */}
+                    <div className="space-y-0.5">
+                      <div className="text-xs font-semibold text-white font-mono truncate">
+                        {m.accountDetails}
+                      </div>
+                      <div className="text-[11px] text-slate-400 truncate">
+                        {m.label || m.beneficiaryName || 'Verified Payout Account'}
+                      </div>
+                    </div>
+
+                    {/* Footer Actions */}
+                    <div className="flex items-center justify-between pt-2 border-t border-slate-800/80 text-[11px]">
+                      <span className="text-[10px] text-slate-500">
+                        {isSelected ? 'Active for withdrawal' : 'Click to select'}
+                      </span>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenEditModal(m);
+                          }}
+                          title="Edit Account Details"
+                          className="text-slate-400 hover:text-cyan-300 transition-colors p-1"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteMethod(m.id, m.label || m.accountDetails);
+                          }}
+                          title="Remove Account"
+                          className="text-slate-400 hover:text-rose-400 transition-colors p-1"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Empty Slot Card if less than 4 accounts */}
+              {savedMethods.length < 4 && (
+                <div
+                  onClick={handleOpenAddModal}
+                  className="p-5 rounded-xl border border-dashed border-slate-800 hover:border-slate-700 bg-slate-950/30 text-center flex flex-col items-center justify-center space-y-2 cursor-pointer transition-all hover:bg-slate-900/40 min-h-[140px]"
+                >
+                  <div className="w-9 h-9 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center">
+                    <Plus className="w-4 h-4 text-emerald-400" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-semibold text-slate-300">
+                      Link UPI ID (Slot {savedMethods.length + 1} of 4)
+                    </div>
+                    <div className="text-[11px] text-slate-500 mt-0.5">
+                      Google Pay, PhonePe, Paytm, BHIM
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* 2. WITHDRAWAL ACTION PANEL (FINTECH STYLE) */}
+          <div className="bg-[#121826] rounded-2xl p-6 border border-slate-800 shadow-sm space-y-5">
+            <div className="border-b border-slate-800 pb-3">
+              <h2 className="text-base font-semibold text-white flex items-center gap-2">
+                <Wallet className="w-4 h-4 text-cyan-400" />
+                <span>Withdraw Rewards</span>
+              </h2>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Funds are disbursed directly to your active UPI ID via IMPS instant clearing.
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmitPayoutRequest} className="space-y-5">
+              {/* Selected Destination Indicator Strip */}
+              {selectedMethod ? (
+                <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                    <span className="text-slate-400">Withdrawing to:</span>
+                    <span className="font-mono text-white font-semibold">
+                      {selectedMethod.accountDetails}
+                    </span>
+                    <span className="text-[10px] text-slate-400 bg-slate-800 px-2 py-0.5 rounded">
+                      {selectedMethod.label || selectedMethod.method}
+                    </span>
+                  </div>
+
+                  <span className="text-[11px] text-emerald-400 font-medium">Ready</span>
+                </div>
+              ) : (
+                <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>Please add your first UPI ID above to unlock withdrawal requests.</span>
+                </div>
+              )}
+
+              {/* Amount Input */}
+              <div className="space-y-2">
+                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                  Withdrawal Amount (₹ INR)
+                </label>
+
+                <div className="relative max-w-sm">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-lg">
+                    ₹
+                  </span>
+                  <input
+                    type="number"
+                    min="10"
+                    step="10"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder="500"
+                    required
+                    className="w-full bg-slate-950 border border-slate-700/80 rounded-xl pl-9 pr-4 py-2.5 text-xl font-bold text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all font-mono"
+                  />
+                </div>
+
+                {/* Quick Presets */}
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  <span className="text-xs text-slate-400">Quick Presets:</span>
+                  {['100', '250', '500', '1000', '2000'].map((amt) => (
+                    <button
+                      type="button"
+                      key={amt}
+                      onClick={() => setAmount(amt)}
+                      className={`px-3 py-1 rounded-lg text-xs font-semibold font-mono border transition-all cursor-pointer ${
+                        amount === amt
+                          ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                          : 'bg-slate-950 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-white'
+                      }`}
+                    >
+                      ₹{amt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Transparent Fee & Settlement Breakdown */}
+              <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-2 text-xs">
+                <div className="flex items-center justify-between text-slate-400">
+                  <span>Gross Payout:</span>
+                  <span className="font-mono text-white">₹{Number(amount || 0).toFixed(2)}</span>
+                </div>
+                <div className="flex items-center justify-between text-slate-400">
+                  <span>Platform Fee (Gamer Rewards Promo):</span>
+                  <span className="font-mono text-emerald-400 font-medium">₹0.00 (Free)</span>
+                </div>
+                <div className="flex items-center justify-between text-slate-400">
+                  <span>Estimated Processing Speed:</span>
+                  <span className="text-slate-300">Instant (under 5 mins via IMPS / UPI)</span>
+                </div>
+              </div>
+
+              {/* Optional Memo */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-medium text-slate-400">
+                  Optional Note / Reference
+                </label>
+                <input
+                  type="text"
+                  value={requestNote}
+                  onChange={(e) => setRequestNote(e.target.value)}
+                  placeholder="e.g. Tournament reward settlement"
+                  maxLength={150}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-slate-700"
+                />
+              </div>
+
+              {/* Submit CTA */}
+              <button
+                type="submit"
+                disabled={submittingPayout || savedMethods.length === 0}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs sm:text-sm px-8 py-3 rounded-xl transition-all shadow-md shadow-emerald-500/20 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+              >
+                <Send className="w-4 h-4" />
+                <span>
+                  {submittingPayout
+                    ? 'Submitting Withdrawal...'
+                    : `Withdraw ₹${Number(amount || 0).toFixed(2)} via ${
+                        selectedMethod ? selectedMethod.accountDetails : 'UPI'
+                      }`}
+                </span>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        {/* RIGHT COLUMN: FINTECH RULES & TRUST WIDGET */}
+        <div className="lg:col-span-4 space-y-4">
+          <div className="bg-[#121826] rounded-2xl p-5 border border-slate-800 space-y-4 text-xs">
+            <h3 className="font-semibold text-white flex items-center gap-2 text-sm border-b border-slate-800 pb-3">
+              <Shield className="w-4 h-4 text-emerald-400" />
+              <span>How GameVerse Payouts Work</span>
+            </h3>
+
+            <div className="space-y-3 text-slate-300">
+              <div className="flex items-start gap-2.5">
+                <div className="w-5 h-5 rounded-full bg-slate-800 text-slate-300 font-bold flex items-center justify-center shrink-0 text-[10px]">
+                  1
+                </div>
+                <p className="leading-snug">
+                  <strong className="text-white">Play Games:</strong> Every verified session duration is tracked directly in your tamper-evident ledger.
+                </p>
+              </div>
+
+              <div className="flex items-start gap-2.5">
+                <div className="w-5 h-5 rounded-full bg-slate-800 text-slate-300 font-bold flex items-center justify-center shrink-0 text-[10px]">
+                  2
+                </div>
+                <p className="leading-snug">
+                  <strong className="text-white">Link 4 UPI Accounts:</strong> You can add up to 4 UPI IDs (e.g. personal GPay, PhonePe, Paytm, or bank).
+                </p>
+              </div>
+
+              <div className="flex items-start gap-2.5">
+                <div className="w-5 h-5 rounded-full bg-slate-800 text-slate-300 font-bold flex items-center justify-center shrink-0 text-[10px]">
+                  3
+                </div>
+                <p className="leading-snug">
+                  <strong className="text-white">Direct Withdrawal:</strong> Submit withdrawal requests anytime with zero platform deduction.
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-slate-800/80 space-y-1 text-[11px] text-slate-400">
+              <div className="flex items-center gap-1.5 text-slate-300 font-medium">
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+                <span>NPCI UPI Network Integration</span>
+              </div>
+              <p>We never ask for your bank PIN, password, or OTP. Payouts are credit-only.</p>
+            </div>
+          </div>
+
+          {/* Quick Support Card */}
+          <div className="bg-[#121826] rounded-2xl p-5 border border-slate-800 space-y-2 text-xs">
+            <h4 className="font-semibold text-white">Need Settlement Help?</h4>
+            <p className="text-slate-400 text-[11px] leading-relaxed">
+              If a payout takes longer than 2 hours or if your UPI ID changes, reach out to our community support desk.
+            </p>
+            <Link
+              href="/player/profile"
+              className="inline-flex items-center gap-1 text-cyan-400 hover:text-cyan-300 font-medium pt-1"
+            >
+              <span>View Gamer Profile Settings</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. TRANSACTION ACTIVITY & SETTLEMENT HISTORY TABLE (STRIPE / WISE STYLE) */}
+      <div className="bg-[#121826] rounded-2xl border border-slate-800 shadow-sm overflow-hidden space-y-0">
+        {/* Controls & Search Header */}
+        <div className="p-5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-bold text-white flex items-center gap-2">
-              <Coins className="w-5 h-5 text-amber-400" />
-              <span>1. Payout Method (Ek Baar Save Karein)</span>
+            <h2 className="text-base font-semibold text-white flex items-center gap-2">
+              <span>Withdrawal & Settlement Activity</span>
+              <span className="text-xs font-mono text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
+                {requests.length} records
+              </span>
             </h2>
-            <p className="text-xs sm:text-sm text-gray-400 mt-1">
-              Yahan apna payout method choose aur save karein, taki baar-baar details na dalni pade. Aap ise kabhi bhi update ya delete kar sakte hain.
+            <p className="text-xs text-slate-400 mt-0.5">
+              History of all withdrawal requests submitted from your account with real-time settlement status.
             </p>
           </div>
 
-          {savedMethod && !isEditingMethod && (
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setIsEditingMethod(true)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-cyan-300 border border-white/10 text-xs font-semibold transition-colors cursor-pointer"
-              >
-                <Edit3 className="w-3.5 h-3.5" />
-                <span>Update Method</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleDeleteMethod}
-                disabled={savingMethod}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-                <span>Delete</span>
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* If Saved: Show the Active Saved Card */}
-        {savedMethod && !isEditingMethod ? (
-          <div className="p-5 rounded-2xl bg-[#090D16] border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
-                {savedMethod.method === 'UPI' && <Coins className="w-6 h-6" />}
-                {savedMethod.method === 'BANK_TRANSFER' && <Building className="w-6 h-6" />}
-                {savedMethod.method === 'PAYPAL' && <CreditCard className="w-6 h-6" />}
-                {savedMethod.method === 'GIFT_CARD' && <Gift className="w-6 h-6" />}
-              </div>
-
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="font-bold text-white text-base">
-                    {savedMethod.method.replace('_', ' ')}
-                  </span>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold">
-                    <Check className="w-3 h-3" />
-                    <span>Saved & Verified</span>
-                  </span>
-                </div>
-                <p className="text-sm font-mono text-cyan-300">
-                  {savedMethod.accountDetails}
-                </p>
-                {savedMethod.beneficiaryName && (
-                  <p className="text-xs text-gray-400">
-                    Beneficiary: <span className="text-gray-200">{savedMethod.beneficiaryName}</span>
-                  </p>
-                )}
-                <p className="text-[11px] text-gray-500">
-                  Last updated: {new Date(savedMethod.updatedAt).toLocaleDateString()}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 self-end sm:self-center">
-              <span className="text-xs text-emerald-400 font-semibold bg-emerald-500/10 px-3 py-1.5 rounded-xl border border-emerald-500/20 flex items-center gap-1.5">
-                <Check className="w-3.5 h-3.5" />
-                <span>Ready for Direct Payout</span>
-              </span>
-            </div>
-          </div>
-        ) : !savedMethod && !isEditingMethod ? (
-          /* If Not Saved: Prompt Button to Choose & Save */
-          <div className="py-8 px-6 rounded-2xl bg-[#090D16] border border-dashed border-white/20 text-center space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mx-auto">
-              <Wallet className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-white">No Payout Method Saved</h3>
-              <p className="text-xs text-gray-400 max-w-md mx-auto mt-1">
-                Apna UPI ID ya Bank Account ek baar save kar lijiye taki aage sirf amount enter karke payout le sakein.
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setIsEditingMethod(true)}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg shadow-amber-500/20 transition-all active:scale-95 cursor-pointer"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Choose & Save Payout Method</span>
-            </button>
-          </div>
-        ) : (
-          /* Form to Choose, Save or Update Payout Method */
-          <form onSubmit={handleSaveMethod} className="space-y-6 pt-2">
-            <div>
-              <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-3">
-                Select Payment Option
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {PAYMENT_METHODS.map((pm) => {
-                  const Icon = pm.icon;
-                  const isSelected = methodType === pm.id;
-                  return (
-                    <button
-                      type="button"
-                      key={pm.id}
-                      onClick={() => setMethodType(pm.id as any)}
-                      className={`p-4 rounded-2xl border text-left transition-all flex items-start gap-3.5 cursor-pointer ${
-                        isSelected
-                          ? 'bg-amber-500/10 border-amber-500/50 shadow-md shadow-amber-500/10'
-                          : 'bg-[#090D16] border-white/5 hover:border-white/20 text-gray-400 hover:text-white'
-                      }`}
-                    >
-                      <div
-                        className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
-                          isSelected
-                            ? 'bg-amber-500 text-slate-950 font-bold'
-                            : 'bg-white/5 text-gray-400'
-                        }`}
-                      >
-                        <Icon className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <div className={`text-sm font-semibold ${isSelected ? 'text-white' : 'text-gray-300'}`}>
-                          {pm.name}
-                        </div>
-                        <div className="text-[11px] text-gray-400 mt-0.5 leading-snug">
-                          {pm.description}
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">
-                  {selectedMethodObj?.fieldLabel || 'Account Details'}
-                </label>
-                <input
-                  type="text"
-                  value={accountDetails}
-                  onChange={(e) => setAccountDetails(e.target.value)}
-                  placeholder={selectedMethodObj?.placeholder}
-                  required
-                  className="w-full bg-[#090D16] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all font-mono"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">
-                  Account Holder / Beneficiary Name (Optional)
-                </label>
-                <input
-                  type="text"
-                  value={beneficiaryName}
-                  onChange={(e) => setBeneficiaryName(e.target.value)}
-                  placeholder="e.g. Rahul Sharma"
-                  className="w-full bg-[#090D16] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-all"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end gap-3 pt-2">
-              {savedMethod && (
-                <button
-                  type="button"
-                  onClick={() => setIsEditingMethod(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white transition-colors cursor-pointer"
-                >
-                  Cancel
-                </button>
-              )}
-
-              <button
-                type="submit"
-                disabled={savingMethod}
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs px-6 py-2.5 rounded-xl shadow-lg shadow-amber-500/20 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
-              >
-                <Check className="w-4 h-4" />
-                <span>{savingMethod ? 'Saving Method...' : 'Save Payout Method'}</span>
-              </button>
-            </div>
-          </form>
-        )}
-      </div>
-
-      {/* STEP 2: PAYOUT REQUEST (AMOUNT ONLY) */}
-      <div className="bg-surface rounded-3xl p-6 sm:p-8 border border-white/10 shadow-xl space-y-6">
-        <div className="border-b border-white/10 pb-4">
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <Wallet className="w-5 h-5 text-emerald-400" />
-            <span>2. Request Payout (Sirf Amount Fill Karein)</span>
-          </h2>
-          <p className="text-xs sm:text-sm text-gray-400 mt-1">
-            Aapka saved method automatically link ho chuka hai. Bas withdrawal amount enter karein aur payout request submit karein.
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmitPayoutRequest} className="space-y-6">
-          <div>
-            <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">
-              Enter Withdrawal Amount (₹)
-            </label>
-            <div className="relative max-w-md">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-base">
-                ₹
-              </span>
+          {/* Search + Filter Tabs */}
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="relative">
+              <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
-                type="number"
-                min="10"
-                step="10"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="500"
-                required
-                className="w-full bg-[#090D16] border border-white/10 rounded-xl pl-9 pr-4 py-3 text-lg font-bold text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all font-mono"
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search UTR or account..."
+                className="bg-slate-950 border border-slate-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-slate-700 w-44"
               />
             </div>
 
-            {/* Quick Amount Suggestion Chips */}
-            <div className="flex flex-wrap items-center gap-2 mt-3">
-              <span className="text-xs text-gray-400">Quick Select:</span>
-              {['100', '250', '500', '1000', '2000'].map((amt) => (
+            <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
+              {['ALL', 'PAID', 'PROCESSING', 'PENDING'].map((status) => (
                 <button
-                  type="button"
-                  key={amt}
-                  onClick={() => setAmount(amt)}
-                  className={`px-3 py-1 rounded-xl text-xs font-semibold font-mono border transition-all cursor-pointer ${
-                    amount === amt
-                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                      : 'bg-[#090D16] text-gray-400 border-white/10 hover:border-white/20 hover:text-white'
+                  key={status}
+                  onClick={() => setStatusFilter(status)}
+                  className={`text-[11px] font-medium px-2.5 py-1 rounded transition-colors cursor-pointer ${
+                    statusFilter === status
+                      ? 'bg-slate-800 text-white font-semibold'
+                      : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
-                  ₹{amt}
+                  {status === 'PAID' ? 'Settled' : status}
                 </button>
               ))}
             </div>
           </div>
-
-          {/* Receiving Account Indicator */}
-          {savedMethod ? (
-            <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between text-xs">
-              <span className="text-gray-400">Receiving via Saved Method:</span>
-              <span className="font-mono text-cyan-300 font-semibold">
-                {savedMethod.method} &bull; {savedMethod.accountDetails}
-              </span>
-            </div>
-          ) : (
-            <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center gap-2 text-xs text-amber-300">
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              <span>Upar pehle apna payout method save karein, fir yahan request submit karein.</span>
-            </div>
-          )}
-
-          {/* Optional Note */}
-          <div>
-            <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">
-              Note / Comments (Optional)
-            </label>
-            <input
-              type="text"
-              value={requestNote}
-              onChange={(e) => setRequestNote(e.target.value)}
-              placeholder="e.g. Fast payout please"
-              maxLength={200}
-              className="w-full bg-[#090D16] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-all"
-            />
-          </div>
-
-          <div className="flex items-center justify-end pt-2">
-            <button
-              type="submit"
-              disabled={submittingPayout || !savedMethod}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold text-xs px-7 py-3 rounded-xl shadow-lg shadow-emerald-600/30 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-            >
-              <Send className="w-3.5 h-3.5" />
-              <span>{submittingPayout ? 'Submitting Request...' : `Submit Payout Request (₹${amount || 0})`}</span>
-            </button>
-          </div>
-        </form>
-      </div>
-
-      {/* STEP 3: PAYOUT HISTORY TABLE WITH EXPLICIT STATUS & METHOD */}
-      <div className="bg-[#0B0F19] rounded-3xl border border-white/10 shadow-xl overflow-hidden">
-        <div className="p-6 border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div>
-            <h2 className="text-lg font-bold text-white">
-              History of all withdrawal requests submitted from your account
-            </h2>
-            <p className="text-xs text-gray-400 mt-0.5">
-              Har withdrawal request ka live status, method aur transaction reference yahan dekhein.
-            </p>
-          </div>
-          <span className="text-xs font-mono text-gray-400 bg-white/5 px-2.5 py-1 rounded-lg self-start sm:self-auto">
-            {requests.length} Requests
-          </span>
         </div>
 
+        {/* Real Table */}
         <div className="overflow-x-auto">
-          {requests.length === 0 ? (
-            <div className="py-12 px-6 text-center space-y-3">
-              <Coins className="w-8 h-8 text-gray-500 mx-auto" />
-              <p className="text-sm font-semibold text-gray-300">No withdrawal requests yet</p>
-              <p className="text-xs text-gray-500 max-w-sm mx-auto">
-                Play games to build up your playtime, save your payout method, and submit your first withdrawal request.
+          {filteredRequests.length === 0 ? (
+            <div className="py-14 px-6 text-center space-y-2">
+              <Coins className="w-8 h-8 text-slate-600 mx-auto" />
+              <div className="text-sm font-semibold text-slate-300">No withdrawal records found</div>
+              <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                {requests.length === 0
+                  ? 'Your submitted withdrawal requests will appear here with live tracking and UTR transaction numbers.'
+                  : 'No transactions match the selected filter.'}
               </p>
             </div>
           ) : (
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-950/80 border-b border-white/10 text-gray-400 uppercase font-semibold text-[10px] tracking-wider">
+              <thead className="bg-slate-950/70 border-b border-slate-800 text-slate-400 uppercase font-semibold text-[10px] tracking-wider">
                 <tr>
-                  <th className="px-6 py-3.5">Requested Date</th>
-                  <th className="px-6 py-3.5">Amount</th>
-                  <th className="px-6 py-3.5">Payout Method</th>
-                  <th className="px-6 py-3.5 font-mono">Account / Details</th>
-                  <th className="px-6 py-3.5">Transaction Ref</th>
-                  <th className="px-6 py-3.5 text-right">Status (Payout Hua ya Pending)</th>
+                  <th className="px-5 py-3.5">Requested Date</th>
+                  <th className="px-5 py-3.5">Amount</th>
+                  <th className="px-5 py-3.5">Destination UPI</th>
+                  <th className="px-5 py-3.5">UTR / Reference ID</th>
+                  <th className="px-5 py-3.5 text-right">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5 text-gray-300">
-                {requests.map((r) => {
+              <tbody className="divide-y divide-slate-800/80 text-slate-300">
+                {filteredRequests.map((r) => {
                   const isPaid = r.status === 'PAID';
                   const isProcessing = r.status === 'PROCESSING';
-                  const isRejected = r.status === 'REJECTED';
                   const isPending = r.status === 'PENDING';
+                  const isRejected = r.status === 'REJECTED';
+                  const refId = r.transactionRef || 'TXN-GV-PENDING';
+                  const isCopied = copiedRef === refId;
 
                   return (
-                    <tr key={r.id} className="hover:bg-white/[0.02] transition-colors">
-                      <td className="px-6 py-4 text-white font-medium whitespace-nowrap">
+                    <tr key={r.id} className="hover:bg-slate-800/20 transition-colors">
+                      <td className="px-5 py-4 whitespace-nowrap text-slate-300 font-medium">
                         {new Date(r.requestedAt).toLocaleDateString('en-US', {
                           month: 'short',
                           day: 'numeric',
                           year: 'numeric',
                         })}
-                      </td>
-
-                      <td className="px-6 py-4 font-mono font-bold text-white text-sm whitespace-nowrap">
-                        ₹{r.amount || 100}
-                      </td>
-
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center gap-1.5 font-semibold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/20">
-                          {r.method === 'UPI' && <Coins className="w-3.5 h-3.5" />}
-                          {r.method === 'BANK_TRANSFER' && <Building className="w-3.5 h-3.5" />}
-                          {r.method === 'PAYPAL' && <CreditCard className="w-3.5 h-3.5" />}
-                          {r.method === 'GIFT_CARD' && <Gift className="w-3.5 h-3.5" />}
-                          <span>{r.method.replace('_', ' ')}</span>
+                        <span className="text-slate-500 text-[10px] block">
+                          {new Date(r.requestedAt).toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
                         </span>
                       </td>
 
-                      <td className="px-6 py-4 font-mono text-gray-300 whitespace-nowrap">
-                        {r.accountDetails.length > 12
-                          ? `${r.accountDetails.slice(0, 4)}••••${r.accountDetails.slice(-4)}`
-                          : r.accountDetails}
+                      <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-sm text-white">
+                        ₹{Number(r.amount || 100).toFixed(2)}
                       </td>
 
-                      <td className="px-6 py-4 font-mono text-gray-400 text-[11px] whitespace-nowrap">
-                        {r.transactionRef || 'TXN-GV-PENDING'}
+                      <td className="px-5 py-4 whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-white text-xs">{r.accountDetails}</span>
+                          <span className="text-[10px] font-medium text-slate-400 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">
+                            {r.method.replace('_', ' ')}
+                          </span>
+                        </div>
+                        {r.beneficiaryName && (
+                          <span className="text-[11px] text-slate-500 block">
+                            {r.beneficiaryName}
+                          </span>
+                        )}
                       </td>
 
-                      <td className="px-6 py-4 text-right whitespace-nowrap">
+                      <td className="px-5 py-4 whitespace-nowrap">
+                        <button
+                          type="button"
+                          onClick={() => handleCopyRef(refId)}
+                          title="Click to copy UTR reference"
+                          className="inline-flex items-center gap-1.5 font-mono text-xs text-slate-400 hover:text-white bg-slate-950 px-2.5 py-1 rounded border border-slate-800 hover:border-slate-700 transition-colors cursor-pointer"
+                        >
+                          <span>{refId}</span>
+                          {isCopied ? (
+                            <Check className="w-3 h-3 text-emerald-400" />
+                          ) : (
+                            <Copy className="w-3 h-3 text-slate-500" />
+                          )}
+                        </button>
+                      </td>
+
+                      <td className="px-5 py-4 text-right whitespace-nowrap">
                         {isPaid && (
-                          <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-sm shadow-emerald-500/10">
-                            <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                             <span>Successfully Paid</span>
                           </span>
                         )}
 
                         {isProcessing && (
-                          <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
+                          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
                             <Clock className="w-3.5 h-3.5 animate-spin" />
                             <span>Processing Payout</span>
                           </span>
                         )}
 
                         {isPending && (
-                          <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30">
                             <Clock className="w-3.5 h-3.5" />
                             <span>Pending Review</span>
                           </span>
                         )}
 
                         {isRejected && (
-                          <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1 rounded-full bg-rose-500/15 text-rose-400 border border-rose-500/30">
+                          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/30">
                             <AlertCircle className="w-3.5 h-3.5" />
                             <span>Rejected</span>
                           </span>
@@ -860,6 +1111,175 @@ export default function PlayerPayoutsPage() {
           )}
         </div>
       </div>
+
+      {/* 4. MODAL / DIALOG: ADD OR EDIT PAYOUT ACCOUNT (UP TO 4 SLOTS) */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
+          <div className="bg-[#121826] border border-slate-700/80 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden space-y-5 p-6 animate-scale-up">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div>
+                <h3 className="text-base font-bold text-white">
+                  {editingMethodId
+                    ? 'Edit Payout Account'
+                    : `Link Payout Account (Slot ${savedMethods.length + 1} of 4)`}
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Aap 4 tak UPI IDs save kar sakte hain instant withdrawals ke liye.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Form */}
+            <form onSubmit={handleSaveMethod} className="space-y-4">
+              {/* Method Selector Tabs */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                  Payout Method
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setMethodType('UPI')}
+                    className={`py-2 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-colors ${
+                      methodType === 'UPI'
+                        ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
+                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <Smartphone className="w-3.5 h-3.5" />
+                    <span>UPI (GPay / PhonePe / Paytm)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setMethodType('BANK_TRANSFER')}
+                    className={`py-2 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-colors ${
+                      methodType === 'BANK_TRANSFER'
+                        ? 'bg-blue-500/10 border-blue-500/50 text-blue-400'
+                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <Building className="w-3.5 h-3.5" />
+                    <span>Bank Account (IMPS)</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* UPI ID / Account Details Input */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-slate-300">
+                  {methodType === 'UPI' ? 'UPI ID / VPA' : 'Bank Account & IFSC'}
+                </label>
+                <input
+                  type="text"
+                  value={accountDetails}
+                  onChange={(e) => setAccountDetails(e.target.value)}
+                  placeholder={
+                    methodType === 'UPI'
+                      ? 'e.g. yourname@okhdfcbank or 9876543210@paytm'
+                      : 'Account No., IFSC Code'
+                  }
+                  required
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono"
+                />
+
+                {/* Quick Handle Chips for UPI */}
+                {methodType === 'UPI' && (
+                  <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                    <span className="text-[11px] text-slate-500">Quick Handle:</span>
+                    {COMMON_UPI_HANDLES.map((h) => (
+                      <button
+                        type="button"
+                        key={h.handle}
+                        onClick={() => {
+                          const prefix = accountDetails.includes('@')
+                            ? accountDetails.split('@')[0]
+                            : accountDetails || 'user';
+                          setAccountDetails(`${prefix}${h.handle}`);
+                        }}
+                        className="text-[10px] font-mono bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800 px-2 py-0.5 rounded cursor-pointer transition-colors"
+                      >
+                        {h.handle}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Account Nickname / Label */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-slate-300">
+                  Account Nickname / Label (Optional)
+                </label>
+                <input
+                  type="text"
+                  value={accountLabel}
+                  onChange={(e) => setAccountLabel(e.target.value)}
+                  placeholder="e.g. My Personal GPay, PhonePe Secondary"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+
+              {/* Account Holder Name */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-slate-300">
+                  Beneficiary Name (Account Holder Name)
+                </label>
+                <input
+                  type="text"
+                  value={beneficiaryName}
+                  onChange={(e) => setBeneficiaryName(e.target.value)}
+                  placeholder="e.g. Rahul Sharma"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+
+              {/* Default Checkbox */}
+              <div className="flex items-center gap-2 pt-1">
+                <input
+                  type="checkbox"
+                  id="setAsDefaultCheck"
+                  checked={setAsDefault}
+                  onChange={(e) => setSetAsDefault(e.target.checked)}
+                  className="w-4 h-4 rounded bg-slate-950 border-slate-700 text-emerald-500 focus:ring-emerald-500"
+                />
+                <label htmlFor="setAsDefaultCheck" className="text-xs text-slate-300 cursor-pointer">
+                  Set this as my primary payout account
+                </label>
+              </div>
+
+              {/* Modal Actions */}
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={savingMethod}
+                  className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs px-6 py-2 rounded-xl transition-all shadow-md shadow-emerald-500/20 active:scale-95 disabled:opacity-50 cursor-pointer"
+                >
+                  <Check className="w-3.5 h-3.5" />
+                  <span>{savingMethod ? 'Saving Account...' : 'Save Payout Account'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

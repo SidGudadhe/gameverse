@@ -1643,45 +1643,158 @@ class GameVerseDatabase {
   }
 
   // ================= PLAYER PAYOUTS & REWARDS =================
-  getPlayerPayoutMethod(userId: string): PlayerPayoutMethod | undefined {
-    if (!this.state.playerPayoutMethods) return undefined;
-    return this.state.playerPayoutMethods.find((p) => p.userId === userId);
+  getPlayerPayoutMethods(userId: string): PlayerPayoutMethod[] {
+    if (!this.state.playerPayoutMethods) return [];
+    return this.state.playerPayoutMethods.filter((p) => p.userId === userId);
+  }
+
+  getPlayerPayoutMethod(userId: string, methodId?: string): PlayerPayoutMethod | undefined {
+    const list = this.getPlayerPayoutMethods(userId);
+    if (list.length === 0) return undefined;
+    if (methodId) {
+      return list.find((p) => p.id === methodId);
+    }
+    return list.find((p) => p.isDefault) || list[0];
   }
 
   savePlayerPayoutMethod(
     userId: string,
     data: {
+      id?: string;
+      addNew?: boolean;
       method: 'UPI' | 'BANK_TRANSFER' | 'PAYPAL' | 'GIFT_CARD';
       accountDetails: string;
       beneficiaryName?: string;
+      label?: string;
+      provider?: PlayerPayoutMethod['provider'];
+      isDefault?: boolean;
     }
   ): PlayerPayoutMethod {
     if (!this.state.playerPayoutMethods) this.state.playerPayoutMethods = [];
-    let method = this.state.playerPayoutMethods.find((p) => p.userId === userId);
+    const userMethods = this.state.playerPayoutMethods.filter((p) => p.userId === userId);
+
+    let method = data.id
+      ? this.state.playerPayoutMethods.find((p) => p.id === data.id && p.userId === userId)
+      : (!data.addNew && userMethods.length === 1 ? userMethods[0] : undefined);
+
+    // Detect provider if UPI
+    let provider = data.provider;
+    if (!provider && data.method === 'UPI') {
+      const lower = data.accountDetails.toLowerCase();
+      if (
+        lower.includes('@okaxis') ||
+        lower.includes('@okhdfcbank') ||
+        lower.includes('@oksbi') ||
+        lower.includes('@okicici')
+      ) {
+        provider = 'GPAY';
+      } else if (lower.includes('@ybl') || lower.includes('@ibl') || lower.includes('@axl')) {
+        provider = 'PHONEPE';
+      } else if (lower.includes('@paytm')) {
+        provider = 'PAYTM';
+      } else if (lower.includes('@upi')) {
+        provider = 'BHIM';
+      } else {
+        provider = 'GENERIC_UPI';
+      }
+    } else if (!provider) {
+      provider =
+        data.method === 'BANK_TRANSFER' ? 'BANK' : data.method === 'PAYPAL' ? 'PAYPAL' : 'GIFT';
+    }
+
+    const now = new Date().toISOString();
+
     if (!method) {
+      // If user already reached 4 methods, enforce limit
+      if (userMethods.length >= 4) {
+        throw new Error('Limit reached: You can save a maximum of 4 payout accounts / UPI IDs.');
+      }
+
+      // If user has no existing methods or requested default, set as default
+      const shouldBeDefault = userMethods.length === 0 || Boolean(data.isDefault);
+      if (shouldBeDefault) {
+        userMethods.forEach((m) => {
+          m.isDefault = false;
+        });
+      }
+
       method = {
-        id: `ppm-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        id: data.id || `ppm-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
         userId,
         method: data.method,
         accountDetails: data.accountDetails,
         beneficiaryName: data.beneficiaryName,
-        updatedAt: new Date().toISOString(),
+        label:
+          data.label ||
+          (data.method === 'UPI' ? `${provider} Account` : data.method.replace('_', ' ')),
+        provider,
+        isDefault: shouldBeDefault,
+        createdAt: now,
+        updatedAt: now,
       };
       this.state.playerPayoutMethods.push(method);
     } else {
+      // Updating existing
+      if (data.isDefault) {
+        userMethods.forEach((m) => {
+          m.isDefault = false;
+        });
+      }
       method.method = data.method;
       method.accountDetails = data.accountDetails;
       method.beneficiaryName = data.beneficiaryName;
-      method.updatedAt = new Date().toISOString();
+      if (data.label) method.label = data.label;
+      if (provider) method.provider = provider;
+      if (typeof data.isDefault === 'boolean') method.isDefault = data.isDefault;
+      method.updatedAt = now;
     }
+
     this.persistState();
     return method;
   }
 
-  deletePlayerPayoutMethod(userId: string): boolean {
+  setDefaultPlayerPayoutMethod(userId: string, methodId: string): boolean {
+    const userMethods = this.getPlayerPayoutMethods(userId);
+    const target = userMethods.find((m) => m.id === methodId);
+    if (!target) return false;
+
+    userMethods.forEach((m) => {
+      m.isDefault = m.id === methodId;
+      m.updatedAt = new Date().toISOString();
+    });
+
+    this.persistState();
+    return true;
+  }
+
+  deletePlayerPayoutMethod(userId: string, methodId?: string): boolean {
     if (!this.state.playerPayoutMethods) return false;
     const initialLen = this.state.playerPayoutMethods.length;
-    this.state.playerPayoutMethods = this.state.playerPayoutMethods.filter((p) => p.userId !== userId);
+
+    if (methodId) {
+      const toDelete = this.state.playerPayoutMethods.find(
+        (p) => p.userId === userId && p.id === methodId
+      );
+      if (!toDelete) return false;
+
+      this.state.playerPayoutMethods = this.state.playerPayoutMethods.filter(
+        (p) => !(p.userId === userId && p.id === methodId)
+      );
+
+      // If deleted item was default, assign default to another method if available
+      if (toDelete.isDefault) {
+        const remaining = this.state.playerPayoutMethods.filter((p) => p.userId === userId);
+        if (remaining.length > 0) {
+          remaining[0].isDefault = true;
+        }
+      }
+    } else {
+      // Delete all methods for user (backward compatibility)
+      this.state.playerPayoutMethods = this.state.playerPayoutMethods.filter(
+        (p) => p.userId !== userId
+      );
+    }
+
     const removed = this.state.playerPayoutMethods.length < initialLen;
     if (removed) this.persistState();
     return removed;

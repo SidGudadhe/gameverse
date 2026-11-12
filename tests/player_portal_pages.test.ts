@@ -428,4 +428,154 @@ describe('Player Portal Routes & Integration Tests', () => {
     const deleteData = await deleteRes.json();
     expect(deleteData.success).toBe(true);
   });
+
+  it('14. Player Multi-UPI Support (Allows up to 4 UPI IDs, rejects 5th, supports switching active)', async () => {
+    // Clear existing methods for test user
+    gvDb.deletePlayerPayoutMethod(TEST_USER.userId);
+
+    // 14a. Add UPI #1 (Google Pay)
+    const upi1Res = await requestPayout(
+      new NextRequest('http://localhost:3000/api/player/payouts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          action: 'SAVE_METHOD',
+          addNew: true,
+          method: 'UPI',
+          accountDetails: 'player1@okaxis',
+          label: 'Personal GPay',
+          beneficiaryName: 'Player One',
+        }),
+      })
+    );
+    expect(upi1Res.status).toBe(200);
+    const upi1Data = await upi1Res.json();
+    expect(upi1Data.savedMethods.length).toBe(1);
+    expect(upi1Data.savedMethod.isDefault).toBe(true);
+
+    // 14b. Add UPI #2 (PhonePe)
+    const upi2Res = await requestPayout(
+      new NextRequest('http://localhost:3000/api/player/payouts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          action: 'SAVE_METHOD',
+          addNew: true,
+          method: 'UPI',
+          accountDetails: 'player2@ybl',
+          label: 'PhonePe Secondary',
+          beneficiaryName: 'Player Two',
+        }),
+      })
+    );
+    expect(upi2Res.status).toBe(200);
+    const upi2Data = await upi2Res.json();
+    expect(upi2Data.savedMethods.length).toBe(2);
+
+    // 14c. Add UPI #3 (Paytm)
+    const upi3Res = await requestPayout(
+      new NextRequest('http://localhost:3000/api/player/payouts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          action: 'SAVE_METHOD',
+          addNew: true,
+          method: 'UPI',
+          accountDetails: '9876543210@paytm',
+          label: 'Paytm Wallet',
+          beneficiaryName: 'Player Three',
+        }),
+      })
+    );
+    expect(upi3Res.status).toBe(200);
+    const upi3Data = await upi3Res.json();
+    expect(upi3Data.savedMethods.length).toBe(3);
+
+    // 14d. Add UPI #4 (BHIM)
+    const upi4Res = await requestPayout(
+      new NextRequest('http://localhost:3000/api/player/payouts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          action: 'SAVE_METHOD',
+          addNew: true,
+          method: 'UPI',
+          accountDetails: 'player4@upi',
+          label: 'BHIM UPI',
+          beneficiaryName: 'Player Four',
+        }),
+      })
+    );
+    expect(upi4Res.status).toBe(200);
+    const upi4Data = await upi4Res.json();
+    expect(upi4Data.savedMethods.length).toBe(4);
+
+    // 14e. Attempting to add a 5th UPI ID must fail with 400
+    const upi5Res = await requestPayout(
+      new NextRequest('http://localhost:3000/api/player/payouts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          action: 'SAVE_METHOD',
+          addNew: true,
+          method: 'UPI',
+          accountDetails: 'player5@okhdfcbank',
+          label: 'Excess 5th UPI',
+        }),
+      })
+    );
+    expect(upi5Res.status).toBe(400);
+    const upi5Data = await upi5Res.json();
+    expect(upi5Data.error).toContain('maximum of 4');
+
+    // 14f. Switch active/default UPI ID to UPI #3
+    const method3Id = upi3Data.savedMethods.find((m: any) => m.accountDetails === '9876543210@paytm').id;
+    const setDefaultRes = await requestPayout(
+      new NextRequest('http://localhost:3000/api/player/payouts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          action: 'SET_DEFAULT',
+          methodId: method3Id,
+        }),
+      })
+    );
+    expect(setDefaultRes.status).toBe(200);
+    const setDefaultData = await setDefaultRes.json();
+    expect(setDefaultData.savedMethod.id).toBe(method3Id);
+    expect(setDefaultData.savedMethod.accountDetails).toBe('9876543210@paytm');
+
+    // 14g. Request payout choosing a specific UPI ID (UPI #2)
+    const method2Id = upi2Data.savedMethods.find((m: any) => m.accountDetails === 'player2@ybl').id;
+    const specificPayoutRes = await requestPayout(
+      new NextRequest('http://localhost:3000/api/player/payouts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          action: 'REQUEST_PAYOUT',
+          methodId: method2Id,
+          amount: 600,
+        }),
+      })
+    );
+    expect(specificPayoutRes.status).toBe(200);
+    const specificPayoutData = await specificPayoutRes.json();
+    expect(specificPayoutData.request.accountDetails).toBe('player2@ybl');
+    expect(specificPayoutData.request.amount).toBe(600);
+
+    // 14h. Delete 1 UPI ID (frees up slot)
+    const deleteRes = await requestPayout(
+      new NextRequest('http://localhost:3000/api/player/payouts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          action: 'DELETE_METHOD',
+          methodId: method2Id,
+        }),
+      })
+    );
+    expect(deleteRes.status).toBe(200);
+    const deleteData = await deleteRes.json();
+    expect(deleteData.savedMethods.length).toBe(3);
+  });
 });

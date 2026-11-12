@@ -17,6 +17,7 @@ export async function GET(req: NextRequest) {
     const history = gvDb.getPlayHistory(authUser.userId, 100);
     const totalMinutes = history.reduce((acc, h) => acc + (h.totalPlayMinutes || 0), 0);
     const requests = gvDb.getPlayerPayoutRequests(authUser.userId);
+    const savedMethods = gvDb.getPlayerPayoutMethods(authUser.userId);
     const savedMethod = gvDb.getPlayerPayoutMethod(authUser.userId) || null;
 
     return NextResponse.json({
@@ -30,6 +31,8 @@ export async function GET(req: NextRequest) {
           'Game play reward rates and conversion will be activated in the next platform update. Every minute you play is currently being logged and tracked for your future payout eligibility!',
       },
       savedMethod,
+      savedMethods,
+      maxAllowed: 4,
       requests,
     });
   } catch (err: any) {
@@ -44,9 +47,20 @@ export async function POST(req: NextRequest) {
     if (errorResponse) return errorResponse;
 
     const body = await req.json().catch(() => ({}));
-    const { action = 'REQUEST_PAYOUT', method, accountDetails, beneficiaryName, amount, note } = body;
+    const {
+      action = 'REQUEST_PAYOUT',
+      id,
+      methodId,
+      method,
+      accountDetails,
+      beneficiaryName,
+      label,
+      isDefault,
+      amount,
+      note,
+    } = body;
 
-    // 1. Action: Save / Update Payout Method
+    // 1. Action: Save / Update Payout Method (Up to 4 accounts/UPI IDs)
     if (action === 'SAVE_METHOD') {
       const validMethods = ['UPI', 'BANK_TRANSFER', 'PAYPAL', 'GIFT_CARD'];
       if (!method || !validMethods.includes(method)) {
@@ -63,29 +77,68 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      const saved = gvDb.savePlayerPayoutMethod(user!.userId, {
-        method,
-        accountDetails: accountDetails.trim(),
-        beneficiaryName: typeof beneficiaryName === 'string' ? beneficiaryName.trim() : undefined,
-      });
+      try {
+        const saved = gvDb.savePlayerPayoutMethod(user!.userId, {
+          id: id || methodId,
+          addNew: Boolean(body.addNew),
+          method,
+          accountDetails: accountDetails.trim(),
+          beneficiaryName: typeof beneficiaryName === 'string' ? beneficiaryName.trim() : undefined,
+          label: typeof label === 'string' && label.trim() ? label.trim() : undefined,
+          isDefault: typeof isDefault === 'boolean' ? isDefault : undefined,
+        });
 
+        const updatedMethods = gvDb.getPlayerPayoutMethods(user!.userId);
+
+        return NextResponse.json({
+          success: true,
+          message: 'Payout method saved successfully!',
+          savedMethod: saved,
+          savedMethods: updatedMethods,
+        });
+      } catch (saveErr: any) {
+        return NextResponse.json(
+          { error: saveErr.message || 'Failed to save payout method.' },
+          { status: 400 }
+        );
+      }
+    }
+
+    // 2. Action: Set Primary / Default Payout Method
+    if (action === 'SET_DEFAULT') {
+      const targetId = methodId || id;
+      if (!targetId) {
+        return NextResponse.json({ error: 'Method ID is required to set default.' }, { status: 400 });
+      }
+
+      const success = gvDb.setDefaultPlayerPayoutMethod(user!.userId, targetId);
+      if (!success) {
+        return NextResponse.json({ error: 'Payout method not found.' }, { status: 404 });
+      }
+
+      const updatedMethods = gvDb.getPlayerPayoutMethods(user!.userId);
       return NextResponse.json({
         success: true,
-        message: 'Payout method saved successfully!',
-        savedMethod: saved,
+        message: 'Default payout method updated.',
+        savedMethods: updatedMethods,
+        savedMethod: gvDb.getPlayerPayoutMethod(user!.userId),
       });
     }
 
-    // 2. Action: Delete Payout Method
+    // 3. Action: Delete Payout Method
     if (action === 'DELETE_METHOD') {
-      gvDb.deletePlayerPayoutMethod(user!.userId);
+      const targetId = methodId || id;
+      gvDb.deletePlayerPayoutMethod(user!.userId, targetId);
+      const updatedMethods = gvDb.getPlayerPayoutMethods(user!.userId);
       return NextResponse.json({
         success: true,
         message: 'Payout method deleted successfully!',
+        savedMethods: updatedMethods,
+        savedMethod: gvDb.getPlayerPayoutMethod(user!.userId) || null,
       });
     }
 
-    // 3. Action: Request Payout
+    // 4. Action: Request Payout
     const validMethods = ['UPI', 'BANK_TRANSFER', 'PAYPAL', 'GIFT_CARD'];
     if (method && !validMethods.includes(method)) {
       return NextResponse.json(
@@ -100,11 +153,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Retrieve saved method or fallback to passed method
-    const savedMethod = gvDb.getPlayerPayoutMethod(user!.userId);
-    const effectiveMethod = (method && validMethods.includes(method)) ? method : (savedMethod ? savedMethod.method : undefined);
-    const effectiveDetails = (accountDetails && accountDetails.trim().length > 0) ? accountDetails.trim() : (savedMethod ? savedMethod.accountDetails : undefined);
-    const effectiveName = beneficiaryName || (savedMethod ? savedMethod.beneficiaryName : undefined);
+    // Retrieve saved method (either chosen by methodId or default) or fallback to passed method
+    const targetMethodId = methodId || id;
+    const selectedSavedMethod = targetMethodId
+      ? gvDb.getPlayerPayoutMethod(user!.userId, targetMethodId)
+      : gvDb.getPlayerPayoutMethod(user!.userId);
+
+    const effectiveMethod = (method && validMethods.includes(method))
+      ? method
+      : (selectedSavedMethod ? selectedSavedMethod.method : undefined);
+    const effectiveDetails = (accountDetails && accountDetails.trim().length > 0)
+      ? accountDetails.trim()
+      : (selectedSavedMethod ? selectedSavedMethod.accountDetails : undefined);
+    const effectiveName = beneficiaryName || (selectedSavedMethod ? selectedSavedMethod.beneficiaryName : undefined);
 
     if (!effectiveMethod || !effectiveDetails) {
       return NextResponse.json(

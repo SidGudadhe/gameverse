@@ -304,6 +304,10 @@ export interface PlayerPayoutMethod {
   method: 'UPI' | 'BANK_TRANSFER' | 'PAYPAL' | 'GIFT_CARD';
   accountDetails: string;
   beneficiaryName?: string;
+  label?: string; // e.g. "Primary GPay", "PhonePe Personal", "Paytm Business"
+  provider?: 'GPAY' | 'PHONEPE' | 'PAYTM' | 'BHIM' | 'GENERIC_UPI' | 'BANK' | 'PAYPAL' | 'GIFT';
+  isDefault?: boolean;
+  createdAt?: string;
   updatedAt: string;
 }
 

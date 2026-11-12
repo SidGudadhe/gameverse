@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HelpCircle, Send, CheckCircle2, MessageSquare, BookOpen, Clock, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -12,18 +12,20 @@ export default function DeveloperSupportPage() {
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [tickets, setTickets] = useState<any[]>([]);
+  const [loadingTickets, setLoadingTickets] = useState(true);
 
-  // Initial mock ticket for display
-  const [tickets, setTickets] = useState([
-    {
-      id: 'tkt-001',
-      subject: 'WebGL 2.0 compressed texture support',
-      category: 'TECHNICAL',
-      message: 'Does the sandbox runner support Basis Universal / KTX2 texture formats?',
-      status: 'RESOLVED',
-      createdAt: '2026-11-05T14:00:00.000Z',
-    },
-  ]);
+  useEffect(() => {
+    fetch('/api/developer/support')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && Array.isArray(data.data)) {
+          setTickets(data.data);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoadingTickets(false));
+  }, []);
 
   const handleSubmitTicket = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -145,21 +147,30 @@ export default function DeveloperSupportPage() {
             </h3>
 
             <div className="space-y-3">
-              {tickets.map((t) => (
-                <div key={t.id} className="p-4 rounded-2xl bg-black/30 border border-white/5 space-y-2 text-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-white text-sm">{t.subject}</span>
-                    <Badge variant={t.status === 'RESOLVED' ? 'success' : 'warning'}>
-                      {t.status}
-                    </Badge>
-                  </div>
-                  <p className="text-gray-400 text-xs leading-relaxed">{t.message}</p>
-                  <div className="text-[10px] text-gray-500 flex items-center justify-between pt-1">
-                    <span>Category: {t.category}</span>
-                    <span>{new Date(t.createdAt).toLocaleDateString()}</span>
-                  </div>
+              {loadingTickets ? (
+                <div className="text-center py-6 text-xs text-gray-500">Loading tickets...</div>
+              ) : tickets.length === 0 ? (
+                <div className="text-center py-8 px-4 rounded-2xl bg-black/20 border border-white/5 space-y-1">
+                  <div className="text-xs text-gray-400 font-medium">No support tickets yet.</div>
+                  <div className="text-[11px] text-gray-600">Submit an inquiry on the left whenever you need assistance.</div>
                 </div>
-              ))}
+              ) : (
+                tickets.map((t) => (
+                  <div key={t.id} className="p-4 rounded-2xl bg-black/30 border border-white/5 space-y-2 text-xs">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-white text-sm">{t.subject}</span>
+                      <Badge variant={t.status === 'RESOLVED' ? 'success' : 'warning'}>
+                        {t.status}
+                      </Badge>
+                    </div>
+                    <p className="text-gray-400 text-xs leading-relaxed">{t.message}</p>
+                    <div className="text-[10px] text-gray-500 flex items-center justify-between pt-1">
+                      <span>Category: {t.category}</span>
+                      <span>{new Date(t.createdAt).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>

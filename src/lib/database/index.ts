@@ -500,20 +500,24 @@ class GameVerseDatabase {
   }
 
   createUser(userData: {
+    id?: string;
     email: string;
     passwordHash: string;
     name: string;
     role: UserRole;
     emailVerified?: boolean;
+    twoFactorEnabled?: boolean;
+    createdAt?: string;
   }) {
     const newUser = {
-      id: `usr-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      id: userData.id || `usr-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       email: userData.email,
       name: userData.name,
       role: userData.role,
       passwordHash: userData.passwordHash,
       emailVerified: userData.emailVerified || false,
-      createdAt: new Date().toISOString(),
+      twoFactorEnabled: userData.twoFactorEnabled || false,
+      createdAt: userData.createdAt || new Date().toISOString(),
     };
 
     this.state.users.push(newUser);

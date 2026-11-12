@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import {
   User,
@@ -16,7 +16,10 @@ import {
   Shield,
   Gamepad2,
   Coins,
-  Wallet,
+  Upload,
+  Camera,
+  Trash2,
+  Image as ImageIcon,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -27,7 +30,6 @@ interface ProfileData {
   username: string;
   displayName: string;
   avatarUrl?: string;
-  bio?: string;
   favoriteGenre?: string;
   createdAt?: string;
 }
@@ -36,15 +38,6 @@ interface ProfileStats {
   favoritesCount: number;
   gamesPlayedCount: number;
 }
-
-const PRESET_AVATARS = [
-  'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=150&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1628157582853-a796fa650a6a?w=150&auto=format&fit=crop&q=80',
-];
 
 const GENRES = [
   'Action',
@@ -64,16 +57,19 @@ export default function PlayerMyProfilePage() {
   const [stats, setStats] = useState<ProfileStats>({ favoritesCount: 0, gamesPlayedCount: 0 });
   const [loading, setLoading] = useState(true);
 
-  // Form edit states
+  // Form edit states (Essential fields only)
   const [displayName, setDisplayName] = useState('');
   const [username, setUsername] = useState('');
-  const [bio, setBio] = useState('');
   const [favoriteGenre, setFavoriteGenre] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
 
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+
+  // Gallery import ref
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [imageProcessing, setImageProcessing] = useState(false);
 
   const fetchProfile = async () => {
     try {
@@ -85,9 +81,8 @@ export default function PlayerMyProfilePage() {
           setProfile(data.profile);
           setDisplayName(data.profile.displayName || user?.name || '');
           setUsername(data.profile.username || '');
-          setBio(data.profile.bio || '');
           setFavoriteGenre(data.profile.favoriteGenre || 'Arcade');
-          setAvatarUrl(data.profile.avatarUrl || PRESET_AVATARS[0]);
+          setAvatarUrl(data.profile.avatarUrl || '');
         }
         if (data.stats) {
           setStats(data.stats);
@@ -108,6 +103,66 @@ export default function PlayerMyProfilePage() {
     }
   }, [isAuthenticated, authLoading]);
 
+  // Handle Photo Import from Device Gallery / File Explorer
+  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setSaveError('Please select a valid image file (PNG, JPG, WEBP, or GIF).');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setSaveError('Selected image is too large. Please select an image under 5MB.');
+      return;
+    }
+
+    setImageProcessing(true);
+    setSaveError(null);
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        // Optimize and resize to high-resolution 320x320 square avatar using HTML5 Canvas
+        const canvas = document.createElement('canvas');
+        const size = 320;
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+
+        if (ctx) {
+          // Center crop calculation
+          const minDim = Math.min(img.width, img.height);
+          const startX = (img.width - minDim) / 2;
+          const startY = (img.height - minDim) / 2;
+
+          ctx.drawImage(img, startX, startY, minDim, minDim, 0, 0, size, size);
+          const optimizedDataUrl = canvas.toDataURL('image/jpeg', 0.88);
+          setAvatarUrl(optimizedDataUrl);
+        } else {
+          // Fallback to raw base64 if canvas is unavailable
+          setAvatarUrl(event.target?.result as string);
+        }
+        setImageProcessing(false);
+      };
+      img.onerror = () => {
+        setSaveError('Failed to read image file. Please try another photo.');
+        setImageProcessing(false);
+      };
+      img.src = event.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveAvatar = () => {
+    setAvatarUrl('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -121,7 +176,6 @@ export default function PlayerMyProfilePage() {
         body: JSON.stringify({
           displayName,
           username,
-          bio,
           favoriteGenre,
           avatarUrl,
         }),
@@ -160,7 +214,7 @@ export default function PlayerMyProfilePage() {
         <EmptyState
           icon={User}
           title="Sign In to Manage Your Profile"
-          description="Create your unique gamer tag, track your gameplay stats, save favorite games, and show off your badges."
+          description="Create your unique gamer tag, track your gameplay stats, save favorite games, and configure your payouts."
           actionLabel="Sign In as Gamer"
           onAction={() => {
             window.location.href = '/auth/login';
@@ -185,6 +239,8 @@ export default function PlayerMyProfilePage() {
       })
     : '2026';
 
+  const defaultAvatar = `https://api.dicebear.com/7.x/bottts/svg?seed=${username || 'gamer'}`;
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
       {/* Breadcrumb Navigation */}
@@ -199,18 +255,17 @@ export default function PlayerMyProfilePage() {
 
       {/* Header Banner */}
       <div className="bg-[#0B0F19] rounded-3xl p-6 sm:p-8 border border-white/10 shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-indigo-600/10 to-transparent blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-indigo-600/10 via-cyan-400/5 to-transparent blur-3xl pointer-events-none" />
 
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 relative z-10 text-center sm:text-left">
           {/* Avatar preview */}
           <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl p-1 bg-gradient-to-tr from-indigo-500 via-cyan-400 to-emerald-400 shadow-xl shadow-indigo-600/20 shrink-0">
             <img
-              src={avatarUrl || PRESET_AVATARS[0]}
+              src={avatarUrl || defaultAvatar}
               alt={displayName || 'Player Avatar'}
-              className="w-full h-full object-cover rounded-[14px] bg-surface"
+              className="w-full h-full object-cover rounded-[14px] bg-[#090D16]"
               onError={(e) => {
-                // Fallback avatar
-                (e.target as HTMLElement).setAttribute('src', PRESET_AVATARS[0]);
+                (e.target as HTMLElement).setAttribute('src', defaultAvatar);
               }}
             />
           </div>
@@ -228,8 +283,6 @@ export default function PlayerMyProfilePage() {
 
             <p className="text-sm font-mono text-cyan-400">@{username || 'player'}</p>
 
-            {bio && <p className="text-gray-300 text-sm max-w-xl line-clamp-2">{bio}</p>}
-
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 pt-2 text-xs text-gray-400">
               <span className="flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5 text-gray-500" />
@@ -237,7 +290,7 @@ export default function PlayerMyProfilePage() {
               </span>
               <span className="flex items-center gap-1.5">
                 <Gamepad2 className="w-3.5 h-3.5 text-cyan-400" />
-                Prefers {favoriteGenre || 'Arcade'}
+                Favorite Genre: <strong className="text-slate-200 ml-1">{favoriteGenre || 'Arcade'}</strong>
               </span>
               {username && (
                 <Link
@@ -304,21 +357,21 @@ export default function PlayerMyProfilePage() {
         </div>
       </div>
 
-      {/* Edit Profile Section */}
+      {/* Edit Profile Section (Essential Fields Only) */}
       <div className="bg-surface rounded-3xl p-6 sm:p-8 border border-white/10 shadow-xl">
         <div className="border-b border-white/10 pb-4 mb-6">
           <h2 className="text-xl font-bold text-white flex items-center gap-2">
             <span>Edit Gamer Profile</span>
           </h2>
           <p className="text-xs sm:text-sm text-gray-400 mt-1">
-            Customize your gamer identity and how other players see you across GameVerse.
+            Apna avatar, display name, handle aur favorite genre customize karein.
           </p>
         </div>
 
         {saveSuccess && (
           <div className="mb-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs sm:text-sm flex items-center gap-2.5">
             <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span>Your profile changes have been saved successfully!</span>
+            <span>Profile changes saved successfully!</span>
           </div>
         )}
 
@@ -330,35 +383,65 @@ export default function PlayerMyProfilePage() {
         )}
 
         <form onSubmit={handleSave} className="space-y-6">
-          {/* Avatar Chooser */}
-          <div>
-            <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">
-              Choose Avatar
+          {/* Profile Picture (Gallery Import) */}
+          <div className="p-5 rounded-2xl bg-[#090D16] border border-white/10 space-y-4">
+            <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider">
+              Profile Picture (Gallery Import)
             </label>
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-              {PRESET_AVATARS.map((preset, idx) => (
-                <button
-                  type="button"
-                  key={idx}
-                  onClick={() => setAvatarUrl(preset)}
-                  className={`relative rounded-2xl overflow-hidden aspect-square border-2 transition-all p-0.5 ${
-                    avatarUrl === preset
-                      ? 'border-cyan-400 scale-105 shadow-md shadow-cyan-500/20'
-                      : 'border-transparent hover:border-white/20 opacity-70 hover:opacity-100'
-                  }`}
-                >
-                  <img
-                    src={preset}
-                    alt={`Avatar option ${idx + 1}`}
-                    className="w-full h-full object-cover rounded-xl"
-                  />
-                  {avatarUrl === preset && (
-                    <div className="absolute inset-0 bg-cyan-500/20 flex items-center justify-center">
-                      <CheckCircle2 className="w-5 h-5 text-white drop-shadow" />
-                    </div>
+
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
+              {/* Photo Preview */}
+              <div className="relative w-24 h-24 rounded-2xl overflow-hidden border-2 border-cyan-400/40 bg-slate-950 flex items-center justify-center shrink-0 shadow-lg">
+                <img
+                  src={avatarUrl || defaultAvatar}
+                  alt="Avatar Preview"
+                  className="w-full h-full object-cover"
+                />
+                {imageProcessing && (
+                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                    <div className="w-6 h-6 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+                  </div>
+                )}
+              </div>
+
+              {/* Gallery Upload Controls */}
+              <div className="space-y-3 flex-1 text-center sm:text-left">
+                {/* Hidden native file input */}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageFileChange}
+                  accept="image/png, image/jpeg, image/webp, image/gif"
+                  className="hidden"
+                />
+
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={imageProcessing}
+                    className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-md transition-all active:scale-95 cursor-pointer disabled:opacity-50"
+                  >
+                    <Upload className="w-4 h-4" />
+                    <span>Import from Gallery / Device</span>
+                  </button>
+
+                  {avatarUrl && (
+                    <button
+                      type="button"
+                      onClick={handleRemoveAvatar}
+                      className="inline-flex items-center gap-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 text-xs font-medium px-3.5 py-2.5 rounded-xl transition-colors cursor-pointer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Remove Photo</span>
+                    </button>
                   )}
-                </button>
-              ))}
+                </div>
+
+                <p className="text-[11px] text-gray-400 leading-relaxed">
+                  Apne phone ya computer ki gallery se koi bhi photo choose karein (PNG, JPG, WEBP - Max 5MB). Photo automatically avatar size me crop aur optimize ho jayegi.
+                </p>
+              </div>
             </div>
           </div>
 
@@ -435,30 +518,6 @@ export default function PlayerMyProfilePage() {
             </div>
           </div>
 
-          {/* Bio */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label
-                htmlFor="bio"
-                className="block text-xs font-semibold text-gray-300 uppercase tracking-wider"
-              >
-                Bio
-              </label>
-              <span className="text-[11px] text-gray-500 font-mono">
-                {bio.length}/250 characters
-              </span>
-            </div>
-            <textarea
-              id="bio"
-              rows={3}
-              value={bio}
-              maxLength={250}
-              onChange={(e) => setBio(e.target.value)}
-              placeholder="Tell other gamers about yourself, your favorite games, or your play style..."
-              className="w-full bg-[#090D16] border border-white/10 rounded-xl p-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all resize-none"
-            />
-          </div>
-
           {/* Submit CTA */}
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
             <Link
@@ -470,7 +529,7 @@ export default function PlayerMyProfilePage() {
 
             <button
               type="submit"
-              disabled={saving}
+              disabled={saving || imageProcessing}
               className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-600/30 transition-all active:scale-95 disabled:opacity-50"
             >
               <Save className="w-3.5 h-3.5" />

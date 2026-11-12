@@ -216,4 +216,32 @@ describe('Player Portal Routes & Integration Tests', () => {
     const userReqs = gvDb.getPlayerPayoutRequests(TEST_USER.userId);
     expect(userReqs.some((r) => r.id === data.request.id)).toBe(true);
   });
+
+  it('11. PUT /api/player/profile should accept and persist custom gallery avatar (data URI)', async () => {
+    const sampleBase64Avatar = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP...';
+    const putReq = new NextRequest('http://localhost:3000/api/player/profile', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        avatarUrl: sampleBase64Avatar,
+      }),
+    });
+
+    const putRes = await updateProfile(putReq);
+    expect(putRes.status).toBe(200);
+    const data = await putRes.json();
+    expect(data.success).toBe(true);
+    expect(data.profile.avatarUrl).toBe(sampleBase64Avatar);
+
+    // Verify retrieval
+    const getReq = new NextRequest('http://localhost:3000/api/player/profile', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const getRes = await getProfile(getReq);
+    const getData = await getRes.json();
+    expect(getData.profile.avatarUrl).toBe(sampleBase64Avatar);
+  });
 });

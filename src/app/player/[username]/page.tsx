@@ -75,12 +75,6 @@ export default function PlayerProfilePage({ params }: PlayerProfilePageProps) {
               )}
             </div>
 
-            {profile.bio && (
-              <p className="text-xs sm:text-sm text-gray-300 max-w-2xl leading-relaxed">
-                {profile.bio}
-              </p>
-            )}
-
             {/* Badges / Joined */}
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 pt-1 text-xs text-gray-400">
               <span className="flex items-center gap-1">

@@ -19,6 +19,7 @@ import {
 import { Game, AdFormat } from '@/types';
 import AdOverlay from './AdOverlay';
 import { MockAdCreative } from '../lib/ads';
+import { useAuth } from '@/context/AuthContext';
 
 interface GamePlayerProps {
   game: Game;
@@ -27,6 +28,7 @@ interface GamePlayerProps {
 }
 
 export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: GamePlayerProps) {
+  const { user } = useAuth();
   const [isPlaying, setIsPlaying] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isTheater, setIsTheater] = useState(false);
@@ -82,6 +84,7 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
         const payload = {
           gameId: game.id,
           sessionToken: sessionTokenRef.current,
+          playerId: user?.id,
           eventType,
           activeSeconds: activeSecondsRef.current,
           deviceType,

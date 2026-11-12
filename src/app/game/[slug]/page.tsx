@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { gvDb } from '@/lib/database';
 import GameCard from '@/components/GameCard';
 import GameActionBar from '@/components/GameActionBar';
+import AdaptiveRecommendations from '@/components/AdaptiveRecommendations';
 import { Star, ArrowLeft, Gamepad, Info, ShieldCheck, Check, Sparkles, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 
@@ -179,27 +180,13 @@ export default function GamePage({ params }: GamePageProps) {
       {/* Community Ratings & Reviews */}
       <GameReviewsSection gameSlug={game.slug} gameId={game.id} initialRating={game.rating} />
 
-      {/* Related Games Carousel */}
-      {relatedGames.length > 0 && (
-        <section className="space-y-4 pt-6 border-t border-white/10">
-          <div className="flex items-center justify-between">
-            <h2 className="font-heading font-bold text-xl text-white">
-              More Games Like This
-            </h2>
-            <Link
-              href={`/category/${game.categoryId}`}
-              className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
-            >
-              Browse All in {game.categoryName} →
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {relatedGames.map((rg) => (
-              <GameCard key={rg.id} game={rg} />
-            ))}
-          </div>
-        </section>
-      )}
+      {/* Adaptive Personalized Recommendations Feed */}
+      <AdaptiveRecommendations
+        title={`More Games Like ${game.title}`}
+        subtitle="Curated by our neural recommendation algorithm based on this game and your profile."
+        excludeGameId={game.id}
+        limit={4}
+      />
     </div>
   );
 }

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { gvDb } from '@/lib/database';
 import HeroCarousel from '@/components/HeroCarousel';
 import GameCard from '@/components/GameCard';
+import AdaptiveRecommendations from '@/components/AdaptiveRecommendations';
 import { Flame, Trophy, Sparkles, Gamepad2, ArrowRight } from 'lucide-react';
 
 export default function HomePage() {
@@ -55,6 +56,13 @@ export default function HomePage() {
           </Link>
         ))}
       </div>
+
+      {/* Instagram-Style Adaptive Recommendation Feed with Mood Selector */}
+      <AdaptiveRecommendations
+        title="Curated For You • Adaptive Feed"
+        subtitle="Our neural recommendation algorithm trains on your active playtime, favorites, and mood."
+        limit={8}
+      />
 
       {/* Trending Games Section */}
       <section className="space-y-4">

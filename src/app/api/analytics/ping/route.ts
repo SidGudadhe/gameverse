@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { gvDb } from '../../../../lib/database';
 import { detectBot, hashIpAddress, validateHeartbeat, isEligibleForMonetization } from '../../../../lib/analytics';
+import { extractAuth } from '../../../../lib/security/middleware';
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,6 +15,10 @@ export async function POST(req: NextRequest) {
       referralToken,
       deviceType = 'DESKTOP',
     } = body;
+
+    // Detect authenticated user from cookie if not explicitly provided
+    const auth = extractAuth(req);
+    const effectivePlayerId = playerId || auth?.userId;
 
     if (!gameId || !sessionToken) {
       return NextResponse.json(
@@ -48,7 +53,7 @@ export async function POST(req: NextRequest) {
       session = gvDb.createSession({
         gameId,
         sessionToken,
-        playerId,
+        playerId: effectivePlayerId,
         ipHash,
         deviceType,
         referralToken,
@@ -76,6 +81,11 @@ export async function POST(req: NextRequest) {
           activeSeconds: session.activeSeconds,
           metadata: { timestamp: new Date().toISOString() },
         });
+
+        // Record real-time user engagement into play history for recommendation algorithm
+        if (effectivePlayerId && activeSeconds > 0 && !session.isIvt) {
+          gvDb.recordPlayHistory(effectivePlayerId, gameId, activeSeconds);
+        }
       }
     }
 
@@ -90,6 +100,10 @@ export async function POST(req: NextRequest) {
           activeSeconds: session.activeSeconds,
           metadata: { finalDuration: session.activeSeconds },
         });
+
+        if (effectivePlayerId && activeSeconds > 0 && !session.isIvt) {
+          gvDb.recordPlayHistory(effectivePlayerId, gameId, activeSeconds);
+        }
       }
     }
 

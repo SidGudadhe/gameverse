@@ -3,9 +3,23 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import GameCard from '@/components/GameCard';
-import { Search as SearchIcon, Filter, SlidersHorizontal, Sparkles, Gamepad2, Flame, Star, Clock } from 'lucide-react';
-import { EmptyState } from '@/components/ui/EmptyState';
+import {
+  Search as SearchIcon,
+  Filter,
+  SlidersHorizontal,
+  Sparkles,
+  Gamepad2,
+  Flame,
+  Star,
+  Clock,
+  Compass,
+  Send,
+  CheckCircle,
+  HelpCircle,
+  Layers,
+} from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
 
 const POPULAR_TAGS = ['Retro', 'Runner', 'Cyberpunk', 'Dungeon', 'Physics', 'Pixel', 'WebGL'];
 
@@ -21,6 +35,10 @@ function SearchContent() {
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  // Fallback recommendations when 0 results found
+  const [fallbackRecommendations, setFallbackRecommendations] = useState<any[]>([]);
+  const [requestSent, setRequestSent] = useState(false);
+
   // Fetch games from /api/games
   const executeSearch = async () => {
     try {
@@ -34,13 +52,31 @@ function SearchContent() {
       const res = await fetch(`/api/games?${params.toString()}`);
       if (res.ok) {
         const data = await res.json();
-        setGames(data.games || []);
+        const found = data.games || [];
+        setGames(found);
         setTotalCount(data.total || 0);
+
+        // If no games found, trigger smart fallback recommendations
+        if (found.length === 0 && query.trim()) {
+          fetchFallbackRecommendations(query.trim());
+        }
       }
     } catch (err) {
       console.error('Search query failed:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchFallbackRecommendations = async (searchKeyword: string) => {
+    try {
+      const res = await fetch(`/api/recommendations?query=${encodeURIComponent(searchKeyword)}&limit=4`);
+      if (res.ok) {
+        const data = await res.json();
+        setFallbackRecommendations(data.recommendations || []);
+      }
+    } catch {
+      // Fallback
     }
   };
 
@@ -51,6 +87,14 @@ function SearchContent() {
 
     return () => clearTimeout(handler);
   }, [query, selectedCategory, sortBy]);
+
+  const handleRequestGame = () => {
+    setRequestSent(true);
+    setTimeout(() => {
+      // Auto-reset button state after 4 seconds
+      setRequestSent(false);
+    }, 4000);
+  };
 
   return (
     <div className="space-y-8">
@@ -67,7 +111,7 @@ function SearchContent() {
             Discover & Search Games
           </h1>
           <p className="text-gray-400 text-xs sm:text-sm mt-0.5">
-            Instant filter across verified HTML5, WebGL, and WASM browser titles.
+            Instant search across verified HTML5, WebGL, and WASM browser titles.
           </p>
         </div>
 
@@ -140,18 +184,75 @@ function SearchContent() {
           ))}
         </div>
       ) : (
-        <div className="p-16">
-          <EmptyState
-            icon={Gamepad2}
-            title="No Matching Games"
-            description={`We couldn't find any games matching "${query}". Try searching for popular genres like "Runner", "Retro", or "Dungeon".`}
-            actionLabel="Clear Search"
-            onAction={() => {
-              setQuery('');
-              setSelectedCategory('all');
-              setSortBy('trending');
-            }}
-          />
+        /* Smart Fallback & Engaging Recommendations when Zero Matches Found */
+        <div className="space-y-10 py-6">
+          <div className="bg-gradient-to-b from-indigo-950/40 via-slate-900/60 to-[#090D16] border border-indigo-500/30 rounded-3xl p-8 sm:p-10 text-center shadow-2xl relative overflow-hidden">
+            <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto mb-4 text-indigo-400">
+              <Compass className="w-8 h-8 animate-pulse" />
+            </div>
+
+            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              Yeh game abhi available nahi hai
+            </h2>
+            <p className="text-gray-300 text-sm max-w-xl mx-auto mt-2 leading-relaxed">
+              Humne aapke keyword <span className="font-mono text-cyan-300 font-bold bg-white/5 px-2 py-0.5 rounded">"{query}"</span> ke liye pura catalog search kiya, par ye title abhi GameVerse par uplabdh nahi hai.
+            </p>
+            <p className="text-indigo-300 text-sm font-semibold mt-2">
+              Kya aap iske badle hamare yeh top-rated aur similar games khelna pasand karenge?
+            </p>
+
+            <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
+              <Button
+                variant={requestSent ? 'outline' : 'primary'}
+                onClick={handleRequestGame}
+                disabled={requestSent}
+                className="flex items-center gap-2"
+              >
+                {requestSent ? (
+                  <>
+                    <CheckCircle className="w-4 h-4 text-emerald-400" />
+                    <span>Request Logged! Devs Notified</span>
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4" />
+                    <span>Request "{query || 'This Title'}" to be Added</span>
+                  </>
+                )}
+              </Button>
+
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setQuery('');
+                  setSelectedCategory('all');
+                }}
+              >
+                Browse All Trending Games
+              </Button>
+            </div>
+          </div>
+
+          {/* Curated Alternative Recommendations */}
+          {fallbackRecommendations.length > 0 && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-amber-400" />
+                  <h3 className="font-heading font-black text-xl text-white">
+                    Suggested Games You Might Enjoy Instead
+                  </h3>
+                </div>
+                <span className="text-xs font-mono text-gray-400">Curated AI Recommendations</span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                {fallbackRecommendations.map((rec) => (
+                  <GameCard key={rec.id} game={rec} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

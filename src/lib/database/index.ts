@@ -1528,6 +1528,11 @@ class GameVerseDatabase {
     return this.state.reviews.find((r) => r.userId === userId && r.gameId === gameId);
   }
 
+  getReviewsByUser(userId: string): GameReview[] {
+    if (!this.state.reviews) return [];
+    return this.state.reviews.filter((r) => r.userId === userId);
+  }
+
   createReview(
     data: Omit<GameReview, 'id' | 'createdAt' | 'helpfulCount' | 'helpfulVoters'> & {
       id?: string;

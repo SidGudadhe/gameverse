@@ -364,7 +364,7 @@ export default function PlayerMyProfilePage() {
             <span>Edit Gamer Profile</span>
           </h2>
           <p className="text-xs sm:text-sm text-gray-400 mt-1">
-            Apna avatar, display name, handle aur favorite genre customize karein.
+            Customize your avatar, display name, handle, and favorite genre.
           </p>
         </div>
 
@@ -439,7 +439,7 @@ export default function PlayerMyProfilePage() {
                 </div>
 
                 <p className="text-[11px] text-gray-400 leading-relaxed">
-                  Apne phone ya computer ki gallery se koi bhi photo choose karein (PNG, JPG, WEBP - Max 5MB). Photo automatically avatar size me crop aur optimize ho jayegi.
+                  Choose any photo from your phone or device gallery (PNG, JPG, WEBP - Max 5MB). Images are automatically optimized and cropped for your gamer profile avatar.
                 </p>
               </div>
             </div>

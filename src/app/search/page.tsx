@@ -192,13 +192,13 @@ function SearchContent() {
             </div>
 
             <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-              Yeh game abhi available nahi hai
+              This Game is Not Available Yet
             </h2>
             <p className="text-gray-300 text-sm max-w-xl mx-auto mt-2 leading-relaxed">
-              Humne aapke keyword <span className="font-mono text-cyan-300 font-bold bg-white/5 px-2 py-0.5 rounded">"{query}"</span> ke liye pura catalog search kiya, par ye title abhi GameVerse par uplabdh nahi hai.
+              We searched the entire catalog for <span className="font-mono text-cyan-300 font-bold bg-white/5 px-2 py-0.5 rounded">"{query}"</span>, but this title is not available on GameVerse yet.
             </p>
             <p className="text-indigo-300 text-sm font-semibold mt-2">
-              Kya aap iske badle hamare yeh top-rated aur similar games khelna pasand karenge?
+              Would you like to play these top-rated and similar popular games instead?
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-3 mt-6">

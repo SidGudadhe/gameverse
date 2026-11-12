@@ -305,13 +305,13 @@ export default function PlayerPayoutsPage() {
 
     const numAmount = Number(amount);
     if (!numAmount || numAmount < 500) {
-      setErrorMessage('Minimum withdrawal amount is ₹500. Aap ₹500 ke niche withdrawal nahi kar sakte.');
+      setErrorMessage('Minimum withdrawal amount is ₹500. Withdrawals below ₹500 are not permitted.');
       return;
     }
 
     if ((wallet?.availableBalance ?? 0) < 500) {
       setErrorMessage(
-        `Aapke account me sirf ₹${(wallet?.availableBalance ?? 0).toFixed(2)} hain. Withdraw karne ke liye pehle ₹500 balance complete karna hoga (Remaining: ₹${Math.max(0, 500 - (wallet?.availableBalance ?? 0)).toFixed(2)}).`
+        `Your available balance is ₹${(wallet?.availableBalance ?? 0).toFixed(2)}. A minimum balance of ₹500 is required to withdraw (Remaining needed: ₹${Math.max(0, 500 - (wallet?.availableBalance ?? 0)).toFixed(2)}).`
       );
       return;
     }
@@ -480,7 +480,7 @@ export default function PlayerPayoutsPage() {
               Player Rewards & Payouts is Locked
             </h1>
             <p className="text-slate-400 text-sm leading-relaxed">
-              GameVerse par games khelne ke rewards aur instant UPI withdrawals sirf registered gamer accounts ke liye available hain.
+              Gameplay rewards and instant UPI payouts on GameVerse are exclusively available for registered gamer accounts.
             </p>
           </div>
 
@@ -839,7 +839,7 @@ export default function PlayerPayoutsPage() {
                   </div>
 
                   <p className="text-[11px] text-slate-300 leading-relaxed">
-                    Aapke account me abhi <strong className="text-white font-mono">₹{(wallet?.availableBalance ?? 0).toFixed(2)}</strong> hain. Withdrawal ke liye aapko kam se kam <strong className="text-amber-300 font-mono">₹500</strong> balance complete karna hoga (Remaining: <strong className="text-white font-mono">₹{Math.max(0, 500 - (wallet?.availableBalance ?? 0)).toFixed(2)}</strong>). Games khel kar ₹500 pura karein!
+                    Your current available balance is <strong className="text-white font-mono">₹{(wallet?.availableBalance ?? 0).toFixed(2)}</strong>. A minimum balance of <strong className="text-amber-300 font-mono">₹500.00</strong> is required before submitting a withdrawal (Remaining needed: <strong className="text-white font-mono">₹{Math.max(0, 500 - (wallet?.availableBalance ?? 0)).toFixed(2)}</strong>). Play games on GameVerse to reach the ₹500 threshold!
                   </p>
                 </div>
               )}
@@ -897,7 +897,7 @@ export default function PlayerPayoutsPage() {
                   <p className="text-[11px] text-amber-400 font-medium flex items-center gap-1">
                     <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                     <span>
-                      Minimum withdrawal amount is ₹500.00. Aap ₹500 ke niche withdraw nahi kar sakte.
+                      Minimum withdrawal amount is ₹500.00. Withdrawals below ₹500 are not permitted.
                     </span>
                   </p>
                 ) : Number(amount) > (wallet?.availableBalance ?? 1500) ? (
@@ -1038,7 +1038,7 @@ export default function PlayerPayoutsPage() {
                   3
                 </div>
                 <p className="leading-snug">
-                  <strong className="text-white">Min ₹500 Withdrawal:</strong> Withdrawals start at ₹500. Agar balance ₹500 se kam hai, toh games khel kar ₹500 pura karein, fir 1-click instant IMPS withdrawal karein.
+                  <strong className="text-white">Min ₹500 Withdrawal:</strong> Withdrawals start at ₹500. If your balance is under ₹500, play games to complete the ₹500 threshold, then withdraw instantly with 1-click direct transfer.
                 </p>
               </div>
             </div>
@@ -1438,7 +1438,7 @@ export default function PlayerPayoutsPage() {
                     : `Link Payout Account (Slot ${savedMethods.length + 1} of 4)`}
                 </h3>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  Aap 4 tak UPI IDs save kar sakte hain instant withdrawals ke liye.
+                  Save up to 4 UPI IDs or payment accounts for instant withdrawals.
                 </p>
               </div>
 

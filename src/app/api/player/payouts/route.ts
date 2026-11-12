@@ -186,12 +186,12 @@ export async function POST(req: NextRequest) {
     const MINIMUM_PAYOUT = 500;
     const wallet = gvDb.getPlayerWallet(user!.userId);
 
-    // Rule: Agar account me kam paise hai to 500 complete karne honge, uske baad hi withdrawal hoga
+    // Rule: If account balance is below the minimum threshold, require player to reach ₹500 before withdrawing
     if (wallet.availableBalance < MINIMUM_PAYOUT) {
       const needed = Math.max(0, MINIMUM_PAYOUT - wallet.availableBalance);
       return NextResponse.json(
         {
-          error: `Aapke account me sirf ₹${wallet.availableBalance.toFixed(2)} hain. Withdraw karne ke liye aapko kam se kam ₹${MINIMUM_PAYOUT} balance complete karna hoga (Remaining needed: ₹${needed.toFixed(2)}). Games khel kar ₹${MINIMUM_PAYOUT} pura karein!`,
+          error: `Your available balance is ₹${wallet.availableBalance.toFixed(2)}. A minimum balance of ₹${MINIMUM_PAYOUT} is required to withdraw (Remaining needed: ₹${needed.toFixed(2)}). Play games to reach ₹${MINIMUM_PAYOUT} and unlock withdrawals!`,
           threshold: MINIMUM_PAYOUT,
           currentBalance: wallet.availableBalance,
           needed,
@@ -204,7 +204,7 @@ export async function POST(req: NextRequest) {
     if (isNaN(numAmount) || numAmount < MINIMUM_PAYOUT) {
       return NextResponse.json(
         {
-          error: `Minimum withdrawal amount is ₹${MINIMUM_PAYOUT}. Aap ₹${MINIMUM_PAYOUT} ke niche withdrawal nahi kar sakte.`,
+          error: `Minimum withdrawal amount is ₹${MINIMUM_PAYOUT}. Withdrawals below ₹${MINIMUM_PAYOUT} are not permitted.`,
           threshold: MINIMUM_PAYOUT,
         },
         { status: 400 }

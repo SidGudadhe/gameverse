@@ -322,7 +322,7 @@ export default function PayoutsPage() {
             </span>
           </div>
           <p className="text-slate-400 text-xs sm:text-sm mt-1">
-            Apna payout method ek baar save karein, aur amount enter karke turant withdrawal request dalein.
+            Save your payout method once, then simply enter your desired withdrawal amount to submit instant settlement requests.
           </p>
         </div>
 
@@ -346,9 +346,7 @@ export default function PayoutsPage() {
             Payout Calculation & Revenue Distribution
           </h3>
           <p className="text-xs text-indigo-200 leading-relaxed">
-            Developer payouts ka option active hai. Payout par kitne paise milenge iska exact rate formula
-            platform administrators dwara finalize karke jald yahan add kiya jayega.
-            Aapke sabhi games ka player traffic, game plays, aur session duration accurately record ho raha hai.
+            Developer payouts are active. Verified earnings formulas and rate tiers are finalized by platform administrators. Player traffic, gameplay sessions, and engagement durations across all your published titles are tracked in real-time.
           </p>
         </div>
       </div>
@@ -500,10 +498,10 @@ export default function PayoutsPage() {
           <div>
             <h2 className="text-lg font-bold text-white flex items-center gap-2">
               <Coins className="w-5 h-5 text-amber-400" />
-              <span>1. Payout Method (Ek Baar Save Karein)</span>
+              <span>1. Payout Destination (Saved Method)</span>
             </h2>
             <p className="text-xs sm:text-sm text-slate-400 mt-1">
-              Yahan apna payout method choose aur save karein, taki baar-baar details na dalni pade. Aap ise kabhi bhi update ya delete kar sakte hain.
+              Select and save your preferred payout destination once. You can update or change this destination at any time.
             </p>
           </div>
 
@@ -582,7 +580,7 @@ export default function PayoutsPage() {
             <div>
               <h3 className="text-base font-bold text-white">No Payout Method Saved</h3>
               <p className="text-xs text-slate-400 max-w-md mx-auto mt-1">
-                Apna Bank Account, UPI ID ya PayPal ek baar save kar lijiye taki aage sirf amount enter karke payout le sakein.
+                Save your Bank Wire, UPI ID, PayPal, or Stripe account once so you can request payouts by entering the amount.
               </p>
             </div>
             <button
@@ -701,10 +699,10 @@ export default function PayoutsPage() {
         <div className="border-b border-slate-800 pb-4">
           <h2 className="text-xl font-bold text-white flex items-center gap-2">
             <Wallet className="w-5 h-5 text-emerald-400" />
-            <span>2. Request Payout (Sirf Amount Fill Karein)</span>
+            <span>2. Request Payout (Enter Amount)</span>
           </h2>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Aapka saved method automatically link ho chuka hai. Bas withdrawal amount enter karein aur payout request submit karein.
+            Your saved payout destination is automatically connected. Enter your withdrawal amount to submit the request.
           </p>
         </div>
 
@@ -777,7 +775,7 @@ export default function PayoutsPage() {
           ) : (
             <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center gap-2 text-xs text-amber-300">
               <AlertCircle className="w-4 h-4 shrink-0" />
-              <span>Upar pehle apna payout method save karein, fir yahan request submit karein.</span>
+              <span>Please save your payout destination above before submitting a withdrawal request.</span>
             </div>
           )}
 
@@ -827,7 +825,7 @@ export default function PayoutsPage() {
               History of all withdrawal requests submitted from your account
             </h2>
             <p className="text-xs text-slate-400 mt-0.5">
-              Har payout request aur settlement cycle ka live status, method aur reference ID yahan dekhein.
+              View live status, disbursement methods, and transaction reference IDs for all settlement requests.
             </p>
           </div>
 

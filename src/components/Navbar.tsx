@@ -235,7 +235,7 @@ export default function Navbar() {
               <Gamepad2 className="w-6 h-6 text-white" />
             </div>
             <div>
-              <span className="font-heading font-black text-2xl tracking-wider bg-gradient-to-r from-white via-indigo-200 to-cyan-300 bg-clip-text text-transparent">
+              <span className="font-heading font-black text-2xl tracking-wider text-white">
                 GAME<span className="text-indigo-400">VERSE</span>
               </span>
               <span className="text-[10px] text-gray-400 block -mt-1 tracking-wider uppercase font-semibold">

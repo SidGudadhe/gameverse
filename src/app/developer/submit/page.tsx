@@ -210,10 +210,10 @@ export default function GameSubmitPage() {
             View in My Games
           </Link>
           <Link
-            href="/admin"
-            className="bg-elevated hover:bg-white/10 text-gray-200 text-xs font-semibold px-6 py-3 rounded-xl border border-white/10 transition-colors"
+            href="/developer"
+            className="bg-slate-800 hover:bg-slate-700 text-gray-200 text-xs font-semibold px-6 py-3 rounded-xl border border-white/10 transition-colors"
           >
-            Preview in Admin QA Queue
+            Return to Studio Overview
           </Link>
         </div>
       </div>

@@ -30,7 +30,7 @@ export default function FooterLegal() {
           <span className="hidden sm:inline text-white/20">|</span>
           <div className="flex items-center gap-1.5 text-emerald-400 font-mono text-[11px]">
             <ShieldCheck className="w-3.5 h-3.5" />
-            <span>GDPR & DPDP Hardened</span>
+            <span>Secure & Privacy Protected</span>
           </div>
         </div>
 

@@ -57,10 +57,7 @@ export default function DeveloperSignupPage() {
 
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md space-y-6 bg-surface p-8 rounded-3xl border border-cyan-500/30 shadow-2xl relative overflow-hidden">
-        {/* Glow */}
-        <div className="absolute -top-24 -right-24 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-
+      <div className="w-full max-w-md space-y-6 bg-slate-900/90 p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden backdrop-blur-xl">
         <div className="text-center space-y-2">
           <div className="w-12 h-12 rounded-2xl bg-cyan-600/20 border border-cyan-500/30 flex items-center justify-center mx-auto text-cyan-400">
             <Code className="w-6 h-6" />

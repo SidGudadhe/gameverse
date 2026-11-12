@@ -7,17 +7,11 @@ import {
   ShieldCheck,
   CheckCircle,
   Clock,
-  AlertTriangle,
   ArrowRight,
   Play,
-  ExternalLink,
   Search,
-  Filter,
   RefreshCw,
-  Sliders,
   Gamepad2,
-  Check,
-  XCircle,
   Rocket,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -72,7 +66,7 @@ export default function AdminDashboard() {
       case 'PUBLISHED':
         return <Badge variant="success">PUBLISHED</Badge>;
       case 'SUBMITTED':
-        return <Badge variant="warning">SUBMITTED</Badge>;
+        return <Badge variant="warning">PENDING REVIEW</Badge>;
       case 'QA_TESTING':
         return <Badge variant="cyan">IN TESTING</Badge>;
       case 'CHANGES_REQUESTED':
@@ -90,15 +84,16 @@ export default function AdminDashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
         <div>
           <div className="flex items-center gap-2">
-            <span className="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[11px] font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-              Platform Operations
+            <span className="flex h-2 w-2 rounded-full bg-rose-500" />
+            <span className="text-[11px] font-bold text-rose-400 uppercase tracking-wider">
+              Operations Center
             </span>
           </div>
-          <h1 className="font-heading font-black text-2xl sm:text-3xl text-white mt-1.5">
-            Admin QA & Content Moderation Queue
+          <h1 className="font-heading font-black text-2xl sm:text-3xl text-white mt-1">
+            QA & Content Moderation Queue
           </h1>
           <p className="text-gray-400 text-xs sm:text-sm mt-0.5">
-            Perform security scans, live sandbox testing, rights verification, and catalog publishing workflows.
+            Test game builds in sandboxed runtime, review code integrity, and approve for public catalog.
           </p>
         </div>
 
@@ -123,49 +118,43 @@ export default function AdminDashboard() {
             onClick={fetchSubmissions}
             leftIcon={<RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />}
           >
-            Refresh Queue
+            Refresh
           </Button>
-          <Link
-            href="/developer"
-            className="bg-elevated hover:bg-white/10 text-gray-200 text-xs font-semibold px-4 py-2 rounded-xl border border-white/10 transition-colors"
-          >
-            Developer Hub
-          </Link>
         </div>
       </div>
 
-      {/* Operational Metrics Overview Cards */}
+      {/* Operational Metrics Overview Cards (Linear / Stripe Style) */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-slate-900/60 rounded-2xl p-5 border border-white/10 space-y-2">
-          <div className="text-xs text-gray-400 font-medium">Pending QA Queue</div>
+        <div className="bg-slate-900/80 rounded-2xl p-5 border border-white/10 space-y-2">
+          <div className="text-xs text-gray-400 font-medium">Pending Review</div>
           <div className="font-heading font-black text-3xl text-amber-400">
             {metrics.pendingQa}
           </div>
-          <div className="text-[11px] text-gray-400">Requires manual testing</div>
+          <div className="text-[11px] text-gray-400">Awaiting operator testing</div>
         </div>
 
-        <div className="bg-slate-900/60 rounded-2xl p-5 border border-white/10 space-y-2">
+        <div className="bg-slate-900/80 rounded-2xl p-5 border border-white/10 space-y-2">
           <div className="text-xs text-gray-400 font-medium">Published Live</div>
           <div className="font-heading font-black text-3xl text-emerald-400">
             {metrics.publishedLive}
           </div>
-          <div className="text-[11px] text-emerald-400">Live in catalog</div>
+          <div className="text-[11px] text-emerald-400">Active in catalog</div>
         </div>
 
-        <div className="bg-slate-900/60 rounded-2xl p-5 border border-white/10 space-y-2">
+        <div className="bg-slate-900/80 rounded-2xl p-5 border border-white/10 space-y-2">
           <div className="text-xs text-gray-400 font-medium">Changes Requested</div>
           <div className="font-heading font-black text-3xl text-indigo-400">
             {metrics.changesRequested}
           </div>
-          <div className="text-[11px] text-indigo-300">Awaiting studio update</div>
+          <div className="text-[11px] text-indigo-300">Awaiting developer update</div>
         </div>
 
-        <div className="bg-slate-900/60 rounded-2xl p-5 border border-white/10 space-y-2">
+        <div className="bg-slate-900/80 rounded-2xl p-5 border border-white/10 space-y-2">
           <div className="text-xs text-gray-400 font-medium">Rejected Builds</div>
           <div className="font-heading font-black text-3xl text-rose-400">
             {metrics.rejected}
           </div>
-          <div className="text-[11px] text-rose-400/80">Safety or rights violations</div>
+          <div className="text-[11px] text-rose-400/80">Security or policy issues</div>
         </div>
       </div>
 
@@ -186,7 +175,7 @@ export default function AdminDashboard() {
               className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors ${
                 statusFilter === tab.id
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                  : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'
+                  : 'bg-slate-900/80 hover:bg-slate-800 text-gray-400 hover:text-white border border-white/5'
               }`}
             >
               {tab.label}
@@ -200,20 +189,26 @@ export default function AdminDashboard() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search game or studio..."
-            className="w-full bg-slate-950/80 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500"
+            placeholder="Search by game or studio..."
+            className="w-full bg-slate-950 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500"
           />
         </form>
       </div>
 
       {/* Submissions Queue Table */}
-      <div className="bg-slate-900/60 rounded-2xl border border-white/10 overflow-hidden shadow-xl">
+      <div className="bg-slate-900/80 rounded-2xl border border-white/10 overflow-hidden shadow-xl">
         <div className="p-5 border-b border-white/10 flex items-center justify-between">
-          <h2 className="font-heading font-bold text-base text-white flex items-center gap-2">
-            <span>Operations Review Queue</span>
-            <span className="text-xs font-normal text-gray-400">({submissions.length} builds)</span>
-          </h2>
-          <span className="text-xs font-mono text-cyan-400">SANDBOX_ORIGIN_ISOLATED</span>
+          <div>
+            <h2 className="font-heading font-bold text-base text-white">
+              Submissions Review Queue
+            </h2>
+            <p className="text-xs text-gray-400 mt-0.5">
+              Showing {submissions.length} {submissions.length === 1 ? 'build' : 'builds'}
+            </p>
+          </div>
+          <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md">
+            SANDBOX_ISOLATED
+          </span>
         </div>
 
         {submissions.length === 0 ? (
@@ -224,7 +219,7 @@ export default function AdminDashboard() {
               description={
                 statusFilter !== 'ALL'
                   ? `There are currently no game builds with status '${statusFilter}'.`
-                  : 'No game submissions have been logged yet.'
+                  : 'No game submissions in this queue.'
               }
               actionLabel="Clear Filter"
               onAction={() => {
@@ -236,13 +231,13 @@ export default function AdminDashboard() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-black/40 border-b border-white/5 text-gray-400 uppercase font-semibold text-[10px] tracking-wider">
+              <thead className="bg-slate-950/60 border-b border-white/5 text-gray-400 uppercase font-semibold text-[10px] tracking-wider">
                 <tr>
-                  <th className="px-5 py-3.5">Submission / Game</th>
+                  <th className="px-5 py-3.5">Game</th>
                   <th className="px-5 py-3.5">Studio / Creator</th>
-                  <th className="px-5 py-3.5">Engine & Specs</th>
-                  <th className="px-5 py-3.5">Security Scan</th>
-                  <th className="px-5 py-3.5">QA Status</th>
+                  <th className="px-5 py-3.5">Engine</th>
+                  <th className="px-5 py-3.5">Security Check</th>
+                  <th className="px-5 py-3.5">Status</th>
                   <th className="px-5 py-3.5">Submitted</th>
                   <th className="px-5 py-3.5 text-right">Actions</th>
                 </tr>
@@ -254,39 +249,39 @@ export default function AdminDashboard() {
                       <div className="text-sm font-bold text-white flex items-center gap-2">
                         <span>{s.gameTitle}</span>
                         {s.game?.isFeatured && (
-                          <span className="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-1.5 py-0.2 rounded font-normal">
+                          <span className="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-1.5 py-0.5 rounded font-normal">
                             Featured
                           </span>
                         )}
                       </div>
                       <div className="text-[11px] text-gray-400 font-mono mt-0.5">
-                        {s.id} • v{s.version?.versionNumber || '1.0.0'}
+                        v{s.version?.versionNumber || '1.0.0'}
                       </div>
                     </td>
 
                     <td className="px-5 py-4">
                       <div className="text-gray-200 font-medium">{s.developerName}</div>
                       <div className="text-[11px] text-gray-400">
-                        {s.rights?.aiDisclosure || 'NONE_HUMAN_ONLY'}
+                        {s.rights?.aiDisclosure || 'Human Created'}
                       </div>
                     </td>
 
                     <td className="px-5 py-4">
                       <div className="text-cyan-300 font-mono text-[11px]">
-                        {s.game?.engine || 'HTML5 Canvas'}
+                        {s.game?.engine || 'HTML5'}
                       </div>
-                      <div className="text-[11px] text-gray-400">
-                        {s.game?.orientation || 'LANDSCAPE'}
+                      <div className="text-[11px] text-gray-400 capitalize">
+                        {s.game?.orientation?.toLowerCase() || 'landscape'}
                       </div>
                     </td>
 
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-1.5 text-emerald-400 font-semibold text-[11px]">
                         <CheckCircle className="w-3.5 h-3.5 flex-shrink-0" />
-                        <span>Pre-Flight OK</span>
+                        <span>Pre-Flight Passed</span>
                       </div>
                       <div className="text-[10px] text-gray-400 font-mono mt-0.5">
-                        {s.version?.scanResults?.extractedFilesCount || 'Safe'} files • No .exe
+                        {s.version?.scanResults?.extractedFilesCount || 'Safe'} files • Verified
                       </div>
                     </td>
 
@@ -305,10 +300,10 @@ export default function AdminDashboard() {
                     <td className="px-5 py-4 text-right">
                       <Link
                         href={`/admin/review/${s.id}`}
-                        className="inline-flex items-center gap-1.5 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 text-xs font-semibold px-3 py-1.5 rounded-xl transition-all shadow-sm"
+                        className="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-all shadow-sm"
                       >
-                        <Play className="w-3 h-3 text-indigo-400" />
-                        <span>Launch QA Workspace</span>
+                        <Play className="w-3 h-3 fill-white" />
+                        <span>Review & QA</span>
                       </Link>
                     </td>
                   </tr>

@@ -8,6 +8,7 @@ import GameActionBar from '@/components/GameActionBar';
 import AdaptiveRecommendations from '@/components/AdaptiveRecommendations';
 import { Star, ArrowLeft, Gamepad, Info, ShieldCheck, Check, Sparkles, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
+import { GameMood } from '@/types/recommendations';
 
 // Dynamic code-splitting for heavy client components to optimize LCP & TTI
 const GamePlayer = dynamic(() => import('@/components/GamePlayer'), {
@@ -44,10 +45,16 @@ export default function GamePage({ params }: GamePageProps) {
   }
 
   const version = game.currentVersionId ? gvDb.getVersionById(game.currentVersionId) : null;
-  const relatedGames = gvDb
-    .getGames({ categoryId: game.categoryId, status: 'PUBLISHED' })
-    .filter((g) => g.id !== game.id)
-    .slice(0, 3);
+
+  // Infer initial mood from current game category
+  let defaultMood: GameMood = 'ALL';
+  if (game.categoryId === 'cat-arcade' || game.categoryId === 'cat-action') {
+    defaultMood = 'ADRENALINE';
+  } else if (game.categoryId === 'cat-rpg' || game.categoryId === 'cat-strategy') {
+    defaultMood = 'EXPLORATION';
+  } else if (game.categoryId === 'cat-puzzle' || game.categoryId === 'cat-casual') {
+    defaultMood = 'RELAX_PUZZLE';
+  }
 
   // Generate opaque creator referral token
   const referralToken = `cr_${game.developerId.replace(/[^a-zA-Z0-9]/g, '').substring(0, 8)}`;
@@ -109,84 +116,96 @@ export default function GamePage({ params }: GamePageProps) {
         />
       </div>
 
-      {/* Details & Controls Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left 2 Cols: Description & Instructions */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-slate-900/60 rounded-2xl p-6 border border-white/10 space-y-4">
-            <h2 className="font-heading font-bold text-lg text-white flex items-center gap-2">
-              <Info className="w-5 h-5 text-indigo-400" />
-              <span>About {game.title}</span>
-            </h2>
-            <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-line">
-              {game.fullDescription || game.shortDescription}
-            </p>
-          </div>
-
-          <div className="bg-slate-900/60 rounded-2xl p-6 border border-white/10 space-y-4">
-            <h2 className="font-heading font-bold text-lg text-white flex items-center gap-2">
-              <Gamepad className="w-5 h-5 text-cyan-400" />
-              <span>Controls & How to Play</span>
-            </h2>
-            <div className="bg-black/40 p-4 rounded-xl border border-white/5 font-mono text-xs text-gray-300 whitespace-pre-line leading-relaxed">
-              {game.controlsGuide || 'Standard Mouse / Keyboard / Touch controls supported.'}
-            </div>
-          </div>
-        </div>
-
-        {/* Right Col: Technical Specifications & Verification */}
-        <div className="space-y-6">
-          <div className="bg-slate-900/60 rounded-2xl p-6 border border-white/10 space-y-4">
-            <h3 className="font-heading font-bold text-base text-white flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>Verified Technical Specs</span>
-            </h3>
-            <div className="space-y-3 text-xs">
-              <div className="flex justify-between py-1.5 border-b border-white/5">
-                <span className="text-gray-400">Game Engine</span>
-                <span className="text-gray-200 font-semibold font-mono">{game.engine}</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-white/5">
-                <span className="text-gray-400">Target Orientation</span>
-                <span className="text-gray-200 font-semibold">{game.orientation}</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-white/5">
-                <span className="text-gray-400">Platform Sandbox</span>
-                <span className="text-emerald-400 font-semibold">Strict Origin Isolation</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-white/5">
-                <span className="text-gray-400">Build Version</span>
-                <span className="text-gray-200 font-mono">v{version?.versionNumber || '1.0.0'}</span>
-              </div>
-              {version?.archiveChecksum && (
-                <div className="flex justify-between py-1.5 border-b border-white/5">
-                  <span className="text-gray-400">Checksum (SHA-256)</span>
-                  <span className="text-emerald-400 font-mono truncate max-w-[120px]" title={version.archiveChecksum}>
-                    {version.archiveChecksum.substring(0, 10)}...
-                  </span>
-                </div>
-              )}
-              <div className="flex justify-between py-1.5">
-                <span className="text-gray-400">Published Date</span>
-                <span className="text-gray-200">
-                  {new Date(game.publishedAt || game.createdAt).toLocaleDateString()}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* 1. SIMILAR GAMES SUGGESTIONS (Directly below half-screen game player & action bar) */}
+      <div className="bg-slate-900/40 rounded-3xl p-6 border border-white/10 backdrop-blur-sm shadow-xl">
+        <AdaptiveRecommendations
+          initialMood={defaultMood}
+          title={`More Games Like ${game.title}`}
+          subtitle={`Hand-picked similar ${game.categoryName} games ranked by our neural recommendation algorithm.`}
+          excludeGameId={game.id}
+          limit={4}
+        />
       </div>
 
-      {/* Community Ratings & Reviews */}
-      <GameReviewsSection gameSlug={game.slug} gameId={game.id} initialRating={game.rating} />
+      {/* 2. ABOUT GAME INFORMATION, CONTROLS & SPECS (Below suggestions) */}
+      <div className="space-y-6 pt-2">
+        <div className="flex items-center gap-2 border-b border-white/10 pb-3">
+          <Info className="w-5 h-5 text-indigo-400" />
+          <h2 className="font-heading font-bold text-xl text-white">
+            About & Technical Details
+          </h2>
+        </div>
 
-      {/* Adaptive Personalized Recommendations Feed */}
-      <AdaptiveRecommendations
-        title={`More Games Like ${game.title}`}
-        subtitle="Curated by our neural recommendation algorithm based on this game and your profile."
-        excludeGameId={game.id}
-        limit={4}
-      />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left 2 Cols: Description & Instructions */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="bg-slate-900/60 rounded-2xl p-6 border border-white/10 space-y-4">
+              <h3 className="font-heading font-bold text-lg text-white flex items-center gap-2">
+                <Info className="w-4 h-4 text-indigo-400" />
+                <span>About {game.title}</span>
+              </h3>
+              <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-line">
+                {game.fullDescription || game.shortDescription}
+              </p>
+            </div>
+
+            <div className="bg-slate-900/60 rounded-2xl p-6 border border-white/10 space-y-4">
+              <h3 className="font-heading font-bold text-lg text-white flex items-center gap-2">
+                <Gamepad className="w-4 h-4 text-cyan-400" />
+                <span>Controls & How to Play</span>
+              </h3>
+              <div className="bg-black/40 p-4 rounded-xl border border-white/5 font-mono text-xs text-gray-300 whitespace-pre-line leading-relaxed">
+                {game.controlsGuide || 'Standard Mouse / Keyboard / Touch controls supported.'}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Col: Technical Specifications & Verification */}
+          <div className="space-y-6">
+            <div className="bg-slate-900/60 rounded-2xl p-6 border border-white/10 space-y-4">
+              <h3 className="font-heading font-bold text-base text-white flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span>Verified Technical Specs</span>
+              </h3>
+              <div className="space-y-3 text-xs">
+                <div className="flex justify-between py-1.5 border-b border-white/5">
+                  <span className="text-gray-400">Game Engine</span>
+                  <span className="text-gray-200 font-semibold font-mono">{game.engine}</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-white/5">
+                  <span className="text-gray-400">Target Orientation</span>
+                  <span className="text-gray-200 font-semibold">{game.orientation}</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-white/5">
+                  <span className="text-gray-400">Platform Sandbox</span>
+                  <span className="text-emerald-400 font-semibold">Strict Origin Isolation</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-white/5">
+                  <span className="text-gray-400">Build Version</span>
+                  <span className="text-gray-200 font-mono">v{version?.versionNumber || '1.0.0'}</span>
+                </div>
+                {version?.archiveChecksum && (
+                  <div className="flex justify-between py-1.5 border-b border-white/5">
+                    <span className="text-gray-400">Checksum (SHA-256)</span>
+                    <span className="text-emerald-400 font-mono truncate max-w-[120px]" title={version.archiveChecksum}>
+                      {version.archiveChecksum.substring(0, 10)}...
+                    </span>
+                  </div>
+                )}
+                <div className="flex justify-between py-1.5">
+                  <span className="text-gray-400">Published Date</span>
+                  <span className="text-gray-200">
+                    {new Date(game.publishedAt || game.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 3. Community Ratings & Reviews */}
+        <GameReviewsSection gameSlug={game.slug} gameId={game.id} initialRating={game.rating} />
+      </div>
     </div>
   );
 }

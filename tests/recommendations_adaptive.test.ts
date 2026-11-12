@@ -196,4 +196,21 @@ describe('Adaptive Recommendation Engine & Smart Search Fallback', () => {
     expect(entry).toBeDefined();
     expect(entry?.totalPlayMinutes).toBeGreaterThanOrEqual(0.5); // 45s rounds to ~0.75m
   });
+
+  // 11. In-Game Similar Games Suggestions Ordering & Category Mapping
+  it('11. should generate relevant mood and recommendations for in-game half-screen suggestions', () => {
+    const arcadeGame = sampleGames.find((g) => g.categoryId === 'cat-arcade') || sampleGames[0];
+    
+    // Recommendations for playing game: must exclude active game, limit to 4
+    const inGameRecs = getPersonalizedRecommendations({
+      mood: 'ADRENALINE',
+      excludeGameId: arcadeGame.id,
+      limit: 4,
+    });
+
+    expect(inGameRecs.games.length).toBeGreaterThan(0);
+    expect(inGameRecs.games.length).toBeLessThanOrEqual(4);
+    // Ensure the game itself is never recommended to itself
+    expect(inGameRecs.games.some((g) => g.id === arcadeGame.id)).toBe(false);
+  });
 });

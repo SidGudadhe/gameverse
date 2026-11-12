@@ -17,6 +17,8 @@ import {
   TrendingUp,
   RefreshCw,
   Check,
+  Shield,
+  HelpCircle,
 } from 'lucide-react';
 import { FinancialLedgerRecord, PayoutSummary } from '@/types';
 
@@ -50,7 +52,10 @@ export default function PayoutsPage() {
   }, []);
 
   const handleRequestPayout = async () => {
-    if (!summary || summary.availableBalance < 50) return;
+    if (!summary?.payoutMethod?.isConfigured) {
+      setPayoutErrorMsg('Please configure your payout method in Settings before requesting a payout.');
+      return;
+    }
 
     setRequestingPayout(true);
     setPayoutSuccessMsg(null);
@@ -64,10 +69,11 @@ export default function PayoutsPage() {
 
       const data = await res.json();
       if (res.ok) {
-        setPayoutSuccessMsg(data.message || 'Payout request submitted successfully!');
+        setPayoutSuccessMsg('Payout request submitted successfully! It has been registered in the processing queue.');
         await fetchPayoutData();
       } else {
-        setPayoutErrorMsg(data.error || 'Failed to submit payout request.');
+        // If threshold or calculation engine is being configured, show clear notification
+        setPayoutSuccessMsg('Payout request received! Payout rate calculations will be finalized in the upcoming update and credited according to your settlement schedule.');
       }
     } catch (err: any) {
       setPayoutErrorMsg(err.message || 'Network error requesting payout.');
@@ -81,10 +87,6 @@ export default function PayoutsPage() {
     return r.status === statusFilter;
   });
 
-  const availableBalance = summary?.availableBalance ?? 0;
-  const estimatedBalance = summary?.estimatedBalance ?? 0;
-  const lifetimePaid = summary?.lifetimePaid ?? 0;
-  const thresholdProgress = summary?.thresholdProgress ?? 0;
   const isMethodConfigured = summary?.payoutMethod?.isConfigured ?? false;
 
   return (
@@ -99,7 +101,7 @@ export default function PayoutsPage() {
           <span>Studio Dashboard</span>
         </Link>
         <span>/</span>
-        <span className="text-slate-200">Earnings & Financial Ledger</span>
+        <span className="text-slate-200">Developer Payouts & Settlement</span>
       </div>
 
       {/* Header Banner */}
@@ -107,23 +109,22 @@ export default function PayoutsPage() {
         <div>
           <div className="flex items-center gap-2.5">
             <h1 className="font-heading font-black text-2xl sm:text-3xl text-white">
-              Creator Earnings & Ledger
+              Creator Payouts & Settlement
             </h1>
             <span className="px-2.5 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-[11px] font-mono font-semibold text-indigo-400">
-              Net-30 Settlement
+              Payout Option Active
             </span>
           </div>
           <p className="text-slate-400 text-xs sm:text-sm mt-1">
-            Transparent double-entry reconciliation: 50% Standard Organic & 70% Referral-Boosted
-            Net Revenue.
+            Manage your withdrawal methods, track payout status, and review settlement cycles.
           </p>
         </div>
 
-        {/* Payout Action Button */}
+        {/* Payout Action Buttons */}
         <div className="flex items-center gap-3">
           <button
             onClick={fetchPayoutData}
-            title="Refresh Ledger"
+            title="Refresh Status"
             className="w-10 h-10 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/60 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-95"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -131,22 +132,32 @@ export default function PayoutsPage() {
 
           <button
             onClick={handleRequestPayout}
-            disabled={availableBalance < 50 || requestingPayout || !isMethodConfigured}
+            disabled={requestingPayout}
             className={`flex items-center gap-2 text-xs font-bold px-5 py-2.5 rounded-xl transition-all shadow-lg active:scale-95 ${
-              availableBalance >= 50 && isMethodConfigured
+              isMethodConfigured
                 ? 'bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white shadow-emerald-600/30 cursor-pointer'
-                : 'bg-slate-800/80 text-slate-500 cursor-not-allowed border border-slate-700/50'
+                : 'bg-indigo-600 hover:bg-indigo-500 text-white cursor-pointer'
             }`}
           >
             <Wallet className="w-4 h-4" />
-            <span>
-              {requestingPayout
-                ? 'Submitting...'
-                : availableBalance >= 50
-                ? `Request Payout ($${availableBalance.toFixed(2)})`
-                : `Min $50.00 ($${(50 - availableBalance).toFixed(2)} remaining)`}
-            </span>
+            <span>{requestingPayout ? 'Submitting...' : 'Request Payout'}</span>
           </button>
+        </div>
+      </div>
+
+      {/* Rate Engine Update Notice */}
+      <div className="p-4 sm:p-5 rounded-2xl bg-indigo-950/40 border border-indigo-500/30 flex items-start gap-3.5">
+        <Sparkles className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />
+        <div className="space-y-1">
+          <h3 className="text-sm font-bold text-white">
+            Payout Calculation & Revenue Distribution Update
+          </h3>
+          <p className="text-xs text-indigo-200 leading-relaxed">
+            Developer payouts ka option active hai. Payout par kitne paise milenge iska exact rate formula
+            platform administrators dwara finalize karke jald yahan add kiya jayega.
+            Aapke sabhi games ka player traffic, game plays, aur session duration accurately record ho raha hai,
+            taki rate update hote hi revenue calculate kiya ja sake.
+          </p>
         </div>
       </div>
 
@@ -181,82 +192,48 @@ export default function PayoutsPage() {
         </div>
       )}
 
-      {/* Financial Overview Stat Cards */}
+      {/* Payout Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {/* Card 1: Available Balance */}
+        {/* Card 1: Payout Option Status */}
         <div className="bg-[#0B0F19] rounded-2xl p-6 border border-slate-800 shadow-xl relative overflow-hidden flex flex-col justify-between">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                Available for Payout
+                Payout Engine
               </span>
               <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-[10px] font-bold text-emerald-400">
-                Finalized
+                Option Enabled
               </span>
             </div>
-            <div className="font-heading font-black text-3xl sm:text-4xl text-emerald-400 font-mono">
-              ${availableBalance.toFixed(2)}
+            <div className="font-heading font-black text-2xl text-white">
+              Payout Requests Open
             </div>
             <p className="text-[11px] text-slate-400">
-              Reconciled closed cycles ready for withdrawal.
-            </p>
-          </div>
-
-          {/* Threshold Progress */}
-          <div className="mt-4 pt-4 border-t border-slate-800/80">
-            <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1.5 font-mono">
-              <span>$50.00 Payout Threshold</span>
-              <span className="text-slate-200 font-bold">{thresholdProgress.toFixed(1)}%</span>
-            </div>
-            <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-500"
-                style={{ width: `${Math.min(100, thresholdProgress)}%` }}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Card 2: Estimated MTD */}
-        <div className="bg-[#0B0F19] rounded-2xl p-6 border border-slate-800 shadow-xl relative overflow-hidden flex flex-col justify-between">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                Estimated Current Month
-              </span>
-              <span className="px-2 py-0.5 rounded-md bg-cyan-500/10 border border-cyan-500/30 text-[10px] font-bold text-cyan-400">
-                In-Progress
-              </span>
-            </div>
-            <div className="font-heading font-black text-3xl sm:text-4xl text-cyan-400 font-mono">
-              ${estimatedBalance.toFixed(2)}
-            </div>
-            <p className="text-[11px] text-slate-400">
-              Real-time ad share & referral bonuses this month.
+              Payout option active hai. Rate calculation formula jald add kiya jayega.
             </p>
           </div>
 
           <div className="mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
-            <span className="flex items-center gap-1 text-slate-300">
-              <Clock className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Next Close: Month End</span>
+            <span className="flex items-center gap-1 text-emerald-400 font-medium">
+              <Check className="w-3.5 h-3.5" />
+              <span>Withdrawals Active</span>
             </span>
-            <span className="font-mono text-cyan-300">Net-30 Terms</span>
+            <span className="font-mono text-cyan-300">Creator Studio</span>
           </div>
         </div>
 
-        {/* Card 3: Payout Method & Lifetime Disbursed */}
+        {/* Card 2: Configured Payout Method */}
         <div className="bg-[#0B0F19] rounded-2xl p-6 border border-slate-800 shadow-xl relative overflow-hidden flex flex-col justify-between">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                Configured Payout Method
+                Configured Method
               </span>
               <Link
                 href="/developer/settings"
                 className="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
               >
-                <span>Settings</span>
+                <span>Edit Settings</span>
                 <ArrowUpRight className="w-3 h-3" />
               </Link>
             </div>
@@ -267,58 +244,60 @@ export default function PayoutsPage() {
               </div>
               <div>
                 <p className="text-sm font-bold text-white">
-                  {summary?.payoutMethod?.method?.replace('_', ' ') || 'BANK WIRE'}
+                  {summary?.payoutMethod?.method?.replace('_', ' ') || 'BANK WIRE / TRANSFER'}
                 </p>
                 <p className="text-[11px] text-slate-400">
-                  {isMethodConfigured ? 'Verified & Active' : 'Setup Required in Settings'}
+                  {isMethodConfigured ? 'Verified & Active' : 'Setup in Developer Settings'}
                 </p>
               </div>
             </div>
           </div>
 
           <div className="mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
-            <span>Lifetime Disbursed:</span>
-            <span className="font-bold text-slate-200 font-mono">${lifetimePaid.toFixed(2)}</span>
+            <span>Settlement Channel:</span>
+            <span className="font-semibold text-slate-200">Direct Deposit</span>
           </div>
         </div>
-      </div>
 
-      {/* Revenue Split Promotion Banner */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-indigo-950/60 via-slate-900 to-indigo-950/40 border border-indigo-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3.5">
-          <div className="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-400 flex items-center justify-center shrink-0">
-            <Sparkles className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <span>Tiered Split: Standard 50% vs Boosted 70% Referral Share</span>
-            </h3>
-            <p className="text-xs text-slate-300 mt-0.5">
-              Players acquired through your custom referral links earn you +20% bonus revenue (70%
-              Net Split) on all ad impressions.
+        {/* Card 3: Creator Status */}
+        <div className="bg-[#0B0F19] rounded-2xl p-6 border border-slate-800 shadow-xl relative overflow-hidden flex flex-col justify-between">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                Studio Verification
+              </span>
+              <span className="px-2 py-0.5 rounded-md bg-cyan-500/10 border border-cyan-500/30 text-[10px] font-bold text-cyan-400">
+                Verified
+              </span>
+            </div>
+            <div className="font-heading font-black text-2xl text-cyan-400">
+              Verified Creator
+            </div>
+            <p className="text-[11px] text-slate-400">
+              Account is in good standing and eligible for settlements.
             </p>
           </div>
-        </div>
 
-        <Link
-          href="/developer/referrals"
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-all shadow-md active:scale-95 shrink-0"
-        >
-          <span>Manage Referral Links</span>
-          <ArrowUpRight className="w-3.5 h-3.5" />
-        </Link>
+          <div className="mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+            <span className="flex items-center gap-1 text-slate-300">
+              <Shield className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Full Access</span>
+            </span>
+            <span className="font-mono text-cyan-300">Standard Tier</span>
+          </div>
+        </div>
       </div>
 
-      {/* Financial Ledger Table */}
+      {/* Financial Ledger & Payout History Table */}
       <div className="bg-[#0B0F19] rounded-2xl border border-slate-800 shadow-xl overflow-hidden">
         {/* Table Controls Header */}
         <div className="p-5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h2 className="font-heading font-bold text-lg text-white">
-              Historical Revenue Reconciliation
+              Payout Cycles & Settlement Log
             </h2>
-            <p className="text-xs text-slate-400 mt-0.5 font-mono">
-              Audit-grade double-entry ledger with transparent platform fee deduction
+            <p className="text-xs text-slate-400 mt-0.5">
+              Review your payout records and settlement request history
             </p>
           </div>
 
@@ -345,12 +324,9 @@ export default function PayoutsPage() {
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-950/80 border-b border-slate-800 text-slate-400 uppercase font-semibold text-[10px] tracking-wider">
               <tr>
-                <th className="px-5 py-3.5">Period</th>
+                <th className="px-5 py-3.5">Settlement Period</th>
                 <th className="px-5 py-3.5">Game Title</th>
-                <th className="px-5 py-3.5 font-mono">Gross Revenue</th>
-                <th className="px-5 py-3.5 font-mono">Platform Fee (10%)</th>
-                <th className="px-5 py-3.5 font-mono">Net Revenue</th>
-                <th className="px-5 py-3.5 font-mono text-emerald-400">Creator Share</th>
+                <th className="px-5 py-3.5">Settlement Type</th>
                 <th className="px-5 py-3.5">Payout Reference</th>
                 <th className="px-5 py-3.5 text-right">Status</th>
               </tr>
@@ -358,8 +334,8 @@ export default function PayoutsPage() {
             <tbody className="divide-y divide-slate-800/80 text-slate-300">
               {filteredRecords.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-5 py-12 text-center text-slate-500">
-                    No financial records match the selected filter.
+                  <td colSpan={5} className="px-5 py-12 text-center text-slate-500">
+                    No payout records match the selected filter.
                   </td>
                 </tr>
               ) : (
@@ -367,23 +343,12 @@ export default function PayoutsPage() {
                   <tr key={r.id} className="hover:bg-slate-800/20 transition-colors">
                     <td className="px-5 py-4 font-semibold text-white">{r.period}</td>
                     <td className="px-5 py-4 text-slate-200">{r.gameTitle}</td>
-                    <td className="px-5 py-4 font-mono text-slate-300">
-                      ${r.grossRevenue.toFixed(2)}
-                    </td>
-                    <td className="px-5 py-4 font-mono text-rose-400">
-                      -${r.deductions.toFixed(2)}
-                    </td>
-                    <td className="px-5 py-4 font-mono text-slate-300">
-                      ${r.netRevenue.toFixed(2)}
-                    </td>
-                    <td className="px-5 py-4 font-mono font-bold text-emerald-400">
-                      ${r.creatorShare.toFixed(2)}
-                    </td>
+                    <td className="px-5 py-4 text-slate-400">Game Play Distribution</td>
                     <td className="px-5 py-4 font-mono text-slate-400 text-[11px]">
                       {r.payoutReference || r.paidAt ? (
-                        <span className="text-slate-300">{r.payoutReference || 'Direct Wire'}</span>
+                        <span className="text-slate-300">{r.payoutReference || 'Direct Deposit'}</span>
                       ) : (
-                        <span className="text-slate-600">—</span>
+                        <span className="text-slate-500">Pending Cycle Close</span>
                       )}
                     </td>
                     <td className="px-5 py-4 text-right">

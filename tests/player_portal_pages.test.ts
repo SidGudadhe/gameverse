@@ -4,6 +4,7 @@ import { GET as getFavorites, POST as addFavorite } from '../src/app/api/player/
 import { DELETE as removeFavorite } from '../src/app/api/player/favorites/[gameId]/route';
 import { GET as getHistory } from '../src/app/api/player/history/route';
 import { GET as getProfile, PUT as updateProfile } from '../src/app/api/player/profile/route';
+import { GET as getPayouts, POST as requestPayout } from '../src/app/api/player/payouts/route';
 import { gvDb } from '../src/lib/database';
 import { generateToken } from '../src/lib/auth';
 import { UserRole } from '../src/types';
@@ -141,5 +142,78 @@ describe('Player Portal Routes & Integration Tests', () => {
     expect(data.profile.displayName).toBe('Elite Champion');
     expect(data.profile.bio).toBe('Competitive speedrunner and arcade fan');
     expect(data.profile.favoriteGenre).toBe('Racing');
+  });
+
+  it('7. GET /api/player/payouts should require authentication or return 401', async () => {
+    const req = new NextRequest('http://localhost:3000/api/player/payouts');
+    const res = await getPayouts(req);
+    expect(res.status).toBe(401);
+  });
+
+  it('8. GET /api/player/payouts should return player stats and requests for authenticated user', async () => {
+    const req = new NextRequest('http://localhost:3000/api/player/payouts', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const res = await getPayouts(req);
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(data.success).toBe(true);
+    expect(data.stats).toBeDefined();
+    expect(data.stats.eligible).toBe(true);
+    expect(Array.isArray(data.requests)).toBe(true);
+  });
+
+  it('9. POST /api/player/payouts should validate method and account details', async () => {
+    // Missing method
+    const badReq1 = new NextRequest('http://localhost:3000/api/player/payouts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ method: 'BITCOIN', accountDetails: 'wallet123' }),
+    });
+    const res1 = await requestPayout(badReq1);
+    expect(res1.status).toBe(400);
+
+    // Missing details
+    const badReq2 = new NextRequest('http://localhost:3000/api/player/payouts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ method: 'UPI', accountDetails: ' ' }),
+    });
+    const res2 = await requestPayout(badReq2);
+    expect(res2.status).toBe(400);
+  });
+
+  it('10. POST /api/player/payouts should create a pending payout request for valid submission', async () => {
+    const postReq = new NextRequest('http://localhost:3000/api/player/payouts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        method: 'UPI',
+        accountDetails: 'player@upi',
+        note: 'Fast IMPS please',
+      }),
+    });
+
+    const res = await requestPayout(postReq);
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(data.success).toBe(true);
+    expect(data.request).toBeDefined();
+    expect(data.request.method).toBe('UPI');
+    expect(data.request.accountDetails).toBe('player@upi');
+    expect(data.request.status).toBe('PENDING');
+
+    // Verify it appears in user's payout requests
+    const userReqs = gvDb.getPlayerPayoutRequests(TEST_USER.userId);
+    expect(userReqs.some((r) => r.id === data.request.id)).toBe(true);
   });
 });

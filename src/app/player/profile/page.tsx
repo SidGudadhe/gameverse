@@ -15,6 +15,8 @@ import {
   ExternalLink,
   Shield,
   Gamepad2,
+  Coins,
+  Wallet,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -252,7 +254,7 @@ export default function PlayerMyProfilePage() {
         </div>
 
         {/* Quick Stats Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-6 pt-6 border-t border-white/5">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-white/5">
           <Link
             href="/player/favorites"
             className="p-3.5 rounded-2xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/5 transition-colors group"
@@ -277,15 +279,27 @@ export default function PlayerMyProfilePage() {
             <div className="text-[10px] text-gray-500 mt-0.5">Games played &rarr;</div>
           </Link>
 
-          <div className="col-span-2 sm:col-span-1 p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
+          <Link
+            href="/player/payouts"
+            className="p-3.5 rounded-2xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/5 transition-colors group"
+          >
+            <div className="flex items-center gap-2">
+              <Coins className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
+              <span className="text-xs text-gray-400">Gaming Payouts</span>
+            </div>
+            <div className="text-base font-bold text-emerald-400 mt-1">Active</div>
+            <div className="text-[10px] text-gray-500 mt-0.5">View & Withdraw &rarr;</div>
+          </Link>
+
+          <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-cyan-400" />
               <span className="text-xs text-gray-400">Favorite Genre</span>
             </div>
-            <div className="text-lg font-bold text-cyan-300 mt-1 truncate">
+            <div className="text-base font-bold text-cyan-300 mt-1 truncate">
               {favoriteGenre || 'Arcade'}
             </div>
-            <div className="text-[10px] text-gray-500 mt-0.5">Personal recommendation base</div>
+            <div className="text-[10px] text-gray-500 mt-0.5">Personal taste base</div>
           </div>
         </div>
       </div>

@@ -24,6 +24,8 @@ interface AdaptiveRecommendationsProps {
   limit?: number;
 }
 
+const recCache = new Map<string, any[]>();
+
 export default function AdaptiveRecommendations({
   initialMood = 'ALL',
   title = 'Recommended For You',
@@ -32,10 +34,18 @@ export default function AdaptiveRecommendations({
   limit = 8,
 }: AdaptiveRecommendationsProps) {
   const [activeMood, setActiveMood] = useState<GameMood>(initialMood);
-  const [recommendations, setRecommendations] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const cacheKey = `${initialMood}_${excludeGameId || ''}_${limit}`;
+  const [recommendations, setRecommendations] = useState<any[]>(() => recCache.get(cacheKey) || []);
+  const [loading, setLoading] = useState(!recCache.has(cacheKey));
 
   const fetchRecommendations = async (mood: GameMood) => {
+    const key = `${mood}_${excludeGameId || ''}_${limit}`;
+    if (recCache.has(key)) {
+      setRecommendations(recCache.get(key)!);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     try {
       const params = new URLSearchParams();
@@ -46,7 +56,9 @@ export default function AdaptiveRecommendations({
       const res = await fetch(`/api/recommendations?${params.toString()}`);
       if (res.ok) {
         const data = await res.json();
-        setRecommendations(data.recommendations || []);
+        const recs = data.recommendations || [];
+        recCache.set(key, recs);
+        setRecommendations(recs);
       }
     } catch (err) {
       console.error('Failed to load personalized recommendations:', err);

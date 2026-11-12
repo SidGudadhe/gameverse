@@ -6,6 +6,7 @@ import {
   BarChart3,
   Users,
   DollarSign,
+  Wallet,
   Clock,
   Sparkles,
   CheckCircle2,
@@ -88,14 +89,14 @@ export default function DeveloperDashboard() {
 
         <div className="bg-slate-900/80 rounded-2xl p-5 border border-white/10 space-y-2">
           <div className="flex items-center justify-between text-gray-400 text-xs font-medium">
-            <span>Total Earnings (70%)</span>
-            <DollarSign className="w-4 h-4 text-emerald-400" />
+            <span>Payout Option</span>
+            <Wallet className="w-4 h-4 text-emerald-400" />
           </div>
-          <div className="font-heading font-bold text-2xl text-emerald-400 font-mono">
-            ${totalEarnings.toFixed(2)}
+          <div className="font-heading font-bold text-2xl text-emerald-400">
+            Active
           </div>
-          <div className="text-[11px] text-emerald-400 font-medium">
-            Net-30 Monthly Payouts
+          <div className="text-[11px] text-gray-400">
+            Calculation rates coming soon
           </div>
         </div>
 

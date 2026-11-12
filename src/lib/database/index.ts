@@ -23,6 +23,7 @@ import {
   AdImpression,
   PlayerFavorite,
   PlayerHistoryItem,
+  PlayerPayoutRequest,
   GameReview,
   AuditLog,
   CookieConsentPreferences,
@@ -102,6 +103,7 @@ export interface DatabaseState {
   favorites: PlayerFavorite[];
   playHistory: PlayerHistoryItem[];
   reviews: GameReview[];
+  playerPayoutRequests: PlayerPayoutRequest[];
 }
 
 const DATA_DIR = path.join(process.cwd(), '.data');
@@ -310,6 +312,7 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
   favorites: [],
   playHistory: [],
   reviews: [],
+  playerPayoutRequests: [],
   financialRecords: [
     {
       id: 'led-001',
@@ -394,6 +397,7 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
 
 class GameVerseDatabase {
   public state: DatabaseState;
+  private persistTimer: NodeJS.Timeout | null = null;
 
   constructor() {
     this.state = this.loadState();
@@ -420,6 +424,7 @@ class GameVerseDatabase {
           favorites: parsed.favorites || INITIAL_DATABASE_STATE.favorites || [],
           playHistory: parsed.playHistory || INITIAL_DATABASE_STATE.playHistory || [],
           reviews: parsed.reviews || INITIAL_DATABASE_STATE.reviews || [],
+          playerPayoutRequests: parsed.playerPayoutRequests || INITIAL_DATABASE_STATE.playerPayoutRequests || [],
           financialRecords: parsed.financialRecords || INITIAL_DATABASE_STATE.financialRecords || [],
         };
       }
@@ -429,9 +434,32 @@ class GameVerseDatabase {
     return JSON.parse(JSON.stringify(INITIAL_DATABASE_STATE));
   }
 
-  public persistState() {
+  public persistState(immediate: boolean = false) {
     try {
       globalIndexEngine.rebuildIndexes(this.state);
+
+      if (immediate) {
+        if (this.persistTimer) {
+          clearTimeout(this.persistTimer);
+          this.persistTimer = null;
+        }
+        this.writeStateToDisk();
+        return;
+      }
+
+      if (!this.persistTimer) {
+        this.persistTimer = setTimeout(() => {
+          this.persistTimer = null;
+          this.writeStateToDisk();
+        }, 150);
+      }
+    } catch (e) {
+      console.warn('Failed to schedule database persistence:', e);
+    }
+  }
+
+  private writeStateToDisk() {
+    try {
       if (!fs.existsSync(DATA_DIR)) {
         fs.mkdirSync(DATA_DIR, { recursive: true });
       }
@@ -1608,6 +1636,35 @@ class GameVerseDatabase {
     game.totalReviews = reviews.length;
     this.persistState();
     return { rating: avg, totalReviews: reviews.length };
+  }
+
+  // ================= PLAYER PAYOUTS & REWARDS =================
+  getPlayerPayoutRequests(userId: string): PlayerPayoutRequest[] {
+    if (!this.state.playerPayoutRequests) return [];
+    return this.state.playerPayoutRequests.filter((p) => p.userId === userId);
+  }
+
+  createPlayerPayoutRequest(
+    userId: string,
+    data: {
+      method: 'UPI' | 'BANK_TRANSFER' | 'PAYPAL' | 'GIFT_CARD';
+      accountDetails: string;
+      note?: string;
+    }
+  ): PlayerPayoutRequest {
+    if (!this.state.playerPayoutRequests) this.state.playerPayoutRequests = [];
+    const request: PlayerPayoutRequest = {
+      id: `payout-req-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      userId,
+      method: data.method,
+      accountDetails: data.accountDetails,
+      status: 'PENDING',
+      requestedAt: new Date().toISOString(),
+      note: data.note,
+    };
+    this.state.playerPayoutRequests.unshift(request);
+    this.persistState();
+    return request;
   }
 }
 

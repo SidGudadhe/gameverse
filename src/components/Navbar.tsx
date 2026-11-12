@@ -26,6 +26,8 @@ import {
   Lock,
   Layers,
   ArrowRight,
+  Coins,
+  Wallet,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
@@ -251,6 +253,7 @@ export default function Navbar() {
           >
             <Link
               href="/"
+              prefetch={true}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-colors ${
                 pathname === '/'
                   ? 'bg-indigo-600 text-white shadow-sm'
@@ -263,6 +266,7 @@ export default function Navbar() {
 
             <Link
               href="/category/cat-arcade"
+              prefetch={true}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-colors ${
                 pathname.startsWith('/category')
                   ? 'bg-indigo-600 text-white shadow-sm'
@@ -273,10 +277,11 @@ export default function Navbar() {
               <span>Categories</span>
             </Link>
 
-            {isAuthenticated && (
+            {isAuthenticated ? (
               <>
                 <Link
                   href="/player/favorites"
+                  prefetch={true}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-colors ${
                     pathname.startsWith('/player/favorites')
                       ? 'bg-indigo-600 text-white'
@@ -289,6 +294,7 @@ export default function Navbar() {
 
                 <Link
                   href="/player/history"
+                  prefetch={true}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-colors ${
                     pathname.startsWith('/player/history')
                       ? 'bg-indigo-600 text-white'
@@ -298,7 +304,30 @@ export default function Navbar() {
                   <History className="w-4 h-4 text-amber-400" />
                   <span>History</span>
                 </Link>
+
+                <Link
+                  href="/player/payouts"
+                  prefetch={true}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-colors ${
+                    pathname.startsWith('/player/payouts')
+                      ? 'bg-indigo-600 text-white'
+                      : 'text-gray-300 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  <Coins className="w-4 h-4 text-emerald-400" />
+                  <span>Payouts</span>
+                </Link>
               </>
+            ) : (
+              <Link
+                href="/player/payouts"
+                prefetch={true}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
+                title="Gamer Payouts (Requires Account)"
+              >
+                <Lock className="w-3.5 h-3.5 text-amber-400" />
+                <span>Payouts</span>
+              </Link>
             )}
           </nav>
         </div>
@@ -428,6 +457,15 @@ export default function Navbar() {
                 >
                   <History className="w-4 h-4 text-amber-400" />
                   <span>Play History</span>
+                </Link>
+
+                <Link
+                  href="/player/payouts"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-white/5"
+                >
+                  <Coins className="w-4 h-4 text-emerald-400" />
+                  <span>Gamer Payouts</span>
                 </Link>
 
                 <button

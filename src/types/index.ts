@@ -298,6 +298,16 @@ export interface PlayerHistoryItem {
   totalPlayMinutes: number;
 }
 
+export interface PlayerPayoutRequest {
+  id: string;
+  userId: string;
+  method: 'UPI' | 'BANK_TRANSFER' | 'PAYPAL' | 'GIFT_CARD';
+  accountDetails: string;
+  status: 'PENDING' | 'PROCESSING' | 'PAID' | 'REJECTED';
+  requestedAt: string;
+  note?: string;
+}
+
 export interface GameReview {
   id: string;
   gameId: string;

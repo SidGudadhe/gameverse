@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Gamepad2, Mail, Lock, User, AlertCircle, Sparkles, ArrowRight, ShieldCheck, Code } from 'lucide-react';
+import { Gamepad2, Mail, Lock, User, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
@@ -51,7 +51,7 @@ export default function GamerSignupPage() {
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md space-y-6 bg-surface p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden">
-        {/* Glow accent */}
+        {/* Glow */}
         <div className="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="text-center space-y-2">
@@ -127,34 +127,11 @@ export default function GamerSignupPage() {
           </Button>
         </form>
 
-        <div className="text-center text-xs text-gray-400 pt-2 border-t border-white/5 space-y-3">
-          <div>
-            Already registered?{' '}
-            <Link href="/auth/login" className="text-indigo-400 hover:text-indigo-300 font-semibold">
-              Gamer Sign In
-            </Link>
-          </div>
-
-          {/* Portal Switcher Guidance */}
-          <div className="bg-black/30 p-3 rounded-xl border border-white/5 text-[11px] text-gray-400 space-y-2">
-            <div className="font-semibold text-gray-300">Are you looking for another portal?</div>
-            <div className="flex flex-col sm:flex-row gap-2 justify-center">
-              <Link
-                href="/developer/auth/signup"
-                className="flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-lg bg-cyan-950/40 text-cyan-300 border border-cyan-500/20 hover:bg-cyan-900/40 transition-colors"
-              >
-                <Code className="w-3.5 h-3.5" />
-                <span>Developer Studio Signup</span>
-              </Link>
-              <Link
-                href="/admin/auth/login"
-                className="flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-lg bg-rose-950/40 text-rose-300 border border-rose-500/20 hover:bg-rose-900/40 transition-colors"
-              >
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Admin Staff Login</span>
-              </Link>
-            </div>
-          </div>
+        <div className="text-center text-xs text-gray-400 pt-2 border-t border-white/5">
+          Already registered?{' '}
+          <Link href="/auth/login" className="text-indigo-400 hover:text-indigo-300 font-semibold">
+            Gamer Sign In
+          </Link>
         </div>
       </div>
     </div>

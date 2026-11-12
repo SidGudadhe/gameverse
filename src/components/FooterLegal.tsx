@@ -51,20 +51,6 @@ export default function FooterLegal() {
             <Cookie className="w-3.5 h-3.5" />
             <span>Cookie Settings</span>
           </button>
-
-          {/* Only show Developer link if user is DEVELOPER */}
-          {role === 'DEVELOPER' && (
-            <Link href="/developer" className="hover:text-cyan-400 transition-colors font-semibold">
-              Developer Studio
-            </Link>
-          )}
-
-          {/* Only show Admin link if user is ADMIN or MODERATOR */}
-          {(role === 'ADMIN' || role === 'SUPER_ADMIN' || role === 'MODERATOR') && (
-            <Link href="/admin" className="hover:text-rose-400 transition-colors font-semibold">
-              Admin Console
-            </Link>
-          )}
         </div>
       </div>
     </footer>

@@ -81,7 +81,7 @@ describe('Three Separate Role Websites & Dedicated Auth Portals Isolation', () =
     expect(gamerRes.status).toBe(200);
     expect(gamerData.user.role).toBe('PLAYER');
 
-    // B. Developer login on Player Portal -> REJECTED with portal redirect guidance
+    // B. Developer login on Player Portal -> REJECTED with portal mismatch
     const devReq = new NextRequest('http://localhost:3000/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -95,7 +95,7 @@ describe('Three Separate Role Websites & Dedicated Auth Portals Isolation', () =
     const devData = await devRes.json();
     expect(devRes.status).toBe(403);
     expect(devData.portalMismatch).toBe('DEVELOPER');
-    expect(devData.redirectUrl).toBe('/developer/auth/login');
+    expect(devData.error).toContain('independent website');
   });
 
   it('3. should reject Admin accounts trying to login on Player Portal', async () => {
@@ -113,7 +113,7 @@ describe('Three Separate Role Websites & Dedicated Auth Portals Isolation', () =
 
     expect(adminRes.status).toBe(403);
     expect(adminData.portalMismatch).toBe('ADMIN');
-    expect(adminData.redirectUrl).toBe('/admin/auth/login');
+    expect(adminData.error).toContain('independent website');
   });
 
   // =========================================================================
@@ -169,7 +169,7 @@ describe('Three Separate Role Websites & Dedicated Auth Portals Isolation', () =
     const playerData = await playerRes.json();
     expect(playerRes.status).toBe(403);
     expect(playerData.portalMismatch).toBe('PLAYER');
-    expect(playerData.redirectUrl).toBe('/auth/login');
+    expect(playerData.error).toContain('independent website');
   });
 
   // =========================================================================

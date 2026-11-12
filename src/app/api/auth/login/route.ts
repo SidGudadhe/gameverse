@@ -41,16 +41,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // ================= STRICT PORTAL ISOLATION CHECKS =================
-    // 1. Player Portal Isolation: Only Gamers allowed to log in at /auth/login
+    // ================= STRICT INDEPENDENT PORTAL ISOLATION CHECKS =================
+    // 1. Gamer Website: Strictly only Gamers allowed to log in at /auth/login
     if (portal === 'PLAYER') {
       if (user.role === 'DEVELOPER') {
         return NextResponse.json(
           {
             success: false,
-            error: 'This is a Developer Studio account. Please sign in via the dedicated Developer Portal.',
+            error: 'Access Denied: This is a Developer Studio account. Each role has an independent website, and Developer accounts cannot log in on the Gamer website.',
             portalMismatch: 'DEVELOPER',
-            redirectUrl: '/developer/auth/login',
           },
           { status: 403 }
         );
@@ -59,39 +58,36 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(
           {
             success: false,
-            error: 'This is an Admin Staff account. Please sign in via the dedicated Admin Operations Portal.',
+            error: 'Access Denied: This is an Admin Staff account. Each role has an independent website, and Staff accounts cannot log in on the Gamer website.',
             portalMismatch: 'ADMIN',
-            redirectUrl: '/admin/auth/login',
           },
           { status: 403 }
         );
       }
     }
 
-    // 2. Developer Studio Portal Isolation: Only Developers / Admins allowed at /developer/auth/login
+    // 2. Developer Studio Website: Strictly only Developers / Admins allowed at /developer/auth/login
     if (portal === 'DEVELOPER') {
       if (user.role === 'PLAYER') {
         return NextResponse.json(
           {
             success: false,
-            error: 'Access Denied: Player accounts cannot access Developer Studio. Sign in at the Gamer Portal or register as a Game Studio.',
+            error: 'Access Denied: Player accounts cannot log in on the Developer Studio website. Each role operates on its own independent website.',
             portalMismatch: 'PLAYER',
-            redirectUrl: '/auth/login',
           },
           { status: 403 }
         );
       }
     }
 
-    // 3. Admin Operations Portal Isolation: Only Admin / Staff allowed at /admin/auth/login
+    // 3. Admin Operations Website: Strictly only Admin / Staff allowed at /admin/auth/login
     if (portal === 'ADMIN') {
       if (user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN' && user.role !== 'MODERATOR') {
         return NextResponse.json(
           {
             success: false,
-            error: 'Access Denied (403 Forbidden): Unauthorized. This portal is strictly restricted to GameVerse Administrative Staff.',
+            error: 'Access Denied (403 Forbidden): Unauthorized. This website is strictly restricted to authorized GameVerse Administrative Staff only.',
             portalMismatch: 'UNAUTHORIZED',
-            redirectUrl: '/auth/login',
           },
           { status: 403 }
         );

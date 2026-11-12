@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ShieldCheck, Lock, Mail, ArrowRight, AlertCircle, KeyRound, Gamepad2, Code, ShieldAlert } from 'lucide-react';
+import { ShieldCheck, Lock, Mail, AlertCircle, KeyRound } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
@@ -15,10 +15,6 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [portalMismatch, setPortalMismatch] = useState<{
-    role?: string;
-    message: string;
-  } | null>(null);
 
   // 2FA state
   const [requires2FA, setRequires2FA] = useState(false);
@@ -30,7 +26,6 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setLoading(true);
     setError('');
-    setPortalMismatch(null);
 
     try {
       const res = await fetch('/api/auth/login', {
@@ -43,14 +38,7 @@ export default function AdminLoginPage() {
       setLoading(false);
 
       if (!res.ok) {
-        if (data.portalMismatch || res.status === 403) {
-          setPortalMismatch({
-            role: data.portalMismatch,
-            message: data.error || 'Access Denied: Only authorized GameVerse Administrative Staff can log in here.',
-          });
-        } else {
-          setError(data.error || 'Admin authentication failed.');
-        }
+        setError(data.error || 'Admin authentication failed.');
         return;
       }
 
@@ -121,21 +109,6 @@ export default function AdminLoginPage() {
           </p>
         </div>
 
-        {portalMismatch && (
-          <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 space-y-3">
-            <div className="flex items-start gap-2.5 text-rose-300 text-xs">
-              <ShieldAlert className="w-4 h-4 flex-shrink-0 mt-0.5" />
-              <span>{portalMismatch.message}</span>
-            </div>
-            <Link href="/auth/login">
-              <Button variant="outline" className="w-full text-xs py-2 flex items-center justify-center gap-2 border-rose-500/30 text-rose-200">
-                <Gamepad2 className="w-3.5 h-3.5" />
-                <span>Return to Gamer Portal</span>
-              </Button>
-            </Link>
-          </div>
-        )}
-
         {error && (
           <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-center gap-2">
             <AlertCircle className="w-4 h-4 flex-shrink-0" />
@@ -186,34 +159,11 @@ export default function AdminLoginPage() {
           </button>
         </div>
 
-        <div className="text-center text-xs text-gray-400 pt-1 space-y-3">
-          <div>
-            Need Staff Access?{' '}
-            <Link href="/admin/auth/signup" className="text-rose-400 hover:text-rose-300 font-semibold">
-              Register with Security Key
-            </Link>
-          </div>
-
-          {/* Cross portal links */}
-          <div className="bg-black/30 p-3 rounded-xl border border-white/5 text-[11px] text-gray-400 space-y-2">
-            <div className="font-semibold text-gray-300">Looking for other portals?</div>
-            <div className="flex flex-col sm:flex-row gap-2 justify-center">
-              <Link
-                href="/auth/login"
-                className="flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-lg bg-indigo-950/40 text-indigo-300 border border-indigo-500/20 hover:bg-indigo-900/40 transition-colors"
-              >
-                <Gamepad2 className="w-3.5 h-3.5" />
-                <span>Gamer Portal</span>
-              </Link>
-              <Link
-                href="/developer/auth/login"
-                className="flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-lg bg-cyan-950/40 text-cyan-300 border border-cyan-500/20 hover:bg-cyan-900/40 transition-colors"
-              >
-                <Code className="w-3.5 h-3.5" />
-                <span>Developer Studio</span>
-              </Link>
-            </div>
-          </div>
+        <div className="text-center text-xs text-gray-400 pt-1">
+          Need Staff Access?{' '}
+          <Link href="/admin/auth/signup" className="text-rose-400 hover:text-rose-300 font-semibold">
+            Register with Security Key
+          </Link>
         </div>
       </div>
 

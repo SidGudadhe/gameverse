@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ShieldCheck, Mail, Lock, User, AlertCircle, KeyRound, Gamepad2, Code, ShieldAlert } from 'lucide-react';
+import { ShieldCheck, Mail, Lock, User, AlertCircle, KeyRound } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
@@ -145,34 +145,11 @@ export default function AdminSignupPage() {
           </Button>
         </form>
 
-        <div className="text-center text-xs text-gray-400 pt-1 space-y-3">
-          <div>
-            Already have Staff Credentials?{' '}
-            <Link href="/admin/auth/login" className="text-rose-400 hover:text-rose-300 font-semibold">
-              Admin Sign In
-            </Link>
-          </div>
-
-          {/* Cross portal links */}
-          <div className="bg-black/30 p-3 rounded-xl border border-white/5 text-[11px] text-gray-400 space-y-2">
-            <div className="font-semibold text-gray-300">Not GameVerse Staff?</div>
-            <div className="flex flex-col sm:flex-row gap-2 justify-center">
-              <Link
-                href="/auth/signup"
-                className="flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-lg bg-indigo-950/40 text-indigo-300 border border-indigo-500/20 hover:bg-indigo-900/40 transition-colors"
-              >
-                <Gamepad2 className="w-3.5 h-3.5" />
-                <span>Gamer Registration</span>
-              </Link>
-              <Link
-                href="/developer/auth/signup"
-                className="flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-lg bg-cyan-950/40 text-cyan-300 border border-cyan-500/20 hover:bg-cyan-900/40 transition-colors"
-              >
-                <Code className="w-3.5 h-3.5" />
-                <span>Studio Registration</span>
-              </Link>
-            </div>
-          </div>
+        <div className="text-center text-xs text-gray-400 pt-1">
+          Already have Staff Credentials?{' '}
+          <Link href="/admin/auth/login" className="text-rose-400 hover:text-rose-300 font-semibold">
+            Admin Sign In
+          </Link>
         </div>
       </div>
     </div>

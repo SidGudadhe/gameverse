@@ -75,12 +75,7 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
           <p className="text-sm text-gray-400 leading-relaxed mb-6">
             You must be signed in with a GameVerse Developer account to access the studio, upload game builds, and inspect telemetry analytics.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/">
-              <Button variant="outline" className="w-full">
-                Player Catalog
-              </Button>
-            </Link>
+          <div className="flex flex-col gap-3 justify-center">
             <Link href="/developer/auth/login">
               <Button variant="primary" className="w-full bg-cyan-600 hover:bg-cyan-500">
                 Sign In to Studio

@@ -86,13 +86,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             )}
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/">
-              <Button variant="outline" className="w-full flex items-center justify-center gap-2">
-                <ArrowLeft className="w-4 h-4" />
-                <span>Return to Catalog</span>
-              </Button>
-            </Link>
+          <div className="flex flex-col gap-3 justify-center">
             <Link href="/admin/auth/login">
               <Button variant="primary" className="w-full">
                 Log In as Admin

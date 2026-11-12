@@ -101,14 +101,6 @@ export default function Navbar() {
 
           {/* Studio Right Actions */}
           <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="flex items-center gap-1.5 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-semibold px-3 py-2 rounded-xl border border-white/10 transition-colors"
-            >
-              <Gamepad2 className="w-3.5 h-3.5 text-indigo-400" />
-              <span className="hidden sm:inline">Switch to Gamer Site</span>
-            </Link>
-
             {isAuthenticated ? (
               <>
                 <Link
@@ -207,14 +199,6 @@ export default function Navbar() {
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               <span>2FA VERIFIED</span>
             </span>
-
-            <Link
-              href="/"
-              className="flex items-center gap-1.5 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-semibold px-3 py-2 rounded-xl border border-white/10 transition-colors"
-            >
-              <Gamepad2 className="w-3.5 h-3.5 text-indigo-400" />
-              <span className="hidden sm:inline">Gamer Site</span>
-            </Link>
 
             {isAuthenticated ? (
               <button
@@ -334,30 +318,8 @@ export default function Navbar() {
           </form>
         </div>
 
-        {/* Player Profile & Role Switcher Actions */}
+        {/* Player Profile & Authentication Actions (Strictly Gamer Realm Only) */}
         <div className="flex items-center gap-3">
-          {/* Creator portal shortcut ONLY for verified developers */}
-          {role === 'DEVELOPER' && (
-            <Link
-              href="/developer"
-              className="hidden lg:flex items-center gap-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-semibold px-3 py-1.5 rounded-xl transition-all"
-            >
-              <Code className="w-3.5 h-3.5" />
-              <span>Studio Portal</span>
-            </Link>
-          )}
-
-          {/* Admin portal shortcut ONLY for admins */}
-          {(role === 'ADMIN' || role === 'SUPER_ADMIN' || role === 'MODERATOR') && (
-            <Link
-              href="/admin"
-              className="hidden lg:flex items-center gap-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-semibold px-3 py-1.5 rounded-xl transition-all"
-            >
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Admin Console</span>
-            </Link>
-          )}
-
           {/* Authentication State: Log In vs User Avatar */}
           {isAuthenticated ? (
             <div className="flex items-center gap-2 pl-2 border-l border-white/10">
@@ -467,28 +429,6 @@ export default function Navbar() {
                   <History className="w-4 h-4 text-amber-400" />
                   <span>Play History</span>
                 </Link>
-
-                {role === 'DEVELOPER' && (
-                  <Link
-                    href="/developer"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-cyan-300 bg-cyan-500/10 border border-cyan-500/20 font-semibold"
-                  >
-                    <Code className="w-4 h-4" />
-                    <span>Go to Developer Studio</span>
-                  </Link>
-                )}
-
-                {(role === 'ADMIN' || role === 'SUPER_ADMIN' || role === 'MODERATOR') && (
-                  <Link
-                    href="/admin"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-rose-300 bg-rose-500/10 border border-rose-500/20 font-semibold"
-                  >
-                    <ShieldCheck className="w-4 h-4" />
-                    <span>Go to Admin Console</span>
-                  </Link>
-                )}
 
                 <button
                   onClick={() => {

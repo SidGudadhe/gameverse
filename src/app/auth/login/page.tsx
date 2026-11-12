@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Gamepad2, Lock, Mail, ArrowRight, AlertCircle, Code, ShieldCheck } from 'lucide-react';
+import { Gamepad2, Lock, Mail, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
@@ -14,17 +14,11 @@ export default function GamerLoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [portalMismatch, setPortalMismatch] = useState<{
-    role: string;
-    redirectUrl: string;
-    message: string;
-  } | null>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    setPortalMismatch(null);
 
     try {
       const res = await fetch('/api/auth/login', {
@@ -37,15 +31,7 @@ export default function GamerLoginPage() {
       setLoading(false);
 
       if (!res.ok) {
-        if (data.portalMismatch) {
-          setPortalMismatch({
-            role: data.portalMismatch,
-            redirectUrl: data.redirectUrl || (data.portalMismatch === 'DEVELOPER' ? '/developer/auth/login' : '/admin/auth/login'),
-            message: data.error,
-          });
-        } else {
-          setError(data.error || 'Authentication failed.');
-        }
+        setError(data.error || 'Gamer authentication failed.');
         return;
       }
 
@@ -81,21 +67,6 @@ export default function GamerLoginPage() {
             Sign in to continue your gaming sessions, access favorites, and view recommendations.
           </p>
         </div>
-
-        {portalMismatch && (
-          <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 space-y-3">
-            <div className="flex items-start gap-2.5 text-amber-300 text-xs">
-              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-              <span>{portalMismatch.message}</span>
-            </div>
-            <Link href={portalMismatch.redirectUrl}>
-              <Button variant="primary" className="w-full bg-amber-600 hover:bg-amber-500 text-xs py-2 flex items-center justify-center gap-2">
-                <span>Go to {portalMismatch.role === 'DEVELOPER' ? 'Developer Studio Portal' : 'Admin Ops Portal'}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Button>
-            </Link>
-          </div>
-        )}
 
         {error && (
           <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-center gap-2">
@@ -155,34 +126,11 @@ export default function GamerLoginPage() {
           </button>
         </div>
 
-        <div className="text-center text-xs text-gray-400 pt-1 space-y-3">
-          <div>
-            Don&apos;t have a Gamer account?{' '}
-            <Link href="/auth/signup" className="text-indigo-400 hover:text-indigo-300 font-semibold">
-              Create Gamer Account
-            </Link>
-          </div>
-
-          {/* Portal Switcher Guidance */}
-          <div className="bg-black/30 p-3 rounded-xl border border-white/5 text-[11px] text-gray-400 space-y-2">
-            <div className="font-semibold text-gray-300">Are you a Game Creator or Admin?</div>
-            <div className="flex flex-col sm:flex-row gap-2 justify-center">
-              <Link
-                href="/developer/auth/login"
-                className="flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-lg bg-cyan-950/40 text-cyan-300 border border-cyan-500/20 hover:bg-cyan-900/40 transition-colors"
-              >
-                <Code className="w-3.5 h-3.5" />
-                <span>Developer Studio Login</span>
-              </Link>
-              <Link
-                href="/admin/auth/login"
-                className="flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-lg bg-rose-950/40 text-rose-300 border border-rose-500/20 hover:bg-rose-900/40 transition-colors"
-              >
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Admin Ops Login</span>
-              </Link>
-            </div>
-          </div>
+        <div className="text-center text-xs text-gray-400 pt-1">
+          Don&apos;t have a Gamer account?{' '}
+          <Link href="/auth/signup" className="text-indigo-400 hover:text-indigo-300 font-semibold">
+            Create Gamer Account
+          </Link>
         </div>
       </div>
     </div>

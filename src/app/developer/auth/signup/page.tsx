@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Code, Mail, Lock, User, AlertCircle, Sparkles, Gamepad2, Layers, CheckCircle2 } from 'lucide-react';
+import { Code, Mail, Lock, User, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
@@ -154,34 +154,11 @@ export default function DeveloperSignupPage() {
           </Button>
         </form>
 
-        <div className="text-center text-xs text-gray-400 pt-1 space-y-3">
-          <div>
-            Already registered as a Developer?{' '}
-            <Link href="/developer/auth/login" className="text-cyan-400 hover:text-cyan-300 font-semibold">
-              Studio Sign In
-            </Link>
-          </div>
-
-          {/* Cross portal links */}
-          <div className="bg-black/30 p-3 rounded-xl border border-white/5 text-[11px] text-gray-400 space-y-2">
-            <div className="font-semibold text-gray-300">Looking for another portal?</div>
-            <div className="flex flex-col sm:flex-row gap-2 justify-center">
-              <Link
-                href="/auth/signup"
-                className="flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-lg bg-indigo-950/40 text-indigo-300 border border-indigo-500/20 hover:bg-indigo-900/40 transition-colors"
-              >
-                <Gamepad2 className="w-3.5 h-3.5" />
-                <span>Gamer Sign Up</span>
-              </Link>
-              <Link
-                href="/admin/auth/login"
-                className="flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-lg bg-rose-950/40 text-rose-300 border border-rose-500/20 hover:bg-rose-900/40 transition-colors"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Admin Ops Login</span>
-              </Link>
-            </div>
-          </div>
+        <div className="text-center text-xs text-gray-400 pt-1">
+          Already registered as a Developer?{' '}
+          <Link href="/developer/auth/login" className="text-cyan-400 hover:text-cyan-300 font-semibold">
+            Studio Sign In
+          </Link>
         </div>
       </div>
     </div>

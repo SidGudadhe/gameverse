@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Code, Lock, Mail, ArrowRight, AlertCircle, Sparkles, Gamepad2, ShieldCheck } from 'lucide-react';
+import { Code, Lock, Mail, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
@@ -14,17 +14,11 @@ export default function DeveloperLoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [portalMismatch, setPortalMismatch] = useState<{
-    role: string;
-    redirectUrl: string;
-    message: string;
-  } | null>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    setPortalMismatch(null);
 
     try {
       const res = await fetch('/api/auth/login', {
@@ -37,15 +31,7 @@ export default function DeveloperLoginPage() {
       setLoading(false);
 
       if (!res.ok) {
-        if (data.portalMismatch) {
-          setPortalMismatch({
-            role: data.portalMismatch,
-            redirectUrl: data.redirectUrl || '/auth/login',
-            message: data.error,
-          });
-        } else {
-          setError(data.error || 'Developer authentication failed.');
-        }
+        setError(data.error || 'Developer authentication failed.');
         return;
       }
 
@@ -81,21 +67,6 @@ export default function DeveloperLoginPage() {
             Access your developer workspace, submit HTML5/WebGL builds, inspect telemetry and withdraw earnings.
           </p>
         </div>
-
-        {portalMismatch && (
-          <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 space-y-3">
-            <div className="flex items-start gap-2.5 text-amber-300 text-xs">
-              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-              <span>{portalMismatch.message}</span>
-            </div>
-            <Link href={portalMismatch.redirectUrl}>
-              <Button variant="primary" className="w-full bg-amber-600 hover:bg-amber-500 text-xs py-2 flex items-center justify-center gap-2">
-                <span>Go to Gamer Portal</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Button>
-            </Link>
-          </div>
-        )}
 
         {error && (
           <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-center gap-2">
@@ -155,34 +126,11 @@ export default function DeveloperLoginPage() {
           </button>
         </div>
 
-        <div className="text-center text-xs text-gray-400 pt-1 space-y-3">
-          <div>
-            New Game Studio or Indie Creator?{' '}
-            <Link href="/developer/auth/signup" className="text-cyan-400 hover:text-cyan-300 font-semibold">
-              Register Studio Account
-            </Link>
-          </div>
-
-          {/* Cross portal links */}
-          <div className="bg-black/30 p-3 rounded-xl border border-white/5 text-[11px] text-gray-400 space-y-2">
-            <div className="font-semibold text-gray-300">Not a Game Developer?</div>
-            <div className="flex flex-col sm:flex-row gap-2 justify-center">
-              <Link
-                href="/auth/login"
-                className="flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-lg bg-indigo-950/40 text-indigo-300 border border-indigo-500/20 hover:bg-indigo-900/40 transition-colors"
-              >
-                <Gamepad2 className="w-3.5 h-3.5" />
-                <span>Return to Gamer Portal</span>
-              </Link>
-              <Link
-                href="/admin/auth/login"
-                className="flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-lg bg-rose-950/40 text-rose-300 border border-rose-500/20 hover:bg-rose-900/40 transition-colors"
-              >
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Admin Ops Login</span>
-              </Link>
-            </div>
-          </div>
+        <div className="text-center text-xs text-gray-400 pt-1">
+          New Game Studio or Indie Creator?{' '}
+          <Link href="/developer/auth/signup" className="text-cyan-400 hover:text-cyan-300 font-semibold">
+            Register Studio Account
+          </Link>
         </div>
       </div>
     </div>

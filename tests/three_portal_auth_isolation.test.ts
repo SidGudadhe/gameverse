@@ -65,7 +65,7 @@ describe('Three Separate Role Websites & Dedicated Auth Portals Isolation', () =
     expect(data.user.role).toBe('PLAYER'); // Must be forced to PLAYER
   });
 
-  it('2. should authenticate gamers on Player Portal, but reject Developer accounts', async () => {
+  it('2. should authenticate gamers on Player Portal, but return generic 401 for Developer accounts to prevent enumeration', async () => {
     // A. Gamer login on Player Portal -> SUCCESS
     const gamerReq = new NextRequest('http://localhost:3000/api/auth/login', {
       method: 'POST',
@@ -81,7 +81,7 @@ describe('Three Separate Role Websites & Dedicated Auth Portals Isolation', () =
     expect(gamerRes.status).toBe(200);
     expect(gamerData.user.role).toBe('PLAYER');
 
-    // B. Developer login on Player Portal -> REJECTED with portal mismatch
+    // B. Developer login on Player Portal -> REJECTED with generic 401 (Zero account/role enumeration)
     const devReq = new NextRequest('http://localhost:3000/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -93,12 +93,13 @@ describe('Three Separate Role Websites & Dedicated Auth Portals Isolation', () =
     });
     const devRes = await loginRoute(devReq);
     const devData = await devRes.json();
-    expect(devRes.status).toBe(403);
-    expect(devData.portalMismatch).toBe('DEVELOPER');
-    expect(devData.error).toContain('independent website');
+    expect(devRes.status).toBe(401);
+    expect(devData.success).toBe(false);
+    expect(devData.error).toBe('Invalid email or password.');
+    expect(devData.portalMismatch).toBeUndefined();
   });
 
-  it('3. should reject Admin accounts trying to login on Player Portal', async () => {
+  it('3. should reject Admin accounts on Player Portal with generic 401 to prevent enumeration', async () => {
     const adminReq = new NextRequest('http://localhost:3000/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -111,9 +112,10 @@ describe('Three Separate Role Websites & Dedicated Auth Portals Isolation', () =
     const adminRes = await loginRoute(adminReq);
     const adminData = await adminRes.json();
 
-    expect(adminRes.status).toBe(403);
-    expect(adminData.portalMismatch).toBe('ADMIN');
-    expect(adminData.error).toContain('independent website');
+    expect(adminRes.status).toBe(401);
+    expect(adminData.success).toBe(false);
+    expect(adminData.error).toBe('Invalid email or password.');
+    expect(adminData.portalMismatch).toBeUndefined();
   });
 
   // =========================================================================
@@ -155,7 +157,7 @@ describe('Three Separate Role Websites & Dedicated Auth Portals Isolation', () =
     expect(devRes.status).toBe(200);
     expect(devData.user.role).toBe('DEVELOPER');
 
-    // B. Player login on Developer Portal -> REJECTED
+    // B. Player login on Developer Portal -> REJECTED with generic 401 (Zero account/role enumeration)
     const playerReq = new NextRequest('http://localhost:3000/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -167,9 +169,10 @@ describe('Three Separate Role Websites & Dedicated Auth Portals Isolation', () =
     });
     const playerRes = await loginRoute(playerReq);
     const playerData = await playerRes.json();
-    expect(playerRes.status).toBe(403);
-    expect(playerData.portalMismatch).toBe('PLAYER');
-    expect(playerData.error).toContain('independent website');
+    expect(playerRes.status).toBe(401);
+    expect(playerData.success).toBe(false);
+    expect(playerData.error).toBe('Invalid email or password.');
+    expect(playerData.portalMismatch).toBeUndefined();
   });
 
   // =========================================================================
@@ -233,7 +236,7 @@ describe('Three Separate Role Websites & Dedicated Auth Portals Isolation', () =
     expect(adminRes.status).toBe(200);
     expect(adminData.user.role).toBe('ADMIN');
 
-    // B. Player login on Admin Portal -> 403 Forbidden
+    // B. Player login on Admin Portal -> REJECTED with generic 401
     const playerReq = new NextRequest('http://localhost:3000/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -244,9 +247,12 @@ describe('Three Separate Role Websites & Dedicated Auth Portals Isolation', () =
       }),
     });
     const playerRes = await loginRoute(playerReq);
-    expect(playerRes.status).toBe(403);
+    const playerData = await playerRes.json();
+    expect(playerRes.status).toBe(401);
+    expect(playerData.success).toBe(false);
+    expect(playerData.error).toBe('Invalid email or password.');
 
-    // C. Developer login on Admin Portal -> 403 Forbidden
+    // C. Developer login on Admin Portal -> REJECTED with generic 401
     const devReq = new NextRequest('http://localhost:3000/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -257,7 +263,10 @@ describe('Three Separate Role Websites & Dedicated Auth Portals Isolation', () =
       }),
     });
     const devRes = await loginRoute(devReq);
-    expect(devRes.status).toBe(403);
+    const devData = await devRes.json();
+    expect(devRes.status).toBe(401);
+    expect(devData.success).toBe(false);
+    expect(devData.error).toBe('Invalid email or password.');
   });
 
   // =========================================================================

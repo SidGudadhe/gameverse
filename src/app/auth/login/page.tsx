@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Gamepad2, Lock, Mail, AlertCircle } from 'lucide-react';
+import { Gamepad2, Lock, Mail, AlertCircle, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
@@ -14,11 +14,13 @@ export default function GamerLoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setShowErrorPopup(false);
 
     try {
       const res = await fetch('/api/auth/login', {
@@ -31,7 +33,8 @@ export default function GamerLoginPage() {
       setLoading(false);
 
       if (!res.ok) {
-        setError(data.error || 'Gamer authentication failed.');
+        setError(data.error || 'Invalid email or password.');
+        setShowErrorPopup(true);
         return;
       }
 
@@ -39,6 +42,7 @@ export default function GamerLoginPage() {
     } catch {
       setLoading(false);
       setError('Network error occurred. Please try again.');
+      setShowErrorPopup(true);
     }
   };
 
@@ -48,7 +52,31 @@ export default function GamerLoginPage() {
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center px-4 py-12">
+    <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 relative">
+      {/* Incorrect Credentials Pop-Up Notification */}
+      {showErrorPopup && (
+        <div
+          role="alert"
+          className="fixed top-6 right-6 z-50 max-w-sm w-full bg-slate-900/95 border border-rose-500/50 rounded-2xl p-4 shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-top-4 flex items-start gap-3"
+        >
+          <div className="w-9 h-9 rounded-xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center flex-shrink-0 text-rose-400">
+            <AlertCircle className="w-5 h-5" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h4 className="text-sm font-bold text-white">Incorrect Credentials</h4>
+            <p className="text-xs text-rose-300/90 mt-0.5">{error || 'Invalid email or password.'}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowErrorPopup(false)}
+            className="text-gray-400 hover:text-white transition-colors p-1 rounded-lg"
+            aria-label="Close notification"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       <div className="w-full max-w-md space-y-6 bg-surface p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden">
         {/* Glow */}
         <div className="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />

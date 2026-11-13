@@ -35,9 +35,27 @@ const AuthContext = createContext<AuthContextType>({
   logout: async () => {},
 });
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [loading, setLoading] = useState(true);
+export function AuthProvider({
+  children,
+  initialUser = null,
+}: {
+  children: React.ReactNode;
+  initialUser?: AuthUser | null;
+}) {
+  const [user, setUser] = useState<AuthUser | null>(() => {
+    if (initialUser) return initialUser;
+    if (typeof window !== 'undefined') {
+      try {
+        const cached = localStorage.getItem(STORAGE_KEY);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed && parsed.id && parsed.role) return parsed;
+        }
+      } catch {}
+    }
+    return null;
+  });
+  const [loading, setLoading] = useState(!initialUser);
   const router = useRouter();
 
   // Instant synchronous session setter for 0ms UI transitions
@@ -75,16 +93,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           } catch {}
           return data.user;
         }
+      } else if (res.status === 401) {
+        // Explicit unauthorized from server: clear stale session
+        clearSession();
+        return null;
       }
-      clearSession();
-      return null;
+      // On 500, network delays or transient issues: preserve existing active session
+      return user;
     } catch {
-      clearSession();
-      return null;
+      // Network interruption: preserve existing session
+      return user;
     } finally {
       setLoading(false);
     }
-  }, [clearSession]);
+  }, [clearSession, user]);
 
   useEffect(() => {
     // 1. Instant optimistic restore from localStorage to eliminate auth flicker

@@ -505,7 +505,7 @@ export default function PlayerPayoutsPage() {
       </div>
 
       {/* Unauthenticated State (Matching Favorites & History design) */}
-      {!isAuthenticated ? (
+      {!authLoading && !isAuthenticated ? (
         <div className="bg-slate-900/80 rounded-3xl p-8 sm:p-12 border border-white/10 text-center max-w-xl mx-auto space-y-4 shadow-xl">
           <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mx-auto">
             <Coins className="w-8 h-8" />

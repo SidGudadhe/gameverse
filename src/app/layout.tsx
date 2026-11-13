@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import React, { Suspense } from 'react';
+import { cookies } from 'next/headers';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import CookieConsent from '@/components/CookieConsent';
 import FooterLegal from '@/components/FooterLegal';
 import NavigationProgressBar from '@/components/NavigationProgressBar';
-import { AuthProvider } from '@/context/AuthContext';
+import { AuthProvider, AuthUser } from '@/context/AuthContext';
+import { verifyToken } from '@/lib/auth';
 
 export const metadata: Metadata = {
   title: 'GameVerse — Play Free Instant Browser Games (HTML5 & WebGL)',
@@ -17,6 +19,23 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  let initialUser: AuthUser | null = null;
+  try {
+    const cookieStore = cookies();
+    const token = cookieStore.get('gameverse_session')?.value;
+    if (token) {
+      const decoded = verifyToken(token);
+      if (decoded && decoded.userId) {
+        initialUser = {
+          id: decoded.userId,
+          email: decoded.email,
+          name: decoded.name || decoded.email.split('@')[0],
+          role: decoded.role,
+        };
+      }
+    }
+  } catch {}
+
   return (
     <html lang="en" className="dark">
       <head>
@@ -28,7 +47,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-[#090D16] text-gray-100 flex flex-col selection:bg-indigo-500 selection:text-white">
-        <AuthProvider>
+        <AuthProvider initialUser={initialUser}>
           <Suspense fallback={null}>
             <NavigationProgressBar />
           </Suspense>

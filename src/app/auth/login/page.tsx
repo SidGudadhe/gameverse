@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, Suspense } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Gamepad2, Lock, Mail, AlertCircle, X, Zap } from 'lucide-react';
@@ -12,10 +12,17 @@ import { useAuth } from '@/context/AuthContext';
 function GamerLoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { setSession } = useAuth();
+  const { setSession, isAuthenticated, loading: authLoading } = useAuth();
 
   const redirectParam = searchParams.get('redirect');
   const targetDestination = redirectParam && redirectParam.startsWith('/') ? redirectParam : '/';
+
+  // Prevent logged-in users from seeing the login screen
+  useEffect(() => {
+    if (isAuthenticated && !authLoading) {
+      router.replace(targetDestination);
+    }
+  }, [isAuthenticated, authLoading, router, targetDestination]);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -90,6 +97,15 @@ function GamerLoginContent() {
     setPassword('Password123!');
     await performLogin(testEmail, 'Password123!');
   };
+
+  if (isAuthenticated && !authLoading) {
+    return (
+      <div className="min-h-[70vh] flex flex-col items-center justify-center gap-3">
+        <div className="w-10 h-10 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+        <p className="text-xs text-gray-400 font-mono">Redirecting to your session...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 relative">

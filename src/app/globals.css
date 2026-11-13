@@ -44,3 +44,15 @@ body {
 .glow-cyan {
   box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.4);
 }
+
+@keyframes progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}

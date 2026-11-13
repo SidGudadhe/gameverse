@@ -4,63 +4,14 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   ArrowLeft,
-  Gamepad2,
-  Swords,
-  Puzzle,
-  Crown,
-  Shield,
-  Trophy,
-  Sparkles,
-  ArrowRight,
   SlidersHorizontal,
   Flame,
   Star,
   Clock,
 } from 'lucide-react';
-import CategoryNavChips, { CATEGORY_ICONS } from '@/components/CategoryNavChips';
+import CategoryNavChips from '@/components/CategoryNavChips';
 import GameCard from '@/components/GameCard';
 import { Badge } from '@/components/ui/Badge';
-
-const CATEGORY_DETAILS: Record<
-  string,
-  { icon: any; gradient: string; description: string }
-> = {
-  action: {
-    icon: Swords,
-    gradient: 'from-rose-600/30 via-rose-900/20 to-slate-900/40',
-    description: 'Fast-paced reflexes, combat, aerial duels, and shooters.',
-  },
-  arcade: {
-    icon: Gamepad2,
-    gradient: 'from-indigo-600/30 via-indigo-900/20 to-slate-900/40',
-    description: 'Classic 2D retro, platformers, and high-speed endless runners.',
-  },
-  puzzle: {
-    icon: Puzzle,
-    gradient: 'from-amber-600/30 via-amber-900/20 to-slate-900/40',
-    description: 'Brain teasers, physics puzzles, logic mazes, and match-3 games.',
-  },
-  strategy: {
-    icon: Crown,
-    gradient: 'from-emerald-600/30 via-emerald-900/20 to-slate-900/40',
-    description: 'Tactical tower defense, resource planning, and conquest simulations.',
-  },
-  rpg: {
-    icon: Shield,
-    gradient: 'from-purple-600/30 via-purple-900/20 to-slate-900/40',
-    description: 'Character progression, isometric dungeon crawlers, and adventures.',
-  },
-  sports: {
-    icon: Trophy,
-    gradient: 'from-cyan-600/30 via-cyan-900/20 to-slate-900/40',
-    description: 'High-octane racing, soccer, basketball, and trick physics.',
-  },
-  casual: {
-    icon: Sparkles,
-    gradient: 'from-pink-600/30 via-pink-900/20 to-slate-900/40',
-    description: 'Relaxing instant clickers, hypercasual games, and zen simulations.',
-  },
-};
 
 export default function AllCategoriesPage() {
   const [categories, setCategories] = useState<any[]>([]);
@@ -128,73 +79,23 @@ export default function AllCategoriesPage() {
         </div>
       </div>
 
-      {/* Category Navigation Quick Chips (Dedicated Placement on Categories Page) */}
-      <div className="space-y-2">
+      {/* Category Navigation (Browse by Category) */}
+      <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-            Quick Genre Switcher
-          </span>
-          <span className="text-[11px] text-gray-500 font-mono">
+          <div>
+            <h2 className="font-heading font-bold text-lg text-white">
+              Browse by Category
+            </h2>
+            <p className="text-xs text-gray-400">
+              Select a genre to filter and explore games
+            </p>
+          </div>
+          <span className="text-xs text-indigo-400 font-mono font-medium px-2.5 py-1 rounded-full bg-indigo-950/60 border border-indigo-500/20">
             {categories.length} Categories
           </span>
         </div>
         <CategoryNavChips activeSlug="all" />
       </div>
-
-      {/* Categories Cards Grid */}
-      <section className="space-y-4">
-        <div className="flex items-center justify-between border-b border-white/10 pb-3">
-          <h2 className="font-heading font-bold text-xl text-white flex items-center gap-2">
-            <span>Browse by Category</span>
-          </h2>
-          <span className="text-xs text-gray-400">Select a genre to view its collection</span>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {categories.map((cat) => {
-            const detail = CATEGORY_DETAILS[cat.slug] || {
-              icon: Gamepad2,
-              gradient: 'from-slate-800/40 to-slate-900/40',
-              description: cat.description || 'Instant browser playable games.',
-            };
-            const Icon = detail.icon;
-            const emoji = CATEGORY_ICONS[cat.slug] || '🎯';
-
-            return (
-              <Link
-                key={cat.id}
-                href={`/category/${cat.slug}`}
-                className="group relative rounded-2xl p-5 border border-white/10 hover:border-indigo-500/50 bg-[#121826] hover:bg-[#161F33] transition-all flex flex-col justify-between space-y-4 shadow-sm hover:shadow-indigo-500/10"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="w-12 h-12 rounded-xl bg-slate-900 border border-white/10 flex items-center justify-center text-2xl group-hover:scale-105 transition-transform">
-                      {emoji}
-                    </div>
-                    <span className="text-xs font-mono font-semibold px-2.5 py-1 rounded-full bg-slate-900 text-indigo-400 border border-white/10">
-                      {cat.count} {cat.count === 1 ? 'Game' : 'Games'}
-                    </span>
-                  </div>
-
-                  <div>
-                    <h3 className="font-heading font-bold text-base text-white group-hover:text-indigo-300 transition-colors flex items-center gap-1.5">
-                      <span>{cat.name}</span>
-                    </h3>
-                    <p className="text-xs text-gray-400 mt-1 line-clamp-2 leading-relaxed">
-                      {cat.description || detail.description}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between text-xs text-indigo-400 group-hover:text-indigo-300 font-semibold pt-2 border-t border-white/5">
-                  <span>Explore Games</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
 
       {/* All Playable Games Directory */}
       <section className="space-y-4 pt-4 border-t border-white/10">

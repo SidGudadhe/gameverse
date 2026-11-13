@@ -86,13 +86,6 @@ export default function PlayerProfilePage({ params }: PlayerProfilePageProps) {
                 <Shield className="w-3.5 h-3.5" />
                 <span>GameVerse Verified Player</span>
               </span>
-              <span>•</span>
-              <Link
-                href="/privacy"
-                className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
-              >
-                Privacy & Rights
-              </Link>
             </div>
           </div>
         </div>

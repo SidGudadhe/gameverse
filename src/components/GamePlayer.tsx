@@ -489,20 +489,20 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
                   {game.title}
                 </h2>
                 <p className="mt-1 text-xs sm:text-sm text-gray-300">
-                  Instant playable in secure isolated sandbox
+                  Click to play instantly &bull; No downloads or install required
                 </p>
               </div>
 
-              {/* Technical Spec Badges */}
+              {/* Player Badges */}
               <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+                <span className="bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 text-[11px] font-semibold px-2.5 py-1 rounded-lg">
+                  Instant Play
+                </span>
                 <span className="bg-black/60 border border-white/10 text-gray-300 text-[11px] px-2.5 py-1 rounded-lg">
-                  {game.orientation} 16:9
+                  Free Online
                 </span>
-                <span className="bg-black/60 border border-cyan-500/30 text-cyan-300 font-mono text-[11px] px-2.5 py-1 rounded-lg">
-                  {game.engine}
-                </span>
-                <span className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-semibold px-2.5 py-1 rounded-lg">
-                  Zero Bandwidth Idle
+                <span className="bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] font-semibold px-2.5 py-1 rounded-lg">
+                  ★ {game.rating.toFixed(1)} Rating
                 </span>
               </div>
             </div>

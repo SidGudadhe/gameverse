@@ -84,7 +84,6 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
   const [games, setGames] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<'popular' | 'top_rated' | 'newest'>('popular');
-  const [orientationFilter, setOrientationFilter] = useState<'ALL' | 'LANDSCAPE' | 'PORTRAIT'>('ALL');
 
   React.useEffect(() => {
     async function loadGames() {
@@ -104,10 +103,7 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
     loadGames();
   }, [params.slug, sortBy]);
 
-  const filteredGames = useMemo(() => {
-    if (orientationFilter === 'ALL') return games;
-    return games.filter((g) => g.orientation === orientationFilter || g.orientation === 'ANY');
-  }, [games, orientationFilter]);
+  const filteredGames = games;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
@@ -185,22 +181,8 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
           })}
         </div>
 
-        {/* Orientation Filter */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-400 mr-1">Orientation:</span>
-          {(['ALL', 'LANDSCAPE', 'PORTRAIT'] as const).map((orient) => (
-            <button
-              key={orient}
-              onClick={() => setOrientationFilter(orient)}
-              className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
-                orientationFilter === orient
-                  ? 'bg-white/20 text-white font-bold'
-                  : 'bg-white/5 text-gray-400 hover:text-white'
-              }`}
-            >
-              {orient}
-            </button>
-          ))}
+        <div className="text-xs text-gray-400 font-mono">
+          Showing {filteredGames.length} titles
         </div>
       </div>
 
@@ -210,11 +192,10 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
           <EmptyState
             icon={Gamepad2}
             title="No Games Found in this Category"
-            description="No published games currently match the selected orientation or category filters."
-            actionLabel="Reset Filters"
+            description="No published games currently available in this category. Check back soon or explore other popular categories!"
+            actionLabel="Reset to Most Popular"
             onAction={() => {
               setSortBy('popular');
-              setOrientationFilter('ALL');
             }}
           />
         </div>

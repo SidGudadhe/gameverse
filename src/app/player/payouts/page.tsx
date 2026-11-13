@@ -532,7 +532,7 @@ export default function PlayerPayoutsPage() {
         <div className="flex items-center gap-3">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="font-mono text-[11px] text-slate-300">Instant UPI Network: Active</span>
+            <span className="font-mono text-[11px] text-slate-300">Instant Payouts: Active</span>
           </div>
 
           <button
@@ -1020,7 +1020,7 @@ export default function PlayerPayoutsPage() {
                   1
                 </div>
                 <p className="leading-snug">
-                  <strong className="text-white">Play Games:</strong> Every verified session duration is tracked directly in your tamper-evident ledger.
+                  <strong className="text-white">Play Games:</strong> Your play time and game earnings are automatically calculated and added to your balance.
                 </p>
               </div>
 
@@ -1046,7 +1046,7 @@ export default function PlayerPayoutsPage() {
             <div className="pt-3 border-t border-slate-800/80 space-y-1 text-[11px] text-slate-400">
               <div className="flex items-center gap-1.5 text-slate-300 font-medium">
                 <Check className="w-3.5 h-3.5 text-emerald-400" />
-                <span>NPCI UPI Network Integration</span>
+                <span>Direct UPI Transfer (GPay, PhonePe, Paytm)</span>
               </div>
               <p>We never ask for your bank PIN, password, or OTP. Payouts are credit-only.</p>
             </div>

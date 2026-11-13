@@ -110,7 +110,7 @@ export default function HomePage() {
               <h2 className="font-heading font-black text-xl text-white tracking-wide">
                 New Releases
               </h2>
-              <p className="text-gray-400 text-xs">Fresh games recently uploaded by developers</p>
+              <p className="text-gray-400 text-xs">Fresh games added to the catalog</p>
             </div>
           </div>
           <Link

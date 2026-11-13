@@ -41,9 +41,6 @@ export default function FooterLegal() {
           <Link href="/terms" className="hover:text-gray-300 transition-colors">
             Terms of Service
           </Link>
-          <Link href="/creator-agreement" className="hover:text-gray-300 transition-colors">
-            Creator Agreement
-          </Link>
           <button
             onClick={openCookiePreferences}
             className="hover:text-cyan-400 transition-colors flex items-center gap-1 cursor-pointer"

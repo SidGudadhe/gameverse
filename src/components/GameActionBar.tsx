@@ -82,7 +82,7 @@ export default function GameActionBar({
           className="flex-1 md:flex-initial flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600/30 to-cyan-500/30 hover:from-indigo-600/40 hover:to-cyan-500/40 text-cyan-300 border border-cyan-500/30 text-xs font-semibold px-4 py-2.5 rounded-xl transition-all shadow-sm"
         >
           <Share2 className="w-4 h-4 text-cyan-400" />
-          <span>Share & Refer</span>
+          <span>Share Game</span>
         </button>
 
         <button

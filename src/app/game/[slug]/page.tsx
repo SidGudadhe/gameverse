@@ -178,16 +178,8 @@ export default function GamePage({ params }: GamePageProps) {
                 <span className="text-indigo-400 font-semibold">{game.categoryName}</span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-white/5">
-                <span className="text-gray-400">Orientation</span>
-                <span className="text-gray-200 capitalize">{game.orientation.toLowerCase()}</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-white/5">
                 <span className="text-gray-400">Platform</span>
                 <span className="text-emerald-400 font-medium">Web Browser (No Install)</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-white/5">
-                <span className="text-gray-400">Version</span>
-                <span className="text-gray-200 font-mono">v{version?.versionNumber || '1.0.0'}</span>
               </div>
               <div className="flex justify-between py-1.5">
                 <span className="text-gray-400">Released</span>

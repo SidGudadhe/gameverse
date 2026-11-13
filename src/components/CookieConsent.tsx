@@ -32,15 +32,13 @@ export default function CookieConsent() {
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (!stored) {
-        setIsVisible(true);
-      } else {
+      if (stored) {
         const parsed: CookieConsentPreferences = JSON.parse(stored);
         setAnalyticsEnabled(parsed.analytics);
         setMarketingEnabled(parsed.marketing);
       }
     } catch {
-      setIsVisible(true);
+      // Quiet fallback
     }
 
     // Global listener for "Manage Cookie Preferences" links

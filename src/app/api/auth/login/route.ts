@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { gvDb } from '@/lib/database';
 import { verifyPassword, generateToken } from '@/lib/auth';
-import { checkRateLimit, ROLE_LOGIN_RATE_LIMITS } from '@/lib/security/middleware';
+import { checkRateLimit, resetRateLimit, ROLE_LOGIN_RATE_LIMITS } from '@/lib/security/middleware';
 
 export async function POST(req: NextRequest) {
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || '127.0.0.1';
@@ -84,7 +84,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const user = gvDb.findUserByEmail(email);
+    const cleanEmail = normalizedEmail || (typeof email === 'string' ? email.trim().toLowerCase() : '');
+    const user = gvDb.findUserByEmail(cleanEmail);
     if (!user) {
       return NextResponse.json(
         { success: false, error: 'Invalid email or password.' },
@@ -125,6 +126,12 @@ export async function POST(req: NextRequest) {
         { success: false, error: 'Invalid email or password.' },
         { status: 401 }
       );
+    }
+
+    // Reset rate limiter on successful authentication so valid users are never throttled
+    resetRateLimit(ipLimitKey);
+    if (cleanEmail) {
+      resetRateLimit(`login_portal_${portal.toLowerCase()}_email_${cleanEmail}`);
     }
 
     // Check if user requires 2FA (e.g. Admin role with twoFactorEnabled)

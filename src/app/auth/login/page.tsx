@@ -1,15 +1,22 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Gamepad2, Lock, Mail, AlertCircle, X } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Gamepad2, Lock, Mail, AlertCircle, X, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
+import { useAuth } from '@/context/AuthContext';
 
-export default function GamerLoginPage() {
+function GamerLoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { setSession } = useAuth();
+
+  const redirectParam = searchParams.get('redirect');
+  const targetDestination = redirectParam && redirectParam.startsWith('/') ? redirectParam : '/';
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -17,8 +24,7 @@ export default function GamerLoginPage() {
   const [errorTitle, setErrorTitle] = useState('Incorrect Credentials');
   const [showErrorPopup, setShowErrorPopup] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const performLogin = async (loginEmail: string, loginPass: string) => {
     setLoading(true);
     setError('');
     setShowErrorPopup(false);
@@ -27,13 +33,17 @@ export default function GamerLoginPage() {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, portal: 'PLAYER' }),
+        body: JSON.stringify({
+          email: loginEmail.trim(),
+          password: loginPass,
+          portal: 'PLAYER',
+        }),
       });
 
       const data = await res.json();
-      setLoading(false);
 
       if (!res.ok) {
+        setLoading(false);
         if (res.status === 429) {
           setErrorTitle('Rate Limit Exceeded');
           setError(data.error || 'Too many login attempts on the Gamer Portal. Please wait a minute before trying again.');
@@ -45,7 +55,23 @@ export default function GamerLoginPage() {
         return;
       }
 
-      router.push('/');
+      // 1. Instant synchronous session update (0ms transition)
+      if (data.user) {
+        setSession(data.user);
+      }
+
+      setLoading(false);
+
+      // 2. Invalidate router cache & navigate immediately
+      router.refresh();
+      router.push(targetDestination);
+
+      // 3. Fallback safety: guarantee navigation if client-side router transition lags
+      setTimeout(() => {
+        if (typeof window !== 'undefined' && window.location.pathname === '/auth/login') {
+          window.location.href = targetDestination;
+        }
+      }, 250);
     } catch {
       setLoading(false);
       setErrorTitle('Connection Error');
@@ -54,9 +80,15 @@ export default function GamerLoginPage() {
     }
   };
 
-  const loadTestAccount = (testEmail: string) => {
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await performLogin(email, password);
+  };
+
+  const handleQuickLogin = async (testEmail: string) => {
     setEmail(testEmail);
     setPassword('Password123!');
+    await performLogin(testEmail, 'Password123!');
   };
 
   return (
@@ -144,18 +176,19 @@ export default function GamerLoginPage() {
           </Button>
         </form>
 
-        {/* Quick Test Account */}
+        {/* Quick Instant Test Account */}
         <div className="pt-3 border-t border-white/5 space-y-2">
           <div className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider text-center">
-            One-Click Gamer Test Account
+            One-Click Instant Gamer Login
           </div>
           <button
             type="button"
-            onClick={() => loadTestAccount('player@gamer.com')}
-            className="w-full p-2.5 rounded-xl bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-300 border border-indigo-500/30 text-xs text-center transition-colors font-medium flex items-center justify-center gap-2"
+            disabled={loading}
+            onClick={() => handleQuickLogin('player@gamer.com')}
+            className="w-full p-2.5 rounded-xl bg-indigo-600/15 hover:bg-indigo-600/25 active:scale-[0.99] text-indigo-300 border border-indigo-500/30 text-xs text-center transition-all font-semibold flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:border-indigo-400"
           >
-            <Gamepad2 className="w-4 h-4" />
-            <span>Load Player Account (player@gamer.com)</span>
+            <Zap className="w-4 h-4 text-amber-400" />
+            <span>Instant Sign In (player@gamer.com)</span>
           </button>
         </div>
 
@@ -167,5 +200,19 @@ export default function GamerLoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function GamerLoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-[85vh] flex items-center justify-center text-gray-400 text-xs">
+          Loading Gamer Portal...
+        </div>
+      }
+    >
+      <GamerLoginContent />
+    </Suspense>
   );
 }

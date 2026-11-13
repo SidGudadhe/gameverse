@@ -8,9 +8,11 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
 import { Modal } from '@/components/ui/Modal';
+import { useAuth } from '@/context/AuthContext';
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const { setSession } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -58,7 +60,18 @@ export default function AdminLoginPage() {
         return;
       }
 
+      if (data.user) {
+        setSession(data.user);
+      }
+
+      router.refresh();
       router.push('/admin');
+
+      setTimeout(() => {
+        if (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin/auth')) {
+          window.location.href = '/admin';
+        }
+      }, 250);
     } catch {
       setLoading(false);
       setErrorTitle('Connection Error');
@@ -90,7 +103,18 @@ export default function AdminLoginPage() {
       }
 
       setRequires2FA(false);
+      if (data.user) {
+        setSession(data.user);
+      }
+
+      router.refresh();
       router.push('/admin');
+
+      setTimeout(() => {
+        if (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin/auth')) {
+          window.location.href = '/admin';
+        }
+      }, 250);
     } catch {
       setTwoFaLoading(false);
       setError('2FA verification failed.');

@@ -7,9 +7,11 @@ import { Code, Lock, Mail, AlertCircle, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
+import { useAuth } from '@/context/AuthContext';
 
 export default function DeveloperLoginPage() {
   const router = useRouter();
+  const { setSession } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -45,7 +47,18 @@ export default function DeveloperLoginPage() {
         return;
       }
 
+      if (data.user) {
+        setSession(data.user);
+      }
+
+      router.refresh();
       router.push('/developer');
+
+      setTimeout(() => {
+        if (typeof window !== 'undefined' && window.location.pathname.startsWith('/developer/auth')) {
+          window.location.href = '/developer';
+        }
+      }, 250);
     } catch {
       setLoading(false);
       setErrorTitle('Connection Error');

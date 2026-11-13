@@ -485,9 +485,11 @@ class GameVerseDatabase {
 
   // ================= USERS & AUTH =================
   findUserByEmail(email: string) {
+    if (!email) return undefined;
+    const cleanEmail = email.trim().toLowerCase();
     return (
-      globalIndexEngine.getUserByEmail(email) ||
-      this.state.users.find((u) => u.email.toLowerCase() === email.toLowerCase())
+      globalIndexEngine.getUserByEmail(cleanEmail) ||
+      this.state.users.find((u) => u.email.trim().toLowerCase() === cleanEmail)
     );
   }
 

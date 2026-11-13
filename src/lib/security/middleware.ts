@@ -87,12 +87,15 @@ export function extractAuth(req: NextRequest): TokenPayload | null {
 export function requireAuth(req: NextRequest): { user: TokenPayload | null; errorResponse: NextResponse | null } {
   const user = extractAuth(req);
   if (!user) {
+    const errorResponse = NextResponse.json(
+      { success: false, error: 'Unauthorized: Authentication required.' },
+      { status: 401 }
+    );
+    errorResponse.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+    errorResponse.headers.set('Pragma', 'no-cache');
     return {
       user: null,
-      errorResponse: NextResponse.json(
-        { success: false, error: 'Unauthorized: Authentication required.' },
-        { status: 401 }
-      ),
+      errorResponse,
     };
   }
   return { user, errorResponse: null };

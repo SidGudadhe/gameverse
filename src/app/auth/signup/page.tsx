@@ -7,9 +7,11 @@ import { Gamepad2, Mail, Lock, User, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
+import { useAuth } from '@/context/AuthContext';
 
 export default function GamerSignupPage() {
   const router = useRouter();
+  const { setSession } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -41,7 +43,18 @@ export default function GamerSignupPage() {
         return;
       }
 
+      if (data.user) {
+        setSession(data.user);
+      }
+
+      router.refresh();
       router.push('/');
+
+      setTimeout(() => {
+        if (typeof window !== 'undefined' && window.location.pathname === '/auth/signup') {
+          window.location.href = '/';
+        }
+      }, 250);
     } catch {
       setLoading(false);
       setError('Network connection error. Please try again.');

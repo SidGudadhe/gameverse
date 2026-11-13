@@ -150,4 +150,10 @@ describe('Instant Player Authentication & Session Verification', () => {
     const payRes = await payoutsRoute(payReq);
     expect(payRes.status).toBe(200);
   });
+
+  it('6. should reject unauthenticated requests to /api/player/payouts with 401', async () => {
+    const unauthPayReq = new NextRequest('http://localhost:3000/api/player/payouts');
+    const res = await payoutsRoute(unauthPayReq);
+    expect(res.status).toBe(401);
+  });
 });

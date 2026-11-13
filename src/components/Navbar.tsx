@@ -277,7 +277,7 @@ export default function Navbar() {
               <span>Categories</span>
             </Link>
 
-            {isAuthenticated ? (
+            {isAuthenticated && (
               <>
                 <Link
                   href="/player/favorites"
@@ -318,16 +318,6 @@ export default function Navbar() {
                   <span>Payouts</span>
                 </Link>
               </>
-            ) : (
-              <Link
-                href="/player/payouts"
-                prefetch={true}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
-                title="Gamer Payouts (Requires Account)"
-              >
-                <Lock className="w-3.5 h-3.5 text-amber-400" />
-                <span>Payouts</span>
-              </Link>
             )}
           </nav>
         </div>

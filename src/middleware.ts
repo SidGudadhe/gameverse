@@ -28,11 +28,23 @@ function getSessionRole(request: NextRequest): string | null {
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const rawUrl = request.url;
   const host = request.headers.get('host') || '';
 
-  // 1. Path traversal security check in request URL
-  if (pathname.includes('..') || pathname.includes('%2e%2e') || pathname.includes('%2E%2E')) {
-    return new NextResponse('Access Denied: Path traversal detected.', { status: 403 });
+  // 1. Path traversal & suspicious URL injection security check
+  const isSuspicious =
+    rawUrl.includes('..') ||
+    rawUrl.includes('%2e%2e') ||
+    rawUrl.includes('%2E%2E') ||
+    rawUrl.includes('<script') ||
+    rawUrl.includes('%3Cscript') ||
+    rawUrl.includes('union+select') ||
+    rawUrl.includes('union%20select') ||
+    rawUrl.includes('\x00') ||
+    rawUrl.includes('%00');
+
+  if (isSuspicious) {
+    return new NextResponse('Access Denied: Suspicious URL activity detected.', { status: 403 });
   }
 
   // 2. Subdomain Routing: Support dedicated domains (e.g. admin.gameverse.com, studio.gameverse.com)
@@ -132,7 +144,40 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // 6. Security Headers Injection
+  // 6. Strict Authentication & Anti-URL Jumping Gate for Player Protected Sub-Pages
+  const isPlayerProtectedPath =
+    pathname === '/player' ||
+    pathname.startsWith('/player/payouts') ||
+    pathname.startsWith('/player/profile') ||
+    pathname.startsWith('/player/favorites') ||
+    pathname.startsWith('/player/history');
+
+  const isPlayerProtectedApi =
+    pathname.startsWith('/api/player/payouts') ||
+    pathname.startsWith('/api/player/profile') ||
+    pathname.startsWith('/api/player/favorites') ||
+    pathname.startsWith('/api/player/history');
+
+  if (isPlayerProtectedPath || isPlayerProtectedApi) {
+    // If not authenticated, unauthenticated users can NEVER open these sub-pages via URL manipulation
+    if (!userRole) {
+      if (isPlayerProtectedApi) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Unauthorized: Gamer authentication required.',
+          },
+          { status: 401 }
+        );
+      } else {
+        const loginUrl = new URL('/auth/login', request.url);
+        loginUrl.searchParams.set('redirect', pathname);
+        return NextResponse.redirect(loginUrl);
+      }
+    }
+  }
+
+  // 7. Security Headers Injection
   const response = NextResponse.next();
 
   response.headers.set('X-Content-Type-Options', 'nosniff');

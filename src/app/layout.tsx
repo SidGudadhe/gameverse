@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar';
 import CookieConsent from '@/components/CookieConsent';
 import FooterLegal from '@/components/FooterLegal';
 import NavigationProgressBar from '@/components/NavigationProgressBar';
+import NavigationGuard from '@/components/NavigationGuard';
 import { AuthProvider, AuthUser } from '@/context/AuthContext';
 import { verifyToken } from '@/lib/auth';
 
@@ -48,6 +49,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-[#090D16] text-gray-100 flex flex-col selection:bg-indigo-500 selection:text-white">
         <AuthProvider initialUser={initialUser}>
+          <NavigationGuard />
           <Suspense fallback={null}>
             <NavigationProgressBar />
           </Suspense>

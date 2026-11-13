@@ -14,6 +14,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import GameCard from '@/components/GameCard';
+import { RecommendationsSkeleton } from '@/components/ui/Skeleton';
 import { MOOD_DEFINITIONS, GameMood } from '@/types/recommendations';
 
 interface AdaptiveRecommendationsProps {
@@ -123,10 +124,7 @@ export default function AdaptiveRecommendations({
 
       {/* Recommendations Grid */}
       {loading ? (
-        <div className="py-12 flex flex-col items-center justify-center text-center">
-          <Loader2 className="w-8 h-8 text-indigo-400 animate-spin mb-3" />
-          <p className="text-xs text-gray-400">Finding the best games for you...</p>
-        </div>
+        <RecommendationsSkeleton />
       ) : recommendations.length === 0 ? (
         <div className="py-12 text-center text-gray-400 text-sm">
           No games found in this category right now.

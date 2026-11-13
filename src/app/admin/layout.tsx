@@ -14,6 +14,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { PortalShellSkeleton } from '@/components/ui/Skeleton';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -51,12 +52,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-[#090D16] flex flex-col items-center justify-center">
-        <Loader2 className="w-8 h-8 text-indigo-500 animate-spin mb-3" />
-        <span className="text-xs font-mono text-gray-400">Verifying Admin Credentials & Role...</span>
-      </div>
-    );
+    return <PortalShellSkeleton portal="ADMIN" />;
   }
 
   // Strict role check: only ADMIN, SUPER_ADMIN, or MODERATOR allowed

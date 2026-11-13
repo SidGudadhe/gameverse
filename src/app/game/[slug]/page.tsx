@@ -13,8 +13,8 @@ import { GameMood } from '@/types/recommendations';
 const GamePlayer = dynamic(() => import('@/components/GamePlayer'), {
   loading: () => (
     <div className="w-full aspect-video rounded-3xl bg-slate-950 border border-white/10 flex flex-col items-center justify-center text-center p-6 shadow-2xl relative overflow-hidden animate-pulse">
-      <div className="w-16 h-16 rounded-full bg-indigo-600/20 flex items-center justify-center mb-3">
-        <Loader2 className="w-8 h-8 text-indigo-400 animate-spin" />
+      <div className="w-16 h-16 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center mb-3">
+        <Gamepad2 className="w-8 h-8 text-indigo-400" />
       </div>
       <div className="h-4 w-48 bg-white/10 rounded-full" />
       <div className="h-3 w-32 bg-white/5 rounded-full mt-2" />

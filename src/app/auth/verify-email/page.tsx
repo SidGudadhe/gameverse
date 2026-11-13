@@ -3,7 +3,7 @@
 import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { CheckCircle2, XCircle, ArrowRight, Loader2 } from 'lucide-react';
+import { CheckCircle2, XCircle, ArrowRight, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
 function VerifyEmailContent() {
@@ -43,9 +43,12 @@ function VerifyEmailContent() {
   return (
     <div className="w-full max-w-md space-y-6 bg-surface p-8 rounded-3xl border border-white/10 shadow-2xl text-center">
       {status === 'loading' && (
-        <div className="space-y-4 py-8">
-          <Loader2 className="w-10 h-10 animate-spin text-indigo-400 mx-auto" />
-          <h2 className="font-heading font-bold text-xl text-white">Verifying Email...</h2>
+        <div className="space-y-4 py-8 animate-pulse">
+          <div className="w-14 h-14 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center mx-auto text-indigo-400">
+            <Mail className="w-7 h-7" />
+          </div>
+          <div className="h-6 w-44 rounded-xl bg-slate-800 mx-auto" />
+          <div className="h-3 w-64 rounded bg-slate-800/60 mx-auto" />
         </div>
       )}
 

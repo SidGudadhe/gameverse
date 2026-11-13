@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/context/AuthContext';
+import { PortalShellSkeleton } from '@/components/ui/Skeleton';
 
 export default function DeveloperLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -48,12 +49,7 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-[#090D16] flex flex-col items-center justify-center">
-        <Loader2 className="w-8 h-8 text-cyan-400 animate-spin mb-3" />
-        <span className="text-xs font-mono text-gray-400">Verifying Creator Studio Credentials...</span>
-      </div>
-    );
+    return <PortalShellSkeleton portal="DEVELOPER" />;
   }
 
   // If on onboarding page, allow rendering without blocking

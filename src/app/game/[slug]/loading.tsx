@@ -1,5 +1,5 @@
 import React from 'react';
-import { Loader2 } from 'lucide-react';
+import { Gamepad2 } from 'lucide-react';
 
 export default function GameSlugLoading() {
   return (
@@ -15,8 +15,8 @@ export default function GameSlugLoading() {
 
       {/* Big Game Player Viewport Skeleton */}
       <div className="w-full aspect-video rounded-3xl bg-slate-950/80 border border-white/10 flex flex-col items-center justify-center text-center p-6 shadow-2xl relative overflow-hidden">
-        <div className="w-16 h-16 rounded-full bg-indigo-600/20 flex items-center justify-center mb-3">
-          <Loader2 className="w-8 h-8 text-indigo-400 animate-spin" />
+        <div className="w-16 h-16 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center mb-3">
+          <Gamepad2 className="w-8 h-8 text-indigo-400" />
         </div>
         <div className="h-5 w-48 bg-slate-800/80 rounded-full" />
         <div className="h-3 w-32 bg-slate-800/50 rounded-full mt-2" />

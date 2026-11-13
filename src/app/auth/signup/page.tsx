@@ -7,6 +7,7 @@ import { Gamepad2, Mail, Lock, User, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
+import { AuthTransitionSkeleton } from '@/components/ui/Skeleton';
 import { useAuth } from '@/context/AuthContext';
 
 export default function GamerSignupPage() {
@@ -19,19 +20,22 @@ export default function GamerSignupPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // If already logged in, redirect to home
+  // If already logged in, redirect to home and prefetch
   useEffect(() => {
+    try {
+      router.prefetch('/');
+    } catch {}
     if (isAuthenticated && !authLoading) {
       router.replace('/');
     }
   }, [isAuthenticated, authLoading, router]);
 
-  if (isAuthenticated && !authLoading) {
+  if (loading || (isAuthenticated && !authLoading)) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center gap-3">
-        <div className="w-10 h-10 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-        <p className="text-xs text-gray-400 font-mono">Redirecting to home...</p>
-      </div>
+      <AuthTransitionSkeleton
+        title="Creating Your Gamer Account..."
+        subtitle="Setting up cloud save profile, favorites, and instant play catalog..."
+      />
     );
   }
 
@@ -52,9 +56,9 @@ export default function GamerSignupPage() {
       });
 
       const data = await res.json();
-      setLoading(false);
 
       if (!res.ok) {
+        setLoading(false);
         setError(data.error || 'Gamer registration failed.');
         return;
       }
@@ -63,14 +67,13 @@ export default function GamerSignupPage() {
         setSession(data.user);
       }
 
-      router.refresh();
-      router.push('/');
+      router.replace('/');
 
       setTimeout(() => {
         if (typeof window !== 'undefined' && window.location.pathname === '/auth/signup') {
           window.location.href = '/';
         }
-      }, 250);
+      }, 150);
     } catch {
       setLoading(false);
       setError('Network connection error. Please try again.');

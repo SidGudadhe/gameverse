@@ -7,6 +7,7 @@ import { Gamepad2, Lock, Mail, AlertCircle, X, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
+import { AuthTransitionSkeleton } from '@/components/ui/Skeleton';
 import { useAuth } from '@/context/AuthContext';
 
 function GamerLoginContent() {
@@ -17,8 +18,11 @@ function GamerLoginContent() {
   const redirectParam = searchParams.get('redirect');
   const targetDestination = redirectParam && redirectParam.startsWith('/') ? redirectParam : '/';
 
-  // Prevent logged-in users from seeing the login screen
+  // Prevent logged-in users from seeing the login screen and prefetch target
   useEffect(() => {
+    try {
+      router.prefetch(targetDestination);
+    } catch {}
     if (isAuthenticated && !authLoading) {
       router.replace(targetDestination);
     }
@@ -67,18 +71,15 @@ function GamerLoginContent() {
         setSession(data.user);
       }
 
-      setLoading(false);
-
-      // 2. Invalidate router cache & navigate immediately
-      router.refresh();
-      router.push(targetDestination);
+      // 2. Direct instant client route replacement
+      router.replace(targetDestination);
 
       // 3. Fallback safety: guarantee navigation if client-side router transition lags
       setTimeout(() => {
         if (typeof window !== 'undefined' && window.location.pathname === '/auth/login') {
           window.location.href = targetDestination;
         }
-      }, 250);
+      }, 150);
     } catch {
       setLoading(false);
       setErrorTitle('Connection Error');
@@ -98,12 +99,13 @@ function GamerLoginContent() {
     await performLogin(testEmail, 'Password123!');
   };
 
-  if (isAuthenticated && !authLoading) {
+  // Ultra-fast Skeleton Loading UI on Login & Session Sync
+  if (loading || (isAuthenticated && !authLoading)) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center gap-3">
-        <div className="w-10 h-10 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-        <p className="text-xs text-gray-400 font-mono">Redirecting to your session...</p>
-      </div>
+      <AuthTransitionSkeleton
+        title="Signing into GameVerse..."
+        subtitle="Verifying gamer credentials and loading instant play catalog..."
+      />
     );
   }
 

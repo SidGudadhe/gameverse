@@ -32,6 +32,7 @@ import {
   Filter,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { PayoutsSkeleton } from '@/components/ui/Skeleton';
 
 export interface PlayerPayoutMethod {
   id: string;
@@ -532,10 +533,7 @@ export default function PlayerPayoutsPage() {
           </div>
         </div>
       ) : loading ? (
-        <div className="py-20 flex flex-col items-center justify-center text-center">
-          <div className="w-10 h-10 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mb-3" />
-          <p className="text-xs text-gray-400">Loading payout details...</p>
-        </div>
+        <PayoutsSkeleton />
       ) : (
         <>
 

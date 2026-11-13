@@ -6,6 +6,7 @@ import { Heart, Search, ArrowLeft, Gamepad2, Sparkles, Trash2, Play } from 'luci
 import { useAuth } from '@/context/AuthContext';
 import GameCard from '@/components/GameCard';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { FavoritesSkeleton } from '@/components/ui/Skeleton';
 import { Game } from '@/types';
 
 export default function PlayerFavoritesPage() {
@@ -138,10 +139,7 @@ export default function PlayerFavoritesPage() {
           </div>
         </div>
       ) : loading ? (
-        <div className="py-20 flex flex-col items-center justify-center text-center">
-          <div className="w-10 h-10 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mb-3" />
-          <p className="text-xs text-gray-400">Loading your favorites...</p>
-        </div>
+        <FavoritesSkeleton />
       ) : favoriteGames.length === 0 ? (
         <EmptyState
           icon={Heart}

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { History, Clock, ArrowLeft, Play, Gamepad2, Star, Calendar } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { HistorySkeleton } from '@/components/ui/Skeleton';
 import { Game } from '@/types';
 
 interface HistoryItem {
@@ -133,10 +134,7 @@ export default function PlayerHistoryPage() {
           </div>
         </div>
       ) : loading ? (
-        <div className="py-20 flex flex-col items-center justify-center text-center">
-          <div className="w-10 h-10 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mb-3" />
-          <p className="text-xs text-gray-400">Loading your play history...</p>
-        </div>
+        <HistorySkeleton />
       ) : historyItems.length === 0 ? (
         <EmptyState
           icon={Gamepad2}

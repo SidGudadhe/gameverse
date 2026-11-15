@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { AuthTransitionSkeleton } from '@/components/ui/Skeleton';
 import { useAuth } from '@/context/AuthContext';
+import GoogleAccountChooser, { GoogleAccount } from '@/components/GoogleAccountChooser';
 
 export default function CrazyGamesSignupPage() {
   const router = useRouter();
@@ -27,6 +28,7 @@ export default function CrazyGamesSignupPage() {
   const [termsAgreed, setTermsAgreed] = useState(true);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [showGoogleChooser, setShowGoogleChooser] = useState(false);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
@@ -108,8 +110,14 @@ export default function CrazyGamesSignupPage() {
     }
   };
 
-  // Real Google Single-Sign-On
-  const handleGoogleSignIn = async () => {
+  // Step 1: Open Google Account Chooser
+  const handleGoogleClick = () => {
+    setError('');
+    setShowGoogleChooser(true);
+  };
+
+  // Step 2 & 3: Account selected -> Real Google Sign-in with real chosen email
+  const handleGoogleAccountSelect = async (account: GoogleAccount) => {
     setGoogleLoading(true);
     setError('');
     setSuccessMsg('');
@@ -119,8 +127,9 @@ export default function CrazyGamesSignupPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: 'google.player@gameverse.com',
-          name: 'CrazyGamer_Google',
+          email: account.email,
+          name: account.name,
+          avatarUrl: account.avatarUrl,
         }),
       });
 
@@ -129,14 +138,16 @@ export default function CrazyGamesSignupPage() {
       if (!res.ok) {
         setGoogleLoading(false);
         setError(data.error || 'Google sign-up failed.');
-        return;
+        throw new Error(data.error || 'Google sign-up failed.');
       }
 
       if (data.user) {
         setSession(data.user);
       }
 
-      setSuccessMsg('Welcome to GameVerse! Signed in with Google.');
+      setGoogleLoading(false);
+      setShowGoogleChooser(false);
+      setSuccessMsg(`Welcome to GameVerse, ${data.user.name}! Signed in with Google.`);
       router.replace('/');
 
       setTimeout(() => {
@@ -144,9 +155,9 @@ export default function CrazyGamesSignupPage() {
           window.location.href = '/';
         }
       }, 150);
-    } catch {
+    } catch (err: any) {
       setGoogleLoading(false);
-      setError('Network error during Google authentication.');
+      throw err;
     }
   };
 
@@ -204,7 +215,7 @@ export default function CrazyGamesSignupPage() {
           <button
             type="button"
             disabled={googleLoading || loading}
-            onClick={handleGoogleSignIn}
+            onClick={handleGoogleClick}
             className="w-full bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-3 text-sm active:scale-[0.99] disabled:opacity-70 cursor-pointer"
           >
             <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
@@ -348,6 +359,14 @@ export default function CrazyGamesSignupPage() {
           </Link>
         </div>
       </div>
+
+      {/* Google Account Selector Dialog */}
+      <GoogleAccountChooser
+        isOpen={showGoogleChooser}
+        onClose={() => setShowGoogleChooser(false)}
+        onAccountSelect={handleGoogleAccountSelect}
+        isLoading={googleLoading}
+      />
     </div>
   );
 }

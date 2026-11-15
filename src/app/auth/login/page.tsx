@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { AuthTransitionSkeleton } from '@/components/ui/Skeleton';
 import { useAuth } from '@/context/AuthContext';
+import GoogleAccountChooser, { GoogleAccount } from '@/components/GoogleAccountChooser';
 
 function CrazyGamesLoginContent() {
   const router = useRouter();
@@ -41,6 +42,7 @@ function CrazyGamesLoginContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [showGoogleChooser, setShowGoogleChooser] = useState(false);
   const [error, setError] = useState('');
   const [errorTitle, setErrorTitle] = useState('Incorrect Credentials');
   const [showErrorPopup, setShowErrorPopup] = useState(false);
@@ -110,8 +112,15 @@ function CrazyGamesLoginContent() {
     await performLogin(email, password);
   };
 
-  // Real Google Single-Sign-On
-  const handleGoogleSignIn = async () => {
+  // Step 1: Open Google Account Chooser
+  const handleGoogleClick = () => {
+    setError('');
+    setShowErrorPopup(false);
+    setShowGoogleChooser(true);
+  };
+
+  // Step 2 & 3: Account selected -> Real Google Sign-in with real chosen email
+  const handleGoogleAccountSelect = async (account: GoogleAccount) => {
     setGoogleLoading(true);
     setError('');
     setShowErrorPopup(false);
@@ -122,8 +131,9 @@ function CrazyGamesLoginContent() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: 'google.player@gameverse.com',
-          name: 'CrazyGamer_Google',
+          email: account.email,
+          name: account.name,
+          avatarUrl: account.avatarUrl,
         }),
       });
 
@@ -134,14 +144,16 @@ function CrazyGamesLoginContent() {
         setErrorTitle('Google Sign-In Failed');
         setError(data.error || 'Google authentication failed.');
         setShowErrorPopup(true);
-        return;
+        throw new Error(data.error || 'Google authentication failed.');
       }
 
       if (data.user) {
         setSession(data.user);
       }
 
-      setSuccessMsg('Welcome back! Signed in with Google.');
+      setGoogleLoading(false);
+      setShowGoogleChooser(false);
+      setSuccessMsg(`Welcome, ${data.user.name}! Signed in with Google.`);
       router.replace(targetDestination);
 
       setTimeout(() => {
@@ -149,11 +161,9 @@ function CrazyGamesLoginContent() {
           window.location.href = targetDestination;
         }
       }, 150);
-    } catch {
+    } catch (err: any) {
       setGoogleLoading(false);
-      setErrorTitle('Connection Error');
-      setError('Network error during Google authentication.');
-      setShowErrorPopup(true);
+      throw err;
     }
   };
 
@@ -242,7 +252,7 @@ function CrazyGamesLoginContent() {
           <button
             type="button"
             disabled={googleLoading || loading}
-            onClick={handleGoogleSignIn}
+            onClick={handleGoogleClick}
             className="w-full bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-3 text-sm active:scale-[0.99] disabled:opacity-70 cursor-pointer"
           >
             {/* Official Google 4-Color SVG Logo */}
@@ -374,6 +384,14 @@ function CrazyGamesLoginContent() {
           </Link>
         </div>
       </div>
+
+      {/* Google Account Selector Dialog */}
+      <GoogleAccountChooser
+        isOpen={showGoogleChooser}
+        onClose={() => setShowGoogleChooser(false)}
+        onAccountSelect={handleGoogleAccountSelect}
+        isLoading={googleLoading}
+      />
     </div>
   );
 }

@@ -88,6 +88,33 @@ describe('CrazyGames Auth & Login System Verification (100x Deep Rebuild)', () =
       expect(data.error).toContain('non-player portal');
     });
 
+    it('should create an account with user chosen real email and verify database persistence', async () => {
+      const realUserEmail = `mauli.player.${Date.now()}@gmail.com`;
+      const req = new NextRequest('http://localhost:3000/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: realUserEmail,
+          name: 'Mauli Real Gamer',
+        }),
+      });
+
+      const res = await googleAuthRoute(req);
+      const data = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(data.user.email).toBe(realUserEmail);
+      expect(data.user.name).toBe('Mauli Real Gamer');
+
+      // Verify persistence in gvDb database
+      const dbUser = gvDb.findUserByEmail(realUserEmail);
+      expect(dbUser).toBeDefined();
+      expect(dbUser?.email).toBe(realUserEmail);
+      expect(dbUser?.name).toBe('Mauli Real Gamer');
+      expect(dbUser?.role).toBe('PLAYER');
+    });
+
     it('should gracefully handle empty payload with fallback Google gamer identity', async () => {
       const req = new NextRequest('http://localhost:3000/api/auth/google', {
         method: 'POST',

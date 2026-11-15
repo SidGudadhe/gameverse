@@ -17,6 +17,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import GoogleAccountChooser, { GoogleAccount } from './GoogleAccountChooser';
 
 export default function CrazyGamesAuthModal() {
   const router = useRouter();
@@ -37,6 +38,7 @@ export default function CrazyGamesAuthModal() {
 
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [showGoogleChooser, setShowGoogleChooser] = useState(false);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
@@ -69,18 +71,24 @@ export default function CrazyGamesAuthModal() {
   // Keyboard shortcut: Escape to close
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && authModalOpen) {
+      if (e.key === 'Escape' && authModalOpen && !showGoogleChooser) {
         closeAuthModal();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [authModalOpen, closeAuthModal]);
+  }, [authModalOpen, closeAuthModal, showGoogleChooser]);
 
   if (!authModalOpen) return null;
 
-  // Real Google Single-Sign-On
-  const handleGoogleSignIn = async () => {
+  // Step 1: Open Google Account Chooser
+  const handleGoogleClick = () => {
+    setError('');
+    setShowGoogleChooser(true);
+  };
+
+  // Step 2 & 3: Account selected -> Real Google Sign-in with real chosen email
+  const handleGoogleAccountSelect = async (account: GoogleAccount) => {
     setGoogleLoading(true);
     setError('');
     setSuccessMsg('');
@@ -90,8 +98,9 @@ export default function CrazyGamesAuthModal() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: 'google.player@gameverse.com',
-          name: 'CrazyGamer_Google',
+          email: account.email,
+          name: account.name,
+          avatarUrl: account.avatarUrl,
         }),
       });
 
@@ -99,22 +108,23 @@ export default function CrazyGamesAuthModal() {
 
       if (!res.ok) {
         setGoogleLoading(false);
-        setError(data.error || 'Google sign-in failed. Please try again.');
-        return;
+        throw new Error(data.error || 'Google sign-in failed. Please try again.');
       }
 
       if (data.user) {
         setSession(data.user);
       }
 
-      setSuccessMsg('Welcome back! Signed in with Google.');
+      setGoogleLoading(false);
+      setShowGoogleChooser(false);
+      setSuccessMsg(`Welcome, ${data.user.name}! Signed in with Google.`);
       setTimeout(() => {
         closeAuthModal();
         router.refresh();
-      }, 500);
-    } catch {
+      }, 400);
+    } catch (err: any) {
       setGoogleLoading(false);
-      setError('Connection error during Google authentication.');
+      throw err;
     }
   };
 
@@ -335,7 +345,7 @@ export default function CrazyGamesAuthModal() {
           <button
             type="button"
             disabled={googleLoading || loading}
-            onClick={handleGoogleSignIn}
+            onClick={handleGoogleClick}
             className="w-full bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-3 text-sm active:scale-[0.99] disabled:opacity-70 cursor-pointer"
           >
             {/* Official Google 4-Color SVG Logo */}
@@ -592,6 +602,14 @@ export default function CrazyGamesAuthModal() {
           )}
         </div>
       </div>
+
+      {/* Google Account Selector Dialog (Choose Email / Enter Real Email) */}
+      <GoogleAccountChooser
+        isOpen={showGoogleChooser}
+        onClose={() => setShowGoogleChooser(false)}
+        onAccountSelect={handleGoogleAccountSelect}
+        isLoading={googleLoading}
+      />
     </div>
   );
 }

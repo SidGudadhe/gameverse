@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, Suspense, useRef } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -14,6 +14,7 @@ import {
   Zap,
   ArrowRight,
   CheckCircle2,
+  ChevronDown,
 } from 'lucide-react';
 import { AuthTransitionSkeleton } from '@/components/ui/Skeleton';
 import { useAuth } from '@/context/AuthContext';
@@ -40,6 +41,7 @@ function CrazyGamesLoginContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showLegacyEmailForm, setShowLegacyEmailForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [showGoogleChooser, setShowGoogleChooser] = useState(false);
@@ -48,11 +50,21 @@ function CrazyGamesLoginContent() {
   const [showErrorPopup, setShowErrorPopup] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
 
-  const emailInputRef = useRef<HTMLInputElement>(null);
-
+  // Listen for Google OAuth popup messages
   useEffect(() => {
-    emailInputRef.current?.focus();
-  }, []);
+    const handlePopupMessage = (event: MessageEvent) => {
+      if (event.origin !== window.location.origin) return;
+      if (event.data?.type === 'GOOGLE_AUTH_SUCCESS' && event.data.user) {
+        setSession(event.data.user);
+        setSuccessMsg(`Welcome, ${event.data.user.name}! Signed in with Google.`);
+        setShowGoogleChooser(false);
+        router.replace(targetDestination);
+      }
+    };
+
+    window.addEventListener('message', handlePopupMessage);
+    return () => window.removeEventListener('message', handlePopupMessage);
+  }, [setSession, router, targetDestination]);
 
   const performLogin = async (loginEmail: string, loginPass: string) => {
     setLoading(true);
@@ -247,13 +259,13 @@ function CrazyGamesLoginContent() {
           </div>
         )}
 
-        {/* ================= OPTION 1: SOCIAL SSO (CONTINUE WITH GOOGLE) ================= */}
+        {/* ================= OPTION 1: 1-CLICK ZERO TYPING GOOGLE SSO ================= */}
         <div className="space-y-3">
           <button
             type="button"
             disabled={googleLoading || loading}
             onClick={handleGoogleClick}
-            className="w-full bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-3 text-sm active:scale-[0.99] disabled:opacity-70 cursor-pointer"
+            className="w-full bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-3 text-sm active:scale-[0.99] disabled:opacity-70 cursor-pointer"
           >
             {/* Official Google 4-Color SVG Logo */}
             <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
@@ -274,106 +286,97 @@ function CrazyGamesLoginContent() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
               />
             </svg>
-            <span>{googleLoading ? 'Connecting Google Account...' : 'Continue with Google'}</span>
-          </button>
-        </div>
-
-        {/* Divider */}
-        <div className="relative my-5">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-white/10" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-[#13151f] px-3 text-gray-500 font-semibold tracking-wider">
-              OR
+            <span className="font-bold text-gray-900">
+              {googleLoading ? 'Connecting Google Account...' : 'Continue with Google'}
             </span>
-          </div>
+          </button>
         </div>
 
-        {/* ================= OPTION 2: CREDENTIALS (EMAIL & PASSWORD) ================= */}
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label className="block text-xs font-semibold text-gray-300 mb-1.5">
-              Email
-            </label>
-            <div className="relative">
-              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-              <input
-                ref={emailInputRef}
-                type="email"
-                required
-                placeholder="name@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-[#1b1e2b] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
-              />
-            </div>
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="text-xs font-semibold text-gray-300">
-                Password
-              </label>
-              <Link
-                href="/auth/forgot-password"
-                className="text-xs text-purple-400 hover:text-purple-300 transition-colors font-medium"
-              >
-                Forgot password?
-              </Link>
-            </div>
-            <div className="relative">
-              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                required
-                placeholder="••••••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-[#1b1e2b] border border-white/10 rounded-xl pl-10 pr-10 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
-              >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
-          </div>
-
-          {/* CrazyGames Purple CTA Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#6A38EB] to-[#8B5CF6] hover:from-[#5b2bd9] hover:to-[#7c3aed] text-white font-bold text-sm shadow-lg shadow-purple-600/30 transition-all active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
-          >
-            {loading ? (
-              <span>Signing in...</span>
-            ) : (
-              <>
-                <span>Log In</span>
-                <ArrowRight className="w-4 h-4" />
-              </>
-            )}
-          </button>
-        </form>
-
-        {/* ================= OPTION 3: 1-CLICK INSTANT GAMER LOGIN ================= */}
-        <div className="mt-5 pt-3 border-t border-white/5 space-y-2">
-          <div className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider text-center">
-            One-Click Instant Gamer Login
-          </div>
+        {/* ================= OPTION 2: 1-CLICK INSTANT DEMO GAMER LOGIN ================= */}
+        <div className="mt-4 space-y-2">
           <button
             type="button"
             disabled={loading || googleLoading}
             onClick={() => handleQuickLogin('player@gamer.com')}
-            className="w-full py-2 px-3 rounded-xl bg-purple-600/10 hover:bg-purple-600/20 text-purple-300 border border-purple-500/20 text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer"
+            className="w-full py-3 px-4 rounded-xl bg-purple-600/15 hover:bg-purple-600/25 text-purple-300 hover:text-purple-200 border border-purple-500/25 text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer"
           >
-            <Zap className="w-3.5 h-3.5 text-amber-400" />
+            <Zap className="w-4 h-4 text-amber-400" />
             <span>Instant Demo: Play as NeoGamer99 (1-Click)</span>
           </button>
+        </div>
+
+        {/* Optional Collapsible: Legacy Email/Password Form (Hidden by default to avoid typing clutter) */}
+        <div className="mt-5 pt-3 border-t border-white/5">
+          <button
+            type="button"
+            onClick={() => setShowLegacyEmailForm(!showLegacyEmailForm)}
+            className="w-full text-center text-xs text-gray-500 hover:text-gray-300 py-1 flex items-center justify-center gap-1 transition-colors cursor-pointer"
+          >
+            <span>{showLegacyEmailForm ? 'Hide email sign-in' : 'Have a legacy password? Sign in with email'}</span>
+            <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${showLegacyEmailForm ? 'rotate-180' : ''}`} />
+          </button>
+
+          {showLegacyEmailForm && (
+            <form onSubmit={handleLogin} className="mt-3 space-y-3 animate-in fade-in duration-200">
+              <div>
+                <label className="block text-xs font-semibold text-gray-300 mb-1">
+                  Email
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                  <input
+                    type="email"
+                    required
+                    placeholder="name@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-[#1b1e2b] border border-white/10 rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-xs font-semibold text-gray-300">
+                    Password
+                  </label>
+                  <Link
+                    href="/auth/forgot-password"
+                    className="text-[11px] text-purple-400 hover:text-purple-300 transition-colors"
+                  >
+                    Forgot?
+                  </Link>
+                </div>
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    placeholder="••••••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full bg-[#1b1e2b] border border-white/10 rounded-xl pl-10 pr-10 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
+                  >
+                    {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md transition-all active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
+              >
+                {loading ? <span>Signing in...</span> : <span>Log In with Password</span>}
+              </button>
+            </form>
+          )}
         </div>
 
         {/* Mode Switcher */}

@@ -15,6 +15,7 @@ import {
   CheckCircle2,
   Zap,
   ArrowRight,
+  ChevronDown,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import GoogleAccountChooser, { GoogleAccount } from './GoogleAccountChooser';
@@ -35,6 +36,7 @@ export default function CrazyGamesAuthModal() {
   const [name, setName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [termsAgreed, setTermsAgreed] = useState(true);
+  const [showManualForm, setShowManualForm] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -43,24 +45,20 @@ export default function CrazyGamesAuthModal() {
   const [successMsg, setSuccessMsg] = useState('');
 
   const modalRef = useRef<HTMLDivElement>(null);
-  const emailInputRef = useRef<HTMLInputElement>(null);
 
   // Synchronize internal mode with context
   useEffect(() => {
     setMode(authModalMode);
     setError('');
     setSuccessMsg('');
+    setShowManualForm(false);
   }, [authModalMode]);
 
-  // Lock body scroll and focus email input on open
+  // Lock body scroll on open
   useEffect(() => {
     if (authModalOpen) {
       document.body.style.overflow = 'hidden';
-      const timer = setTimeout(() => {
-        emailInputRef.current?.focus();
-      }, 100);
       return () => {
-        clearTimeout(timer);
         document.body.style.overflow = '';
       };
     } else {
@@ -78,6 +76,25 @@ export default function CrazyGamesAuthModal() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [authModalOpen, closeAuthModal, showGoogleChooser]);
+
+  // Listen for Google OAuth popup messages
+  useEffect(() => {
+    const handlePopupMessage = (event: MessageEvent) => {
+      if (event.origin !== window.location.origin) return;
+      if (event.data?.type === 'GOOGLE_AUTH_SUCCESS' && event.data.user) {
+        setSession(event.data.user);
+        setSuccessMsg(`Welcome, ${event.data.user.name}! Signed in with Google.`);
+        setShowGoogleChooser(false);
+        setTimeout(() => {
+          closeAuthModal();
+          router.refresh();
+        }, 350);
+      }
+    };
+
+    window.addEventListener('message', handlePopupMessage);
+    return () => window.removeEventListener('message', handlePopupMessage);
+  }, [setSession, closeAuthModal, router]);
 
   if (!authModalOpen) return null;
 
@@ -121,7 +138,7 @@ export default function CrazyGamesAuthModal() {
       setTimeout(() => {
         closeAuthModal();
         router.refresh();
-      }, 400);
+      }, 350);
     } catch (err: any) {
       setGoogleLoading(false);
       throw err;
@@ -167,34 +184,22 @@ export default function CrazyGamesAuthModal() {
         setSession(data.user);
       }
 
-      setSuccessMsg('Signed in successfully! Loading games...');
+      setSuccessMsg('Welcome back! Signed in.');
       setTimeout(() => {
         closeAuthModal();
         router.refresh();
-      }, 400);
+      }, 350);
     } catch {
       setLoading(false);
-      setError('Network error occurred. Please try again.');
+      setError('Network connection error. Please try again.');
     }
   };
 
-  // Real Gamer Signup (Join)
+  // Real Email/Password Signup
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) {
-      setError('Please choose a gamer username.');
-      return;
-    }
-    if (!email.trim()) {
-      setError('Please enter a valid email address.');
-      return;
-    }
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters.');
-      return;
-    }
     if (!termsAgreed) {
-      setError('You must confirm you are 18+ and accept the Terms of Service.');
+      setError('You must accept the Terms of Service to join.');
       return;
     }
 
@@ -210,7 +215,6 @@ export default function CrazyGamesAuthModal() {
           name: name.trim(),
           email: email.trim(),
           password,
-          portal: 'PLAYER',
           role: 'PLAYER',
         }),
       });
@@ -219,7 +223,7 @@ export default function CrazyGamesAuthModal() {
 
       if (!res.ok) {
         setLoading(false);
-        setError(data.error || 'Registration failed. Email may already be registered.');
+        setError(data.error || 'Registration failed.');
         return;
       }
 
@@ -231,7 +235,7 @@ export default function CrazyGamesAuthModal() {
       setTimeout(() => {
         closeAuthModal();
         router.refresh();
-      }, 400);
+      }, 350);
     } catch {
       setLoading(false);
       setError('Network connection error. Please try again.');
@@ -263,7 +267,7 @@ export default function CrazyGamesAuthModal() {
         setTimeout(() => {
           closeAuthModal();
           router.refresh();
-        }, 400);
+        }, 350);
       } else {
         setLoading(false);
         setError(data.error || 'Instant login failed.');
@@ -296,7 +300,7 @@ export default function CrazyGamesAuthModal() {
           type="button"
           onClick={closeAuthModal}
           aria-label="Close authentication modal"
-          className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500"
+          className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
@@ -340,13 +344,13 @@ export default function CrazyGamesAuthModal() {
           </div>
         )}
 
-        {/* ================= OPTION 1: SOCIAL SSO (CONTINUE WITH GOOGLE) ================= */}
+        {/* ================= OPTION 1: 1-CLICK ZERO TYPING GOOGLE SSO ================= */}
         <div className="space-y-3">
           <button
             type="button"
             disabled={googleLoading || loading}
             onClick={handleGoogleClick}
-            className="w-full bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-3 text-sm active:scale-[0.99] disabled:opacity-70 cursor-pointer"
+            className="w-full bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-3 text-sm active:scale-[0.99] disabled:opacity-70 cursor-pointer"
           >
             {/* Official Google 4-Color SVG Logo */}
             <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
@@ -367,243 +371,217 @@ export default function CrazyGamesAuthModal() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
               />
             </svg>
-            <span>{googleLoading ? 'Connecting Google Account...' : 'Continue with Google'}</span>
+            <span className="font-bold text-gray-900">
+              {googleLoading ? 'Connecting Google Account...' : 'Continue with Google'}
+            </span>
           </button>
         </div>
 
-        {/* Divider */}
-        <div className="relative my-5">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-white/10" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-[#13151f] px-3 text-gray-500 font-semibold tracking-wider">
-              OR
-            </span>
-          </div>
-        </div>
-
-        {/* ================= OPTION 2: CREDENTIALS (EMAIL & PASSWORD) ================= */}
-        {mode === 'LOGIN' ? (
-          <form onSubmit={handleEmailLogin} className="space-y-4">
-            <div>
-              <label className="block text-xs font-semibold text-gray-300 mb-1.5">
-                Email
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                <input
-                  ref={emailInputRef}
-                  type="email"
-                  required
-                  placeholder="name@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-[#1b1e2b] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-semibold text-gray-300">
-                  Password
-                </label>
-                <Link
-                  href="/auth/forgot-password"
-                  onClick={closeAuthModal}
-                  className="text-xs text-purple-400 hover:text-purple-300 transition-colors font-medium"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-              <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  placeholder="••••••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-[#1b1e2b] border border-white/10 rounded-xl pl-10 pr-10 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-
-            {/* CrazyGames Purple CTA Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#6A38EB] to-[#8B5CF6] hover:from-[#5b2bd9] hover:to-[#7c3aed] text-white font-bold text-sm shadow-lg shadow-purple-600/30 transition-all active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
-            >
-              {loading ? (
-                <span>Signing in...</span>
-              ) : (
-                <>
-                  <span>Log In</span>
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </button>
-          </form>
-        ) : (
-          <form onSubmit={handleSignup} className="space-y-3.5">
-            <div>
-              <label className="block text-xs font-semibold text-gray-300 mb-1">
-                Gamer Tag / Username
-              </label>
-              <div className="relative">
-                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. CyberNinja99"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-[#1b1e2b] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-gray-300 mb-1">
-                Email
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                <input
-                  type="email"
-                  required
-                  placeholder="name@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-[#1b1e2b] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-gray-300 mb-1">
-                Password (min 8 chars)
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  placeholder="••••••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-[#1b1e2b] border border-white/10 rounded-xl pl-10 pr-10 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-
-            {/* Age 18+ and Terms Checkbox */}
-            <div className="pt-1">
-              <label className="flex items-start gap-2.5 cursor-pointer">
-                <input
-                  type="checkbox"
-                  required
-                  checked={termsAgreed}
-                  onChange={(e) => setTermsAgreed(e.target.checked)}
-                  className="mt-0.5 rounded border-white/20 bg-black/40 text-purple-600 focus:ring-0"
-                />
-                <span className="text-[11px] text-gray-400 leading-tight">
-                  I am at least 18 years old and agree to the{' '}
-                  <Link
-                    href="/terms"
-                    onClick={closeAuthModal}
-                    className="text-purple-400 hover:underline"
-                  >
-                    Terms of Service
-                  </Link>{' '}
-                  and Privacy Policy.
-                </span>
-              </label>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#6A38EB] to-[#8B5CF6] hover:from-[#5b2bd9] hover:to-[#7c3aed] text-white font-bold text-sm shadow-lg shadow-purple-600/30 transition-all active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
-            >
-              {loading ? (
-                <span>Creating Profile...</span>
-              ) : (
-                <>
-                  <span>Join GameVerse</span>
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </button>
-          </form>
-        )}
-
-        {/* ================= OPTION 3: 1-CLICK INSTANT GAMER LOGIN ================= */}
-        <div className="mt-4 pt-3 border-t border-white/5">
+        {/* ================= OPTION 2: 1-CLICK INSTANT GAMER LOGIN ================= */}
+        <div className="mt-3.5 space-y-2">
           <button
             type="button"
             disabled={loading || googleLoading}
             onClick={() => handleInstantDemoLogin('player@gamer.com')}
-            className="w-full py-2 px-3 rounded-xl bg-purple-600/10 hover:bg-purple-600/20 text-purple-300 border border-purple-500/20 text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer"
+            className="w-full py-2.5 px-3 rounded-xl bg-purple-600/15 hover:bg-purple-600/25 text-purple-300 hover:text-purple-200 border border-purple-500/25 text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer"
           >
             <Zap className="w-3.5 h-3.5 text-amber-400" />
             <span>Instant Demo: Play as NeoGamer99 (1-Click)</span>
           </button>
         </div>
 
-        {/* Mode Switcher Bottom Footer */}
-        <div className="mt-4 text-center text-xs text-gray-400">
+        {/* Optional Collapsible: Legacy Manual Sign-in (Hidden by default to avoid clutter) */}
+        <div className="mt-4 pt-3 border-t border-white/5">
+          <button
+            type="button"
+            onClick={() => setShowManualForm(!showManualForm)}
+            className="w-full text-center text-xs text-gray-500 hover:text-gray-300 py-1 flex items-center justify-center gap-1 transition-colors cursor-pointer"
+          >
+            <span>{showManualForm ? 'Hide manual sign-in' : mode === 'LOGIN' ? 'Have a legacy password? Sign in with email' : 'Or register with email and password'}</span>
+            <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${showManualForm ? 'rotate-180' : ''}`} />
+          </button>
+
+          {showManualForm && (
+            <div className="mt-3 animate-in fade-in duration-200">
+              {mode === 'LOGIN' ? (
+                <form onSubmit={handleEmailLogin} className="space-y-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-300 mb-1">
+                      Email
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                      <input
+                        type="email"
+                        required
+                        placeholder="name@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full bg-[#1b1e2b] border border-white/10 rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-xs font-semibold text-gray-300">
+                        Password
+                      </label>
+                      <Link
+                        href="/auth/forgot-password"
+                        onClick={closeAuthModal}
+                        className="text-[11px] text-purple-400 hover:text-purple-300"
+                      >
+                        Forgot?
+                      </Link>
+                    </div>
+                    <div className="relative">
+                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        placeholder="••••••••••••"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="w-full bg-[#1b1e2b] border border-white/10 rounded-xl pl-10 pr-10 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
+                      >
+                        {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md transition-all active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    {loading ? <span>Signing in...</span> : <span>Log In with Password</span>}
+                  </button>
+                </form>
+              ) : (
+                <form onSubmit={handleSignup} className="space-y-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-300 mb-1">
+                      Gamer Tag
+                    </label>
+                    <div className="relative">
+                      <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g. CyberNinja99"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="w-full bg-[#1b1e2b] border border-white/10 rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-300 mb-1">
+                      Email
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                      <input
+                        type="email"
+                        required
+                        placeholder="name@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full bg-[#1b1e2b] border border-white/10 rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-300 mb-1">
+                      Password
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        placeholder="••••••••••••"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="w-full bg-[#1b1e2b] border border-white/10 rounded-xl pl-10 pr-10 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
+                      >
+                        {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="pt-1">
+                    <label className="flex items-start gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        required
+                        checked={termsAgreed}
+                        onChange={(e) => setTermsAgreed(e.target.checked)}
+                        className="mt-0.5 rounded border-white/20 bg-black/40 text-purple-600 focus:ring-0"
+                      />
+                      <span className="text-[10px] text-gray-400">
+                        I agree to the Terms of Service & Privacy Policy.
+                      </span>
+                    </label>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md transition-all active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    {loading ? <span>Creating Profile...</span> : <span>Join GameVerse</span>}
+                  </button>
+                </form>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Mode Switcher */}
+        <div className="text-center text-xs text-gray-400 pt-4">
           {mode === 'LOGIN' ? (
-            <p>
+            <>
               No account yet?{' '}
               <button
                 type="button"
-                onClick={() => {
-                  setMode('SIGNUP');
-                  setError('');
-                }}
+                onClick={() => openAuthModal('SIGNUP')}
                 className="text-purple-400 hover:text-purple-300 font-bold transition-colors cursor-pointer"
               >
                 Join now
               </button>
-            </p>
+            </>
           ) : (
-            <p>
+            <>
               Already have an account?{' '}
               <button
                 type="button"
-                onClick={() => {
-                  setMode('LOGIN');
-                  setError('');
-                }}
+                onClick={() => openAuthModal('LOGIN')}
                 className="text-purple-400 hover:text-purple-300 font-bold transition-colors cursor-pointer"
               >
                 Log in
               </button>
-            </p>
+            </>
           )}
         </div>
       </div>
 
-      {/* Google Account Selector Dialog (Choose Email / Enter Real Email) */}
+      {/* Google Account Selector Dialog */}
       <GoogleAccountChooser
         isOpen={showGoogleChooser}
         onClose={() => setShowGoogleChooser(false)}

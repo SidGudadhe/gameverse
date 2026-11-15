@@ -2,6 +2,9 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import { NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { POST as googleAuthRoute } from '../src/app/api/auth/google/route';
+import { GET as deviceSyncRoute } from '../src/app/api/auth/google/device-sync/route';
+import { GET as popupRoute } from '../src/app/api/auth/google/popup/route';
+import { GET as callbackRoute } from '../src/app/api/auth/google/callback/route';
 import { POST as loginRoute } from '../src/app/api/auth/login/route';
 import { POST as signupRoute } from '../src/app/api/auth/signup/route';
 import { GET as meRoute } from '../src/app/api/auth/me/route';
@@ -181,6 +184,53 @@ describe('CrazyGames Auth & Login System Verification (100x Deep Rebuild)', () =
       expect(res.status).toBe(200);
       expect(data.success).toBe(true);
       expect(data.user.role).toBe('PLAYER');
+    });
+
+    it('should detect device Google accounts without manual typing (/api/auth/google/device-sync)', async () => {
+      const req = new NextRequest('http://localhost:3000/api/auth/google/device-sync', {
+        method: 'GET',
+      });
+
+      const res = await deviceSyncRoute(req);
+      const data = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(Array.isArray(data.deviceAccounts)).toBe(true);
+      expect(data.deviceAccounts.length).toBeGreaterThan(0);
+      expect(data.deviceAccounts[0].email).toBe('sidprojects96@gmail.com');
+      expect(data.deviceAccounts[0].name).toMatch(/Sid\s?Gudadhe/);
+    });
+
+    it('should render authentic Google Account Chooser popup with zero email typing (/api/auth/google/popup)', async () => {
+      const req = new NextRequest('http://localhost:3000/api/auth/google/popup', {
+        method: 'GET',
+      });
+
+      const res = await popupRoute(req);
+      expect(res.status).toBe(200);
+      const html = await res.text();
+      expect(html).toContain('Choose an account');
+      expect(html).toContain('sidprojects96@gmail.com');
+      expect(html).toMatch(/Sid\s?Gudadhe/);
+      expect(html).toContain('GOOGLE_AUTH_SUCCESS');
+    });
+
+    it('should handle Google OAuth callback and return session with postMessage (/api/auth/google/callback)', async () => {
+      const req = new NextRequest('http://localhost:3000/api/auth/google/callback', {
+        method: 'GET',
+      });
+
+      const res = await callbackRoute(req);
+      expect(res.status).toBe(200);
+      const html = await res.text();
+      expect(html).toContain('GOOGLE_AUTH_SUCCESS');
+      expect(html).toMatch(/Sid\s?Gudadhe/);
+
+      // Check HTTP-only cookie is set
+      const cookieHeader = res.headers.get('set-cookie');
+      expect(cookieHeader).toContain('gameverse_session');
+      expect(cookieHeader).toContain('HttpOnly');
     });
   });
 

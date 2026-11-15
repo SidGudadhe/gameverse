@@ -7,6 +7,7 @@ import CookieConsent from '@/components/CookieConsent';
 import FooterLegal from '@/components/FooterLegal';
 import NavigationProgressBar from '@/components/NavigationProgressBar';
 import NavigationGuard from '@/components/NavigationGuard';
+import CrazyGamesAuthModal from '@/components/CrazyGamesAuthModal';
 import { AuthProvider, AuthUser } from '@/context/AuthContext';
 import { verifyToken } from '@/lib/auth';
 
@@ -50,6 +51,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-[#090D16] text-gray-100 flex flex-col selection:bg-indigo-500 selection:text-white">
         <AuthProvider initialUser={initialUser}>
           <NavigationGuard />
+          <CrazyGamesAuthModal />
           <Suspense fallback={null}>
             <NavigationProgressBar />
           </Suspense>

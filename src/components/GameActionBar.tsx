@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, Share2, Flag } from 'lucide-react';
 import SocialShareModal from './SocialShareModal';
+import { useAuth } from '@/context/AuthContext';
 
 interface GameActionBarProps {
   gameTitle: string;
@@ -19,12 +20,13 @@ export default function GameActionBar({
   referralToken,
   thumbnailUrl,
 }: GameActionBarProps) {
+  const { isAuthenticated, openAuthModal } = useAuth();
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
   const [reported, setReported] = useState(false);
 
   useEffect(() => {
-    if (!gameId) return;
+    if (!gameId || !isAuthenticated) return;
     fetch(`/api/player/favorites/${gameId}`)
       .then((res) => res.json())
       .then((data) => {
@@ -33,9 +35,13 @@ export default function GameActionBar({
         }
       })
       .catch(() => {});
-  }, [gameId]);
+  }, [gameId, isAuthenticated]);
 
   const handleFavorite = async () => {
+    if (!isAuthenticated) {
+      openAuthModal('LOGIN');
+      return;
+    }
     const nextState = !isFavorited;
     setIsFavorited(nextState);
     if (!gameId) return;

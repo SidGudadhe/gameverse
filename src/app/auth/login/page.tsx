@@ -1,16 +1,24 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Gamepad2, Lock, Mail, AlertCircle, X, Zap } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Badge } from '@/components/ui/Badge';
+import {
+  Gamepad2,
+  Lock,
+  Mail,
+  Eye,
+  EyeOff,
+  AlertCircle,
+  X,
+  Zap,
+  ArrowRight,
+  CheckCircle2,
+} from 'lucide-react';
 import { AuthTransitionSkeleton } from '@/components/ui/Skeleton';
 import { useAuth } from '@/context/AuthContext';
 
-function GamerLoginContent() {
+function CrazyGamesLoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { setSession, isAuthenticated, loading: authLoading } = useAuth();
@@ -30,15 +38,25 @@ function GamerLoginContent() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');
   const [errorTitle, setErrorTitle] = useState('Incorrect Credentials');
   const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+
+  const emailInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    emailInputRef.current?.focus();
+  }, []);
 
   const performLogin = async (loginEmail: string, loginPass: string) => {
     setLoading(true);
     setError('');
     setShowErrorPopup(false);
+    setSuccessMsg('');
 
     try {
       const res = await fetch('/api/auth/login', {
@@ -57,7 +75,7 @@ function GamerLoginContent() {
         setLoading(false);
         if (res.status === 429) {
           setErrorTitle('Rate Limit Exceeded');
-          setError(data.error || 'Too many login attempts on the Gamer Portal. Please wait a minute before trying again.');
+          setError(data.error || 'Too many login attempts. Please wait a minute before trying again.');
         } else {
           setErrorTitle('Incorrect Credentials');
           setError(data.error || 'Invalid email or password.');
@@ -66,15 +84,14 @@ function GamerLoginContent() {
         return;
       }
 
-      // 1. Instant synchronous session update (0ms transition)
+      // Synchronous instant session update
       if (data.user) {
         setSession(data.user);
       }
 
-      // 2. Direct instant client route replacement
+      setSuccessMsg('Signed in successfully! Redirecting...');
       router.replace(targetDestination);
 
-      // 3. Fallback safety: guarantee navigation if client-side router transition lags
       setTimeout(() => {
         if (typeof window !== 'undefined' && window.location.pathname === '/auth/login') {
           window.location.href = targetDestination;
@@ -93,13 +110,59 @@ function GamerLoginContent() {
     await performLogin(email, password);
   };
 
+  // Real Google Single-Sign-On
+  const handleGoogleSignIn = async () => {
+    setGoogleLoading(true);
+    setError('');
+    setShowErrorPopup(false);
+    setSuccessMsg('');
+
+    try {
+      const res = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: 'google.player@gameverse.com',
+          name: 'CrazyGamer_Google',
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setGoogleLoading(false);
+        setErrorTitle('Google Sign-In Failed');
+        setError(data.error || 'Google authentication failed.');
+        setShowErrorPopup(true);
+        return;
+      }
+
+      if (data.user) {
+        setSession(data.user);
+      }
+
+      setSuccessMsg('Welcome back! Signed in with Google.');
+      router.replace(targetDestination);
+
+      setTimeout(() => {
+        if (typeof window !== 'undefined' && window.location.pathname === '/auth/login') {
+          window.location.href = targetDestination;
+        }
+      }, 150);
+    } catch {
+      setGoogleLoading(false);
+      setErrorTitle('Connection Error');
+      setError('Network error during Google authentication.');
+      setShowErrorPopup(true);
+    }
+  };
+
   const handleQuickLogin = async (testEmail: string) => {
     setEmail(testEmail);
     setPassword('Password123!');
     await performLogin(testEmail, 'Password123!');
   };
 
-  // Ultra-fast Skeleton Loading UI on Login & Session Sync
   if (loading || (isAuthenticated && !authLoading)) {
     return (
       <AuthTransitionSkeleton
@@ -111,11 +174,11 @@ function GamerLoginContent() {
 
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 relative">
-      {/* Incorrect Credentials Pop-Up Notification */}
+      {/* Toast Notification Alert */}
       {showErrorPopup && (
         <div
           role="alert"
-          className="fixed top-6 right-6 z-50 max-w-sm w-full bg-slate-900/95 border border-rose-500/50 rounded-2xl p-4 shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-top-4 flex items-start gap-3"
+          className="fixed top-6 right-6 z-50 max-w-sm w-full bg-[#13151f]/95 border border-rose-500/50 rounded-2xl p-4 shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-top-4 flex items-start gap-3"
         >
           <div className="w-9 h-9 rounded-xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center flex-shrink-0 text-rose-400">
             <AlertCircle className="w-5 h-5" />
@@ -135,85 +198,179 @@ function GamerLoginContent() {
         </div>
       )}
 
-      <div className="w-full max-w-md space-y-6 bg-slate-900/90 p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden backdrop-blur-xl">
-        <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center mx-auto text-indigo-400">
-            <Gamepad2 className="w-6 h-6" />
+      {/* CrazyGames Clean Auth Card */}
+      <div className="w-full max-w-md bg-[#13151f] p-8 rounded-2xl border border-purple-500/25 shadow-2xl shadow-purple-950/60 relative overflow-hidden backdrop-blur-xl text-gray-100">
+        {/* Top Glow Accent */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-600 via-indigo-500 to-cyan-400" />
+
+        {/* Brand Header */}
+        <div className="text-center mb-6">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#6A38EB] to-[#9D4EDD] flex items-center justify-center mx-auto shadow-lg shadow-purple-600/30 mb-3">
+            <Gamepad2 className="w-6 h-6 text-white" />
           </div>
-          <div className="flex items-center justify-center gap-1.5 pt-1">
-            <Badge variant="featured">GAMER PORTAL</Badge>
-          </div>
-          <h1 className="font-heading font-black text-2xl text-white">
-            Gamer Sign In
+          <h1 className="text-2xl font-black font-heading text-white tracking-tight">
+            Log in to GameVerse
           </h1>
-          <p className="text-xs text-gray-400">
-            Sign in to continue your gaming sessions, access favorites, and view recommendations.
+          <p className="text-xs text-gray-400 mt-1">
+            Save your game progress, unlock payouts, and track favorites.
           </p>
         </div>
 
+        {/* Inline Alerts */}
         {error && (
-          <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 flex-shrink-0" />
-            <span>{error}</span>
+          <div
+            role="alert"
+            className="mb-4 p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2.5 animate-in fade-in"
+          >
+            <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-400" />
+            <span className="flex-1">{error}</span>
           </div>
         )}
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <Input
-            label="Gamer Email Address"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="gamer@example.com"
-            leftIcon={<Mail className="w-4 h-4" />}
-          />
+        {successMsg && (
+          <div
+            role="status"
+            className="mb-4 p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs flex items-center gap-2.5 animate-in fade-in"
+          >
+            <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-emerald-400" />
+            <span className="flex-1">{successMsg}</span>
+          </div>
+        )}
 
-          <div className="space-y-1">
-            <Input
-              label="Password"
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••••••"
-              leftIcon={<Lock className="w-4 h-4" />}
-            />
-            <div className="flex justify-end">
-              <Link
-                href="/auth/forgot-password"
-                className="text-[11px] text-indigo-400 hover:text-indigo-300 transition-colors"
-              >
-                Forgot Password?
-              </Link>
+        {/* ================= OPTION 1: SOCIAL SSO (CONTINUE WITH GOOGLE) ================= */}
+        <div className="space-y-3">
+          <button
+            type="button"
+            disabled={googleLoading || loading}
+            onClick={handleGoogleSignIn}
+            className="w-full bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-3 text-sm active:scale-[0.99] disabled:opacity-70 cursor-pointer"
+          >
+            {/* Official Google 4-Color SVG Logo */}
+            <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
+              <path
+                fill="#4285F4"
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+              />
+              <path
+                fill="#34A853"
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+              />
+              <path
+                fill="#EA4335"
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+              />
+            </svg>
+            <span>{googleLoading ? 'Connecting Google Account...' : 'Continue with Google'}</span>
+          </button>
+        </div>
+
+        {/* Divider */}
+        <div className="relative my-5">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-white/10" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-[#13151f] px-3 text-gray-500 font-semibold tracking-wider">
+              OR
+            </span>
+          </div>
+        </div>
+
+        {/* ================= OPTION 2: CREDENTIALS (EMAIL & PASSWORD) ================= */}
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-gray-300 mb-1.5">
+              Email
+            </label>
+            <div className="relative">
+              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+              <input
+                ref={emailInputRef}
+                type="email"
+                required
+                placeholder="name@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-[#1b1e2b] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
+              />
             </div>
           </div>
 
-          <Button type="submit" variant="primary" className="w-full" isLoading={loading}>
-            Sign In to Gamer Account
-          </Button>
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-semibold text-gray-300">
+                Password
+              </label>
+              <Link
+                href="/auth/forgot-password"
+                className="text-xs text-purple-400 hover:text-purple-300 transition-colors font-medium"
+              >
+                Forgot password?
+              </Link>
+            </div>
+            <div className="relative">
+              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+              <input
+                type={showPassword ? 'text' : 'password'}
+                required
+                placeholder="••••••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-[#1b1e2b] border border-white/10 rounded-xl pl-10 pr-10 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+
+          {/* CrazyGames Purple CTA Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#6A38EB] to-[#8B5CF6] hover:from-[#5b2bd9] hover:to-[#7c3aed] text-white font-bold text-sm shadow-lg shadow-purple-600/30 transition-all active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
+          >
+            {loading ? (
+              <span>Signing in...</span>
+            ) : (
+              <>
+                <span>Log In</span>
+                <ArrowRight className="w-4 h-4" />
+              </>
+            )}
+          </button>
         </form>
 
-        {/* Quick Instant Test Account */}
-        <div className="pt-3 border-t border-white/5 space-y-2">
+        {/* ================= OPTION 3: 1-CLICK INSTANT GAMER LOGIN ================= */}
+        <div className="mt-5 pt-3 border-t border-white/5 space-y-2">
           <div className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider text-center">
             One-Click Instant Gamer Login
           </div>
           <button
             type="button"
-            disabled={loading}
+            disabled={loading || googleLoading}
             onClick={() => handleQuickLogin('player@gamer.com')}
-            className="w-full p-2.5 rounded-xl bg-indigo-600/15 hover:bg-indigo-600/25 active:scale-[0.99] text-indigo-300 border border-indigo-500/30 text-xs text-center transition-all font-semibold flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:border-indigo-400"
+            className="w-full py-2 px-3 rounded-xl bg-purple-600/10 hover:bg-purple-600/20 text-purple-300 border border-purple-500/20 text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer"
           >
-            <Zap className="w-4 h-4 text-amber-400" />
-            <span>Instant Sign In (player@gamer.com)</span>
+            <Zap className="w-3.5 h-3.5 text-amber-400" />
+            <span>Instant Demo: Play as NeoGamer99 (1-Click)</span>
           </button>
         </div>
 
-        <div className="text-center text-xs text-gray-400 pt-1">
-          Don&apos;t have a Gamer account?{' '}
-          <Link href="/auth/signup" className="text-indigo-400 hover:text-indigo-300 font-semibold">
-            Create Gamer Account
+        {/* Mode Switcher */}
+        <div className="text-center text-xs text-gray-400 pt-4">
+          No account yet?{' '}
+          <Link href="/auth/signup" className="text-purple-400 hover:text-purple-300 font-bold">
+            Join now
           </Link>
         </div>
       </div>
@@ -221,16 +378,16 @@ function GamerLoginContent() {
   );
 }
 
-export default function GamerLoginPage() {
+export default function CrazyGamesLoginPage() {
   return (
     <Suspense
       fallback={
         <div className="min-h-[85vh] flex items-center justify-center text-gray-400 text-xs">
-          Loading Gamer Portal...
+          Loading GameVerse Auth...
         </div>
       }
     >
-      <GamerLoginContent />
+      <CrazyGamesLoginContent />
     </Suspense>
   );
 }

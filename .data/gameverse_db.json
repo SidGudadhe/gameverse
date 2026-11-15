@@ -541,6 +541,16 @@
       "passwordHash": "$2a$10$264MXp4I1GT/frR7oRirleLoLeQVL6PeJoI52tNZfDNw2x1W14kdm",
       "emailVerified": false,
       "createdAt": "2026-11-12T10:07:20.480Z"
+    },
+    {
+      "id": "usr-google-1794731237527-l9oa9",
+      "email": "google.gamer@gameverse.com",
+      "name": "CrazyGamer_Google",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$xwgNcEA.gPkAUr9ig8Tmb.LBWkWxnfHB479NuHg8MgeMwzAbwlxum",
+      "emailVerified": true,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-15T08:27:17.527Z"
     }
   ],
   "profiles": [
@@ -935,6 +945,12 @@
       "userId": "usr-1794478040480-njvuu",
       "username": "test_player_1794478040480",
       "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1794731237527",
+      "userId": "usr-google-1794731237527-l9oa9",
+      "username": "google.gamer",
+      "displayName": "CrazyGamer_Google"
     }
   ],
   "categories": [
@@ -1541,10 +1557,10 @@
       "ipHash": "21a1d7fc582fbd4fab3cbaccce587f445e8078f959353e15bda3af8555a89202",
       "deviceType": "DESKTOP",
       "isIvt": true,
-      "ivtReason": "Negative playtime anomaly: current (21291s) < previous (21298s)",
+      "ivtReason": "Negative playtime anomaly: current (21797s) < previous (21798s)",
       "startTime": "2026-11-12T08:26:01.076Z",
-      "lastHeartbeat": "2026-11-15T08:11:15.192Z",
-      "activeSeconds": 21694
+      "lastHeartbeat": "2026-11-15T08:27:30.377Z",
+      "activeSeconds": 22503
     }
   ],
   "events": [
@@ -11954,6 +11970,655 @@
         "timestamp": "2026-11-15T08:11:15.192Z"
       },
       "timestamp": "2026-11-15T08:11:15.192Z"
+    },
+    {
+      "id": "evt-1794730290027-4b18f",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 21709,
+      "metadata": {
+        "timestamp": "2026-11-15T08:11:30.027Z"
+      },
+      "timestamp": "2026-11-15T08:11:30.027Z"
+    },
+    {
+      "id": "evt-1794730305032-4f1oq",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 21724,
+      "metadata": {
+        "timestamp": "2026-11-15T08:11:45.032Z"
+      },
+      "timestamp": "2026-11-15T08:11:45.032Z"
+    },
+    {
+      "id": "evt-1794730320054-4988l",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 21739,
+      "metadata": {
+        "timestamp": "2026-11-15T08:12:00.054Z"
+      },
+      "timestamp": "2026-11-15T08:12:00.054Z"
+    },
+    {
+      "id": "evt-1794730335037-2hb0y",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 21754,
+      "metadata": {
+        "timestamp": "2026-11-15T08:12:15.037Z"
+      },
+      "timestamp": "2026-11-15T08:12:15.037Z"
+    },
+    {
+      "id": "evt-1794730350097-p2uqt",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 21768,
+      "metadata": {
+        "timestamp": "2026-11-15T08:12:30.097Z"
+      },
+      "timestamp": "2026-11-15T08:12:30.097Z"
+    },
+    {
+      "id": "evt-1794730365021-do9nv",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 21783,
+      "metadata": {
+        "timestamp": "2026-11-15T08:12:45.021Z"
+      },
+      "timestamp": "2026-11-15T08:12:45.021Z"
+    },
+    {
+      "id": "evt-1794730381452-pksmo",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 21798,
+      "metadata": {
+        "timestamp": "2026-11-15T08:13:01.452Z"
+      },
+      "timestamp": "2026-11-15T08:13:01.452Z"
+    },
+    {
+      "id": "evt-1794730381456-nfkkq",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "SESSION_RESUME",
+      "activeSeconds": 21798,
+      "metadata": {
+        "timestamp": "2026-11-15T08:13:01.456Z"
+      },
+      "timestamp": "2026-11-15T08:13:01.456Z"
+    },
+    {
+      "id": "evt-1794730395520-ewrwu",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 21813,
+      "metadata": {
+        "timestamp": "2026-11-15T08:13:15.519Z"
+      },
+      "timestamp": "2026-11-15T08:13:15.520Z"
+    },
+    {
+      "id": "evt-1794730410542-xo8rk",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 21827,
+      "metadata": {
+        "timestamp": "2026-11-15T08:13:30.542Z"
+      },
+      "timestamp": "2026-11-15T08:13:30.542Z"
+    },
+    {
+      "id": "evt-1794730425539-tezn7",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 21842,
+      "metadata": {
+        "timestamp": "2026-11-15T08:13:45.539Z"
+      },
+      "timestamp": "2026-11-15T08:13:45.539Z"
+    },
+    {
+      "id": "evt-1794730492936-zj2sd",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 21856,
+      "metadata": {
+        "timestamp": "2026-11-15T08:14:52.936Z"
+      },
+      "timestamp": "2026-11-15T08:14:52.936Z"
+    },
+    {
+      "id": "evt-1794730552561-bm50s",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 21857,
+      "metadata": {
+        "timestamp": "2026-11-15T08:15:52.561Z"
+      },
+      "timestamp": "2026-11-15T08:15:52.561Z"
+    },
+    {
+      "id": "evt-1794730593754-a6blc",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "SESSION_RESUME",
+      "activeSeconds": 21857,
+      "metadata": {
+        "timestamp": "2026-11-15T08:16:33.754Z"
+      },
+      "timestamp": "2026-11-15T08:16:33.754Z"
+    },
+    {
+      "id": "evt-1794730593811-eotso",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 21858,
+      "metadata": {
+        "timestamp": "2026-11-15T08:16:33.811Z"
+      },
+      "timestamp": "2026-11-15T08:16:33.811Z"
+    },
+    {
+      "id": "evt-1794730605050-alxc5",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 21870,
+      "metadata": {
+        "timestamp": "2026-11-15T08:16:45.050Z"
+      },
+      "timestamp": "2026-11-15T08:16:45.050Z"
+    },
+    {
+      "id": "evt-1794730620021-qrme9",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 21885,
+      "metadata": {
+        "timestamp": "2026-11-15T08:17:00.021Z"
+      },
+      "timestamp": "2026-11-15T08:17:00.021Z"
+    },
+    {
+      "id": "evt-1794730635017-2uyjv",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 21900,
+      "metadata": {
+        "timestamp": "2026-11-15T08:17:15.017Z"
+      },
+      "timestamp": "2026-11-15T08:17:15.017Z"
+    },
+    {
+      "id": "evt-1794730650255-94bao",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 21915,
+      "metadata": {
+        "timestamp": "2026-11-15T08:17:30.255Z"
+      },
+      "timestamp": "2026-11-15T08:17:30.255Z"
+    },
+    {
+      "id": "evt-1794730665039-8yhyh",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 21930,
+      "metadata": {
+        "timestamp": "2026-11-15T08:17:45.039Z"
+      },
+      "timestamp": "2026-11-15T08:17:45.039Z"
+    },
+    {
+      "id": "evt-1794730680493-gksdr",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 21945,
+      "metadata": {
+        "timestamp": "2026-11-15T08:18:00.493Z"
+      },
+      "timestamp": "2026-11-15T08:18:00.493Z"
+    },
+    {
+      "id": "evt-1794730695051-et9eb",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 21960,
+      "metadata": {
+        "timestamp": "2026-11-15T08:18:15.051Z"
+      },
+      "timestamp": "2026-11-15T08:18:15.051Z"
+    },
+    {
+      "id": "evt-1794730710024-stpo1",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 21975,
+      "metadata": {
+        "timestamp": "2026-11-15T08:18:30.024Z"
+      },
+      "timestamp": "2026-11-15T08:18:30.024Z"
+    },
+    {
+      "id": "evt-1794730725044-km9sn",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 21990,
+      "metadata": {
+        "timestamp": "2026-11-15T08:18:45.044Z"
+      },
+      "timestamp": "2026-11-15T08:18:45.044Z"
+    },
+    {
+      "id": "evt-1794730740046-zsczc",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22005,
+      "metadata": {
+        "timestamp": "2026-11-15T08:19:00.046Z"
+      },
+      "timestamp": "2026-11-15T08:19:00.046Z"
+    },
+    {
+      "id": "evt-1794730755043-dzx8e",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22020,
+      "metadata": {
+        "timestamp": "2026-11-15T08:19:15.043Z"
+      },
+      "timestamp": "2026-11-15T08:19:15.043Z"
+    },
+    {
+      "id": "evt-1794730770033-ul112",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22035,
+      "metadata": {
+        "timestamp": "2026-11-15T08:19:30.033Z"
+      },
+      "timestamp": "2026-11-15T08:19:30.033Z"
+    },
+    {
+      "id": "evt-1794730785028-45bgl",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22050,
+      "metadata": {
+        "timestamp": "2026-11-15T08:19:45.028Z"
+      },
+      "timestamp": "2026-11-15T08:19:45.028Z"
+    },
+    {
+      "id": "evt-1794730800145-jvpn8",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22065,
+      "metadata": {
+        "timestamp": "2026-11-15T08:20:00.145Z"
+      },
+      "timestamp": "2026-11-15T08:20:00.145Z"
+    },
+    {
+      "id": "evt-1794730815028-m3u0w",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22080,
+      "metadata": {
+        "timestamp": "2026-11-15T08:20:15.028Z"
+      },
+      "timestamp": "2026-11-15T08:20:15.028Z"
+    },
+    {
+      "id": "evt-1794730830008-b47l2",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22095,
+      "metadata": {
+        "timestamp": "2026-11-15T08:20:30.008Z"
+      },
+      "timestamp": "2026-11-15T08:20:30.008Z"
+    },
+    {
+      "id": "evt-1794730845046-vrwrx",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22110,
+      "metadata": {
+        "timestamp": "2026-11-15T08:20:45.046Z"
+      },
+      "timestamp": "2026-11-15T08:20:45.046Z"
+    },
+    {
+      "id": "evt-1794730860024-d4qte",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22125,
+      "metadata": {
+        "timestamp": "2026-11-15T08:21:00.024Z"
+      },
+      "timestamp": "2026-11-15T08:21:00.024Z"
+    },
+    {
+      "id": "evt-1794730875041-9s9mw",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22140,
+      "metadata": {
+        "timestamp": "2026-11-15T08:21:15.041Z"
+      },
+      "timestamp": "2026-11-15T08:21:15.041Z"
+    },
+    {
+      "id": "evt-1794730890014-7knwz",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22155,
+      "metadata": {
+        "timestamp": "2026-11-15T08:21:30.014Z"
+      },
+      "timestamp": "2026-11-15T08:21:30.014Z"
+    },
+    {
+      "id": "evt-1794730905018-i0f4s",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22170,
+      "metadata": {
+        "timestamp": "2026-11-15T08:21:45.018Z"
+      },
+      "timestamp": "2026-11-15T08:21:45.018Z"
+    },
+    {
+      "id": "evt-1794730920055-zcz5e",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22185,
+      "metadata": {
+        "timestamp": "2026-11-15T08:22:00.055Z"
+      },
+      "timestamp": "2026-11-15T08:22:00.055Z"
+    },
+    {
+      "id": "evt-1794730935042-59zcd",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22199,
+      "metadata": {
+        "timestamp": "2026-11-15T08:22:15.042Z"
+      },
+      "timestamp": "2026-11-15T08:22:15.042Z"
+    },
+    {
+      "id": "evt-1794730950044-e27vp",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22214,
+      "metadata": {
+        "timestamp": "2026-11-15T08:22:30.044Z"
+      },
+      "timestamp": "2026-11-15T08:22:30.044Z"
+    },
+    {
+      "id": "evt-1794730965051-qhzmg",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22229,
+      "metadata": {
+        "timestamp": "2026-11-15T08:22:45.051Z"
+      },
+      "timestamp": "2026-11-15T08:22:45.051Z"
+    },
+    {
+      "id": "evt-1794730980052-v068y",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22244,
+      "metadata": {
+        "timestamp": "2026-11-15T08:23:00.052Z"
+      },
+      "timestamp": "2026-11-15T08:23:00.052Z"
+    },
+    {
+      "id": "evt-1794730995287-smhhd",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22259,
+      "metadata": {
+        "timestamp": "2026-11-15T08:23:15.287Z"
+      },
+      "timestamp": "2026-11-15T08:23:15.287Z"
+    },
+    {
+      "id": "evt-1794731010040-s346o",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22274,
+      "metadata": {
+        "timestamp": "2026-11-15T08:23:30.040Z"
+      },
+      "timestamp": "2026-11-15T08:23:30.040Z"
+    },
+    {
+      "id": "evt-1794731025038-ued1y",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22289,
+      "metadata": {
+        "timestamp": "2026-11-15T08:23:45.038Z"
+      },
+      "timestamp": "2026-11-15T08:23:45.038Z"
+    },
+    {
+      "id": "evt-1794731040027-gfbbi",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22304,
+      "metadata": {
+        "timestamp": "2026-11-15T08:24:00.027Z"
+      },
+      "timestamp": "2026-11-15T08:24:00.027Z"
+    },
+    {
+      "id": "evt-1794731055040-5iwrx",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22319,
+      "metadata": {
+        "timestamp": "2026-11-15T08:24:15.040Z"
+      },
+      "timestamp": "2026-11-15T08:24:15.040Z"
+    },
+    {
+      "id": "evt-1794731073011-etpmr",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22334,
+      "metadata": {
+        "timestamp": "2026-11-15T08:24:33.011Z"
+      },
+      "timestamp": "2026-11-15T08:24:33.011Z"
+    },
+    {
+      "id": "evt-1794731085061-t615v",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22349,
+      "metadata": {
+        "timestamp": "2026-11-15T08:24:45.061Z"
+      },
+      "timestamp": "2026-11-15T08:24:45.061Z"
+    },
+    {
+      "id": "evt-1794731100061-4h9if",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22364,
+      "metadata": {
+        "timestamp": "2026-11-15T08:25:00.061Z"
+      },
+      "timestamp": "2026-11-15T08:25:00.061Z"
+    },
+    {
+      "id": "evt-1794731116025-n4us4",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22379,
+      "metadata": {
+        "timestamp": "2026-11-15T08:25:16.025Z"
+      },
+      "timestamp": "2026-11-15T08:25:16.025Z"
+    },
+    {
+      "id": "evt-1794731130032-juvh6",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22394,
+      "metadata": {
+        "timestamp": "2026-11-15T08:25:30.032Z"
+      },
+      "timestamp": "2026-11-15T08:25:30.032Z"
+    },
+    {
+      "id": "evt-1794731145149-h3td7",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22407,
+      "metadata": {
+        "timestamp": "2026-11-15T08:25:45.149Z"
+      },
+      "timestamp": "2026-11-15T08:25:45.149Z"
+    },
+    {
+      "id": "evt-1794731160084-cfzpy",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22420,
+      "metadata": {
+        "timestamp": "2026-11-15T08:26:00.084Z"
+      },
+      "timestamp": "2026-11-15T08:26:00.084Z"
+    },
+    {
+      "id": "evt-1794731175045-9jvcd",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22435,
+      "metadata": {
+        "timestamp": "2026-11-15T08:26:15.045Z"
+      },
+      "timestamp": "2026-11-15T08:26:15.045Z"
+    },
+    {
+      "id": "evt-1794731190040-i5xdd",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22450,
+      "metadata": {
+        "timestamp": "2026-11-15T08:26:30.040Z"
+      },
+      "timestamp": "2026-11-15T08:26:30.040Z"
+    },
+    {
+      "id": "evt-1794731205092-lgwtu",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22464,
+      "metadata": {
+        "timestamp": "2026-11-15T08:26:45.092Z"
+      },
+      "timestamp": "2026-11-15T08:26:45.092Z"
+    },
+    {
+      "id": "evt-1794731220406-8sd39",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22477,
+      "metadata": {
+        "timestamp": "2026-11-15T08:27:00.406Z"
+      },
+      "timestamp": "2026-11-15T08:27:00.406Z"
+    },
+    {
+      "id": "evt-1794731238638-pj6k5",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22490,
+      "metadata": {
+        "timestamp": "2026-11-15T08:27:18.638Z"
+      },
+      "timestamp": "2026-11-15T08:27:18.638Z"
+    },
+    {
+      "id": "evt-1794731250377-87oh6",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 22503,
+      "metadata": {
+        "timestamp": "2026-11-15T08:27:30.377Z"
+      },
+      "timestamp": "2026-11-15T08:27:30.377Z"
     }
   ],
   "referralLinks": [],
@@ -12146,6 +12811,66 @@
     }
   ],
   "auditLogs": [
+    {
+      "id": "log-1794731237534-caco",
+      "createdAt": "2026-11-15T08:27:17.534Z",
+      "previousHash": "221e9c6523348ec422c0e7c3d706eb2cff50f83f9d31a1567492f53f0e639476",
+      "tamperHash": "3fafa793c458510bbd14e2b330c48671a101af1dd06355bb2ab785b78f9adfc6",
+      "actorId": "usr-google-1794731237527-l9oa9",
+      "actorName": "CrazyGamer_Google",
+      "action": "USER_LOGIN",
+      "targetType": "USER",
+      "targetId": "usr-google-1794731237527-l9oa9",
+      "details": {
+        "role": "PLAYER",
+        "provider": "GOOGLE_SSO"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "log-1794731237529-87w6",
+      "createdAt": "2026-11-15T08:27:17.529Z",
+      "previousHash": "c4c0a2d5977e587f3b29f2a5a361b61093c82dd2eedb52bdbdc55e5725747ba3",
+      "tamperHash": "221e9c6523348ec422c0e7c3d706eb2cff50f83f9d31a1567492f53f0e639476",
+      "actorId": "usr-google-1794731237527-l9oa9",
+      "actorName": "CrazyGamer_Google",
+      "action": "USER_REGISTERED_GOOGLE_SSO",
+      "targetType": "USER",
+      "targetId": "usr-google-1794731237527-l9oa9",
+      "details": {
+        "provider": "GOOGLE",
+        "email": "google.gamer@gameverse.com"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "log-1794730489956-yzsn",
+      "createdAt": "2026-11-15T08:14:49.956Z",
+      "previousHash": "4f162156a3a3252af7b6257ba4edf660c991955ad039ab30986e96f4c7b7f6dd",
+      "tamperHash": "c4c0a2d5977e587f3b29f2a5a361b61093c82dd2eedb52bdbdc55e5725747ba3",
+      "actorId": "usr-player-1",
+      "actorName": "NeoGamer99",
+      "action": "USER_LOGIN",
+      "targetType": "USER",
+      "targetId": "usr-player-1",
+      "details": {
+        "role": "PLAYER"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "log-1794730416155-ykcl",
+      "createdAt": "2026-11-15T08:13:36.155Z",
+      "previousHash": "abbabc0c61f40920f1d4a85611dd3533323e3e5fa96f38c685591d318a37953f",
+      "tamperHash": "4f162156a3a3252af7b6257ba4edf660c991955ad039ab30986e96f4c7b7f6dd",
+      "actorId": "usr-player-1",
+      "actorName": "NeoGamer99",
+      "action": "USER_LOGOUT",
+      "targetType": "USER",
+      "targetId": "usr-player-1",
+      "details": {},
+      "ipAddress": "::1"
+    },
     {
       "id": "log-1794572363898-6fi8",
       "createdAt": "2026-11-13T12:19:23.898Z",

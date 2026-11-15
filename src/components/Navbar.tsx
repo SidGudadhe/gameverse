@@ -33,7 +33,7 @@ import { useAuth } from '@/context/AuthContext';
 
 export default function Navbar() {
   const pathname = usePathname();
-  const { user, isAuthenticated, role, logout } = useAuth();
+  const { user, isAuthenticated, role, logout, openAuthModal } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -367,18 +367,20 @@ export default function Navbar() {
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              <Link
-                href="/auth/login"
-                className="text-xs font-semibold text-gray-300 hover:text-white px-3 py-2 rounded-xl hover:bg-white/5 transition-colors"
+              <button
+                type="button"
+                onClick={() => openAuthModal('LOGIN')}
+                className="text-xs font-bold text-gray-200 hover:text-white px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors flex items-center gap-1.5 cursor-pointer"
               >
-                Sign In
-              </Link>
-              <Link
-                href="/auth/signup"
-                className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-lg shadow-indigo-600/30 transition-all active:scale-95"
+                <span>Log in</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => openAuthModal('SIGNUP')}
+                className="bg-gradient-to-r from-[#6A38EB] to-[#8B5CF6] hover:from-[#5b2bd9] hover:to-[#7c3aed] text-white text-xs font-bold px-4 py-2 rounded-xl shadow-lg shadow-purple-600/30 transition-all active:scale-95 cursor-pointer flex items-center gap-1.5"
               >
-                Sign Up
-              </Link>
+                <span>Join</span>
+              </button>
             </div>
           )}
 
@@ -471,20 +473,26 @@ export default function Navbar() {
               </>
             ) : (
               <div className="pt-2 flex flex-col gap-2">
-                <Link
-                  href="/auth/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center py-2.5 bg-white/5 rounded-xl text-sm font-semibold text-white"
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    openAuthModal('LOGIN');
+                  }}
+                  className="w-full text-center py-2.5 bg-white/5 hover:bg-white/10 rounded-xl text-sm font-semibold text-white border border-white/10 transition-colors"
                 >
-                  Sign In
-                </Link>
-                <Link
-                  href="/auth/signup"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center py-2.5 bg-indigo-600 rounded-xl text-sm font-semibold text-white shadow-lg"
+                  Log in
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    openAuthModal('SIGNUP');
+                  }}
+                  className="w-full text-center py-2.5 bg-gradient-to-r from-[#6A38EB] to-[#8B5CF6] hover:from-[#5b2bd9] hover:to-[#7c3aed] rounded-xl text-sm font-bold text-white shadow-lg shadow-purple-600/30 transition-all"
                 >
-                  Sign Up Free
-                </Link>
+                  Join Free
+                </button>
               </div>
             )}
           </nav>

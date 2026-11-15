@@ -11,6 +11,7 @@ export interface AuthUser {
   role: UserRole;
   emailVerified?: boolean;
   twoFactorEnabled?: boolean;
+  avatarUrl?: string;
 }
 
 interface AuthContextType {
@@ -21,6 +22,10 @@ interface AuthContextType {
   setSession: (user: AuthUser) => void;
   refreshUser: () => Promise<AuthUser | null>;
   logout: () => Promise<void>;
+  authModalOpen: boolean;
+  authModalMode: 'LOGIN' | 'SIGNUP';
+  openAuthModal: (mode?: 'LOGIN' | 'SIGNUP') => void;
+  closeAuthModal: () => void;
 }
 
 const STORAGE_KEY = 'gameverse_user';
@@ -33,6 +38,10 @@ const AuthContext = createContext<AuthContextType>({
   setSession: () => {},
   refreshUser: async () => null,
   logout: async () => {},
+  authModalOpen: false,
+  authModalMode: 'LOGIN',
+  openAuthModal: () => {},
+  closeAuthModal: () => {},
 });
 
 export function AuthProvider({
@@ -56,8 +65,19 @@ export function AuthProvider({
     return null;
   });
   const [loading, setLoading] = useState(!initialUser);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<'LOGIN' | 'SIGNUP'>('LOGIN');
   const router = useRouter();
   const userRef = useRef<AuthUser | null>(user);
+
+  const openAuthModal = useCallback((mode: 'LOGIN' | 'SIGNUP' = 'LOGIN') => {
+    setAuthModalMode(mode);
+    setAuthModalOpen(true);
+  }, []);
+
+  const closeAuthModal = useCallback(() => {
+    setAuthModalOpen(false);
+  }, []);
 
   useEffect(() => {
     userRef.current = user;
@@ -191,6 +211,10 @@ export function AuthProvider({
         setSession,
         refreshUser,
         logout,
+        authModalOpen,
+        authModalMode,
+        openAuthModal,
+        closeAuthModal,
       }}
     >
       {children}

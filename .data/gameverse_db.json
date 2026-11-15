@@ -571,6 +571,16 @@
       "emailVerified": true,
       "twoFactorEnabled": false,
       "createdAt": "2026-11-15T08:40:39.793Z"
+    },
+    {
+      "id": "usr-google-1794735571504-xa21f",
+      "email": "sidprojects96@gmail.com",
+      "name": "Sid Gudadhe",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$xwgNcEA.gPkAUr9ig8Tmb.LBWkWxnfHB479NuHg8MgeMwzAbwlxum",
+      "emailVerified": true,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-15T09:39:31.504Z"
     }
   ],
   "profiles": [
@@ -983,6 +993,12 @@
       "userId": "usr-google-1794732039793-1ja6f",
       "username": "myrealemail.gamer",
       "displayName": "Real Gamer Mauli"
+    },
+    {
+      "id": "prof-1794735571504",
+      "userId": "usr-google-1794735571504-xa21f",
+      "username": "sidprojects96",
+      "displayName": "Sid Gudadhe"
     }
   ],
   "categories": [
@@ -1591,8 +1607,8 @@
       "isIvt": true,
       "ivtReason": "Negative playtime anomaly: current (21797s) < previous (21798s)",
       "startTime": "2026-11-12T08:26:01.076Z",
-      "lastHeartbeat": "2026-11-15T09:37:30.755Z",
-      "activeSeconds": 25178
+      "lastHeartbeat": "2026-11-15T09:39:52.641Z",
+      "activeSeconds": 25219
     }
   ],
   "events": [
@@ -15148,6 +15164,50 @@
         "timestamp": "2026-11-15T09:37:30.755Z"
       },
       "timestamp": "2026-11-15T09:37:30.755Z"
+    },
+    {
+      "id": "evt-1794735466433-ky789",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 25193,
+      "metadata": {
+        "timestamp": "2026-11-15T09:37:46.433Z"
+      },
+      "timestamp": "2026-11-15T09:37:46.433Z"
+    },
+    {
+      "id": "evt-1794735480575-sv7lm",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 25207,
+      "metadata": {
+        "timestamp": "2026-11-15T09:38:00.575Z"
+      },
+      "timestamp": "2026-11-15T09:38:00.575Z"
+    },
+    {
+      "id": "evt-1794735532617-vggel",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 25218,
+      "metadata": {
+        "timestamp": "2026-11-15T09:38:52.617Z"
+      },
+      "timestamp": "2026-11-15T09:38:52.617Z"
+    },
+    {
+      "id": "evt-1794735592642-k74qf",
+      "sessionId": "sess-1794471961076-y13xy",
+      "gameId": "game-neon-runner",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 25219,
+      "metadata": {
+        "timestamp": "2026-11-15T09:39:52.642Z"
+      },
+      "timestamp": "2026-11-15T09:39:52.642Z"
     }
   ],
   "referralLinks": [],
@@ -15340,6 +15400,54 @@
     }
   ],
   "auditLogs": [
+    {
+      "id": "log-1794735613300-4a51",
+      "createdAt": "2026-11-15T09:40:13.300Z",
+      "previousHash": "676fba35926438407ccc813fb194f149b2095a3f63b92f17ba429d4df2faf3eb",
+      "tamperHash": "c12eb412530aa64a2da91e782df7b3661e86310072a546530fa10a208610cbed",
+      "actorId": "usr-google-1794735571504-xa21f",
+      "actorName": "Sid Gudadhe",
+      "action": "USER_LOGIN",
+      "targetType": "USER",
+      "targetId": "usr-google-1794735571504-xa21f",
+      "details": {
+        "role": "PLAYER",
+        "provider": "GOOGLE_AUTH_SYNC"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "log-1794735571507-3ofu",
+      "createdAt": "2026-11-15T09:39:31.507Z",
+      "previousHash": "0ccdbb588d3f300baf903265e1ff98f4febb401e9730b8dfd8c8c4d8b4b393c6",
+      "tamperHash": "676fba35926438407ccc813fb194f149b2095a3f63b92f17ba429d4df2faf3eb",
+      "actorId": "usr-google-1794735571504-xa21f",
+      "actorName": "Sid Gudadhe",
+      "action": "USER_LOGIN",
+      "targetType": "USER",
+      "targetId": "usr-google-1794735571504-xa21f",
+      "details": {
+        "role": "PLAYER",
+        "provider": "GOOGLE_AUTH_SYNC"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "log-1794735571504-94cn",
+      "createdAt": "2026-11-15T09:39:31.504Z",
+      "previousHash": "0a3ec57596f6ae1355c542242ef2abfb47e30824113cfaa965b3ac97c4f1783a",
+      "tamperHash": "0ccdbb588d3f300baf903265e1ff98f4febb401e9730b8dfd8c8c4d8b4b393c6",
+      "actorId": "usr-google-1794735571504-xa21f",
+      "actorName": "Sid Gudadhe",
+      "action": "USER_REGISTERED_GOOGLE_SSO",
+      "targetType": "USER",
+      "targetId": "usr-google-1794735571504-xa21f",
+      "details": {
+        "provider": "GOOGLE_AUTH",
+        "email": "sidprojects96@gmail.com"
+      },
+      "ipAddress": "::1"
+    },
     {
       "id": "log-1794732049122-t1fl",
       "createdAt": "2026-11-15T08:40:49.122Z",

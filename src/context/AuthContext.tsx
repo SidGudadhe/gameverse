@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { UserRole } from '@/types';
 
@@ -57,10 +57,16 @@ export function AuthProvider({
   });
   const [loading, setLoading] = useState(!initialUser);
   const router = useRouter();
+  const userRef = useRef<AuthUser | null>(user);
+
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
 
   // Instant synchronous session setter for 0ms UI transitions
   const setSession = useCallback((newUser: AuthUser) => {
     setUser(newUser);
+    userRef.current = newUser;
     setLoading(false);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser));
@@ -70,6 +76,7 @@ export function AuthProvider({
 
   const clearSession = useCallback(() => {
     setUser(null);
+    userRef.current = null;
     setLoading(false);
     try {
       localStorage.removeItem(STORAGE_KEY);
@@ -87,6 +94,7 @@ export function AuthProvider({
         const data = await res.json();
         if (data.user) {
           setUser(data.user);
+          userRef.current = data.user;
           setLoading(false);
           try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data.user));
@@ -99,14 +107,14 @@ export function AuthProvider({
         return null;
       }
       // On 500, network delays or transient issues: preserve existing active session
-      return user;
+      return userRef.current;
     } catch {
       // Network interruption: preserve existing session
-      return user;
+      return userRef.current;
     } finally {
       setLoading(false);
     }
-  }, [clearSession, user]);
+  }, [clearSession]);
 
   useEffect(() => {
     // 1. Instant optimistic restore from localStorage to eliminate auth flicker

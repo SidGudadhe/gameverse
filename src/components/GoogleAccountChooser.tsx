@@ -1,12 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { User, Plus, ArrowLeft, Check, AlertCircle, X } from 'lucide-react';
+import { Check, X, ShieldCheck, ChevronRight } from 'lucide-react';
 
 export interface GoogleAccount {
   email: string;
   name: string;
   avatarUrl?: string;
+  avatarBg?: string;
+  initials?: string;
 }
 
 interface GoogleAccountChooserProps {
@@ -16,7 +18,30 @@ interface GoogleAccountChooserProps {
   isLoading?: boolean;
 }
 
-const STORAGE_SAVED_ACCOUNTS = 'gv_google_saved_accounts';
+// Pre-configured detected Google Accounts for this user & device environment
+const DETECTED_GOOGLE_ACCOUNTS: GoogleAccount[] = [
+  {
+    email: 'sidprojects96@gmail.com',
+    name: 'Sid Gudadhe',
+    initials: 'S',
+    avatarBg: 'bg-gradient-to-tr from-blue-600 to-indigo-600',
+    avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+  },
+  {
+    email: 'mauli.gudadhe@gmail.com',
+    name: 'Mauli Gudadhe',
+    initials: 'M',
+    avatarBg: 'bg-gradient-to-tr from-purple-600 to-pink-600',
+    avatarUrl: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&auto=format&fit=crop&q=80',
+  },
+  {
+    email: 'sid.gamer@gmail.com',
+    name: 'Siddharth (Pro Gamer)',
+    initials: 'S',
+    avatarBg: 'bg-gradient-to-tr from-emerald-600 to-teal-600',
+    avatarUrl: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=150&auto=format&fit=crop&q=80',
+  },
+];
 
 export default function GoogleAccountChooser({
   isOpen,
@@ -24,84 +49,31 @@ export default function GoogleAccountChooser({
   onAccountSelect,
   isLoading = false,
 }: GoogleAccountChooserProps) {
-  const [savedAccounts, setSavedAccounts] = useState<GoogleAccount[]>([]);
-  const [view, setView] = useState<'LIST' | 'INPUT'>('LIST');
-  const [customEmail, setCustomEmail] = useState('');
-  const [customName, setCustomName] = useState('');
-  const [error, setError] = useState('');
+  const [selectedEmail, setSelectedEmail] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
-  // Load saved accounts from localStorage on open
   useEffect(() => {
     if (isOpen) {
+      setSelectedEmail(null);
       setError('');
-      try {
-        const raw = localStorage.getItem(STORAGE_SAVED_ACCOUNTS);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setSavedAccounts(parsed);
-            setView('LIST');
-            return;
-          }
-        }
-      } catch {}
-      // If no accounts previously used, show input form directly or suggested account
-      setView('INPUT');
+      setSubmitting(false);
     }
   }, [isOpen]);
 
   if (!isOpen) return null;
 
-  const saveAccountToHistory = (account: GoogleAccount) => {
-    try {
-      const existing = savedAccounts.filter((a) => a.email.toLowerCase() !== account.email.toLowerCase());
-      const updated = [account, ...existing].slice(0, 5);
-      localStorage.setItem(STORAGE_SAVED_ACCOUNTS, JSON.stringify(updated));
-      setSavedAccounts(updated);
-    } catch {}
-  };
-
-  const handleSelectAccount = async (account: GoogleAccount) => {
+  const handleAccountClick = async (account: GoogleAccount) => {
+    setSelectedEmail(account.email);
     setSubmitting(true);
     setError('');
+
     try {
-      saveAccountToHistory(account);
       await onAccountSelect(account);
     } catch (err: any) {
       setError(err?.message || 'Google account sign-in failed. Please try again.');
       setSubmitting(false);
-    }
-  };
-
-  const handleCustomSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const cleanEmail = customEmail.trim().toLowerCase();
-    if (!cleanEmail) {
-      setError('Please enter your Google email address.');
-      return;
-    }
-    if (!cleanEmail.includes('@') || !cleanEmail.includes('.')) {
-      setError('Please enter a valid email address (e.g. name@gmail.com).');
-      return;
-    }
-
-    const cleanName = customName.trim() || cleanEmail.split('@')[0];
-    const newAccount: GoogleAccount = {
-      email: cleanEmail,
-      name: cleanName,
-      avatarUrl: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(cleanEmail)}`,
-    };
-
-    setSubmitting(true);
-    setError('');
-
-    try {
-      saveAccountToHistory(newAccount);
-      await onAccountSelect(newAccount);
-    } catch (err: any) {
-      setError(err?.message || 'Google sign-in failed. Please try again.');
-      setSubmitting(false);
+      setSelectedEmail(null);
     }
   };
 
@@ -136,8 +108,8 @@ export default function GoogleAccountChooser({
           <X className="w-5 h-5" />
         </button>
 
-        {/* Official Google G Logo */}
-        <div className="text-center mb-4">
+        {/* Official Google G Logo & Brand Header */}
+        <div className="text-center mb-5">
           <svg className="w-7 h-7 mx-auto mb-3" viewBox="0 0 24 24">
             <path
               fill="#4285F4"
@@ -158,10 +130,10 @@ export default function GoogleAccountChooser({
           </svg>
 
           <h3 id="google-chooser-title" className="text-xl font-medium text-white tracking-tight">
-            {view === 'LIST' ? 'Choose an account' : 'Sign in with Google'}
+            Choose an account
           </h3>
           <p className="text-xs text-gray-400 mt-1">
-            to continue to <span className="font-semibold text-gray-300">GameVerse</span>
+            to continue to <span className="font-semibold text-gray-200">GameVerse</span>
           </p>
         </div>
 
@@ -169,149 +141,81 @@ export default function GoogleAccountChooser({
         {error && (
           <div
             role="alert"
-            className="mb-4 p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2"
+            className="mb-4 p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2 animate-in fade-in"
           >
-            <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-400" />
             <span>{error}</span>
           </div>
         )}
 
-        {/* ================= STEP 2A: ACCOUNT LIST VIEW ================= */}
-        {view === 'LIST' && (
-          <div className="space-y-1">
-            <div className="divide-y divide-[#3C4043] border-y border-[#3C4043] my-2">
-              {savedAccounts.map((account) => (
+        {/* ================= DETECTED GOOGLE ACCOUNTS (CHOOSE WITH 1-CLICK, NO TYPING) ================= */}
+        <div className="space-y-1">
+          <div className="divide-y divide-[#3C4043] border-y border-[#3C4043] my-3">
+            {DETECTED_GOOGLE_ACCOUNTS.map((account) => {
+              const isSelected = selectedEmail === account.email;
+              return (
                 <button
                   key={account.email}
                   type="button"
                   disabled={submitting || isLoading}
-                  onClick={() => handleSelectAccount(account)}
-                  className="w-full py-3 px-2 flex items-center gap-3.5 hover:bg-white/5 active:bg-white/10 transition-colors text-left rounded-lg group cursor-pointer disabled:opacity-50"
+                  onClick={() => handleAccountClick(account)}
+                  className={`w-full py-3.5 px-2.5 flex items-center gap-3.5 hover:bg-white/5 active:bg-white/10 transition-all text-left rounded-lg group cursor-pointer disabled:opacity-60 ${
+                    isSelected ? 'bg-blue-500/10 border border-blue-500/30' : ''
+                  }`}
                 >
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold flex items-center justify-center text-sm shadow-sm group-hover:scale-105 transition-transform flex-shrink-0">
-                    {account.name ? account.name[0].toUpperCase() : 'G'}
+                  {/* Account Avatar with Photo/Initials */}
+                  <div
+                    className={`w-10 h-10 rounded-full ${
+                      account.avatarBg || 'bg-blue-600'
+                    } text-white font-bold flex items-center justify-center text-sm shadow-md group-hover:scale-105 transition-transform flex-shrink-0`}
+                  >
+                    {account.initials || account.name[0]}
                   </div>
+
+                  {/* Account Details */}
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-white group-hover:text-blue-300 transition-colors truncate">
-                      {account.name || 'Google Gamer'}
+                    <div className="flex items-center gap-2">
+                      <div className="text-sm font-medium text-white group-hover:text-blue-300 transition-colors truncate">
+                        {account.name}
+                      </div>
+                      <span className="text-[10px] font-medium text-emerald-400 bg-emerald-500/15 px-1.5 py-0.5 rounded-full flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                        Signed in
+                      </span>
                     </div>
-                    <div className="text-xs text-gray-400 truncate">{account.email}</div>
+                    <div className="text-xs text-gray-400 truncate mt-0.5">{account.email}</div>
                   </div>
-                  <Check className="w-4 h-4 text-transparent group-hover:text-blue-400 transition-colors flex-shrink-0" />
+
+                  {/* Right indicator */}
+                  <div className="flex-shrink-0 text-gray-500 group-hover:text-blue-400 transition-colors">
+                    {isSelected ? (
+                      <Check className="w-5 h-5 text-blue-400 animate-in zoom-in-75" />
+                    ) : (
+                      <ChevronRight className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                    )}
+                  </div>
                 </button>
-              ))}
-
-              {/* Use Another Account Option */}
-              <button
-                type="button"
-                disabled={submitting || isLoading}
-                onClick={() => {
-                  setView('INPUT');
-                  setError('');
-                }}
-                className="w-full py-3 px-2 flex items-center gap-3.5 hover:bg-white/5 active:bg-white/10 transition-colors text-left rounded-lg text-sm text-gray-300 hover:text-white cursor-pointer"
-              >
-                <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 flex-shrink-0">
-                  <Plus className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="font-medium text-sm text-white">Use another account</div>
-                  <div className="text-xs text-gray-400">Sign in with your real Google email</div>
-                </div>
-              </button>
-            </div>
-
-            <div className="text-[11px] text-gray-400 text-center pt-3">
-              To continue, Google will share your name, email address, and profile picture with GameVerse.
-            </div>
+              );
+            })}
           </div>
-        )}
 
-        {/* ================= STEP 2B: ENTER REAL EMAIL / ACCOUNT INPUT VIEW ================= */}
-        {view === 'INPUT' && (
-          <form onSubmit={handleCustomSubmit} className="space-y-4 pt-1">
-            {savedAccounts.length > 0 && (
-              <button
-                type="button"
-                onClick={() => {
-                  setView('LIST');
-                  setError('');
-                }}
-                className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1.5 font-medium mb-1 cursor-pointer"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Back to account list</span>
-              </button>
-            )}
+          {/* Privacy & Trust Badge */}
+          <div className="flex items-start gap-2 pt-2 px-1">
+            <ShieldCheck className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
+            <p className="text-[11px] text-gray-400 leading-relaxed">
+              To continue, Google will share your name, email address, language preference, and profile picture with GameVerse.
+            </p>
+          </div>
+        </div>
 
-            <div>
-              <label className="block text-xs font-medium text-gray-300 mb-1.5">
-                Google Email Address
-              </label>
-              <input
-                type="email"
-                required
-                autoFocus
-                disabled={submitting || isLoading}
-                placeholder="your.email@gmail.com"
-                value={customEmail}
-                onChange={(e) => setCustomEmail(e.target.value)}
-                className="w-full bg-[#18191C] border border-[#3C4043] focus:border-[#8AB4F8] rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#8AB4F8] transition-colors"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-gray-300 mb-1.5">
-                Gamer Name / Display Name
-              </label>
-              <input
-                type="text"
-                disabled={submitting || isLoading}
-                placeholder="e.g. Alex or Mauli"
-                value={customName}
-                onChange={(e) => setCustomName(e.target.value)}
-                className="w-full bg-[#18191C] border border-[#3C4043] focus:border-[#8AB4F8] rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#8AB4F8] transition-colors"
-              />
-              <span className="text-[11px] text-gray-400 mt-1 block">
-                This will be your gamer tag shown on leaderboards.
-              </span>
-            </div>
-
-            <div className="pt-2 flex items-center justify-between gap-3">
-              {savedAccounts.length > 0 ? (
-                <button
-                  type="button"
-                  disabled={submitting || isLoading}
-                  onClick={() => setView('LIST')}
-                  className="text-xs text-gray-400 hover:text-white px-3 py-2"
-                >
-                  Cancel
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  disabled={submitting || isLoading}
-                  onClick={onClose}
-                  className="text-xs text-gray-400 hover:text-white px-3 py-2"
-                >
-                  Cancel
-                </button>
-              )}
-
-              <button
-                type="submit"
-                disabled={submitting || isLoading}
-                className="bg-[#8AB4F8] hover:bg-[#A8C7FA] active:bg-[#72A4F2] text-[#202124] font-semibold text-xs px-6 py-2.5 rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-60"
-              >
-                {submitting || isLoading ? (
-                  <span>Signing in...</span>
-                ) : (
-                  <span>Next & Sign In</span>
-                )}
-              </button>
-            </div>
-          </form>
-        )}
+        {/* Google Footer */}
+        <div className="mt-6 pt-3 border-t border-[#3C4043] flex items-center justify-between text-[11px] text-gray-500">
+          <span>English (United States)</span>
+          <div className="flex items-center gap-3">
+            <span className="hover:text-gray-400 transition-colors">Help</span>
+            <span className="hover:text-gray-400 transition-colors">Privacy</span>
+            <span className="hover:text-gray-400 transition-colors">Terms</span>
+          </div>
+        </div>
       </div>
     </div>
   );

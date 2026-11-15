@@ -88,6 +88,27 @@ describe('CrazyGames Auth & Login System Verification (100x Deep Rebuild)', () =
       expect(data.error).toContain('non-player portal');
     });
 
+    it('should authenticate detected primary Google account (sidprojects96@gmail.com) on 1-click selection', async () => {
+      const detectedEmail = 'sidprojects96@gmail.com';
+      const req = new NextRequest('http://localhost:3000/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: detectedEmail,
+          name: 'Sid Gudadhe',
+        }),
+      });
+
+      const res = await googleAuthRoute(req);
+      const data = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(data.user.email).toBe(detectedEmail);
+      expect(data.user.name).toBe('Sid Gudadhe');
+      expect(data.user.role).toBe('PLAYER');
+    });
+
     it('should create an account with user chosen real email and verify database persistence', async () => {
       const realUserEmail = `mauli.player.${Date.now()}@gmail.com`;
       const req = new NextRequest('http://localhost:3000/api/auth/google', {

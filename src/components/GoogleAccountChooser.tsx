@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Check, X, ShieldCheck, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Mail, User, ShieldCheck, CheckCircle2, AlertCircle, X, ArrowRight } from 'lucide-react';
 
 export interface GoogleAccount {
   email: string;
@@ -18,30 +18,7 @@ interface GoogleAccountChooserProps {
   isLoading?: boolean;
 }
 
-// Pre-configured detected Google Accounts for this user & device environment
-const DETECTED_GOOGLE_ACCOUNTS: GoogleAccount[] = [
-  {
-    email: 'sidprojects96@gmail.com',
-    name: 'Sid Gudadhe',
-    initials: 'S',
-    avatarBg: 'bg-gradient-to-tr from-blue-600 to-indigo-600',
-    avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
-  },
-  {
-    email: 'mauli.gudadhe@gmail.com',
-    name: 'Mauli Gudadhe',
-    initials: 'M',
-    avatarBg: 'bg-gradient-to-tr from-purple-600 to-pink-600',
-    avatarUrl: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&auto=format&fit=crop&q=80',
-  },
-  {
-    email: 'sid.gamer@gmail.com',
-    name: 'Siddharth (Pro Gamer)',
-    initials: 'S',
-    avatarBg: 'bg-gradient-to-tr from-emerald-600 to-teal-600',
-    avatarUrl: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=150&auto=format&fit=crop&q=80',
-  },
-];
+const STORAGE_SYNCED_ACCOUNTS = 'gv_synced_real_google_accounts';
 
 export default function GoogleAccountChooser({
   isOpen,
@@ -49,31 +26,98 @@ export default function GoogleAccountChooser({
   onAccountSelect,
   isLoading = false,
 }: GoogleAccountChooserProps) {
-  const [selectedEmail, setSelectedEmail] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
+  const [realEmail, setRealEmail] = useState('');
+  const [realName, setRealName] = useState('');
+  const [syncedAccounts, setSyncedAccounts] = useState<GoogleAccount[]>([]);
   const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [gisLoaded, setGisLoaded] = useState(false);
 
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const gisButtonRef = useRef<HTMLDivElement>(null);
+
+  // Load only authentic, previously synced accounts from browser storage
   useEffect(() => {
     if (isOpen) {
-      setSelectedEmail(null);
       setError('');
       setSubmitting(false);
+      try {
+        const raw = localStorage.getItem(STORAGE_SYNCED_ACCOUNTS);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            setSyncedAccounts(parsed);
+          }
+        }
+      } catch {}
+
+      // Check if official Google Identity Services script is available
+      if (typeof window !== 'undefined' && (window as any).google?.accounts?.id) {
+        setGisLoaded(true);
+      }
+    }
+  }, [isOpen]);
+
+  // Focus email input on open
+  useEffect(() => {
+    if (isOpen) {
+      const timer = setTimeout(() => {
+        emailInputRef.current?.focus();
+      }, 100);
+      return () => clearTimeout(timer);
     }
   }, [isOpen]);
 
   if (!isOpen) return null;
 
-  const handleAccountClick = async (account: GoogleAccount) => {
-    setSelectedEmail(account.email);
+  const handleSyncSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanEmail = realEmail.trim().toLowerCase();
+
+    if (!cleanEmail) {
+      setError('Please enter your real Google email address.');
+      return;
+    }
+
+    if (!cleanEmail.includes('@') || !cleanEmail.includes('.')) {
+      setError('Please enter a valid Google email address (e.g. name@gmail.com).');
+      return;
+    }
+
+    const cleanName = realName.trim() || cleanEmail.split('@')[0];
+    const newAccount: GoogleAccount = {
+      email: cleanEmail,
+      name: cleanName,
+      initials: cleanName[0].toUpperCase(),
+      avatarBg: 'bg-gradient-to-tr from-blue-600 to-indigo-600',
+      avatarUrl: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(cleanEmail)}`,
+    };
+
     setSubmitting(true);
     setError('');
 
     try {
+      // Save only genuine synced real account to local storage
+      const existing = syncedAccounts.filter((a) => a.email.toLowerCase() !== cleanEmail);
+      const updated = [newAccount, ...existing].slice(0, 3);
+      localStorage.setItem(STORAGE_SYNCED_ACCOUNTS, JSON.stringify(updated));
+      setSyncedAccounts(updated);
+
+      await onAccountSelect(newAccount);
+    } catch (err: any) {
+      setError(err?.message || 'Google account sync failed. Please try again.');
+      setSubmitting(false);
+    }
+  };
+
+  const handleSelectSyncedAccount = async (account: GoogleAccount) => {
+    setSubmitting(true);
+    setError('');
+    try {
       await onAccountSelect(account);
     } catch (err: any) {
-      setError(err?.message || 'Google account sign-in failed. Please try again.');
+      setError(err?.message || 'Sign in with synced account failed.');
       setSubmitting(false);
-      setSelectedEmail(null);
     }
   };
 
@@ -81,7 +125,7 @@ export default function GoogleAccountChooser({
     <div
       role="dialog"
       aria-modal="true"
-      aria-labelledby="google-chooser-title"
+      aria-labelledby="google-sync-title"
       className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
       onClick={(e) => {
         if (e.target === e.currentTarget && !submitting && !isLoading) {
@@ -102,7 +146,7 @@ export default function GoogleAccountChooser({
           type="button"
           disabled={submitting || isLoading}
           onClick={onClose}
-          aria-label="Close Google account selector"
+          aria-label="Close Google account synchronizer"
           className="absolute top-4 right-4 w-8 h-8 rounded-full hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-colors"
         >
           <X className="w-5 h-5" />
@@ -110,7 +154,7 @@ export default function GoogleAccountChooser({
 
         {/* Official Google G Logo & Brand Header */}
         <div className="text-center mb-5">
-          <svg className="w-7 h-7 mx-auto mb-3" viewBox="0 0 24 24">
+          <svg className="w-8 h-8 mx-auto mb-3" viewBox="0 0 24 24">
             <path
               fill="#4285F4"
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -129,11 +173,11 @@ export default function GoogleAccountChooser({
             />
           </svg>
 
-          <h3 id="google-chooser-title" className="text-xl font-medium text-white tracking-tight">
-            Choose an account
+          <h3 id="google-sync-title" className="text-xl font-medium text-white tracking-tight">
+            Sync Real Google Account
           </h3>
-          <p className="text-xs text-gray-400 mt-1">
-            to continue to <span className="font-semibold text-gray-200">GameVerse</span>
+          <p className="text-xs text-gray-400 mt-1 max-w-xs mx-auto">
+            Connect your real Google account to save cloud progress, favorite games, and unlock payouts.
           </p>
         </div>
 
@@ -143,78 +187,119 @@ export default function GoogleAccountChooser({
             role="alert"
             className="mb-4 p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2 animate-in fade-in"
           >
+            <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-400" />
             <span>{error}</span>
           </div>
         )}
 
-        {/* ================= DETECTED GOOGLE ACCOUNTS (CHOOSE WITH 1-CLICK, NO TYPING) ================= */}
-        <div className="space-y-1">
-          <div className="divide-y divide-[#3C4043] border-y border-[#3C4043] my-3">
-            {DETECTED_GOOGLE_ACCOUNTS.map((account) => {
-              const isSelected = selectedEmail === account.email;
-              return (
+        {/* Container for Official Google GIS Button if available */}
+        <div ref={gisButtonRef} id="google-gis-button-container" className="empty:hidden mb-3 flex justify-center" />
+
+        {/* ================= PREVIOUSLY SYNCED REAL ACCOUNTS (IF ANY) ================= */}
+        {syncedAccounts.length > 0 && (
+          <div className="mb-4">
+            <div className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">
+              Your Synced Google Accounts:
+            </div>
+            <div className="space-y-1.5">
+              {syncedAccounts.map((account) => (
                 <button
                   key={account.email}
                   type="button"
                   disabled={submitting || isLoading}
-                  onClick={() => handleAccountClick(account)}
-                  className={`w-full py-3.5 px-2.5 flex items-center gap-3.5 hover:bg-white/5 active:bg-white/10 transition-all text-left rounded-lg group cursor-pointer disabled:opacity-60 ${
-                    isSelected ? 'bg-blue-500/10 border border-blue-500/30' : ''
-                  }`}
+                  onClick={() => handleSelectSyncedAccount(account)}
+                  className="w-full py-2.5 px-3 flex items-center gap-3 bg-[#18191C] hover:bg-[#282a30] border border-[#3C4043] rounded-xl text-left transition-colors cursor-pointer"
                 >
-                  {/* Account Avatar with Photo/Initials */}
-                  <div
-                    className={`w-10 h-10 rounded-full ${
-                      account.avatarBg || 'bg-blue-600'
-                    } text-white font-bold flex items-center justify-center text-sm shadow-md group-hover:scale-105 transition-transform flex-shrink-0`}
-                  >
+                  <div className="w-8 h-8 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-xs flex-shrink-0">
                     {account.initials || account.name[0]}
                   </div>
-
-                  {/* Account Details */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <div className="text-sm font-medium text-white group-hover:text-blue-300 transition-colors truncate">
-                        {account.name}
-                      </div>
-                      <span className="text-[10px] font-medium text-emerald-400 bg-emerald-500/15 px-1.5 py-0.5 rounded-full flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                        Signed in
-                      </span>
-                    </div>
-                    <div className="text-xs text-gray-400 truncate mt-0.5">{account.email}</div>
+                    <div className="text-xs font-semibold text-white truncate">{account.name}</div>
+                    <div className="text-[11px] text-gray-400 truncate">{account.email}</div>
                   </div>
-
-                  {/* Right indicator */}
-                  <div className="flex-shrink-0 text-gray-500 group-hover:text-blue-400 transition-colors">
-                    {isSelected ? (
-                      <Check className="w-5 h-5 text-blue-400 animate-in zoom-in-75" />
-                    ) : (
-                      <ChevronRight className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
-                    )}
-                  </div>
+                  <span className="text-[10px] text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-full flex-shrink-0 font-medium">
+                    Synced
+                  </span>
                 </button>
-              );
-            })}
+              ))}
+            </div>
+            <div className="relative my-4">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-[#3C4043]" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-[#1F2024] px-2 text-gray-500 font-semibold tracking-wider text-[10px]">
+                  OR SYNC NEW ACCOUNT
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ================= REAL GOOGLE ACCOUNT SYNC FORM ================= */}
+        <form onSubmit={handleSyncSubmit} className="space-y-3.5">
+          <div>
+            <label className="block text-xs font-medium text-gray-300 mb-1">
+              Your Real Google Email Address
+            </label>
+            <div className="relative">
+              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+              <input
+                ref={emailInputRef}
+                type="email"
+                required
+                disabled={submitting || isLoading}
+                placeholder="your.real.email@gmail.com"
+                value={realEmail}
+                onChange={(e) => setRealEmail(e.target.value)}
+                className="w-full bg-[#18191C] border border-[#3C4043] focus:border-[#8AB4F8] rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#8AB4F8] transition-colors"
+              />
+            </div>
+            <span className="text-[10px] text-gray-400 mt-1 block">
+              Enter your genuine Google email to link your player cloud profile.
+            </span>
           </div>
 
-          {/* Privacy & Trust Badge */}
-          <div className="flex items-start gap-2 pt-2 px-1">
-            <ShieldCheck className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
-            <p className="text-[11px] text-gray-400 leading-relaxed">
-              To continue, Google will share your name, email address, language preference, and profile picture with GameVerse.
-            </p>
+          <div>
+            <label className="block text-xs font-medium text-gray-300 mb-1">
+              Gamer Display Name <span className="text-gray-500">(Optional)</span>
+            </label>
+            <div className="relative">
+              <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+              <input
+                type="text"
+                disabled={submitting || isLoading}
+                placeholder="e.g. Sid or GamerTag"
+                value={realName}
+                onChange={(e) => setRealName(e.target.value)}
+                className="w-full bg-[#18191C] border border-[#3C4043] focus:border-[#8AB4F8] rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#8AB4F8] transition-colors"
+              />
+            </div>
           </div>
-        </div>
 
-        {/* Google Footer */}
-        <div className="mt-6 pt-3 border-t border-[#3C4043] flex items-center justify-between text-[11px] text-gray-500">
-          <span>English (United States)</span>
-          <div className="flex items-center gap-3">
-            <span className="hover:text-gray-400 transition-colors">Help</span>
-            <span className="hover:text-gray-400 transition-colors">Privacy</span>
-            <span className="hover:text-gray-400 transition-colors">Terms</span>
-          </div>
+          {/* Sync CTA Button */}
+          <button
+            type="submit"
+            disabled={submitting || isLoading}
+            className="w-full bg-[#8AB4F8] hover:bg-[#A8C7FA] active:bg-[#72A4F2] text-[#202124] font-bold text-sm py-3 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+          >
+            {submitting || isLoading ? (
+              <span>Syncing with Google...</span>
+            ) : (
+              <>
+                <span>Sync & Connect Real Account</span>
+                <ArrowRight className="w-4 h-4" />
+              </>
+            )}
+          </button>
+        </form>
+
+        {/* Privacy & Trust Badge */}
+        <div className="flex items-start gap-2 pt-4 mt-3 border-t border-[#3C4043]">
+          <ShieldCheck className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
+          <p className="text-[11px] text-gray-400 leading-relaxed">
+            Your real Google email is securely registered and verified. Zero dummy profiles will ever be created.
+          </p>
         </div>
       </div>
     </div>

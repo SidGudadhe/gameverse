@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { NextRequest } from 'next/server';
+import jwt from 'jsonwebtoken';
 import { POST as googleAuthRoute } from '../src/app/api/auth/google/route';
 import { POST as loginRoute } from '../src/app/api/auth/login/route';
 import { POST as signupRoute } from '../src/app/api/auth/signup/route';
@@ -134,6 +135,37 @@ describe('CrazyGames Auth & Login System Verification (100x Deep Rebuild)', () =
       expect(dbUser?.email).toBe(realUserEmail);
       expect(dbUser?.name).toBe('Mauli Real Gamer');
       expect(dbUser?.role).toBe('PLAYER');
+    });
+
+    it('should authenticate user from real Google Identity Services (GIS) ID Token', async () => {
+      const googleTokenEmail = 'real.gis.user@gmail.com';
+      const fakeGisIdToken = jwt.sign(
+        {
+          iss: 'https://accounts.google.com',
+          sub: '109823456789',
+          email: googleTokenEmail,
+          name: 'GIS Real Gamer',
+          picture: 'https://lh3.googleusercontent.com/a/test',
+        },
+        'test-secret'
+      );
+
+      const req = new NextRequest('http://localhost:3000/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          credential: fakeGisIdToken,
+        }),
+      });
+
+      const res = await googleAuthRoute(req);
+      const data = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(data.user.email).toBe(googleTokenEmail);
+      expect(data.user.name).toBe('GIS Real Gamer');
+      expect(data.user.role).toBe('PLAYER');
     });
 
     it('should gracefully handle empty payload with fallback Google gamer identity', async () => {

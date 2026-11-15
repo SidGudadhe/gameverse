@@ -47,6 +47,7 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap"
           rel="stylesheet"
         />
+        <script src="https://accounts.google.com/gsi/client" async defer />
       </head>
       <body className="min-h-screen bg-[#090D16] text-gray-100 flex flex-col selection:bg-indigo-500 selection:text-white">
         <AuthProvider initialUser={initialUser}>

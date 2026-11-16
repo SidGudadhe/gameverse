@@ -83,18 +83,18 @@ export default function AdaptiveRecommendations({
   return (
     <section className="space-y-6 pt-4 pb-2">
       {/* Header & Quick Mood Filters */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-white/10 pb-5">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-5">
         <div>
           <div className="flex items-center gap-2">
-            <span className="flex h-2 w-2 rounded-full bg-indigo-400" />
-            <span className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider">
+            <span className="flex h-2 w-2 rounded-full bg-indigo-600" />
+            <span className="text-[11px] font-bold text-indigo-600 uppercase tracking-wider">
               Picks For You
             </span>
           </div>
-          <h2 className="font-heading font-black text-2xl sm:text-3xl text-white tracking-tight mt-1">
+          <h2 className="font-heading font-black text-2xl sm:text-3xl text-slate-900 tracking-tight mt-1">
             {title}
           </h2>
-          <p className="text-gray-400 text-xs sm:text-sm mt-1 max-w-xl">
+          <p className="text-slate-500 text-xs sm:text-sm mt-1 max-w-xl">
             {subtitle}
           </p>
         </div>
@@ -108,10 +108,10 @@ export default function AdaptiveRecommendations({
               <button
                 key={btn.key}
                 onClick={() => setActiveMood(btn.key)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all active:scale-95 ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all active:scale-95 cursor-pointer ${
                   isSelected
-                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                    : 'bg-slate-900/80 hover:bg-slate-800 text-gray-300 border border-white/5 hover:border-white/15'
+                    ? 'bg-indigo-600 text-white shadow-sm'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'
                 }`}
               >
                 <span>{btn.icon}</span>
@@ -126,7 +126,7 @@ export default function AdaptiveRecommendations({
       {loading ? (
         <RecommendationsSkeleton />
       ) : recommendations.length === 0 ? (
-        <div className="py-12 text-center text-gray-400 text-sm">
+        <div className="py-12 text-center text-slate-400 text-sm">
           No games found in this category right now.
         </div>
       ) : (

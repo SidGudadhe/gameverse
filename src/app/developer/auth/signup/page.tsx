@@ -69,25 +69,25 @@ export default function DeveloperSignupPage() {
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md space-y-6 bg-slate-900/90 p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden backdrop-blur-xl">
+    <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 bg-[#F8FAFC]">
+      <div className="w-full max-w-md space-y-6 bg-white p-8 rounded-3xl border border-slate-200 shadow-xl relative overflow-hidden">
         <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-2xl bg-cyan-600/20 border border-cyan-500/30 flex items-center justify-center mx-auto text-cyan-400">
+          <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-200 flex items-center justify-center mx-auto text-indigo-600">
             <Code className="w-6 h-6" />
           </div>
           <div className="flex items-center justify-center gap-1.5 pt-1">
             <Badge variant="cyan">DEVELOPER STUDIO PORTAL</Badge>
           </div>
-          <h1 className="font-heading font-black text-2xl text-white">
+          <h1 className="font-heading font-black text-2xl text-slate-900">
             Register Game Studio
           </h1>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-slate-500">
             Join GameVerse Creator Network. Upload ZIP games, reach millions of gamers, and earn 70% ad revenue.
           </p>
         </div>
 
         {error && (
-          <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-center gap-2">
+          <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
             <AlertCircle className="w-4 h-4 flex-shrink-0" />
             <span>{error}</span>
           </div>
@@ -114,20 +114,20 @@ export default function DeveloperSignupPage() {
           />
 
           <div>
-            <label className="block text-xs font-semibold text-gray-300 mb-1.5">
+            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
               Primary Game Engine
             </label>
             <div className="relative">
               <select
                 value={engine}
                 onChange={(e) => setEngine(e.target.value)}
-                className="w-full bg-black/40 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500 transition-colors"
+                className="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 transition-colors shadow-xs"
               >
-                <option value="Unity WebGL" className="bg-slate-900 text-white">Unity WebGL (Wasm)</option>
-                <option value="Godot Engine" className="bg-slate-900 text-white">Godot 4.x Web</option>
-                <option value="Phaser 3" className="bg-slate-900 text-white">Phaser 3 / PixiJS</option>
-                <option value="Custom HTML5" className="bg-slate-900 text-white">Custom HTML5 / Vanilla Canvas</option>
-                <option value="PlayCanvas" className="bg-slate-900 text-white">PlayCanvas</option>
+                <option value="Unity WebGL" className="bg-white text-slate-800">Unity WebGL (Wasm)</option>
+                <option value="Godot Engine" className="bg-white text-slate-800">Godot 4.x Web</option>
+                <option value="Phaser 3" className="bg-white text-slate-800">Phaser 3 / PixiJS</option>
+                <option value="Custom HTML5" className="bg-white text-slate-800">Custom HTML5 / Vanilla Canvas</option>
+                <option value="PlayCanvas" className="bg-white text-slate-800">PlayCanvas</option>
               </select>
             </div>
           </div>
@@ -150,23 +150,23 @@ export default function DeveloperSignupPage() {
                 required
                 checked={termsAgreed}
                 onChange={(e) => setTermsAgreed(e.target.checked)}
-                className="mt-0.5 rounded border-white/20 bg-black/40 text-cyan-600 focus:ring-0"
+                className="mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-0"
               />
-              <span className="text-[11px] text-gray-300 leading-relaxed">
+              <span className="text-[11px] text-slate-600 leading-relaxed">
                 I accept the GameVerse Creator Terms, Sandbox Security Rules, and{' '}
-                <span className="text-cyan-400 font-semibold">Creator Revenue Agreement (70% net revenue split)</span>.
+                <span className="text-indigo-600 font-semibold">Creator Revenue Agreement (70% net revenue split)</span>.
               </span>
             </label>
           </div>
 
-          <Button type="submit" variant="primary" className="w-full bg-cyan-600 hover:bg-cyan-500" isLoading={loading}>
+          <Button type="submit" variant="primary" className="w-full bg-indigo-600 hover:bg-indigo-500" isLoading={loading}>
             Create Developer Studio Account
           </Button>
         </form>
 
-        <div className="text-center text-xs text-gray-400 pt-1">
+        <div className="text-center text-xs text-slate-500 pt-1">
           Already registered as a Developer?{' '}
-          <Link href="/developer/auth/login" className="text-cyan-400 hover:text-cyan-300 font-semibold">
+          <Link href="/developer/auth/login" className="text-indigo-600 hover:text-indigo-700 font-semibold">
             Studio Sign In
           </Link>
         </div>

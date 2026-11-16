@@ -27,7 +27,7 @@ export default function HeroCarousel({ featuredGames }: HeroCarouselProps) {
   const current = games[currentIndex] || games[0];
 
   return (
-    <div className="relative w-full rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-slate-900 group">
+    <div className="relative w-full rounded-3xl overflow-hidden border border-slate-200 shadow-xl shadow-slate-300/30 bg-slate-950 group">
       {/* Banner Backdrop */}
       <div className="relative h-[360px] sm:h-[420px] md:h-[460px] w-full overflow-hidden">
         <img
@@ -35,8 +35,8 @@ export default function HeroCarousel({ featuredGames }: HeroCarouselProps) {
           alt={current.title}
           className="w-full h-full object-cover transition-transform duration-700 ease-out"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#090D16] via-[#090D16]/70 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#090D16] via-[#090D16]/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/60 to-transparent" />
 
         {/* Content Overlay */}
         <div className="absolute inset-0 p-6 sm:p-10 md:p-12 flex flex-col justify-end max-w-2xl z-10">
@@ -65,7 +65,7 @@ export default function HeroCarousel({ featuredGames }: HeroCarouselProps) {
           <div className="mt-6 flex items-center gap-4">
             <Link
               href={`/game/${current.slug}`}
-              className="inline-flex items-center gap-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm sm:text-base px-6 py-3.5 rounded-2xl shadow-xl shadow-indigo-600/30 hover:scale-105 active:scale-95 transition-all"
+              className="inline-flex items-center gap-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm sm:text-base px-6 py-3.5 rounded-2xl shadow-xl shadow-indigo-600/30 hover:scale-105 active:scale-95 transition-all cursor-pointer"
             >
               <Play className="w-5 h-5 fill-white" />
               <span>Play Now Free</span>
@@ -81,7 +81,7 @@ export default function HeroCarousel({ featuredGames }: HeroCarouselProps) {
         {/* Desktop Side Thumbnails Switcher (Steam / CrazyGames Style) */}
         {games.length > 1 && (
           <div className="hidden lg:flex flex-col gap-2.5 absolute right-6 bottom-6 top-6 justify-center z-10 w-64">
-            <div className="text-[11px] font-bold text-gray-400 uppercase tracking-wider px-1">
+            <div className="text-[11px] font-bold text-gray-300 uppercase tracking-wider px-1">
               Top Featured Games
             </div>
             {games.map((g, idx) => {
@@ -90,48 +90,28 @@ export default function HeroCarousel({ featuredGames }: HeroCarouselProps) {
                 <button
                   key={g.id}
                   onClick={() => setCurrentIndex(idx)}
-                  className={`flex items-center gap-3 p-2 rounded-xl text-left transition-all ${
+                  className={`flex items-center gap-3 p-2 rounded-xl text-left transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-slate-800/90 border border-indigo-500 shadow-md backdrop-blur-md'
-                      : 'bg-black/40 hover:bg-black/60 border border-white/5 opacity-70 hover:opacity-100 backdrop-blur-sm'
+                      ? 'bg-slate-800/90 border border-indigo-400 shadow-md backdrop-blur-md'
+                      : 'bg-black/50 hover:bg-black/70 border border-white/10 opacity-75 hover:opacity-100 backdrop-blur-sm'
                   }`}
                 >
                   <img
                     src={g.thumbnailUrl}
                     alt={g.title}
-                    className="w-14 h-10 object-cover rounded-lg flex-shrink-0"
+                    className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
                   />
                   <div className="min-w-0 flex-1">
-                    <div className="text-xs font-bold text-white truncate">{g.title}</div>
-                    <div className="text-[10px] text-gray-400 flex items-center gap-1.5 mt-0.5">
-                      <span>{g.categoryName}</span>
-                      <span>•</span>
-                      <span className="text-amber-400 font-medium">★ {g.rating.toFixed(1)}</span>
+                    <div className="text-xs font-semibold text-white truncate">
+                      {g.title}
+                    </div>
+                    <div className="text-[11px] text-gray-400 truncate">
+                      {g.categoryName}
                     </div>
                   </div>
                 </button>
               );
             })}
-          </div>
-        )}
-
-        {/* Mobile Navigation Arrows */}
-        {games.length > 1 && (
-          <div className="flex lg:hidden items-center gap-2 absolute right-4 bottom-4 z-10">
-            <button
-              onClick={() => setCurrentIndex((prev) => (prev - 1 + games.length) % games.length)}
-              className="w-8 h-8 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center border border-white/10"
-              aria-label="Previous game"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setCurrentIndex((prev) => (prev + 1) % games.length)}
-              className="w-8 h-8 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center border border-white/10"
-              aria-label="Next game"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
           </div>
         )}
       </div>

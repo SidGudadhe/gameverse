@@ -99,18 +99,18 @@ function SearchContent() {
   return (
     <div className="space-y-8">
       {/* Header & Filter Controls */}
-      <div className="space-y-5 border-b border-white/10 pb-6">
+      <div className="space-y-5 border-b border-slate-200 pb-6">
         <div>
           <div className="flex items-center gap-2">
             <Badge variant="cyan">GLOBAL SEARCH</Badge>
-            <span className="text-xs text-gray-400 font-mono">
+            <span className="text-xs text-slate-500 font-mono">
               {totalCount} {totalCount === 1 ? 'game found' : 'games found'}
             </span>
           </div>
-          <h1 className="font-heading font-black text-3xl sm:text-4xl text-white mt-1">
+          <h1 className="font-heading font-black text-3xl sm:text-4xl text-slate-900 mt-1">
             Discover & Search Games
           </h1>
-          <p className="text-gray-400 text-xs sm:text-sm mt-0.5">
+          <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
             Instant search across verified HTML5, WebGL, and WASM browser titles.
           </p>
         </div>
@@ -118,13 +118,13 @@ function SearchContent() {
         {/* Search Bar + Controls */}
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <SearchIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <SearchIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search by game title, mechanics, tags, or studio..."
-              className="w-full bg-slate-900/80 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-500 shadow-sm"
+              className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-xs"
             />
           </div>
 
@@ -132,7 +132,7 @@ function SearchContent() {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="bg-slate-900/80 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500"
+              className="bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 shadow-xs"
             >
               <option value="all">All Categories</option>
               <option value="cat-arcade">Arcade</option>
@@ -147,7 +147,7 @@ function SearchContent() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="bg-slate-900/80 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500"
+              className="bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 shadow-xs"
             >
               <option value="trending">Sort: Trending</option>
               <option value="popular">Sort: Most Played</option>
@@ -158,16 +158,16 @@ function SearchContent() {
         </div>
 
         {/* Quick Tag Suggestion Chips */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none text-xs text-gray-400">
-          <span className="font-semibold text-gray-400">Popular:</span>
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none text-xs text-slate-500">
+          <span className="font-semibold text-slate-700">Popular:</span>
           {POPULAR_TAGS.map((tag) => (
             <button
               key={tag}
               onClick={() => setQuery(tag)}
               className={`px-2.5 py-1 rounded-lg border transition-colors ${
                 query.toLowerCase() === tag.toLowerCase()
-                  ? 'bg-indigo-600/30 text-indigo-300 border-indigo-500/40'
-                  : 'bg-white/5 border-white/10 text-gray-400 hover:text-white hover:bg-white/10'
+                  ? 'bg-indigo-50 text-indigo-700 border-indigo-300 font-semibold'
+                  : 'bg-slate-100 border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-200'
               }`}
             >
               {tag}
@@ -186,18 +186,18 @@ function SearchContent() {
       ) : (
         /* Smart Fallback & Engaging Recommendations when Zero Matches Found */
         <div className="space-y-10 py-6">
-          <div className="bg-gradient-to-b from-indigo-950/40 via-slate-900/60 to-[#090D16] border border-indigo-500/30 rounded-3xl p-8 sm:p-10 text-center shadow-2xl relative overflow-hidden">
-            <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto mb-4 text-indigo-400">
+          <div className="bg-gradient-to-b from-indigo-50/60 via-slate-50 to-white border border-indigo-200 rounded-3xl p-8 sm:p-10 text-center shadow-sm relative overflow-hidden">
+            <div className="w-16 h-16 rounded-2xl bg-indigo-100/70 border border-indigo-200 flex items-center justify-center mx-auto mb-4 text-indigo-600">
               <Compass className="w-8 h-8 animate-pulse" />
             </div>
 
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
               This Game is Not Available Yet
             </h2>
-            <p className="text-gray-300 text-sm max-w-xl mx-auto mt-2 leading-relaxed">
-              We searched the entire catalog for <span className="font-mono text-cyan-300 font-bold bg-white/5 px-2 py-0.5 rounded">"{query}"</span>, but this title is not available on GameVerse yet.
+            <p className="text-slate-600 text-sm max-w-xl mx-auto mt-2 leading-relaxed">
+              We searched the entire catalog for <span className="font-mono text-indigo-700 font-bold bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">"{query}"</span>, but this title is not available on GameVerse yet.
             </p>
-            <p className="text-indigo-300 text-sm font-semibold mt-2">
+            <p className="text-indigo-700 text-sm font-semibold mt-2">
               Would you like to play these top-rated and similar popular games instead?
             </p>
 
@@ -210,7 +210,7 @@ function SearchContent() {
               >
                 {requestSent ? (
                   <>
-                    <CheckCircle className="w-4 h-4 text-emerald-400" />
+                    <CheckCircle className="w-4 h-4 text-emerald-600" />
                     <span>Request Logged! Devs Notified</span>
                   </>
                 ) : (
@@ -238,12 +238,12 @@ function SearchContent() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-amber-400" />
-                  <h3 className="font-heading font-black text-xl text-white">
+                  <Sparkles className="w-5 h-5 text-amber-500" />
+                  <h3 className="font-heading font-black text-xl text-slate-900">
                     Suggested Games You Might Enjoy Instead
                   </h3>
                 </div>
-                <span className="text-xs font-mono text-gray-400">Curated AI Recommendations</span>
+                <span className="text-xs font-mono text-slate-500">Curated AI Recommendations</span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">

@@ -8,6 +8,7 @@ import FooterLegal from '@/components/FooterLegal';
 import NavigationProgressBar from '@/components/NavigationProgressBar';
 import NavigationGuard from '@/components/NavigationGuard';
 import CrazyGamesAuthModal from '@/components/CrazyGamesAuthModal';
+import GoogleOneTap from '@/components/GoogleOneTap';
 import { AuthProvider, AuthUser } from '@/context/AuthContext';
 import { verifyToken } from '@/lib/auth';
 
@@ -39,7 +40,7 @@ export default function RootLayout({
   } catch {}
 
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -49,10 +50,11 @@ export default function RootLayout({
         />
         <script src="https://accounts.google.com/gsi/client" async defer />
       </head>
-      <body className="min-h-screen bg-[#090D16] text-gray-100 flex flex-col selection:bg-indigo-500 selection:text-white">
+      <body className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col selection:bg-indigo-500 selection:text-white">
         <AuthProvider initialUser={initialUser}>
           <NavigationGuard />
           <CrazyGamesAuthModal />
+          <GoogleOneTap />
           <Suspense fallback={null}>
             <NavigationProgressBar />
           </Suspense>
@@ -65,4 +67,3 @@ export default function RootLayout({
     </html>
   );
 }
-

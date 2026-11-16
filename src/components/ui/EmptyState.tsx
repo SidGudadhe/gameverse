@@ -23,15 +23,15 @@ export function EmptyState({
     <div
       role="region"
       aria-label={title}
-      className={`py-16 px-6 text-center space-y-4 bg-surface/30 rounded-3xl border border-white/5 max-w-md mx-auto ${className}`}
+      className={`py-16 px-6 text-center space-y-4 bg-white rounded-3xl border border-slate-200 shadow-sm max-w-md mx-auto ${className}`}
     >
-      <div className="w-14 h-14 rounded-2xl bg-indigo-600/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mx-auto shadow-inner">
+      <div className="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center mx-auto shadow-inner">
         <Icon className="w-7 h-7" />
       </div>
 
       <div className="space-y-1">
-        <h3 className="font-heading font-bold text-lg text-white">{title}</h3>
-        <p className="text-gray-400 text-xs sm:text-sm leading-relaxed">
+        <h3 className="font-heading font-bold text-lg text-slate-900">{title}</h3>
+        <p className="text-slate-500 text-xs sm:text-sm leading-relaxed">
           {description}
         </p>
       </div>

@@ -36,34 +36,34 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md space-y-6 bg-surface p-8 rounded-3xl border border-white/10 shadow-2xl">
-        <div className="flex items-center gap-2 text-xs text-gray-400">
-          <Link href="/auth/login" className="hover:text-white transition-colors flex items-center gap-1">
+      <div className="w-full max-w-md space-y-6 bg-white p-8 rounded-3xl border border-slate-200 shadow-xl">
+        <div className="flex items-center gap-2 text-xs text-slate-500">
+          <Link href="/auth/login" className="hover:text-slate-900 transition-colors flex items-center gap-1 font-medium">
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to Sign In</span>
           </Link>
         </div>
 
         <div className="space-y-1.5">
-          <h1 className="font-heading font-black text-2xl text-white">
+          <h1 className="font-heading font-black text-2xl text-slate-900">
             Reset Password
           </h1>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-slate-500">
             Enter your registered email address to receive password recovery instructions.
           </p>
         </div>
 
         {submitted ? (
-          <div className="p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-xs space-y-3">
-            <div className="flex items-center gap-2 text-emerald-400 font-bold">
-              <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
+          <div className="p-5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs space-y-3">
+            <div className="flex items-center gap-2 text-emerald-700 font-bold">
+              <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-emerald-600" />
               <span>Password Recovery Dispatched</span>
             </div>
-            <p className="text-gray-300 leading-relaxed">
-              If an account with <span className="font-semibold text-white">{email}</span> exists, you will receive recovery instructions.
+            <p className="text-slate-600 leading-relaxed">
+              If an account with <span className="font-semibold text-slate-900">{email}</span> exists, you will receive recovery instructions.
             </p>
             {resetToken && (
-              <div className="bg-black/40 p-3 rounded-xl border border-white/10 font-mono text-[11px] text-cyan-300 break-all">
+              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 font-mono text-[11px] text-cyan-800 break-all">
                 Test Token: {resetToken}
               </div>
             )}

@@ -60,17 +60,17 @@ export default function DeveloperSettingsPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-8">
       {/* Header */}
-      <div className="border-b border-white/10 pb-6">
-        <h1 className="font-heading font-black text-2xl sm:text-3xl text-white">
+      <div className="border-b border-slate-200 pb-6">
+        <h1 className="font-heading font-black text-2xl sm:text-3xl text-slate-900">
           Studio Settings & Payout Preferences
         </h1>
-        <p className="text-gray-400 text-xs sm:text-sm mt-0.5">
+        <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
           Configure payment disbursement accounts, email notification preferences, and security settings.
         </p>
       </div>
 
       {saved && (
-        <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs flex items-center gap-2">
+        <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4" />
           <span>Settings successfully updated.</span>
         </div>
@@ -78,21 +78,21 @@ export default function DeveloperSettingsPage() {
 
       <form onSubmit={handleSaveSettings} className="space-y-6">
         {/* Payout Configuration Card */}
-        <div className="bg-surface rounded-3xl p-6 sm:p-8 border border-white/10 space-y-6">
-          <div className="flex items-center justify-between border-b border-white/5 pb-4">
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-4">
             <div>
-              <h2 className="font-heading font-bold text-lg text-white flex items-center gap-2">
-                <Wallet className="w-5 h-5 text-emerald-400" />
+              <h2 className="font-heading font-bold text-lg text-slate-900 flex items-center gap-2">
+                <Wallet className="w-5 h-5 text-emerald-600" />
                 <span>Monetization Payout Method</span>
               </h2>
-              <p className="text-xs text-gray-400 mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5">
                 Minimum payout threshold is $50.00 USD. Net-30 monthly disbursement.
               </p>
             </div>
           </div>
 
           {/* Payout Method Selector */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {[
               { id: 'BANK_WIRE', label: 'International Wire / IBAN', fee: 'No platform fee' },
               { id: 'UPI', label: 'India UPI Instant', fee: 'INR direct bank transfer' },
@@ -104,12 +104,12 @@ export default function DeveloperSettingsPage() {
                 onClick={() => setPayoutMethod(m.id as any)}
                 className={`p-3.5 rounded-2xl border text-left transition-all ${
                   payoutMethod === m.id
-                    ? 'bg-indigo-600/20 border-indigo-500 text-white'
-                    : 'bg-black/30 border-white/5 text-gray-400 hover:text-white'
+                    ? 'bg-indigo-50 border-indigo-500 text-indigo-900 shadow-xs'
+                    : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
                 }`}
               >
-                <div className="font-semibold text-xs text-white">{m.label}</div>
-                <div className="text-[10px] text-gray-400 mt-0.5">{m.fee}</div>
+                <div className="font-semibold text-xs text-slate-900">{m.label}</div>
+                <div className="text-[10px] text-slate-500 mt-0.5">{m.fee}</div>
               </button>
             ))}
           </div>
@@ -168,54 +168,54 @@ export default function DeveloperSettingsPage() {
         </div>
 
         {/* Notifications Card */}
-        <div className="bg-surface rounded-3xl p-6 sm:p-8 border border-white/10 space-y-6">
-          <h2 className="font-heading font-bold text-lg text-white flex items-center gap-2">
-            <Bell className="w-5 h-5 text-indigo-400" />
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+          <h2 className="font-heading font-bold text-lg text-slate-900 flex items-center gap-2">
+            <Bell className="w-5 h-5 text-indigo-600" />
             <span>Studio Notification Preferences</span>
           </h2>
 
           <div className="space-y-4">
-            <label className="flex items-center justify-between p-3.5 rounded-2xl bg-black/20 border border-white/5 cursor-pointer">
+            <label className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors">
               <div>
-                <div className="text-xs font-semibold text-white">QA Review Updates</div>
-                <div className="text-[11px] text-gray-400">Receive instant alerts when an admin approves or requests changes to a build.</div>
+                <div className="text-xs font-semibold text-slate-900">QA Review Updates</div>
+                <div className="text-[11px] text-slate-500">Receive instant alerts when an admin approves or requests changes to a build.</div>
               </div>
               <input
                 type="checkbox"
                 checked={notifyQa}
                 onChange={(e) => setNotifyQa(e.target.checked)}
-                className="rounded border-white/20 bg-black/40 text-indigo-600 focus:ring-0"
+                className="rounded border-slate-300 bg-white text-indigo-600 focus:ring-0"
               />
             </label>
 
-            <label className="flex items-center justify-between p-3.5 rounded-2xl bg-black/20 border border-white/5 cursor-pointer">
+            <label className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors">
               <div>
-                <div className="text-xs font-semibold text-white">Monthly Payout Statements</div>
-                <div className="text-[11px] text-gray-400">Receive notification when monthly ad revenue reconciliation is completed.</div>
+                <div className="text-xs font-semibold text-slate-900">Monthly Payout Statements</div>
+                <div className="text-[11px] text-slate-500">Receive notification when monthly ad revenue reconciliation is completed.</div>
               </div>
               <input
                 type="checkbox"
                 checked={notifyPayout}
                 onChange={(e) => setNotifyPayout(e.target.checked)}
-                className="rounded border-white/20 bg-black/40 text-indigo-600 focus:ring-0"
+                className="rounded border-slate-300 bg-white text-indigo-600 focus:ring-0"
               />
             </label>
 
-            <label className="flex items-center justify-between p-3.5 rounded-2xl bg-black/20 border border-white/5 cursor-pointer">
+            <label className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors">
               <div>
-                <div className="text-xs font-semibold text-white">Player Bug & Performance Reports</div>
-                <div className="text-[11px] text-gray-400">Get notified if players submit crash or audio glitch reports for your games.</div>
+                <div className="text-xs font-semibold text-slate-900">Player Bug & Performance Reports</div>
+                <div className="text-[11px] text-slate-500">Get notified if players submit crash or audio glitch reports for your games.</div>
               </div>
               <input
                 type="checkbox"
                 checked={notifyReports}
                 onChange={(e) => setNotifyReports(e.target.checked)}
-                className="rounded border-white/20 bg-black/40 text-indigo-600 focus:ring-0"
+                className="rounded border-slate-300 bg-white text-indigo-600 focus:ring-0"
               />
             </label>
           </div>
 
-          <div className="flex justify-end pt-4 border-t border-white/5">
+          <div className="flex justify-end pt-4 border-t border-slate-100">
             <Button type="submit" variant="primary" isLoading={loading}>
               Save Preferences
             </Button>

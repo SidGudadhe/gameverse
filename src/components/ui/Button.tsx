@@ -25,7 +25,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseStyles =
-      'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#090D16] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100 select-none';
+      'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100 select-none';
 
     const sizeStyles = {
       sm: 'px-3 py-1.5 text-xs gap-1.5',
@@ -35,17 +35,17 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variantStyles = {
       primary:
-        'bg-gradient-to-r from-indigo-600 via-indigo-500 to-indigo-600 hover:from-indigo-500 hover:to-indigo-500 text-white shadow-lg shadow-indigo-600/30 border border-indigo-400/30 focus-visible:ring-indigo-500',
+        'bg-gradient-to-r from-indigo-600 via-indigo-500 to-indigo-600 hover:from-indigo-500 hover:to-indigo-500 text-white shadow-md shadow-indigo-600/20 border border-indigo-400/30 focus-visible:ring-indigo-500',
       secondary:
-        'bg-elevated hover:bg-white/10 text-gray-200 hover:text-white border border-white/10 focus-visible:ring-gray-400',
+        'bg-slate-100 hover:bg-slate-200 text-slate-800 hover:text-slate-900 border border-slate-200 focus-visible:ring-indigo-500',
       outline:
-        'bg-transparent hover:bg-white/5 text-gray-300 hover:text-white border border-white/20 hover:border-white/40 focus-visible:ring-white',
+        'bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-300 focus-visible:ring-indigo-500 shadow-xs',
       ghost:
-        'bg-transparent hover:bg-white/5 text-gray-300 hover:text-white focus-visible:ring-white/50',
+        'bg-transparent hover:bg-slate-100 text-slate-600 hover:text-slate-900 focus-visible:ring-slate-400',
       danger:
-        'bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-600/30 border border-rose-400/30 focus-visible:ring-rose-500',
+        'bg-rose-600 hover:bg-rose-500 text-white shadow-md shadow-rose-600/20 border border-rose-400/30 focus-visible:ring-rose-500',
       success:
-        'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/30 border border-emerald-400/30 focus-visible:ring-emerald-500',
+        'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 border border-emerald-400/30 focus-visible:ring-emerald-500',
     };
 
     return (

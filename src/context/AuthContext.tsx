@@ -192,6 +192,9 @@ export function AuthProvider({
   const logout = useCallback(async () => {
     clearSession();
     try {
+      if (typeof window !== 'undefined' && (window as any).google?.accounts?.id) {
+        (window as any).google.accounts.id.disableAutoSelect();
+      }
       await fetch('/api/auth/logout', { method: 'POST', cache: 'no-store' });
     } catch {}
     router.refresh();

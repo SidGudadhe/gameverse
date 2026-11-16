@@ -20,30 +20,30 @@ export default function FooterLegal() {
   };
 
   return (
-    <footer className="border-t border-white/10 bg-surface/50 py-12 mt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 text-xs text-gray-500">
+    <footer className="border-t border-slate-200 bg-white py-12 mt-20 text-slate-500">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 text-xs">
         <div className="flex flex-col sm:flex-row items-center gap-3">
           <div className="flex items-center gap-2">
-            <span className="font-heading font-black text-white text-base tracking-wider">GAMEVERSE</span>
+            <span className="font-heading font-black text-slate-900 text-base tracking-wider">GAMEVERSE</span>
             <span>© 2026 GameVerse Portal Ltd.</span>
           </div>
-          <span className="hidden sm:inline text-white/20">|</span>
-          <div className="flex items-center gap-1.5 text-emerald-400 font-mono text-[11px]">
+          <span className="hidden sm:inline text-slate-300">|</span>
+          <div className="flex items-center gap-1.5 text-emerald-600 font-mono text-[11px] font-medium">
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>Secure & Privacy Protected</span>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-6">
-          <Link href="/privacy" className="hover:text-gray-300 transition-colors">
+          <Link href="/privacy" className="hover:text-slate-900 transition-colors">
             Privacy Policy
           </Link>
-          <Link href="/terms" className="hover:text-gray-300 transition-colors">
+          <Link href="/terms" className="hover:text-slate-900 transition-colors">
             Terms of Service
           </Link>
           <button
             onClick={openCookiePreferences}
-            className="hover:text-cyan-400 transition-colors flex items-center gap-1 cursor-pointer"
+            className="hover:text-indigo-600 transition-colors flex items-center gap-1 cursor-pointer"
           >
             <Cookie className="w-3.5 h-3.5" />
             <span>Cookie Settings</span>

@@ -73,10 +73,10 @@ export default function GameActionBar({
       <div className="flex items-center gap-2.5 w-full md:w-auto">
         <button
           onClick={handleFavorite}
-          className={`flex-1 md:flex-initial flex items-center justify-center gap-2 text-xs font-semibold px-4 py-2.5 rounded-xl border transition-all ${
+          className={`flex-1 md:flex-initial flex items-center justify-center gap-2 text-xs font-semibold px-4 py-2.5 rounded-xl border transition-all cursor-pointer ${
             isFavorited
-              ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
-              : 'bg-elevated hover:bg-white/10 text-gray-200 hover:text-white border-white/10'
+              ? 'bg-rose-50 text-rose-700 border-rose-200'
+              : 'bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 border-slate-200'
           }`}
         >
           <Heart className={`w-4 h-4 ${isFavorited ? 'fill-rose-500 text-rose-500' : 'text-rose-500'}`} />
@@ -85,18 +85,18 @@ export default function GameActionBar({
 
         <button
           onClick={() => setIsShareOpen(true)}
-          className="flex-1 md:flex-initial flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600/30 to-cyan-500/30 hover:from-indigo-600/40 hover:to-cyan-500/40 text-cyan-300 border border-cyan-500/30 text-xs font-semibold px-4 py-2.5 rounded-xl transition-all shadow-sm"
+          className="flex-1 md:flex-initial flex items-center justify-center gap-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-semibold px-4 py-2.5 rounded-xl transition-all shadow-2xs cursor-pointer"
         >
-          <Share2 className="w-4 h-4 text-cyan-400" />
+          <Share2 className="w-4 h-4 text-indigo-600" />
           <span>Share Game</span>
         </button>
 
         <button
           onClick={handleReport}
-          className={`p-2.5 rounded-xl border transition-colors ${
+          className={`p-2.5 rounded-xl border transition-colors cursor-pointer ${
             reported
-              ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
-              : 'bg-elevated hover:bg-rose-500/20 text-gray-400 hover:text-rose-400 border-white/10'
+              ? 'bg-amber-50 text-amber-700 border-amber-200'
+              : 'bg-slate-100 hover:bg-rose-50 text-slate-500 hover:text-rose-600 border-slate-200'
           }`}
           title="Report build or content issue"
         >

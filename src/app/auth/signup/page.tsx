@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { AuthTransitionSkeleton } from '@/components/ui/Skeleton';
 import { useAuth } from '@/context/AuthContext';
+import GoogleSignIn from '@/components/GoogleSignIn';
 import GoogleAccountChooser, { GoogleAccount } from '@/components/GoogleAccountChooser';
 
 export default function CrazyGamesSignupPage() {
@@ -184,19 +185,19 @@ export default function CrazyGamesSignupPage() {
 
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md bg-[#13151f] p-8 rounded-2xl border border-purple-500/25 shadow-2xl shadow-purple-950/60 relative overflow-hidden backdrop-blur-xl text-gray-100">
+      <div className="w-full max-w-md bg-white p-8 rounded-2xl border border-slate-200 shadow-xl relative overflow-hidden text-slate-800">
         {/* Top Glow Accent */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-600 via-indigo-500 to-cyan-400" />
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-500" />
 
         {/* Brand Header */}
         <div className="text-center mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#6A38EB] to-[#9D4EDD] flex items-center justify-center mx-auto shadow-lg shadow-purple-600/30 mb-3">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#6A38EB] to-[#9D4EDD] flex items-center justify-center mx-auto shadow-md shadow-purple-600/20 mb-3">
             <Gamepad2 className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-2xl font-black font-heading text-white tracking-tight">
+          <h1 className="text-2xl font-black font-heading text-slate-900 tracking-tight">
             Join GameVerse
           </h1>
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Create your free gamer profile to save progress and join leaderboards.
           </p>
         </div>
@@ -205,9 +206,9 @@ export default function CrazyGamesSignupPage() {
         {error && (
           <div
             role="alert"
-            className="mb-4 p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2.5 animate-in fade-in"
+            className="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2.5 animate-in fade-in"
           >
-            <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-400" />
+            <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-600" />
             <span className="flex-1">{error}</span>
           </div>
         )}
@@ -215,51 +216,34 @@ export default function CrazyGamesSignupPage() {
         {successMsg && (
           <div
             role="status"
-            className="mb-4 p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs flex items-center gap-2.5 animate-in fade-in"
+            className="mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs flex items-center gap-2.5 animate-in fade-in"
           >
-            <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-emerald-400" />
+            <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-emerald-600" />
             <span className="flex-1">{successMsg}</span>
           </div>
         )}
 
-        {/* ================= OPTION 1: 1-CLICK ZERO TYPING GOOGLE SSO ================= */}
+        {/* ================= OPTION 1: OFFICIAL GOOGLE SIGN-UP & ONE TAP ================= */}
         <div className="space-y-3">
-          <button
-            type="button"
-            disabled={googleLoading || loading}
-            onClick={handleGoogleClick}
-            className="w-full bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-3 text-sm active:scale-[0.99] disabled:opacity-70 cursor-pointer"
-          >
-            <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
-              <path
-                fill="#4285F4"
-                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-              />
-              <path
-                fill="#34A853"
-                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-              />
-              <path
-                fill="#FBBC05"
-                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-              />
-              <path
-                fill="#EA4335"
-                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-              />
-            </svg>
-            <span className="font-bold text-gray-900">
-              {googleLoading ? 'Connecting Google Account...' : 'Continue with Google'}
-            </span>
-          </button>
+          <GoogleSignIn
+            mode="SIGNUP"
+            enableOneTap={true}
+            onSuccess={(user) => {
+              setSuccessMsg(`Welcome to GameVerse, ${user.name}!`);
+              setTimeout(() => {
+                router.replace('/');
+              }, 300);
+            }}
+            onError={(err) => setError(err)}
+          />
         </div>
 
-        {/* Optional Collapsible: Manual Email Signup (Hidden by default) */}
-        <div className="mt-5 pt-3 border-t border-white/5">
+        {/* Optional Collapsible: Manual Email Signup */}
+        <div className="mt-5 pt-3 border-t border-slate-100">
           <button
             type="button"
             onClick={() => setShowManualForm(!showManualForm)}
-            className="w-full text-center text-xs text-gray-500 hover:text-gray-300 py-1 flex items-center justify-center gap-1 transition-colors cursor-pointer"
+            className="w-full text-center text-xs text-slate-500 hover:text-slate-700 py-1 flex items-center justify-center gap-1 transition-colors cursor-pointer"
           >
             <span>{showManualForm ? 'Hide manual sign-up' : 'Or register with email and password'}</span>
             <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${showManualForm ? 'rotate-180' : ''}`} />
@@ -268,58 +252,58 @@ export default function CrazyGamesSignupPage() {
           {showManualForm && (
             <form onSubmit={handleSignup} className="mt-3 space-y-3 animate-in fade-in duration-200">
               <div>
-                <label className="block text-xs font-semibold text-gray-300 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Gamer Tag / Username
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <input
                     type="text"
                     required
                     placeholder="e.g. CyberNinja99"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-[#1b1e2b] border border-white/10 rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-purple-600 focus:bg-white transition-colors"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-300 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Email
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <input
                     type="email"
                     required
                     placeholder="name@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-[#1b1e2b] border border-white/10 rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-purple-600 focus:bg-white transition-colors"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-300 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Password (min 8 chars)
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
                     placeholder="••••••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-[#1b1e2b] border border-white/10 rounded-xl pl-10 pr-10 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-10 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-purple-600 focus:bg-white transition-colors"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                   >
                     {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                   </button>
@@ -334,11 +318,11 @@ export default function CrazyGamesSignupPage() {
                     required
                     checked={termsAgreed}
                     onChange={(e) => setTermsAgreed(e.target.checked)}
-                    className="mt-0.5 rounded border-white/20 bg-black/40 text-purple-600 focus:ring-0"
+                    className="mt-0.5 rounded border-slate-300 bg-slate-100 text-purple-600 focus:ring-0"
                   />
-                  <span className="text-[10px] text-gray-400">
+                  <span className="text-[10px] text-slate-500">
                     I agree to the{' '}
-                    <Link href="/terms" className="text-purple-400 hover:underline">
+                    <Link href="/terms" className="text-purple-600 hover:underline">
                       Terms of Service
                     </Link>{' '}
                     and Privacy Policy.
@@ -365,9 +349,9 @@ export default function CrazyGamesSignupPage() {
         </div>
 
         {/* Mode Switcher */}
-        <div className="text-center text-xs text-gray-400 pt-4">
+        <div className="text-center text-xs text-slate-500 pt-4">
           Already have an account?{' '}
-          <Link href="/auth/login" className="text-purple-400 hover:text-purple-300 font-bold">
+          <Link href="/auth/login" className="text-purple-600 hover:text-purple-700 font-bold">
             Log in
           </Link>
         </div>

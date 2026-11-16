@@ -48,7 +48,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   // Allow open access to admin auth pages (login & signup)
   if (pathname.startsWith('/admin/auth')) {
-    return <div className="min-h-screen bg-[#090D16]">{children}</div>;
+    return <div className="min-h-screen bg-[#F8FAFC]">{children}</div>;
   }
 
   if (loading) {
@@ -61,22 +61,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (!isAuthorized) {
     return (
-      <div className="min-h-screen bg-[#090D16] flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-slate-900/80 border border-rose-500/30 rounded-3xl p-8 text-center shadow-2xl backdrop-blur-xl">
-          <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mx-auto mb-5 text-rose-400">
+      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white border border-slate-200 rounded-3xl p-8 text-center shadow-xl">
+          <div className="w-16 h-16 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center mx-auto mb-5 text-rose-600">
             <Lock className="w-8 h-8" />
           </div>
-          <h1 className="text-2xl font-black text-white tracking-tight mb-2">
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight mb-2">
             Access Denied (403 Forbidden)
           </h1>
-          <p className="text-sm text-gray-400 leading-relaxed mb-6">
+          <p className="text-sm text-slate-600 leading-relaxed mb-6">
             The GameVerse Admin Suite is strictly restricted to platform administrators and security auditors.
             {user ? (
-              <span className="block mt-2 font-mono text-xs text-rose-300">
+              <span className="block mt-2 font-mono text-xs text-rose-600 font-semibold">
                 Your current account role is <span className="font-bold underline">{user.role}</span>.
               </span>
             ) : (
-              <span className="block mt-2 font-mono text-xs text-gray-400">
+              <span className="block mt-2 font-mono text-xs text-slate-500">
                 You are currently not logged in.
               </span>
             )}
@@ -95,21 +95,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="min-h-screen bg-[#090D16]">
+    <div className="min-h-screen bg-[#F8FAFC]">
       {/* Admin Sub-Navigation Header */}
-      <div className="border-b border-white/10 bg-surface/60 backdrop-blur-md sticky top-16 z-40">
+      <div className="border-b border-slate-200 bg-white/95 backdrop-blur-md sticky top-16 z-40 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-12 flex items-center justify-between gap-4 overflow-x-auto scrollbar-none">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <span className="text-xs font-bold text-white uppercase tracking-wider hidden sm:inline">
+            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <span className="text-xs font-bold text-slate-900 uppercase tracking-wider hidden sm:inline">
               Operations Control
             </span>
-            <span className="text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-mono bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full font-semibold">
               {user.role}
             </span>
           </div>
 
-          <nav className="flex items-center gap-1 text-xs font-semibold text-gray-400">
+          <nav className="flex items-center gap-1 text-xs font-semibold text-slate-600">
             {navLinks.map((item) => {
               const Icon = item.icon;
               const isActive = item.exact
@@ -122,8 +122,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   href={item.href}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors ${
                     isActive
-                      ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30'
-                      : 'hover:text-white hover:bg-white/5'
+                      ? 'bg-indigo-50 text-indigo-700 border border-indigo-200 font-semibold'
+                      : 'hover:text-slate-900 hover:bg-slate-100 text-slate-600'
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />

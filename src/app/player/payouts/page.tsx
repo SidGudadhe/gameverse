@@ -465,39 +465,39 @@ export default function PlayerPayoutsPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 animate-fade-in text-slate-100">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 animate-fade-in text-slate-800">
       {/* Breadcrumb Navigation */}
-      <div className="flex items-center gap-2 text-xs text-slate-400">
-        <Link href="/" className="hover:text-slate-200 transition-colors flex items-center gap-1">
+      <div className="flex items-center gap-2 text-xs text-slate-500">
+        <Link href="/" className="hover:text-slate-900 transition-colors flex items-center gap-1">
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Home</span>
         </Link>
         <span>/</span>
-        <span className="text-slate-300 font-medium">Rewards & Payouts</span>
+        <span className="text-slate-800 font-medium">Rewards & Payouts</span>
       </div>
 
       {/* Top Header & Platform Gateway Status */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white flex items-center gap-2.5">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 flex items-center gap-2.5">
             <span>Rewards & Payouts</span>
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
             Link up to 4 UPI IDs or accounts, transfer your gameplay earnings, and track real-time settlement status.
           </p>
         </div>
 
         {isAuthenticated && (
           <div className="flex items-center gap-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="font-mono text-[11px] text-slate-300">Instant Payouts: Active</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="font-mono text-[11px] text-slate-700 font-semibold">Instant Payouts: Active</span>
             </div>
 
             <button
               onClick={fetchPayoutData}
               title="Refresh Payout Data"
-              className="w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+              className="w-9 h-9 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 hover:text-slate-900 flex items-center justify-center transition-colors cursor-pointer shadow-xs"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             </button>
@@ -507,26 +507,26 @@ export default function PlayerPayoutsPage() {
 
       {/* Unauthenticated State (Matching Favorites & History design) */}
       {!authLoading && !isAuthenticated ? (
-        <div className="bg-slate-900/80 rounded-3xl p-8 sm:p-12 border border-white/10 text-center max-w-xl mx-auto space-y-4 shadow-xl">
-          <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mx-auto">
+        <div className="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200 text-center max-w-xl mx-auto space-y-4 shadow-sm">
+          <div className="w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 mx-auto">
             <Coins className="w-8 h-8" />
           </div>
-          <h2 className="font-heading font-bold text-xl text-white">
+          <h2 className="font-heading font-bold text-xl text-slate-900">
             Sign In to Access Your Payouts
           </h2>
-          <p className="text-gray-400 text-xs sm:text-sm leading-relaxed">
+          <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
             Create a free Gamer account or sign in to track your gaming rewards, view wallet balance, and withdraw instant earnings.
           </p>
           <div className="pt-2 flex flex-wrap justify-center gap-3">
             <Link
               href="/auth/login?redirect=/player/payouts"
-              className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-6 py-2.5 rounded-xl shadow-md shadow-indigo-600/30 transition-all active:scale-95"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-6 py-2.5 rounded-xl shadow-xs transition-all active:scale-95"
             >
               Sign In
             </Link>
             <Link
               href="/auth/signup"
-              className="bg-slate-800 hover:bg-slate-700 text-gray-200 text-xs font-semibold px-6 py-2.5 rounded-xl border border-white/10 transition-colors"
+              className="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold px-6 py-2.5 rounded-xl border border-slate-200 transition-colors"
             >
               Create Account
             </Link>
@@ -538,73 +538,73 @@ export default function PlayerPayoutsPage() {
         <>
 
       {/* FinTech Account Balance Hero Panel (Stripe / Deel Standard) */}
-      <div className="bg-gradient-to-r from-[#121826] via-[#151D2E] to-[#121826] rounded-2xl p-6 sm:p-7 border border-slate-800 shadow-lg relative overflow-hidden">
+      <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200 shadow-xs relative overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 Total Available Account Balance
               </span>
               {(wallet?.availableBalance ?? 1500) < 500 ? (
-                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
                   <Lock className="w-3 h-3" />
                   <span>
                     Need ₹{Math.max(0, 500 - (wallet?.availableBalance ?? 0)).toFixed(2)} to Unlock (Min ₹500)
                   </span>
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   <span>Ready for Instant Withdrawal (Min ₹500 Met)</span>
                 </span>
               )}
             </div>
 
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl sm:text-4xl font-extrabold text-white font-mono tracking-tight">
+              <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-mono tracking-tight">
                 ₹
                 {Number(wallet?.availableBalance ?? 1500).toLocaleString('en-IN', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}
               </span>
-              <span className="text-xs text-slate-400 font-medium">INR</span>
+              <span className="text-xs text-slate-500 font-medium">INR</span>
             </div>
 
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Verified play reward balance available to withdraw immediately to any of your saved UPI IDs.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-6 pt-3 sm:pt-0 border-t sm:border-t-0 sm:border-l border-slate-800 sm:pl-6 text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-6 pt-3 sm:pt-0 border-t sm:border-t-0 sm:border-l border-slate-200 sm:pl-6 text-xs">
             <div>
               <span className="text-slate-500 text-[11px] block">In Processing</span>
-              <span className="font-mono font-bold text-cyan-300 text-sm">
+              <span className="font-mono font-bold text-cyan-700 text-sm">
                 ₹{Number(wallet?.inProcessing ?? 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
               </span>
-              <span className="text-[10px] text-slate-500 block">Pending clearance</span>
+              <span className="text-[10px] text-slate-400 block">Pending clearance</span>
             </div>
 
             <div>
               <span className="text-slate-500 text-[11px] block">Total Withdrawn</span>
-              <span className="font-mono font-bold text-emerald-400 text-sm">
+              <span className="font-mono font-bold text-emerald-700 text-sm">
                 ₹
                 {Number(wallet?.lifetimeWithdrawn ?? 0).toLocaleString('en-IN', {
                   minimumFractionDigits: 2,
                 })}
               </span>
-              <span className="text-[10px] text-slate-500 block">Payouts settled</span>
+              <span className="text-[10px] text-slate-400 block">Payouts settled</span>
             </div>
 
             <div>
               <span className="text-slate-500 text-[11px] block">Lifetime Earned</span>
-              <span className="font-mono font-bold text-white text-sm">
+              <span className="font-mono font-bold text-slate-900 text-sm">
                 ₹
                 {Number(wallet?.totalEarned ?? 1500).toLocaleString('en-IN', {
                   minimumFractionDigits: 2,
                 })}
               </span>
-              <span className="text-[10px] text-slate-500 block">All-time rewards</span>
+              <span className="text-[10px] text-slate-400 block">All-time rewards</span>
             </div>
           </div>
         </div>
@@ -612,52 +612,52 @@ export default function PlayerPayoutsPage() {
 
       {/* Hero Metric Cards (Stripe / Deel Style) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="bg-[#121826] rounded-2xl p-5 border border-slate-800 flex items-center justify-between shadow-sm">
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 flex items-center justify-between shadow-xs">
           <div>
-            <span className="text-xs font-medium text-slate-400 block uppercase tracking-wider">
+            <span className="text-xs font-medium text-slate-500 block uppercase tracking-wider">
               Games Played
             </span>
-            <div className="text-2xl font-bold text-white mt-1 font-mono">
+            <div className="text-2xl font-bold text-slate-900 mt-1 font-mono">
               {stats?.gamesPlayed ?? 0}
             </div>
-            <span className="text-[11px] text-emerald-400 flex items-center gap-1 mt-1 font-medium">
-              <Check className="w-3.5 h-3.5" />
+            <span className="text-[11px] text-emerald-700 flex items-center gap-1 mt-1 font-medium">
+              <Check className="w-3.5 h-3.5 text-emerald-600" />
               <span>Verified Gameplay History</span>
             </span>
           </div>
-          <div className="w-11 h-11 rounded-xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-center text-slate-300">
-            <Gamepad2 className="w-5 h-5 text-cyan-400" />
+          <div className="w-11 h-11 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-700">
+            <Gamepad2 className="w-5 h-5 text-cyan-600" />
           </div>
         </div>
 
-        <div className="bg-[#121826] rounded-2xl p-5 border border-slate-800 flex items-center justify-between shadow-sm">
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 flex items-center justify-between shadow-xs">
           <div>
-            <span className="text-xs font-medium text-slate-400 block uppercase tracking-wider">
+            <span className="text-xs font-medium text-slate-500 block uppercase tracking-wider">
               Tracked Playtime
             </span>
-            <div className="text-2xl font-bold text-white mt-1 font-mono">
+            <div className="text-2xl font-bold text-slate-900 mt-1 font-mono">
               {formatPlaytime(stats?.totalPlayMinutes ?? 0)}
             </div>
-            <span className="text-[11px] text-slate-400 mt-1 block">
+            <span className="text-[11px] text-slate-500 mt-1 block">
               Active session duration
             </span>
           </div>
-          <div className="w-11 h-11 rounded-xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-center text-slate-300">
-            <Clock className="w-5 h-5 text-amber-400" />
+          <div className="w-11 h-11 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-700">
+            <Clock className="w-5 h-5 text-amber-500" />
           </div>
         </div>
       </div>
 
       {/* Global Alerts */}
       {successMessage && (
-        <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs sm:text-sm flex items-center justify-between shadow-sm animate-fade-in">
+        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm flex items-center justify-between shadow-xs animate-fade-in">
           <div className="flex items-center gap-2.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>{successMessage}</span>
           </div>
           <button
             onClick={() => setSuccessMessage(null)}
-            className="text-emerald-400 hover:text-white font-bold ml-4 cursor-pointer"
+            className="text-emerald-700 hover:text-emerald-900 font-bold ml-4 cursor-pointer"
           >
             ✕
           </button>
@@ -665,14 +665,14 @@ export default function PlayerPayoutsPage() {
       )}
 
       {errorMessage && (
-        <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs sm:text-sm flex items-center justify-between shadow-sm animate-fade-in">
+        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm flex items-center justify-between shadow-xs animate-fade-in">
           <div className="flex items-center gap-2.5">
-            <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
             <span>{errorMessage}</span>
           </div>
           <button
             onClick={() => setErrorMessage(null)}
-            className="text-rose-400 hover:text-white font-bold ml-4 cursor-pointer"
+            className="text-rose-700 hover:text-rose-900 font-bold ml-4 cursor-pointer"
           >
             ✕
           </button>
@@ -684,14 +684,14 @@ export default function PlayerPayoutsPage() {
         {/* LEFT COLUMN: WITHDRAWAL FORM */}
         <div className="lg:col-span-8 space-y-6">
           {/* WITHDRAWAL ACTION PANEL */}
-          <div className="bg-[#121826] rounded-2xl p-6 border border-slate-800 shadow-sm space-y-5">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
               <div>
-                <h2 className="text-base font-semibold text-white flex items-center gap-2">
-                  <Wallet className="w-4 h-4 text-emerald-400" />
+                <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
+                  <Wallet className="w-4 h-4 text-emerald-600" />
                   <span>Withdraw Rewards</span>
                 </h2>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-slate-500 mt-0.5">
                   Funds are disbursed directly to your active UPI ID via IMPS instant clearing.
                 </p>
               </div>
@@ -705,7 +705,7 @@ export default function PlayerPayoutsPage() {
                     setIsSelectMethodModalOpen(true);
                   }
                 }}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold transition-all active:scale-95 cursor-pointer self-start sm:self-auto"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-semibold transition-all active:scale-95 cursor-pointer self-start sm:self-auto"
               >
                 <Coins className="w-3.5 h-3.5" />
                 <span>Select Payment Method ({savedMethods.length}/4)</span>
@@ -716,10 +716,10 @@ export default function PlayerPayoutsPage() {
               {/* Payment Method Selector Card (Triggers Pop-up Modal) */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
                     Receiving Account
                   </label>
-                  <span className="text-[11px] text-slate-400 font-mono">
+                  <span className="text-[11px] text-slate-500 font-mono">
                     {savedMethods.length}/4 UPI IDs linked
                   </span>
                 </div>
@@ -727,7 +727,7 @@ export default function PlayerPayoutsPage() {
                 {selectedMethod ? (
                   <div
                     onClick={() => setIsSelectMethodModalOpen(true)}
-                    className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 hover:border-slate-700 transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 group"
+                    className="p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 group"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${getProviderInfo(selectedMethod).badgeClass}`}>
@@ -735,16 +735,16 @@ export default function PlayerPayoutsPage() {
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-bold text-white font-mono truncate">
+                          <span className="text-sm font-bold text-slate-900 font-mono truncate">
                             {selectedMethod.accountDetails}
                           </span>
                           {selectedMethod.isDefault && (
-                            <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 shrink-0">
+                            <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 shrink-0">
                               Primary
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-slate-400 truncate">
+                        <p className="text-xs text-slate-500 truncate">
                           {getProviderInfo(selectedMethod).brand} &bull; {selectedMethod.label || selectedMethod.beneficiaryName || 'Verified Payout Account'}
                         </p>
                       </div>
@@ -757,9 +757,9 @@ export default function PlayerPayoutsPage() {
                           e.stopPropagation();
                           setIsSelectMethodModalOpen(true);
                         }}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-slate-900 group-hover:bg-slate-800 border border-slate-700 text-xs font-medium text-cyan-300 group-hover:text-cyan-200 transition-colors cursor-pointer"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-white group-hover:bg-slate-100 border border-slate-200 text-xs font-medium text-slate-700 transition-colors cursor-pointer shadow-xs"
                       >
-                        <Coins className="w-3.5 h-3.5 text-emerald-400" />
+                        <Coins className="w-3.5 h-3.5 text-emerald-600" />
                         <span>Select Payment Method</span>
                       </button>
                     </div>
@@ -773,17 +773,17 @@ export default function PlayerPayoutsPage() {
                         setIsSelectMethodModalOpen(true);
                       }
                     }}
-                    className="p-4 rounded-xl border border-dashed border-amber-500/40 bg-amber-500/5 hover:bg-amber-500/10 transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                    className="p-4 rounded-xl border border-dashed border-amber-300 bg-amber-50/50 hover:bg-amber-50 transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+                      <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
                         <AlertCircle className="w-5 h-5" />
                       </div>
                       <div>
-                        <div className="text-xs sm:text-sm font-semibold text-amber-300">
+                        <div className="text-xs sm:text-sm font-semibold text-amber-900">
                           No Payout Method Selected
                         </div>
-                        <div className="text-[11px] text-slate-400 mt-0.5">
+                        <div className="text-[11px] text-slate-600 mt-0.5">
                           Click to select or link up to 4 UPI IDs (Google Pay, PhonePe, Paytm, BHIM)
                         </div>
                       </div>
@@ -795,7 +795,7 @@ export default function PlayerPayoutsPage() {
                         e.stopPropagation();
                         handleOpenAddModal();
                       }}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition-colors shrink-0 cursor-pointer shadow-sm shadow-emerald-500/20"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-colors shrink-0 cursor-pointer shadow-xs"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       <span>Link UPI ID</span>
@@ -806,21 +806,21 @@ export default function PlayerPayoutsPage() {
 
               {/* Minimum Balance Requirement / Progress Box if balance < 500 */}
               {(wallet?.availableBalance ?? 1500) < 500 && (
-                <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 space-y-2.5">
+                <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 space-y-2.5">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-amber-300 flex items-center gap-1.5">
+                    <span className="font-semibold text-amber-800 flex items-center gap-1.5">
                       <Lock className="w-3.5 h-3.5" />
                       <span>Minimum Withdrawal Threshold: ₹500.00</span>
                     </span>
-                    <span className="font-mono text-amber-400 font-bold">
+                    <span className="font-mono text-amber-800 font-bold">
                       {Math.min(100, Math.round(((wallet?.availableBalance ?? 0) / 500) * 100))}% Completed
                     </span>
                   </div>
 
                   {/* Progress Bar */}
-                  <div className="w-full h-2 rounded-full bg-slate-900 overflow-hidden border border-slate-800">
+                  <div className="w-full h-2 rounded-full bg-slate-200 overflow-hidden border border-slate-300">
                     <div
-                      className="h-full bg-gradient-to-r from-amber-500 to-amber-300 rounded-full transition-all duration-500"
+                      className="h-full bg-gradient-to-r from-amber-500 to-amber-400 rounded-full transition-all duration-500"
                       style={{
                         width: `${Math.min(
                           100,
@@ -830,8 +830,8 @@ export default function PlayerPayoutsPage() {
                     />
                   </div>
 
-                  <p className="text-[11px] text-slate-300 leading-relaxed">
-                    Your current available balance is <strong className="text-white font-mono">₹{(wallet?.availableBalance ?? 0).toFixed(2)}</strong>. A minimum balance of <strong className="text-amber-300 font-mono">₹500.00</strong> is required before submitting a withdrawal (Remaining needed: <strong className="text-white font-mono">₹{Math.max(0, 500 - (wallet?.availableBalance ?? 0)).toFixed(2)}</strong>). Play games on GameVerse to reach the ₹500 threshold!
+                  <p className="text-[11px] text-slate-700 leading-relaxed">
+                    Your current available balance is <strong className="text-slate-900 font-mono">₹{(wallet?.availableBalance ?? 0).toFixed(2)}</strong>. A minimum balance of <strong className="text-amber-800 font-mono">₹500.00</strong> is required before submitting a withdrawal (Remaining needed: <strong className="text-slate-900 font-mono">₹{Math.max(0, 500 - (wallet?.availableBalance ?? 0)).toFixed(2)}</strong>). Play games on GameVerse to reach the ₹500 threshold!
                   </p>
                 </div>
               )}
@@ -840,24 +840,24 @@ export default function PlayerPayoutsPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                    <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
                       Withdrawal Amount (₹ INR)
                     </label>
-                    <span className="text-[10px] font-mono bg-slate-900 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-mono bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded font-semibold">
                       Min: ₹500
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-slate-400">
+                    <span className="text-xs text-slate-500">
                       Available:{' '}
-                      <strong className="text-emerald-400 font-mono">
+                      <strong className="text-emerald-700 font-mono">
                         ₹{Number(wallet?.availableBalance ?? 1500).toFixed(2)}
                       </strong>
                     </span>
                     <button
                       type="button"
                       onClick={() => setAmount(String(Math.max(500, wallet?.availableBalance ?? 1500)))}
-                      className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition-colors cursor-pointer"
+                      className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 transition-colors cursor-pointer"
                     >
                       Use Max
                     </button>
@@ -876,24 +876,24 @@ export default function PlayerPayoutsPage() {
                     onChange={(e) => setAmount(e.target.value)}
                     placeholder="500"
                     required
-                    className={`w-full bg-slate-950 border rounded-xl pl-9 pr-4 py-2.5 text-xl font-bold text-white placeholder-slate-600 focus:outline-none transition-all font-mono ${
+                    className={`w-full bg-slate-50 border rounded-xl pl-9 pr-4 py-2.5 text-xl font-bold text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white transition-all font-mono ${
                       Number(amount) < 500 || Number(amount) > (wallet?.availableBalance ?? 1500)
-                        ? 'border-amber-500/60 focus:border-amber-500 focus:ring-1 focus:ring-amber-500'
-                        : 'border-slate-700/80 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500'
+                        ? 'border-amber-400 focus:border-amber-500 focus:ring-1 focus:ring-amber-500'
+                        : 'border-slate-300 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500'
                     }`}
                   />
                 </div>
 
                 {/* Amount Feedback Message */}
                 {Number(amount) < 500 ? (
-                  <p className="text-[11px] text-amber-400 font-medium flex items-center gap-1">
+                  <p className="text-[11px] text-amber-700 font-medium flex items-center gap-1">
                     <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                     <span>
                       Minimum withdrawal amount is ₹500.00. Withdrawals below ₹500 are not permitted.
                     </span>
                   </p>
                 ) : Number(amount) > (wallet?.availableBalance ?? 1500) ? (
-                  <p className="text-[11px] text-rose-400 font-medium flex items-center gap-1">
+                  <p className="text-[11px] text-rose-700 font-medium flex items-center gap-1">
                     <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                     <span>
                       Withdrawal amount cannot exceed your available balance of ₹
@@ -901,9 +901,9 @@ export default function PlayerPayoutsPage() {
                     </span>
                   </p>
                 ) : (
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-[11px] text-slate-500">
                     Remaining balance after this withdrawal:{' '}
-                    <strong className="text-slate-200 font-mono">
+                    <strong className="text-slate-800 font-mono">
                       ₹
                       {Math.max(
                         0,
@@ -915,7 +915,7 @@ export default function PlayerPayoutsPage() {
 
                 {/* Quick Presets (Min ₹500) */}
                 <div className="flex flex-wrap items-center gap-2 pt-1">
-                  <span className="text-xs text-slate-400">Quick Presets:</span>
+                  <span className="text-xs text-slate-500">Quick Presets:</span>
                   {['500', '1000', '1500', '2000', '5000'].map((amt) => (
                     <button
                       type="button"
@@ -923,8 +923,8 @@ export default function PlayerPayoutsPage() {
                       onClick={() => setAmount(amt)}
                       className={`px-3 py-1 rounded-lg text-xs font-semibold font-mono border transition-all cursor-pointer ${
                         amount === amt
-                          ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                          : 'bg-slate-950 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-white'
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                          : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-slate-300 hover:text-slate-900'
                       }`}
                     >
                       ₹{amt}
@@ -934,28 +934,28 @@ export default function PlayerPayoutsPage() {
               </div>
 
               {/* Transparent Fee & Settlement Breakdown */}
-              <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-2 text-xs">
-                <div className="flex items-center justify-between text-slate-400">
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
+                <div className="flex items-center justify-between text-slate-600">
                   <span>Gross Payout:</span>
-                  <span className="font-mono text-white">₹{Number(amount || 0).toFixed(2)}</span>
+                  <span className="font-mono text-slate-900 font-semibold">₹{Number(amount || 0).toFixed(2)}</span>
                 </div>
-                <div className="flex items-center justify-between text-slate-400">
+                <div className="flex items-center justify-between text-slate-600">
                   <span>Minimum Threshold:</span>
-                  <span className="font-mono text-amber-400 font-medium">₹500.00 (Enforced)</span>
+                  <span className="font-mono text-amber-700 font-medium">₹500.00 (Enforced)</span>
                 </div>
-                <div className="flex items-center justify-between text-slate-400">
+                <div className="flex items-center justify-between text-slate-600">
                   <span>Platform Fee (Gamer Rewards Promo):</span>
-                  <span className="font-mono text-emerald-400 font-medium">₹0.00 (Free)</span>
+                  <span className="font-mono text-emerald-700 font-medium">₹0.00 (Free)</span>
                 </div>
-                <div className="flex items-center justify-between text-slate-400">
+                <div className="flex items-center justify-between text-slate-600">
                   <span>Estimated Processing Speed:</span>
-                  <span className="text-slate-300">Instant (under 5 mins via IMPS / UPI)</span>
+                  <span className="text-slate-800 font-medium">Instant (under 5 mins via IMPS / UPI)</span>
                 </div>
               </div>
 
               {/* Optional Memo */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-medium text-slate-400">
+                <label className="block text-xs font-medium text-slate-700">
                   Optional Note / Reference
                 </label>
                 <input
@@ -964,7 +964,7 @@ export default function PlayerPayoutsPage() {
                   onChange={(e) => setRequestNote(e.target.value)}
                   placeholder="e.g. Tournament reward settlement"
                   maxLength={150}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-slate-700"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white"
                 />
               </div>
 
@@ -979,7 +979,7 @@ export default function PlayerPayoutsPage() {
                   Number(amount) > (wallet?.availableBalance ?? 1500) ||
                   (wallet?.availableBalance ?? 1500) < 500
                 }
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs sm:text-sm px-8 py-3 rounded-xl transition-all shadow-md shadow-emerald-500/20 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm px-8 py-3 rounded-xl transition-all shadow-xs active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
               >
                 <Send className="w-4 h-4" />
                 <span>
@@ -1000,44 +1000,44 @@ export default function PlayerPayoutsPage() {
 
         {/* RIGHT COLUMN: FINTECH RULES & TRUST WIDGET */}
         <div className="lg:col-span-4 space-y-4">
-          <div className="bg-[#121826] rounded-2xl p-5 border border-slate-800 space-y-4 text-xs">
-            <h3 className="font-semibold text-white flex items-center gap-2 text-sm border-b border-slate-800 pb-3">
-              <Shield className="w-4 h-4 text-emerald-400" />
+          <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs space-y-4 text-xs">
+            <h3 className="font-semibold text-slate-900 flex items-center gap-2 text-sm border-b border-slate-100 pb-3">
+              <Shield className="w-4 h-4 text-emerald-600" />
               <span>How GameVerse Payouts Work</span>
             </h3>
 
-            <div className="space-y-3 text-slate-300">
+            <div className="space-y-3 text-slate-600">
               <div className="flex items-start gap-2.5">
-                <div className="w-5 h-5 rounded-full bg-slate-800 text-slate-300 font-bold flex items-center justify-center shrink-0 text-[10px]">
+                <div className="w-5 h-5 rounded-full bg-slate-100 text-slate-700 font-bold flex items-center justify-center shrink-0 text-[10px]">
                   1
                 </div>
                 <p className="leading-snug">
-                  <strong className="text-white">Play Games:</strong> Your play time and game earnings are automatically calculated and added to your balance.
+                  <strong className="text-slate-900">Play Games:</strong> Your play time and game earnings are automatically calculated and added to your balance.
                 </p>
               </div>
 
               <div className="flex items-start gap-2.5">
-                <div className="w-5 h-5 rounded-full bg-slate-800 text-slate-300 font-bold flex items-center justify-center shrink-0 text-[10px]">
+                <div className="w-5 h-5 rounded-full bg-slate-100 text-slate-700 font-bold flex items-center justify-center shrink-0 text-[10px]">
                   2
                 </div>
                 <p className="leading-snug">
-                  <strong className="text-white">Link 4 UPI Accounts:</strong> You can add up to 4 UPI IDs (e.g. personal GPay, PhonePe, Paytm, or bank).
+                  <strong className="text-slate-900">Link 4 UPI Accounts:</strong> You can add up to 4 UPI IDs (e.g. personal GPay, PhonePe, Paytm, or bank).
                 </p>
               </div>
 
               <div className="flex items-start gap-2.5">
-                <div className="w-5 h-5 rounded-full bg-slate-800 text-slate-300 font-bold flex items-center justify-center shrink-0 text-[10px]">
+                <div className="w-5 h-5 rounded-full bg-slate-100 text-slate-700 font-bold flex items-center justify-center shrink-0 text-[10px]">
                   3
                 </div>
                 <p className="leading-snug">
-                  <strong className="text-white">Min ₹500 Withdrawal:</strong> Withdrawals start at ₹500. If your balance is under ₹500, play games to complete the ₹500 threshold, then withdraw instantly with 1-click direct transfer.
+                  <strong className="text-slate-900">Min ₹500 Withdrawal:</strong> Withdrawals start at ₹500. If your balance is under ₹500, play games to complete the ₹500 threshold, then withdraw instantly with 1-click direct transfer.
                 </p>
               </div>
             </div>
 
-            <div className="pt-3 border-t border-slate-800/80 space-y-1 text-[11px] text-slate-400">
-              <div className="flex items-center gap-1.5 text-slate-300 font-medium">
-                <Check className="w-3.5 h-3.5 text-emerald-400" />
+            <div className="pt-3 border-t border-slate-100 space-y-1 text-[11px] text-slate-500">
+              <div className="flex items-center gap-1.5 text-slate-700 font-medium">
+                <Check className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Direct UPI Transfer (GPay, PhonePe, Paytm)</span>
               </div>
               <p>We never ask for your bank PIN, password, or OTP. Payouts are credit-only.</p>
@@ -1045,14 +1045,14 @@ export default function PlayerPayoutsPage() {
           </div>
 
           {/* Quick Support Card */}
-          <div className="bg-[#121826] rounded-2xl p-5 border border-slate-800 space-y-2 text-xs">
-            <h4 className="font-semibold text-white">Need Settlement Help?</h4>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
+          <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs space-y-2 text-xs">
+            <h4 className="font-semibold text-slate-900">Need Settlement Help?</h4>
+            <p className="text-slate-500 text-[11px] leading-relaxed">
               If a payout takes longer than 2 hours or if your UPI ID changes, reach out to our community support desk.
             </p>
             <Link
               href="/player/profile"
-              className="inline-flex items-center gap-1 text-cyan-400 hover:text-cyan-300 font-medium pt-1"
+              className="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-800 font-medium pt-1"
             >
               <span>View Gamer Profile Settings</span>
               <ChevronRight className="w-3.5 h-3.5" />
@@ -1062,17 +1062,17 @@ export default function PlayerPayoutsPage() {
       </div>
 
       {/* 3. TRANSACTION ACTIVITY & SETTLEMENT HISTORY TABLE (STRIPE / WISE STYLE) */}
-      <div className="bg-[#121826] rounded-2xl border border-slate-800 shadow-sm overflow-hidden space-y-0">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden space-y-0">
         {/* Controls & Search Header */}
-        <div className="p-5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-base font-semibold text-white flex items-center gap-2">
+            <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
               <span>Withdrawal & Settlement Activity</span>
-              <span className="text-xs font-mono text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
+              <span className="text-xs font-mono text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
                 {requests.length} records
               </span>
             </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5">
               History of all withdrawal requests submitted from your account with real-time settlement status.
             </p>
           </div>
@@ -1080,25 +1080,25 @@ export default function PlayerPayoutsPage() {
           {/* Search + Filter Tabs */}
           <div className="flex flex-wrap items-center gap-2">
             <div className="relative">
-              <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search UTR or account..."
-                className="bg-slate-950 border border-slate-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-slate-700 w-44"
+                className="bg-slate-50 border border-slate-200 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white w-44"
               />
             </div>
 
-            <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
+            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200">
               {['ALL', 'PAID', 'PROCESSING', 'PENDING'].map((status) => (
                 <button
                   key={status}
                   onClick={() => setStatusFilter(status)}
                   className={`text-[11px] font-medium px-2.5 py-1 rounded transition-colors cursor-pointer ${
                     statusFilter === status
-                      ? 'bg-slate-800 text-white font-semibold'
-                      : 'text-slate-400 hover:text-slate-200'
+                      ? 'bg-white text-slate-900 font-semibold shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   {status === 'PAID' ? 'Settled' : status}
@@ -1112,8 +1112,8 @@ export default function PlayerPayoutsPage() {
         <div className="overflow-x-auto">
           {filteredRequests.length === 0 ? (
             <div className="py-14 px-6 text-center space-y-2">
-              <Coins className="w-8 h-8 text-slate-600 mx-auto" />
-              <div className="text-sm font-semibold text-slate-300">No withdrawal records found</div>
+              <Coins className="w-8 h-8 text-slate-400 mx-auto" />
+              <div className="text-sm font-semibold text-slate-800">No withdrawal records found</div>
               <p className="text-xs text-slate-500 max-w-sm mx-auto">
                 {requests.length === 0
                   ? 'Your submitted withdrawal requests will appear here with live tracking and UTR transaction numbers.'
@@ -1122,7 +1122,7 @@ export default function PlayerPayoutsPage() {
             </div>
           ) : (
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-950/70 border-b border-slate-800 text-slate-400 uppercase font-semibold text-[10px] tracking-wider">
+              <thead className="bg-slate-50 border-b border-slate-100 text-slate-500 uppercase font-semibold text-[10px] tracking-wider">
                 <tr>
                   <th className="px-5 py-3.5">Requested Date</th>
                   <th className="px-5 py-3.5">Amount</th>
@@ -1131,7 +1131,7 @@ export default function PlayerPayoutsPage() {
                   <th className="px-5 py-3.5 text-right">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/80 text-slate-300">
+              <tbody className="divide-y divide-slate-100 text-slate-700">
                 {filteredRequests.map((r) => {
                   const isPaid = r.status === 'PAID';
                   const isProcessing = r.status === 'PROCESSING';
@@ -1141,14 +1141,14 @@ export default function PlayerPayoutsPage() {
                   const isCopied = copiedRef === refId;
 
                   return (
-                    <tr key={r.id} className="hover:bg-slate-800/20 transition-colors">
-                      <td className="px-5 py-4 whitespace-nowrap text-slate-300 font-medium">
+                    <tr key={r.id} className="hover:bg-slate-50/60 transition-colors">
+                      <td className="px-5 py-4 whitespace-nowrap text-slate-800 font-medium">
                         {new Date(r.requestedAt).toLocaleDateString('en-US', {
                           month: 'short',
                           day: 'numeric',
                           year: 'numeric',
                         })}
-                        <span className="text-slate-500 text-[10px] block">
+                        <span className="text-slate-400 text-[10px] block">
                           {new Date(r.requestedAt).toLocaleTimeString([], {
                             hour: '2-digit',
                             minute: '2-digit',
@@ -1156,14 +1156,14 @@ export default function PlayerPayoutsPage() {
                         </span>
                       </td>
 
-                      <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-sm text-white">
+                      <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-sm text-slate-900">
                         ₹{Number(r.amount || 100).toFixed(2)}
                       </td>
 
                       <td className="px-5 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono text-white text-xs">{r.accountDetails}</span>
-                          <span className="text-[10px] font-medium text-slate-400 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">
+                          <span className="font-mono text-slate-900 text-xs font-semibold">{r.accountDetails}</span>
+                          <span className="text-[10px] font-medium text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
                             {r.method.replace('_', ' ')}
                           </span>
                         </div>
@@ -1179,42 +1179,42 @@ export default function PlayerPayoutsPage() {
                           type="button"
                           onClick={() => handleCopyRef(refId)}
                           title="Click to copy UTR reference"
-                          className="inline-flex items-center gap-1.5 font-mono text-xs text-slate-400 hover:text-white bg-slate-950 px-2.5 py-1 rounded border border-slate-800 hover:border-slate-700 transition-colors cursor-pointer"
+                          className="inline-flex items-center gap-1.5 font-mono text-xs text-slate-600 hover:text-slate-900 bg-slate-50 px-2.5 py-1 rounded border border-slate-200 hover:bg-slate-100 transition-colors cursor-pointer"
                         >
                           <span>{refId}</span>
                           {isCopied ? (
-                            <Check className="w-3 h-3 text-emerald-400" />
+                            <Check className="w-3 h-3 text-emerald-600" />
                           ) : (
-                            <Copy className="w-3 h-3 text-slate-500" />
+                            <Copy className="w-3 h-3 text-slate-400" />
                           )}
                         </button>
                       </td>
 
                       <td className="px-5 py-4 text-right whitespace-nowrap">
                         {isPaid && (
-                          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                             <span>Successfully Paid</span>
                           </span>
                         )}
 
                         {isProcessing && (
-                          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
-                            <Clock className="w-3.5 h-3.5 animate-spin" />
+                          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-cyan-50 text-cyan-800 border border-cyan-200">
+                            <Clock className="w-3.5 h-3.5 animate-spin text-cyan-600" />
                             <span>Processing Payout</span>
                           </span>
                         )}
 
                         {isPending && (
-                          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30">
-                            <Clock className="w-3.5 h-3.5" />
+                          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
+                            <Clock className="w-3.5 h-3.5 text-amber-600" />
                             <span>Pending Review</span>
                           </span>
                         )}
 
                         {isRejected && (
-                          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/30">
-                            <AlertCircle className="w-3.5 h-3.5" />
+                          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
+                            <AlertCircle className="w-3.5 h-3.5 text-rose-600" />
                             <span>Rejected</span>
                           </span>
                         )}
@@ -1230,21 +1230,21 @@ export default function PlayerPayoutsPage() {
 
       {/* 4. POP-UP MODAL: SELECT PAYMENT METHOD (UP TO 4 UPI IDs) */}
       {isSelectMethodModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
-          <div className="bg-[#121826] border border-slate-700/80 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden space-y-4 p-6 animate-scale-up">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden space-y-4 p-6 animate-scale-up">
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-base font-bold text-white flex items-center gap-2">
-                    <Coins className="w-4 h-4 text-emerald-400" />
+                  <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <Coins className="w-4 h-4 text-emerald-600" />
                     <span>Select Payment Method</span>
                   </h3>
-                  <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-cyan-300 border border-slate-700">
+                  <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
                     {savedMethods.length}/4 Linked
                   </span>
                 </div>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-slate-500 mt-1">
                   Choose which UPI ID will receive your withdrawal, or manage up to 4 accounts.
                 </p>
               </div>
@@ -1252,7 +1252,7 @@ export default function PlayerPayoutsPage() {
               <button
                 type="button"
                 onClick={() => setIsSelectMethodModalOpen(false)}
-                className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1261,13 +1261,13 @@ export default function PlayerPayoutsPage() {
             {/* Modal Body: List of Saved Accounts */}
             <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
               {savedMethods.length === 0 ? (
-                <div className="p-6 rounded-xl border border-dashed border-slate-800 bg-slate-950/40 text-center space-y-3">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mx-auto">
+                <div className="p-6 rounded-xl border border-dashed border-slate-200 bg-slate-50 text-center space-y-3">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-600 flex items-center justify-center mx-auto">
                     <AlertCircle className="w-6 h-6" />
                   </div>
                   <div className="space-y-1">
-                    <p className="text-sm font-semibold text-white">No Payout Accounts Linked</p>
-                    <p className="text-xs text-slate-400 max-w-xs mx-auto">
+                    <p className="text-sm font-semibold text-slate-900">No Payout Accounts Linked</p>
+                    <p className="text-xs text-slate-500 max-w-xs mx-auto">
                       Link your first Google Pay, PhonePe, Paytm, BHIM, or Bank Account to withdraw your earnings.
                     </p>
                   </div>
@@ -1277,7 +1277,7 @@ export default function PlayerPayoutsPage() {
                       setIsSelectMethodModalOpen(false);
                       handleOpenAddModal();
                     }}
-                    className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs px-5 py-2.5 rounded-xl transition-all shadow-md shadow-emerald-500/20 cursor-pointer"
+                    className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition-all shadow-md shadow-emerald-600/20 cursor-pointer"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Link First UPI ID (Slot 1 of 4)</span>
@@ -1296,8 +1296,8 @@ export default function PlayerPayoutsPage() {
                         onClick={() => setSelectedMethodId(m.id)}
                         className={`p-3.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
                           isSelected
-                            ? 'bg-slate-900 border-emerald-500/60 shadow-md shadow-emerald-500/5 ring-1 ring-emerald-500/40'
-                            : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 text-slate-300'
+                            ? 'bg-emerald-50/60 border-emerald-500 shadow-xs ring-1 ring-emerald-400/30'
+                            : 'bg-slate-50/60 border-slate-200 hover:border-slate-300 text-slate-700'
                         }`}
                       >
                         {/* Left: Radio indicator + Provider badge + Details */}
@@ -1305,11 +1305,11 @@ export default function PlayerPayoutsPage() {
                           <div
                             className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
                               isSelected
-                                ? 'border-emerald-400 bg-emerald-400 text-slate-950'
-                                : 'border-slate-600 bg-transparent'
+                                ? 'border-emerald-500 bg-emerald-500 text-white'
+                                : 'border-slate-300 bg-transparent'
                             }`}
                           >
-                            {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-slate-950" />}
+                            {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                           </div>
 
                           <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border ${info.badgeClass}`}>
@@ -1318,16 +1318,16 @@ export default function PlayerPayoutsPage() {
 
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
-                              <span className="text-xs sm:text-sm font-semibold text-white font-mono truncate">
+                              <span className="text-xs sm:text-sm font-semibold text-slate-900 font-mono truncate">
                                 {m.accountDetails}
                               </span>
                               {m.isDefault && (
-                                <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 shrink-0">
+                                <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded border border-emerald-200 shrink-0">
                                   Primary
                                 </span>
                               )}
                             </div>
-                            <p className="text-[11px] text-slate-400 truncate">
+                            <p className="text-[11px] text-slate-500 truncate">
                               {info.brand} &bull; {m.label || m.beneficiaryName || 'Verified Payout Account'}
                             </p>
                           </div>
@@ -1339,7 +1339,7 @@ export default function PlayerPayoutsPage() {
                             <button
                               type="button"
                               onClick={() => handleSetPrimary(m.id)}
-                              className="text-[10px] font-medium text-slate-400 hover:text-slate-200 bg-slate-900 hover:bg-slate-800 border border-slate-800 px-2 py-1 rounded transition-colors cursor-pointer"
+                              className="text-[10px] font-medium text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-200 px-2 py-1 rounded transition-colors cursor-pointer"
                             >
                               Make Primary
                             </button>
@@ -1352,7 +1352,7 @@ export default function PlayerPayoutsPage() {
                               handleOpenEditModal(m);
                             }}
                             title="Edit Account Details"
-                            className="w-7 h-7 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-cyan-300 flex items-center justify-center transition-colors cursor-pointer"
+                            className="w-7 h-7 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 text-slate-500 hover:text-cyan-700 flex items-center justify-center transition-colors cursor-pointer"
                           >
                             <Edit3 className="w-3.5 h-3.5" />
                           </button>
@@ -1361,7 +1361,7 @@ export default function PlayerPayoutsPage() {
                             type="button"
                             onClick={() => handleDeleteMethod(m.id, m.label || m.accountDetails)}
                             title="Remove Account"
-                            className="w-7 h-7 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-rose-400 flex items-center justify-center transition-colors cursor-pointer"
+                            className="w-7 h-7 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 text-slate-500 hover:text-rose-600 flex items-center justify-center transition-colors cursor-pointer"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -1378,9 +1378,9 @@ export default function PlayerPayoutsPage() {
                         setIsSelectMethodModalOpen(false);
                         handleOpenAddModal();
                       }}
-                      className="w-full p-3 rounded-xl border border-dashed border-slate-800 hover:border-slate-700 bg-slate-950/30 hover:bg-slate-900/40 text-slate-400 hover:text-white transition-all flex items-center justify-center gap-2 text-xs font-semibold cursor-pointer"
+                      className="w-full p-3 rounded-xl border border-dashed border-slate-200 hover:border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-2 text-xs font-semibold cursor-pointer"
                     >
-                      <Plus className="w-4 h-4 text-emerald-400" />
+                      <Plus className="w-4 h-4 text-emerald-600" />
                       <span>Add Another UPI ID (Slot {savedMethods.length + 1} of 4)</span>
                     </button>
                   )}
@@ -1389,7 +1389,7 @@ export default function PlayerPayoutsPage() {
             </div>
 
             {/* Modal Footer */}
-            <div className="flex items-center justify-between pt-3 border-t border-slate-800 text-xs">
+            <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs">
               <span className="text-slate-500 text-[11px]">
                 {savedMethods.length < 4
                   ? `${4 - savedMethods.length} empty slot(s) remaining`
@@ -1400,14 +1400,14 @@ export default function PlayerPayoutsPage() {
                 <button
                   type="button"
                   onClick={() => setIsSelectMethodModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition-colors cursor-pointer"
+                  className="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsSelectMethodModalOpen(false)}
-                  className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition-all shadow-md shadow-emerald-500/20 active:scale-95 cursor-pointer"
+                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-all shadow-md shadow-emerald-600/20 active:scale-95 cursor-pointer"
                 >
                   Confirm Selection
                 </button>
@@ -1419,17 +1419,17 @@ export default function PlayerPayoutsPage() {
 
       {/* 5. MODAL / DIALOG: ADD OR EDIT PAYOUT ACCOUNT (UP TO 4 SLOTS) */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
-          <div className="bg-[#121826] border border-slate-700/80 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden space-y-5 p-6 animate-scale-up">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden space-y-5 p-6 animate-scale-up">
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
-                <h3 className="text-base font-bold text-white">
+                <h3 className="text-base font-bold text-slate-900">
                   {editingMethodId
                     ? 'Edit Payout Account'
                     : `Link Payout Account (Slot ${savedMethods.length + 1} of 4)`}
                 </h3>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-slate-500 mt-0.5">
                   Save up to 4 UPI IDs or payment accounts for instant withdrawals.
                 </p>
               </div>
@@ -1437,7 +1437,7 @@ export default function PlayerPayoutsPage() {
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1447,7 +1447,7 @@ export default function PlayerPayoutsPage() {
             <form onSubmit={handleSaveMethod} className="space-y-4">
               {/* Method Selector Tabs */}
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
                   Payout Method
                 </label>
                 <div className="grid grid-cols-2 gap-2">
@@ -1456,8 +1456,8 @@ export default function PlayerPayoutsPage() {
                     onClick={() => setMethodType('UPI')}
                     className={`py-2 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-colors ${
                       methodType === 'UPI'
-                        ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
-                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
+                        ? 'bg-emerald-50 border-emerald-500/50 text-emerald-700'
+                        : 'bg-slate-50 border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                     }`}
                   >
                     <Smartphone className="w-3.5 h-3.5" />
@@ -1469,8 +1469,8 @@ export default function PlayerPayoutsPage() {
                     onClick={() => setMethodType('BANK_TRANSFER')}
                     className={`py-2 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-colors ${
                       methodType === 'BANK_TRANSFER'
-                        ? 'bg-blue-500/10 border-blue-500/50 text-blue-400'
-                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
+                        ? 'bg-blue-50 border-blue-500/50 text-blue-700'
+                        : 'bg-slate-50 border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                     }`}
                   >
                     <Building className="w-3.5 h-3.5" />
@@ -1481,7 +1481,7 @@ export default function PlayerPayoutsPage() {
 
               {/* UPI ID / Account Details Input */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-300">
+                <label className="block text-xs font-semibold text-slate-700">
                   {methodType === 'UPI' ? 'UPI ID / VPA' : 'Bank Account & IFSC'}
                 </label>
                 <input
@@ -1494,7 +1494,7 @@ export default function PlayerPayoutsPage() {
                       : 'Account No., IFSC Code'
                   }
                   required
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:bg-white font-mono"
                 />
 
                 {/* Quick Handle Chips for UPI */}
@@ -1511,7 +1511,7 @@ export default function PlayerPayoutsPage() {
                             : accountDetails || 'user';
                           setAccountDetails(`${prefix}${h.handle}`);
                         }}
-                        className="text-[10px] font-mono bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800 px-2 py-0.5 rounded cursor-pointer transition-colors"
+                        className="text-[10px] font-mono bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 border border-slate-200 px-2 py-0.5 rounded cursor-pointer transition-colors"
                       >
                         {h.handle}
                       </button>
@@ -1522,7 +1522,7 @@ export default function PlayerPayoutsPage() {
 
               {/* Account Nickname / Label */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-300">
+                <label className="block text-xs font-semibold text-slate-700">
                   Account Nickname / Label (Optional)
                 </label>
                 <input
@@ -1530,13 +1530,13 @@ export default function PlayerPayoutsPage() {
                   value={accountLabel}
                   onChange={(e) => setAccountLabel(e.target.value)}
                   placeholder="e.g. My Personal GPay, PhonePe Secondary"
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white"
                 />
               </div>
 
               {/* Account Holder Name */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-300">
+                <label className="block text-xs font-semibold text-slate-700">
                   Beneficiary Name (Account Holder Name)
                 </label>
                 <input
@@ -1544,7 +1544,7 @@ export default function PlayerPayoutsPage() {
                   value={beneficiaryName}
                   onChange={(e) => setBeneficiaryName(e.target.value)}
                   placeholder="e.g. Rahul Sharma"
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white"
                 />
               </div>
 
@@ -1555,19 +1555,19 @@ export default function PlayerPayoutsPage() {
                   id="setAsDefaultCheck"
                   checked={setAsDefault}
                   onChange={(e) => setSetAsDefault(e.target.checked)}
-                  className="w-4 h-4 rounded bg-slate-950 border-slate-700 text-emerald-500 focus:ring-emerald-500"
+                  className="w-4 h-4 rounded bg-slate-100 border-slate-300 text-emerald-600 focus:ring-emerald-500"
                 />
-                <label htmlFor="setAsDefaultCheck" className="text-xs text-slate-300 cursor-pointer">
+                <label htmlFor="setAsDefaultCheck" className="text-xs text-slate-600 cursor-pointer">
                   Set this as my primary payout account
                 </label>
               </div>
 
               {/* Modal Actions */}
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition-colors cursor-pointer"
+                  className="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -1575,7 +1575,7 @@ export default function PlayerPayoutsPage() {
                 <button
                   type="submit"
                   disabled={savingMethod}
-                  className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs px-6 py-2 rounded-xl transition-all shadow-md shadow-emerald-500/20 active:scale-95 disabled:opacity-50 cursor-pointer"
+                  className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-6 py-2 rounded-xl transition-all shadow-md shadow-emerald-600/20 active:scale-95 disabled:opacity-50 cursor-pointer"
                 >
                   <Check className="w-3.5 h-3.5" />
                   <span>{savingMethod ? 'Saving Account...' : 'Save Payout Account'}</span>

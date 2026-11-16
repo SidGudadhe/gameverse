@@ -75,15 +75,15 @@ export default function CategoryNavChips({
         href="/category"
         className={`flex-shrink-0 flex items-center gap-2 font-semibold text-xs px-4 py-2 rounded-xl transition-all ${
           isAllActive
-            ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/30'
-            : 'bg-slate-900 hover:bg-slate-800 text-gray-300 hover:text-white border border-white/5 hover:border-white/15'
+            ? 'bg-indigo-600 text-white shadow-sm'
+            : 'bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 border border-slate-200'
         }`}
       >
         <span>🎮</span>
         <span>All Games</span>
         <span
           className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${
-            isAllActive ? 'bg-white/20 text-white' : 'text-gray-400 bg-slate-800'
+            isAllActive ? 'bg-white/20 text-white' : 'text-slate-500 bg-slate-200/80'
           }`}
         >
           {totalGames}
@@ -102,15 +102,15 @@ export default function CategoryNavChips({
             href={`/category/${cat.slug}`}
             className={`flex-shrink-0 flex items-center gap-2 font-medium text-xs px-4 py-2 rounded-xl transition-all border ${
               isCatActive
-                ? 'bg-indigo-600 text-white font-semibold border-indigo-500 shadow-sm shadow-indigo-600/30'
-                : 'bg-slate-900 hover:bg-slate-800 text-gray-300 hover:text-white border-white/5 hover:border-white/15'
+                ? 'bg-indigo-600 text-white font-semibold border-indigo-500 shadow-sm'
+                : 'bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 border-slate-200'
             }`}
           >
             <span>{CATEGORY_ICONS[cat.slug] || CATEGORY_ICONS[cat.id] || '🎯'}</span>
             <span>{cat.name}</span>
             <span
               className={`text-[10px] font-mono ${
-                isCatActive ? 'text-white/80' : 'text-gray-500'
+                isCatActive ? 'text-white/80' : 'text-slate-500'
               }`}
             >
               ({cat.count})

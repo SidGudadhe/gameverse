@@ -43,19 +43,19 @@ export default function HomePage() {
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+            <div className="w-8 h-8 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
               <Flame className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="font-heading font-black text-xl text-white tracking-wide">
+              <h2 className="font-heading font-black text-xl text-slate-900 tracking-wide">
                 Trending Games
               </h2>
-              <p className="text-gray-400 text-xs">Top games players are enjoying today</p>
+              <p className="text-slate-500 text-xs">Top games players are enjoying today</p>
             </div>
           </div>
           <Link
             href="/search?sort=trending"
-            className="flex items-center gap-1 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
+            className="flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
           >
             <span>View All</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -70,22 +70,22 @@ export default function HomePage() {
       </section>
 
       {/* Most Popular All Time */}
-      <section className="space-y-4 pt-4 border-t border-white/5">
+      <section className="space-y-4 pt-6 border-t border-slate-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+            <div className="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600">
               <Trophy className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="font-heading font-black text-xl text-white tracking-wide">
+              <h2 className="font-heading font-black text-xl text-slate-900 tracking-wide">
                 Most Played Games
               </h2>
-              <p className="text-gray-400 text-xs">All-time favorites with highest player counts</p>
+              <p className="text-slate-500 text-xs">All-time favorites with highest player counts</p>
             </div>
           </div>
           <Link
             href="/search?sort=plays"
-            className="flex items-center gap-1 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
+            className="flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
           >
             <span>View All</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -100,22 +100,22 @@ export default function HomePage() {
       </section>
 
       {/* Fresh New Releases */}
-      <section className="space-y-4 pt-4 border-t border-white/5">
+      <section className="space-y-4 pt-6 border-t border-slate-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+            <div className="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
               <Sparkles className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="font-heading font-black text-xl text-white tracking-wide">
+              <h2 className="font-heading font-black text-xl text-slate-900 tracking-wide">
                 New Releases
               </h2>
-              <p className="text-gray-400 text-xs">Fresh games added to the catalog</p>
+              <p className="text-slate-500 text-xs">Fresh games added to the catalog</p>
             </div>
           </div>
           <Link
             href="/search?sort=newest"
-            className="flex items-center gap-1 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
+            className="flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
           >
             <span>View All</span>
             <ArrowRight className="w-3.5 h-3.5" />

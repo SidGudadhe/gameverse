@@ -71,24 +71,24 @@ export default function AdminSignupPage() {
 
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md space-y-6 bg-slate-900/90 p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden backdrop-blur-xl">
+      <div className="w-full max-w-md space-y-6 bg-white p-8 rounded-3xl border border-slate-200 shadow-xl relative overflow-hidden">
         <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-2xl bg-rose-600/20 border border-rose-500/30 flex items-center justify-center mx-auto text-rose-400 shadow-lg shadow-rose-600/20">
+          <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center mx-auto text-rose-600 shadow-xs">
             <ShieldCheck className="w-6 h-6" />
           </div>
           <div className="flex items-center justify-center gap-1.5 pt-1">
             <Badge variant="danger">ADMIN OPERATIONS SUITE</Badge>
           </div>
-          <h1 className="font-heading font-black text-2xl text-white">
+          <h1 className="font-heading font-black text-2xl text-slate-900">
             Staff Onboarding
           </h1>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-slate-500">
             Restricted to GameVerse Staff, Security Auditors & QA Operators. Master Security Key required.
           </p>
         </div>
 
         {error && (
-          <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-center gap-2">
+          <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
             <AlertCircle className="w-4 h-4 flex-shrink-0" />
             <span>{error}</span>
           </div>
@@ -142,26 +142,27 @@ export default function AdminSignupPage() {
                 required
                 checked={termsAgreed}
                 onChange={(e) => setTermsAgreed(e.target.checked)}
-                className="mt-0.5 rounded border-white/20 bg-black/40 text-rose-600 focus:ring-0"
+                className="mt-0.5 rounded border-slate-300 bg-white text-rose-600 focus:ring-0"
               />
-              <span className="text-[11px] text-gray-300 leading-relaxed">
+              <span className="text-[11px] text-slate-700 leading-relaxed">
                 I accept the Administrator Confidentiality, Security Audit Policies & Access Controls.
               </span>
             </label>
           </div>
 
-          <Button type="submit" variant="primary" className="w-full bg-rose-600 hover:bg-rose-500" isLoading={loading}>
+          <Button type="submit" variant="primary" className="w-full bg-rose-600 hover:bg-rose-700 text-white shadow-xs" isLoading={loading}>
             Register Staff Account
           </Button>
         </form>
 
-        <div className="text-center text-xs text-gray-400 pt-1">
+        <div className="text-center text-xs text-slate-500 pt-1">
           Already have Staff Credentials?{' '}
-          <Link href="/admin/auth/login" className="text-rose-400 hover:text-rose-300 font-semibold">
+          <Link href="/admin/auth/login" className="text-rose-600 hover:text-rose-700 font-semibold">
             Admin Sign In
           </Link>
         </div>
       </div>
     </div>
+  );
   );
 }

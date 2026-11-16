@@ -105,25 +105,25 @@ export default function DeveloperReferralsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
         <div>
           <div className="flex items-center gap-2">
-            <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[11px] font-semibold px-2.5 py-0.5 rounded-full uppercase flex items-center gap-1">
+            <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold px-2.5 py-0.5 rounded-full uppercase flex items-center gap-1">
               <Sparkles className="w-3 h-3" />
               <span>70% Net Revenue Split</span>
             </span>
           </div>
-          <h1 className="font-heading font-black text-2xl sm:text-3xl text-white mt-1.5">
+          <h1 className="font-heading font-black text-2xl sm:text-3xl text-slate-900 mt-1.5">
             Creator Promotion & Referral Engine
           </h1>
-          <p className="text-gray-400 text-xs sm:text-sm mt-0.5">
+          <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
             Create tracked campaigns, share directly to social communities, and earn a +20% bonus boost on referred gameplay.
           </p>
         </div>
 
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white text-xs font-semibold px-4 py-2.5 rounded-xl border border-emerald-400/30 shadow-lg shadow-emerald-600/20 transition-all active:scale-95"
+          className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-xs transition-all active:scale-95"
         >
           <Plus className="w-4 h-4" />
           <span>New Campaign Link</span>
@@ -132,63 +132,63 @@ export default function DeveloperReferralsPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-surface rounded-2xl p-5 border border-white/10 space-y-2">
-          <div className="flex items-center justify-between text-gray-400 text-xs">
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs space-y-2">
+          <div className="flex items-center justify-between text-slate-500 text-xs">
             <span>Referred Starts</span>
-            <TrendingUp className="w-4 h-4 text-emerald-400" />
+            <TrendingUp className="w-4 h-4 text-emerald-600" />
           </div>
-          <div className="font-heading font-black text-2xl text-white">
+          <div className="font-heading font-black text-2xl text-slate-900">
             {totalClicks.toLocaleString()}
           </div>
-          <div className="text-[11px] text-emerald-400 font-medium">Attributed to Creator Links</div>
+          <div className="text-[11px] text-emerald-700 font-medium">Attributed to Creator Links</div>
         </div>
 
-        <div className="bg-surface rounded-2xl p-5 border border-white/10 space-y-2">
-          <div className="flex items-center justify-between text-gray-400 text-xs">
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs space-y-2">
+          <div className="flex items-center justify-between text-slate-500 text-xs">
             <span>Unique Referred Players</span>
-            <Users className="w-4 h-4 text-indigo-400" />
+            <Users className="w-4 h-4 text-indigo-600" />
           </div>
-          <div className="font-heading font-black text-2xl text-indigo-400 font-mono">
+          <div className="font-heading font-black text-2xl text-indigo-600 font-mono">
             {totalUnique.toLocaleString()}
           </div>
-          <div className="text-[11px] text-gray-400">First-time visitors converted</div>
+          <div className="text-[11px] text-slate-500">First-time visitors converted</div>
         </div>
 
-        <div className="bg-surface rounded-2xl p-5 border border-white/10 space-y-2">
-          <div className="flex items-center justify-between text-gray-400 text-xs">
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs space-y-2">
+          <div className="flex items-center justify-between text-slate-500 text-xs">
             <span>Referred Playtime</span>
-            <Clock className="w-4 h-4 text-cyan-400" />
+            <Clock className="w-4 h-4 text-cyan-600" />
           </div>
-          <div className="font-heading font-black text-2xl text-white">
+          <div className="font-heading font-black text-2xl text-slate-900">
             {Math.floor(totalMinutes / 60)}h {Math.round(totalMinutes % 60)}m
           </div>
-          <div className="text-[11px] text-gray-400">Eligible for 70% share rate</div>
+          <div className="text-[11px] text-slate-500">Eligible for 70% share rate</div>
         </div>
 
-        <div className="bg-surface rounded-2xl p-5 border border-white/10 space-y-2">
-          <div className="flex items-center justify-between text-gray-400 text-xs">
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs space-y-2">
+          <div className="flex items-center justify-between text-slate-500 text-xs">
             <span>Bonus Split Rate</span>
-            <DollarSign className="w-4 h-4 text-amber-400" />
+            <DollarSign className="w-4 h-4 text-amber-500" />
           </div>
-          <div className="font-heading font-black text-2xl text-emerald-400 font-mono">
+          <div className="font-heading font-black text-2xl text-emerald-600 font-mono">
             70%
           </div>
-          <div className="text-[11px] text-gray-400">50% Base + 20% Referral Boost</div>
+          <div className="text-[11px] text-slate-500">50% Base + 20% Referral Boost</div>
         </div>
       </div>
 
       {/* Campaigns Table */}
-      <div className="bg-surface rounded-3xl p-6 border border-white/10 space-y-4">
+      <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="font-heading font-bold text-lg text-white">Active Referral Campaigns</h2>
-            <p className="text-gray-400 text-xs">Track performance across your promotional channels</p>
+            <h2 className="font-heading font-bold text-lg text-slate-900">Active Referral Campaigns</h2>
+            <p className="text-slate-500 text-xs">Track performance across your promotional channels</p>
           </div>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="border-b border-white/10 text-gray-400 font-semibold">
+            <thead className="border-b border-slate-200 text-slate-500 font-semibold">
               <tr>
                 <th className="py-3 px-4">Campaign Name</th>
                 <th className="py-3 px-4">Target Game</th>
@@ -199,23 +199,23 @@ export default function DeveloperReferralsPage() {
                 <th className="py-3 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5 text-gray-300">
+            <tbody className="divide-y divide-slate-100 text-slate-700">
               {campaigns.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-8 text-center text-gray-500">
+                  <td colSpan={7} className="py-8 text-center text-slate-400">
                     No active campaigns. Click "New Campaign Link" above to create your first promotion link.
                   </td>
                 </tr>
               ) : (
                 campaigns.map((c: any) => (
-                  <tr key={c.id} className="hover:bg-white/5 transition-colors">
-                    <td className="py-3 px-4 font-bold text-white">{c.campaignName}</td>
-                    <td className="py-3 px-4 font-semibold text-gray-300">{c.gameTitle}</td>
-                    <td className="py-3 px-4 font-mono text-indigo-400">{c.token}</td>
-                    <td className="py-3 px-4 font-bold text-white">{c.clicks}</td>
-                    <td className="py-3 px-4">{c.uniquePlayers}</td>
+                  <tr key={c.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="py-3 px-4 font-bold text-slate-900">{c.campaignName}</td>
+                    <td className="py-3 px-4 font-semibold text-slate-700">{c.gameTitle}</td>
+                    <td className="py-3 px-4 font-mono font-semibold text-indigo-600">{c.token}</td>
+                    <td className="py-3 px-4 font-bold text-slate-900">{c.clicks}</td>
+                    <td className="py-3 px-4 font-semibold text-slate-700">{c.uniquePlayers}</td>
                     <td className="py-3 px-4">
-                      <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold px-2 py-0.5 rounded-md">
+                      <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-md">
                         70% Net ({c.bonusPercent}% Bonus)
                       </span>
                     </td>
@@ -224,8 +224,8 @@ export default function DeveloperReferralsPage() {
                         onClick={() => handleCopy(c.token, c.gameSlug)}
                         className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1.5 rounded-lg border transition-all ${
                           copiedToken === c.token
-                            ? 'bg-emerald-600 text-white border-emerald-500'
-                            : 'bg-elevated hover:bg-white/10 text-gray-200 border-white/10'
+                            ? 'bg-emerald-600 text-white border-emerald-600'
+                            : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
                         }`}
                       >
                         {copiedToken === c.token ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
@@ -240,7 +240,7 @@ export default function DeveloperReferralsPage() {
                             token: c.token,
                           })
                         }
-                        className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1.5 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/30 transition-all"
+                        className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition-all"
                       >
                         <Share2 className="w-3 h-3" />
                         <span>Social Share</span>
@@ -256,16 +256,16 @@ export default function DeveloperReferralsPage() {
 
       {/* Create Campaign Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
-          <div className="relative w-full max-w-md rounded-3xl bg-[#0F172A] border border-white/10 shadow-2xl p-6 space-y-6">
-            <h3 className="font-heading font-bold text-lg text-white">Create New Referral Campaign</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
+          <div className="relative w-full max-w-md rounded-3xl bg-white border border-slate-200 shadow-2xl p-6 space-y-6">
+            <h3 className="font-heading font-bold text-lg text-slate-900">Create New Referral Campaign</h3>
             <form onSubmit={handleCreateCampaign} className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-300">Target Game</label>
+                <label className="text-xs font-semibold text-slate-700">Target Game</label>
                 <select
                   value={selectedGameId}
                   onChange={(e) => setSelectedGameId(e.target.value)}
-                  className="w-full bg-surface border border-white/10 text-white text-xs font-semibold px-3 py-2.5 rounded-xl focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs font-semibold px-3 py-2.5 rounded-xl focus:outline-none focus:border-indigo-500 focus:bg-white"
                   required
                 >
                   {games.map((g: any) => (
@@ -277,34 +277,34 @@ export default function DeveloperReferralsPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-300">Campaign Channel Name</label>
+                <label className="text-xs font-semibold text-slate-700">Campaign Channel Name</label>
                 <input
                   type="text"
                   placeholder="e.g. YouTube Video Drop, Discord Announcement, Twitter Post"
                   value={campaignName}
                   onChange={(e) => setCampaignName(e.target.value)}
-                  className="w-full bg-surface border border-white/10 text-white text-xs px-3 py-2.5 rounded-xl focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs px-3 py-2.5 rounded-xl focus:outline-none focus:border-indigo-500 focus:bg-white"
                   required
                 />
               </div>
 
-              <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-[11px] text-emerald-300 flex items-center gap-2">
-                <Sparkles className="w-4 h-4 flex-shrink-0" />
+              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-[11px] text-emerald-800 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 flex-shrink-0 text-emerald-600" />
                 <span>Automatically applies +20% Creator Promotion Bonus (70% Net Revenue Split).</span>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={creating}
-                  className="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-md shadow-emerald-600/30"
+                  className="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-xs"
                 >
                   {creating ? 'Creating...' : 'Create Campaign'}
                 </button>

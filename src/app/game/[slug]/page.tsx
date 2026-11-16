@@ -12,7 +12,7 @@ import { GameMood } from '@/types/recommendations';
 // Dynamic code-splitting for heavy client components
 const GamePlayer = dynamic(() => import('@/components/GamePlayer'), {
   loading: () => (
-    <div className="w-full aspect-video rounded-3xl bg-slate-950 border border-white/10 flex flex-col items-center justify-center text-center p-6 shadow-2xl relative overflow-hidden animate-pulse">
+    <div className="w-full aspect-video rounded-3xl bg-slate-950 border border-slate-200 flex flex-col items-center justify-center text-center p-6 shadow-xl relative overflow-hidden animate-pulse">
       <div className="w-16 h-16 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center mb-3">
         <Gamepad2 className="w-8 h-8 text-indigo-400" />
       </div>
@@ -25,7 +25,7 @@ const GamePlayer = dynamic(() => import('@/components/GamePlayer'), {
 
 const GameReviewsSection = dynamic(() => import('@/components/GameReviewsSection'), {
   loading: () => (
-    <div className="w-full h-44 rounded-2xl bg-slate-900/40 border border-white/5 animate-pulse" />
+    <div className="w-full h-44 rounded-2xl bg-white border border-slate-200 animate-pulse" />
   ),
   ssr: true,
 });
@@ -61,17 +61,17 @@ export default function GamePage({ params }: GamePageProps) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       {/* Clean Breadcrumb Navigation */}
-      <div className="flex items-center gap-2 text-xs text-gray-400">
-        <Link href="/" className="hover:text-white transition-colors flex items-center gap-1">
+      <div className="flex items-center gap-2 text-xs text-slate-500">
+        <Link href="/" className="hover:text-slate-900 transition-colors flex items-center gap-1 font-medium">
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Home</span>
         </Link>
         <span>/</span>
-        <Link href={`/category/${game.categoryId}`} className="hover:text-white transition-colors">
+        <Link href={`/category/${game.categoryId}`} className="hover:text-slate-900 transition-colors font-medium">
           {game.categoryName}
         </Link>
         <span>/</span>
-        <span className="text-gray-200 font-medium truncate max-w-[200px]">{game.title}</span>
+        <span className="text-slate-800 font-semibold truncate max-w-[200px]">{game.title}</span>
       </div>
 
       {/* Embedded Responsive Game Player Viewport */}
@@ -80,23 +80,23 @@ export default function GamePage({ params }: GamePageProps) {
       </div>
 
       {/* Game Title, Creator & Social Action Controls */}
-      <div className="bg-slate-900/80 rounded-2xl p-5 border border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg">
+      <div className="bg-white rounded-2xl p-5 border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xs">
         <div>
           <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="font-heading font-black text-2xl sm:text-3xl text-white">
+            <h1 className="font-heading font-black text-2xl sm:text-3xl text-slate-900">
               {game.title}
             </h1>
-            <span className="bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 text-xs font-semibold px-2.5 py-0.5 rounded-lg">
+            <span className="bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-semibold px-2.5 py-0.5 rounded-lg">
               {game.categoryName}
             </span>
           </div>
-          <div className="flex items-center gap-3 mt-1.5 text-xs text-gray-400">
+          <div className="flex items-center gap-3 mt-1.5 text-xs text-slate-500">
             <span>
-              By <span className="text-gray-200 font-semibold">{game.developerName}</span>
+              By <span className="text-slate-800 font-semibold">{game.developerName}</span>
             </span>
             <span>•</span>
-            <div className="flex items-center gap-1 text-amber-400 font-semibold">
-              <Star className="w-3.5 h-3.5 fill-amber-400" />
+            <div className="flex items-center gap-1 text-amber-500 font-semibold">
+              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
               <span>{game.rating.toFixed(1)}</span>
             </div>
             <span>•</span>
@@ -115,7 +115,7 @@ export default function GamePage({ params }: GamePageProps) {
       </div>
 
       {/* 1. SIMILAR GAMES SUGGESTIONS (Directly below game player - Poki / CrazyGames Pattern) */}
-      <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+      <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
         <AdaptiveRecommendations
           initialMood={defaultMood}
           title={`More Games Like ${game.title}`}
@@ -130,31 +130,31 @@ export default function GamePage({ params }: GamePageProps) {
         {/* Left 2 Cols: Description & Controls */}
         <div className="lg:col-span-2 space-y-6">
           {/* About Game Card */}
-          <div className="bg-slate-900/80 rounded-2xl p-6 border border-white/10 space-y-3">
-            <div className="flex items-center gap-2 text-white font-bold text-lg border-b border-white/10 pb-3">
-              <Info className="w-5 h-5 text-indigo-400" />
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-3">
+            <div className="flex items-center gap-2 text-slate-900 font-bold text-lg border-b border-slate-100 pb-3">
+              <Info className="w-5 h-5 text-indigo-600" />
               <h2>About {game.title}</h2>
             </div>
-            <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-line">
+            <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-line">
               {game.fullDescription || game.shortDescription}
             </p>
           </div>
 
           {/* Controls & Instructions Card */}
-          <div className="bg-slate-900/80 rounded-2xl p-6 border border-white/10 space-y-3">
-            <div className="flex items-center gap-2 text-white font-bold text-lg border-b border-white/10 pb-3">
-              <Keyboard className="w-5 h-5 text-indigo-400" />
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-3">
+            <div className="flex items-center gap-2 text-slate-900 font-bold text-lg border-b border-slate-100 pb-3">
+              <Keyboard className="w-5 h-5 text-indigo-600" />
               <h2>Controls & How to Play</h2>
             </div>
-            <div className="bg-slate-950/80 p-4 rounded-xl border border-white/5 text-sm text-gray-300 whitespace-pre-line leading-relaxed">
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-sm text-slate-700 whitespace-pre-line leading-relaxed font-mono text-xs">
               {game.controlsGuide || '• Use Mouse or Touch to interact\n• Arrow keys or WASD to move\n• Space to jump or action'}
             </div>
           </div>
 
           {/* 3. Community Ratings & Reviews */}
-          <div className="bg-slate-900/80 rounded-2xl p-6 border border-white/10">
-            <div className="flex items-center gap-2 text-white font-bold text-lg border-b border-white/10 pb-3 mb-4">
-              <MessageSquare className="w-5 h-5 text-indigo-400" />
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
+            <div className="flex items-center gap-2 text-slate-900 font-bold text-lg border-b border-slate-100 pb-3 mb-4">
+              <MessageSquare className="w-5 h-5 text-indigo-600" />
               <h2>Player Reviews & Ratings</h2>
             </div>
             <GameReviewsSection gameSlug={game.slug} gameId={game.id} initialRating={game.rating} />
@@ -163,27 +163,27 @@ export default function GamePage({ params }: GamePageProps) {
 
         {/* Right Col: Game Overview Card */}
         <div className="space-y-6">
-          <div className="bg-slate-900/80 rounded-2xl p-6 border border-white/10 space-y-4">
-            <div className="flex items-center gap-2 text-white font-bold text-base border-b border-white/10 pb-3">
-              <Gamepad2 className="w-4 h-4 text-indigo-400" />
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-4">
+            <div className="flex items-center gap-2 text-slate-900 font-bold text-base border-b border-slate-100 pb-3">
+              <Gamepad2 className="w-4 h-4 text-indigo-600" />
               <h3>Game Information</h3>
             </div>
             <div className="space-y-3 text-xs">
-              <div className="flex justify-between py-1.5 border-b border-white/5">
-                <span className="text-gray-400">Developer</span>
-                <span className="text-gray-200 font-semibold">{game.developerName}</span>
+              <div className="flex justify-between py-1.5 border-b border-slate-100">
+                <span className="text-slate-500">Developer</span>
+                <span className="text-slate-800 font-semibold">{game.developerName}</span>
               </div>
-              <div className="flex justify-between py-1.5 border-b border-white/5">
-                <span className="text-gray-400">Genre</span>
-                <span className="text-indigo-400 font-semibold">{game.categoryName}</span>
+              <div className="flex justify-between py-1.5 border-b border-slate-100">
+                <span className="text-slate-500">Genre</span>
+                <span className="text-indigo-600 font-semibold">{game.categoryName}</span>
               </div>
-              <div className="flex justify-between py-1.5 border-b border-white/5">
-                <span className="text-gray-400">Platform</span>
-                <span className="text-emerald-400 font-medium">Web Browser (No Install)</span>
+              <div className="flex justify-between py-1.5 border-b border-slate-100">
+                <span className="text-slate-500">Platform</span>
+                <span className="text-emerald-700 font-medium">Web Browser (No Install)</span>
               </div>
               <div className="flex justify-between py-1.5">
-                <span className="text-gray-400">Released</span>
-                <span className="text-gray-200">
+                <span className="text-slate-500">Released</span>
+                <span className="text-slate-800">
                   {new Date(game.publishedAt || game.createdAt).toLocaleDateString(undefined, {
                     year: 'numeric',
                     month: 'short',

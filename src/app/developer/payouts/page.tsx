@@ -298,30 +298,30 @@ export default function PayoutsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
       {/* Breadcrumb Navigation */}
-      <div className="flex items-center gap-2 text-xs text-slate-400">
+      <div className="flex items-center gap-2 text-xs text-slate-500">
         <Link
           href="/developer"
-          className="hover:text-white transition-colors flex items-center gap-1"
+          className="hover:text-slate-900 transition-colors flex items-center gap-1"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Studio Dashboard</span>
         </Link>
         <span>/</span>
-        <span className="text-slate-200 font-medium">Developer Payouts & Settlement</span>
+        <span className="text-slate-800 font-medium">Developer Payouts & Settlement</span>
       </div>
 
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="font-heading font-black text-2xl sm:text-3xl text-white">
+            <h1 className="font-heading font-black text-2xl sm:text-3xl text-slate-900">
               Creator Payouts & Settlement
             </h1>
-            <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[11px] font-mono font-semibold text-emerald-400">
+            <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-mono font-semibold text-emerald-700">
               Payout Option Active
             </span>
           </div>
-          <p className="text-slate-400 text-xs sm:text-sm mt-1">
+          <p className="text-slate-500 text-xs sm:text-sm mt-1">
             Save your payout method once, then simply enter your desired withdrawal amount to submit instant settlement requests.
           </p>
         </div>
@@ -331,7 +331,7 @@ export default function PayoutsPage() {
           <button
             onClick={fetchPayoutData}
             title="Refresh Status"
-            className="w-10 h-10 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/60 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-95 cursor-pointer"
+            className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 flex items-center justify-center transition-all active:scale-95 cursor-pointer"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </button>
@@ -339,13 +339,13 @@ export default function PayoutsPage() {
       </div>
 
       {/* Rate Engine Update Notice */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-indigo-950/40 border border-indigo-500/30 flex items-start gap-3.5">
-        <Sparkles className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />
+      <div className="p-4 sm:p-5 rounded-2xl bg-indigo-50 border border-indigo-200 flex items-start gap-3.5">
+        <Sparkles className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
         <div className="space-y-1">
-          <h3 className="text-sm font-bold text-white">
+          <h3 className="text-sm font-bold text-slate-900">
             Payout Calculation & Revenue Distribution
           </h3>
-          <p className="text-xs text-indigo-200 leading-relaxed">
+          <p className="text-xs text-indigo-950 leading-relaxed">
             Developer payouts are active. Verified earnings formulas and rate tiers are finalized by platform administrators. Player traffic, gameplay sessions, and engagement durations across all your published titles are tracked in real-time.
           </p>
         </div>
@@ -353,14 +353,14 @@ export default function PayoutsPage() {
 
       {/* Feedback Alerts */}
       {successMsg && (
-        <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs sm:text-sm flex items-center justify-between">
+        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>{successMsg}</span>
           </div>
           <button
             onClick={() => setSuccessMsg(null)}
-            className="text-emerald-400 hover:text-white font-bold ml-4 cursor-pointer"
+            className="text-emerald-700 hover:text-emerald-900 font-bold ml-4 cursor-pointer"
           >
             ✕
           </button>
@@ -368,14 +368,14 @@ export default function PayoutsPage() {
       )}
 
       {errorMsg && (
-        <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs sm:text-sm flex items-center justify-between">
+        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
             <span>{errorMsg}</span>
           </div>
           <button
             onClick={() => setErrorMsg(null)}
-            className="text-rose-400 hover:text-white font-bold ml-4 cursor-pointer"
+            className="text-rose-700 hover:text-rose-900 font-bold ml-4 cursor-pointer"
           >
             ✕
           </button>
@@ -385,45 +385,45 @@ export default function PayoutsPage() {
       {/* Payout Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {/* Card 1: Available Creator Balance */}
-        <div className="bg-[#0B0F19] rounded-2xl p-6 border border-slate-800 shadow-xl relative overflow-hidden flex flex-col justify-between">
+        <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs relative overflow-hidden flex flex-col justify-between">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 Available Balance
               </span>
-              <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-[10px] font-bold text-emerald-400">
+              <span className="px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-[10px] font-bold text-emerald-700">
                 Ready to Withdraw
               </span>
             </div>
-            <div className="font-heading font-black text-3xl text-emerald-400 font-mono">
+            <div className="font-heading font-black text-3xl text-emerald-600 font-mono">
               ${(summary?.availableBalance ?? 0).toFixed(2)}
             </div>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-slate-500">
               Payout option active hai. Rate calculation formula jald finalize kiya jayega.
             </p>
           </div>
 
-          <div className="mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
-            <span className="flex items-center gap-1 text-emerald-400 font-medium">
+          <div className="mt-4 pt-4 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
+            <span className="flex items-center gap-1 text-emerald-700 font-medium">
               <Check className="w-3.5 h-3.5" />
               <span>Withdrawals Active</span>
             </span>
-            <span className="font-mono text-cyan-300">Creator Studio</span>
+            <span className="font-mono text-indigo-600 font-medium">Creator Studio</span>
           </div>
         </div>
 
         {/* Card 2: Configured Payout Method */}
-        <div className="bg-[#0B0F19] rounded-2xl p-6 border border-slate-800 shadow-xl relative overflow-hidden flex flex-col justify-between">
+        <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs relative overflow-hidden flex flex-col justify-between">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 Configured Method
               </span>
               <span
                 className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${
                   isMethodConfigured
-                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                    : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                    : 'bg-amber-50 text-amber-800 border-amber-200'
                 }`}
               >
                 {isMethodConfigured ? 'Ready' : 'Setup Required'}
@@ -431,7 +431,7 @@ export default function PayoutsPage() {
             </div>
 
             <div className="flex items-center gap-3 pt-1">
-              <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-600 flex items-center justify-center shrink-0">
                 {devSettings?.payoutMethod === 'UPI' ? (
                   <Coins className="w-5 h-5" />
                 ) : devSettings?.payoutMethod === 'PAYPAL' ? (
@@ -443,64 +443,64 @@ export default function PayoutsPage() {
                 )}
               </div>
               <div className="overflow-hidden">
-                <p className="text-sm font-bold text-white truncate">
+                <p className="text-sm font-bold text-slate-900 truncate">
                   {devSettings?.payoutMethod
                     ? devSettings.payoutMethod.replace('_', ' ')
                     : 'NOT CONFIGURED'}
                 </p>
-                <p className="text-[11px] text-slate-400 font-mono truncate">
+                <p className="text-[11px] text-slate-500 font-mono truncate">
                   {accountDetails || 'Setup below to unlock instant payouts'}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+          <div className="mt-4 pt-4 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
             <span>Settlement Channel:</span>
-            <span className="font-semibold text-slate-200">
+            <span className="font-semibold text-slate-800">
               {isMethodConfigured ? 'Direct Channel' : 'Pending Configuration'}
             </span>
           </div>
         </div>
 
         {/* Card 3: Creator Status */}
-        <div className="bg-[#0B0F19] rounded-2xl p-6 border border-slate-800 shadow-xl relative overflow-hidden flex flex-col justify-between">
+        <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs relative overflow-hidden flex flex-col justify-between">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 Studio Verification
               </span>
-              <span className="px-2 py-0.5 rounded-md bg-cyan-500/10 border border-cyan-500/30 text-[10px] font-bold text-cyan-400">
+              <span className="px-2 py-0.5 rounded-md bg-cyan-50 border border-cyan-200 text-[10px] font-bold text-cyan-700">
                 Verified
               </span>
             </div>
-            <div className="font-heading font-black text-2xl text-cyan-400">
+            <div className="font-heading font-black text-2xl text-slate-900">
               Verified Creator
             </div>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-slate-500">
               Account is in good standing and eligible for settlements.
             </p>
           </div>
 
-          <div className="mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
-            <span className="flex items-center gap-1 text-slate-300">
-              <Shield className="w-3.5 h-3.5 text-cyan-400" />
+          <div className="mt-4 pt-4 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
+            <span className="flex items-center gap-1 text-slate-700">
+              <Shield className="w-3.5 h-3.5 text-cyan-600" />
               <span>Full Access</span>
             </span>
-            <span className="font-mono text-cyan-300">Standard Tier</span>
+            <span className="font-mono text-cyan-700 font-medium">Standard Tier</span>
           </div>
         </div>
       </div>
 
       {/* STEP 1: CHOOSE, SAVE, UPDATE & DELETE PAYOUT METHOD */}
-      <div className="bg-[#0B0F19] rounded-2xl p-6 sm:p-8 border border-slate-800 shadow-xl space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+      <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
           <div>
-            <h2 className="text-lg font-bold text-white flex items-center gap-2">
-              <Coins className="w-5 h-5 text-amber-400" />
+            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <Coins className="w-5 h-5 text-amber-500" />
               <span>1. Payout Destination (Saved Method)</span>
             </h2>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1">
+            <p className="text-xs sm:text-sm text-slate-500 mt-1">
               Select and save your preferred payout destination once. You can update or change this destination at any time.
             </p>
           </div>
@@ -510,7 +510,7 @@ export default function PayoutsPage() {
               <button
                 type="button"
                 onClick={() => setIsEditingMethod(true)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-xs font-semibold transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-semibold transition-colors cursor-pointer"
               >
                 <Edit3 className="w-3.5 h-3.5" />
                 <span>Update Method</span>
@@ -520,7 +520,7 @@ export default function PayoutsPage() {
                 type="button"
                 onClick={handleDeleteMethod}
                 disabled={savingMethod}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50"
               >
                 <Trash2 className="w-3.5 h-3.5" />
                 <span>Delete</span>
@@ -531,9 +531,9 @@ export default function PayoutsPage() {
 
         {/* If Saved: Show the Active Saved Card */}
         {isMethodConfigured && !isEditingMethod ? (
-          <div className="p-5 rounded-2xl bg-slate-950/80 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="p-5 rounded-2xl bg-slate-50 border border-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shrink-0">
                 {devSettings?.payoutMethod === 'UPI' && <Coins className="w-6 h-6" />}
                 {devSettings?.payoutMethod === 'BANK_WIRE' && <Building className="w-6 h-6" />}
                 {devSettings?.payoutMethod === 'PAYPAL' && <CreditCard className="w-6 h-6" />}
@@ -542,30 +542,30 @@ export default function PayoutsPage() {
 
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-white text-base">
+                  <span className="font-bold text-slate-900 text-base">
                     {devSettings?.payoutMethod?.replace('_', ' ') || 'BANK WIRE'}
                   </span>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold">
                     <Check className="w-3 h-3" />
                     <span>Saved & Verified</span>
                   </span>
                 </div>
-                <p className="text-sm font-mono text-cyan-300">
+                <p className="text-sm font-mono text-indigo-700 font-semibold">
                   {accountDetails}
                 </p>
                 {beneficiaryName && (
-                  <p className="text-xs text-slate-400">
-                    Beneficiary / Studio: <span className="text-slate-200">{beneficiaryName}</span>
+                  <p className="text-xs text-slate-500">
+                    Beneficiary / Studio: <span className="text-slate-800 font-medium">{beneficiaryName}</span>
                   </p>
                 )}
-                <p className="text-[11px] text-slate-500">
+                <p className="text-[11px] text-slate-400">
                   Ready for automatic settlement disbursement
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-2 self-end sm:self-center">
-              <span className="text-xs text-emerald-400 font-semibold bg-emerald-500/10 px-3 py-1.5 rounded-xl border border-emerald-500/20 flex items-center gap-1.5">
+              <span className="text-xs text-emerald-700 font-semibold bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200 flex items-center gap-1.5">
                 <Check className="w-3.5 h-3.5" />
                 <span>Ready for Direct Payout</span>
               </span>
@@ -573,20 +573,20 @@ export default function PayoutsPage() {
           </div>
         ) : !isMethodConfigured && !isEditingMethod ? (
           /* If Not Saved: Prompt Button to Choose & Save */
-          <div className="py-8 px-6 rounded-2xl bg-slate-950/60 border border-dashed border-slate-700 text-center space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mx-auto">
+          <div className="py-8 px-6 rounded-2xl bg-slate-50 border border-dashed border-slate-300 text-center space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 mx-auto">
               <Wallet className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-white">No Payout Method Saved</h3>
-              <p className="text-xs text-slate-400 max-w-md mx-auto mt-1">
+              <h3 className="text-base font-bold text-slate-900">No Payout Method Saved</h3>
+              <p className="text-xs text-slate-500 max-w-md mx-auto mt-1">
                 Save your Bank Wire, UPI ID, PayPal, or Stripe account once so you can request payouts by entering the amount.
               </p>
             </div>
             <button
               type="button"
               onClick={() => setIsEditingMethod(true)}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg shadow-amber-500/20 transition-all active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs px-5 py-2.5 rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>Choose & Save Payout Method</span>
@@ -596,7 +596,7 @@ export default function PayoutsPage() {
           /* Form to Choose, Save or Update Payout Method */
           <form onSubmit={handleSaveMethod} className="space-y-6 pt-2">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-3">
+              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-3">
                 Select Developer Payment Channel
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -610,15 +610,15 @@ export default function PayoutsPage() {
                       onClick={() => setMethodType(pm.id)}
                       className={`p-4 rounded-2xl border text-left transition-all flex items-start gap-3.5 cursor-pointer ${
                         isSelected
-                          ? 'bg-amber-500/10 border-amber-500/50 shadow-md shadow-amber-500/10'
-                          : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 text-slate-400 hover:text-white'
+                          ? 'bg-amber-50 border-amber-300 shadow-xs'
+                          : 'bg-white border-slate-200 hover:border-slate-300 text-slate-600 hover:text-slate-900'
                       }`}
                     >
                       <div
                         className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
                           isSelected
-                            ? 'bg-amber-500 text-slate-950 font-bold'
-                            : 'bg-slate-800 text-slate-400'
+                            ? 'bg-amber-500 text-white font-bold'
+                            : 'bg-slate-100 text-slate-500'
                         }`}
                       >
                         <Icon className="w-5 h-5" />
@@ -626,12 +626,12 @@ export default function PayoutsPage() {
                       <div>
                         <div
                           className={`text-sm font-semibold ${
-                            isSelected ? 'text-white' : 'text-slate-300'
+                            isSelected ? 'text-slate-900' : 'text-slate-800'
                           }`}
                         >
                           {pm.name}
                         </div>
-                        <div className="text-[11px] text-slate-400 mt-0.5 leading-snug">
+                        <div className="text-[11px] text-slate-500 mt-0.5 leading-snug">
                           {pm.description}
                         </div>
                       </div>
@@ -643,7 +643,7 @@ export default function PayoutsPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
                   {selectedMethodObj?.fieldLabel || 'Account Details'}
                 </label>
                 <input
@@ -652,12 +652,12 @@ export default function PayoutsPage() {
                   onChange={(e) => setAccountDetails(e.target.value)}
                   placeholder={selectedMethodObj?.placeholder}
                   required
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all font-mono"
+                  className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all font-mono"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
                   {selectedMethodObj?.secondaryLabel || 'Beneficiary / Studio Legal Name'}
                 </label>
                 <input
@@ -665,7 +665,7 @@ export default function PayoutsPage() {
                   value={beneficiaryName}
                   onChange={(e) => setBeneficiaryName(e.target.value)}
                   placeholder={selectedMethodObj?.secondaryPlaceholder || 'e.g. PixelForge Studios'}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all"
+                  className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-all"
                 />
               </div>
             </div>
@@ -675,7 +675,7 @@ export default function PayoutsPage() {
                 <button
                   type="button"
                   onClick={() => setIsEditingMethod(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition-colors cursor-pointer"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -684,7 +684,7 @@ export default function PayoutsPage() {
               <button
                 type="submit"
                 disabled={savingMethod}
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs px-6 py-2.5 rounded-xl shadow-lg shadow-amber-500/20 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs px-6 py-2.5 rounded-xl shadow-xs transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
               >
                 <Check className="w-4 h-4" />
                 <span>{savingMethod ? 'Saving Method...' : 'Save Payout Method'}</span>
@@ -695,13 +695,13 @@ export default function PayoutsPage() {
       </div>
 
       {/* STEP 2: PAYOUT REQUEST (AMOUNT ONLY) */}
-      <div className="bg-[#0B0F19] rounded-2xl p-6 sm:p-8 border border-slate-800 shadow-xl space-y-6">
-        <div className="border-b border-slate-800 pb-4">
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <Wallet className="w-5 h-5 text-emerald-400" />
+      <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+        <div className="border-b border-slate-200 pb-4">
+          <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+            <Wallet className="w-5 h-5 text-emerald-600" />
             <span>2. Request Payout (Enter Amount)</span>
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
             Your saved payout destination is automatically connected. Enter your withdrawal amount to submit the request.
           </p>
         </div>
@@ -709,20 +709,20 @@ export default function PayoutsPage() {
         <form onSubmit={handleSubmitPayoutRequest} className="space-y-6">
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
                 Enter Withdrawal Amount ($)
               </label>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-slate-500">
                   Available:{' '}
-                  <strong className="text-emerald-400 font-mono">
+                  <strong className="text-emerald-700 font-mono">
                     ${(summary?.availableBalance ?? 0).toFixed(2)}
                   </strong>
                 </span>
                 <button
                   type="button"
                   onClick={() => setAmount(String(summary?.availableBalance ?? 0))}
-                  className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition-colors cursor-pointer"
+                  className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 transition-colors cursor-pointer"
                 >
                   Use Max
                 </button>
@@ -740,13 +740,13 @@ export default function PayoutsPage() {
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="100"
                 required
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl pl-9 pr-4 py-3 text-lg font-bold text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all font-mono"
+                className="w-full bg-white border border-slate-300 rounded-xl pl-9 pr-4 py-3 text-lg font-bold text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all font-mono"
               />
             </div>
 
             {/* Quick Amount Suggestion Chips */}
             <div className="flex flex-wrap items-center gap-2 mt-3">
-              <span className="text-xs text-slate-400">Quick Select:</span>
+              <span className="text-xs text-slate-500">Quick Select:</span>
               {['50', '100', '250', '500', '1000'].map((amt) => (
                 <button
                   type="button"
@@ -754,8 +754,8 @@ export default function PayoutsPage() {
                   onClick={() => setAmount(amt)}
                   className={`px-3 py-1 rounded-xl text-xs font-semibold font-mono border transition-all cursor-pointer ${
                     amount === amt
-                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                      : 'bg-slate-950 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-white'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-300 font-bold'
+                      : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
                   }`}
                 >
                   ${amt}
@@ -766,14 +766,14 @@ export default function PayoutsPage() {
 
           {/* Receiving Account Indicator */}
           {isMethodConfigured ? (
-            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between text-xs">
-              <span className="text-slate-400">Receiving via Saved Method:</span>
-              <span className="font-mono text-cyan-300 font-semibold">
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
+              <span className="text-slate-500">Receiving via Saved Method:</span>
+              <span className="font-mono text-indigo-700 font-semibold">
                 {devSettings?.payoutMethod} &bull; {accountDetails}
               </span>
             </div>
           ) : (
-            <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center gap-2 text-xs text-amber-300">
+            <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 flex items-center gap-2 text-xs text-amber-800">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>Please save your payout destination above before submitting a withdrawal request.</span>
             </div>
@@ -781,7 +781,7 @@ export default function PayoutsPage() {
 
           {/* Optional Note */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
               Note / Reference Memo (Optional)
             </label>
             <input
@@ -790,7 +790,7 @@ export default function PayoutsPage() {
               onChange={(e) => setRequestNote(e.target.value)}
               placeholder="e.g. Monthly creator earnings withdrawal"
               maxLength={200}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all"
+              className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-all"
             />
           </div>
 
@@ -803,7 +803,7 @@ export default function PayoutsPage() {
                 !amount ||
                 Number(amount) <= 0
               }
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold text-xs px-7 py-3 rounded-xl shadow-lg shadow-emerald-600/30 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold text-xs px-7 py-3 rounded-xl shadow-xs transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             >
               <Send className="w-3.5 h-3.5" />
               <span>
@@ -817,14 +817,14 @@ export default function PayoutsPage() {
       </div>
 
       {/* STEP 3: FINANCIAL LEDGER & PAYOUT HISTORY TABLE */}
-      <div className="bg-[#0B0F19] rounded-2xl border border-slate-800 shadow-xl overflow-hidden">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
         {/* Table Controls Header */}
-        <div className="p-6 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="p-6 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="font-heading font-bold text-lg text-white">
+            <h2 className="font-heading font-bold text-lg text-slate-900">
               History of all withdrawal requests submitted from your account
             </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5">
               View live status, disbursement methods, and transaction reference IDs for all settlement requests.
             </p>
           </div>
@@ -836,18 +836,18 @@ export default function PayoutsPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search reference or game..."
-              className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-slate-700 w-44"
+              className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-1 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 w-44"
             />
 
-            <div className="flex flex-wrap items-center gap-1.5 bg-slate-900 p-1 rounded-xl border border-slate-800">
+            <div className="flex flex-wrap items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200">
               {['ALL', 'FINALIZED', 'ESTIMATED', 'PROCESSING', 'PAID'].map((status) => (
                 <button
                   key={status}
                   onClick={() => setStatusFilter(status)}
                   className={`text-[11px] font-semibold px-3 py-1 rounded-lg transition-all cursor-pointer ${
                     statusFilter === status
-                      ? 'bg-indigo-600 text-white shadow-sm'
-                      : 'text-slate-400 hover:text-slate-200'
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   {status}
@@ -860,7 +860,7 @@ export default function PayoutsPage() {
         {/* Ledger Records Table */}
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950/80 border-b border-slate-800 text-slate-400 uppercase font-semibold text-[10px] tracking-wider">
+            <thead className="bg-slate-50 border-b border-slate-200 text-slate-700 uppercase font-semibold text-[10px] tracking-wider">
               <tr>
                 <th className="px-5 py-3.5">Settlement Period / Date</th>
                 <th className="px-5 py-3.5">Amount</th>
@@ -870,10 +870,10 @@ export default function PayoutsPage() {
                 <th className="px-5 py-3.5 text-right">Status (Payout Hua ya Pending)</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/80 text-slate-300">
+            <tbody className="divide-y divide-slate-200 text-slate-700">
               {filteredRecords.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-5 py-12 text-center text-slate-500">
+                  <td colSpan={6} className="px-5 py-12 text-center text-slate-400">
                     No payout records match the selected filter.
                   </td>
                 </tr>
@@ -887,18 +887,18 @@ export default function PayoutsPage() {
                   const isCopied = copiedRef === refId;
 
                   return (
-                    <tr key={r.id} className="hover:bg-slate-800/20 transition-colors">
-                      <td className="px-5 py-4 font-semibold text-white whitespace-nowrap">
+                    <tr key={r.id} className="hover:bg-slate-50 transition-colors">
+                      <td className="px-5 py-4 font-semibold text-slate-900 whitespace-nowrap">
                         {r.period ||
                           (r.createdAt ? new Date(r.createdAt).toLocaleDateString() : 'Current Cycle')}
                       </td>
 
-                      <td className="px-5 py-4 font-mono font-bold text-white text-sm whitespace-nowrap">
+                      <td className="px-5 py-4 font-mono font-bold text-slate-900 text-sm whitespace-nowrap">
                         ${(r.creatorShare || 0).toFixed(2)}
                       </td>
 
                       <td className="px-5 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center gap-1.5 font-semibold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/20">
+                        <span className="inline-flex items-center gap-1.5 font-semibold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200">
                           {r.payoutMethod?.includes('UPI') ? (
                             <Coins className="w-3.5 h-3.5" />
                           ) : r.payoutMethod?.includes('PAYPAL') ? (
@@ -910,7 +910,7 @@ export default function PayoutsPage() {
                         </span>
                       </td>
 
-                      <td className="px-5 py-4 text-slate-300 whitespace-nowrap">
+                      <td className="px-5 py-4 text-slate-700 whitespace-nowrap">
                         {r.gameTitle || 'Studio Creator Share'}
                       </td>
 
@@ -920,44 +920,44 @@ export default function PayoutsPage() {
                             type="button"
                             onClick={() => handleCopyRef(refId)}
                             title="Click to copy payout reference"
-                            className="inline-flex items-center gap-1.5 font-mono text-[11px] text-slate-300 hover:text-white bg-slate-950 px-2 py-0.5 rounded border border-slate-800 hover:border-slate-700 transition-colors cursor-pointer"
+                            className="inline-flex items-center gap-1.5 font-mono text-[11px] text-slate-700 hover:text-slate-900 bg-slate-100 px-2 py-0.5 rounded border border-slate-200 hover:border-slate-300 transition-colors cursor-pointer"
                           >
                             <span>{refId}</span>
                             {isCopied ? (
-                              <Check className="w-3 h-3 text-emerald-400" />
+                              <Check className="w-3 h-3 text-emerald-600" />
                             ) : (
-                              <span className="text-slate-500 text-[10px]">copy</span>
+                              <span className="text-slate-400 text-[10px]">copy</span>
                             )}
                           </button>
                         ) : (
-                          <span className="text-slate-500 font-mono text-[11px]">Pending Cycle Close</span>
+                          <span className="text-slate-400 font-mono text-[11px]">Pending Cycle Close</span>
                         )}
                       </td>
 
                       <td className="px-5 py-4 text-right whitespace-nowrap">
                         {isPaid && (
-                          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                             <CheckCircle2 className="w-3.5 h-3.5" />
                             <span>Successfully Paid / Finalized</span>
                           </span>
                         )}
 
                         {isProcessing && (
-                          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-3 py-1 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
+                          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-3 py-1 rounded-full bg-cyan-50 text-cyan-700 border border-cyan-200">
                             <Clock className="w-3.5 h-3.5 animate-spin" />
                             <span>Processing Payout</span>
                           </span>
                         )}
 
                         {isPending && (
-                          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-3 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-3 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
                             <Clock className="w-3.5 h-3.5" />
                             <span>Pending Review / Scheduled</span>
                           </span>
                         )}
 
                         {isOnHold && (
-                          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-3 py-1 rounded-full bg-rose-500/15 text-rose-400 border border-rose-500/30">
+                          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-3 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
                             <AlertCircle className="w-3.5 h-3.5" />
                             <span>On Hold</span>
                           </span>

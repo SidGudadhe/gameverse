@@ -55,12 +55,12 @@ export default function DeveloperOnboardPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 space-y-8">
       {/* Wizard Progress Bar */}
-      <div className="flex items-center justify-between border-b border-white/10 pb-6">
+      <div className="flex items-center justify-between border-b border-slate-200 pb-6">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-600/20 border border-indigo-500/30 px-2.5 py-0.5 rounded-full">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 border border-indigo-200 px-2.5 py-0.5 rounded-full">
             Studio Onboarding
           </span>
-          <h1 className="font-heading font-black text-2xl sm:text-3xl text-white mt-1">
+          <h1 className="font-heading font-black text-2xl sm:text-3xl text-slate-900 mt-1">
             Creator Activation
           </h1>
         </div>
@@ -69,28 +69,28 @@ export default function DeveloperOnboardPage() {
           <div
             className={`w-8 h-8 rounded-full flex items-center justify-center border ${
               step >= 1
-                ? 'bg-indigo-600 border-indigo-400 text-white'
-                : 'bg-surface border-white/10 text-gray-500'
+                ? 'bg-indigo-600 border-indigo-600 text-white'
+                : 'bg-slate-100 border-slate-200 text-slate-400'
             }`}
           >
             1
           </div>
-          <div className="w-8 h-0.5 bg-white/10" />
+          <div className="w-8 h-0.5 bg-slate-200" />
           <div
             className={`w-8 h-8 rounded-full flex items-center justify-center border ${
               step >= 2
-                ? 'bg-indigo-600 border-indigo-400 text-white'
-                : 'bg-surface border-white/10 text-gray-500'
+                ? 'bg-indigo-600 border-indigo-600 text-white'
+                : 'bg-slate-100 border-slate-200 text-slate-400'
             }`}
           >
             2
           </div>
-          <div className="w-8 h-0.5 bg-white/10" />
+          <div className="w-8 h-0.5 bg-slate-200" />
           <div
             className={`w-8 h-8 rounded-full flex items-center justify-center border ${
               step === 3
-                ? 'bg-emerald-600 border-emerald-400 text-white'
-                : 'bg-surface border-white/10 text-gray-500'
+                ? 'bg-emerald-600 border-emerald-600 text-white'
+                : 'bg-slate-100 border-slate-200 text-slate-400'
             }`}
           >
             <Check className="w-4 h-4" />
@@ -99,20 +99,20 @@ export default function DeveloperOnboardPage() {
       </div>
 
       {error && (
-        <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs">
+        <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs">
           {error}
         </div>
       )}
 
       {/* STEP 1: STUDIO DETAILS */}
       {step === 1 && (
-        <div className="bg-surface rounded-3xl p-6 sm:p-8 border border-white/10 space-y-6">
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
           <div>
-            <h2 className="font-heading font-bold text-lg text-white flex items-center gap-2">
-              <Building className="w-5 h-5 text-indigo-400" />
+            <h2 className="font-heading font-bold text-lg text-slate-900 flex items-center gap-2">
+              <Building className="w-5 h-5 text-indigo-600" />
               <span>Step 1: Studio & Creator Profile</span>
             </h2>
-            <p className="text-xs text-gray-400 mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5">
               Tell the GameVerse community and players about your game studio.
             </p>
           </div>
@@ -136,7 +136,7 @@ export default function DeveloperOnboardPage() {
             />
 
             <div className="space-y-1.5 text-left">
-              <label className="block text-xs font-semibold text-gray-300">
+              <label className="block text-xs font-semibold text-slate-700">
                 Studio Bio & Description
               </label>
               <textarea
@@ -144,12 +144,12 @@ export default function DeveloperOnboardPage() {
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 placeholder="Brief summary of your games and development background..."
-                className="w-full bg-black/40 text-gray-100 placeholder-gray-500 text-xs sm:text-sm rounded-xl p-3 border border-white/10 focus:border-indigo-500 focus:outline-none"
+                className="w-full bg-slate-50 text-slate-900 placeholder-slate-400 text-xs sm:text-sm rounded-xl p-3 border border-slate-200 focus:border-indigo-500 focus:bg-white focus:outline-none transition-colors"
               />
             </div>
           </div>
 
-          <div className="flex justify-end pt-4 border-t border-white/5">
+          <div className="flex justify-end pt-4 border-t border-slate-100">
             <Button
               variant="primary"
               onClick={() => {
@@ -170,40 +170,40 @@ export default function DeveloperOnboardPage() {
 
       {/* STEP 2: CREATOR AGREEMENT */}
       {step === 2 && (
-        <div className="bg-surface rounded-3xl p-6 sm:p-8 border border-white/10 space-y-6">
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
           <div>
-            <h2 className="font-heading font-bold text-lg text-white flex items-center gap-2">
-              <FileText className="w-5 h-5 text-amber-400" />
+            <h2 className="font-heading font-bold text-lg text-slate-900 flex items-center gap-2">
+              <FileText className="w-5 h-5 text-amber-500" />
               <span>Step 2: Review Creator Agreement (v1.0-2026)</span>
             </h2>
-            <p className="text-xs text-gray-400 mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5">
               Review platform revenue share, intellectual property, and publishing rules.
             </p>
           </div>
 
           {/* Legal Scrollbox */}
-          <div className="h-64 overflow-y-auto bg-black/50 p-5 rounded-2xl border border-white/10 text-xs text-gray-300 space-y-3 font-mono leading-relaxed">
-            <div className="font-bold text-white text-sm">
+          <div className="h-64 overflow-y-auto bg-slate-50 p-5 rounded-2xl border border-slate-200 text-xs text-slate-700 space-y-3 font-mono leading-relaxed">
+            <div className="font-bold text-slate-900 text-sm">
               GAMEVERSE CREATOR REVENUE-SHARE & PUBLISHING AGREEMENT
             </div>
-            <div>Version: 1.0-2026 • Published: November 2026</div>
+            <div className="text-slate-500">Version: 1.0-2026 • Published: November 2026</div>
 
-            <div className="font-semibold text-indigo-400 pt-2">1. REVENUE SHARING (50% NET)</div>
+            <div className="font-semibold text-indigo-700 pt-2">1. REVENUE SHARING (50% NET)</div>
             <p>
               The platform distributes fifty percent (50%) of all eligible Net Game Revenue generated by the Creator&apos;s published games. Net Game Revenue is defined as Gross Ad Revenue minus direct network processing fees, chargebacks, and verified invalid traffic (IVT) deductions.
             </p>
 
-            <div className="font-semibold text-indigo-400 pt-2">2. INTELLECTUAL PROPERTY & AI DISCLOSURES</div>
+            <div className="font-semibold text-indigo-700 pt-2">2. INTELLECTUAL PROPERTY & AI DISCLOSURES</div>
             <p>
               The Creator retains 100% intellectual property ownership of their games. The Creator grants GameVerse a non-exclusive license to host, display, and promote the build. The Creator explicitly warrants that they possess commercial licenses for all third-party fonts, audio, and textures, and agrees to truthfully declare any AI-generated components.
             </p>
 
-            <div className="font-semibold text-indigo-400 pt-2">3. PAYOUT THRESHOLDS & ACCOUNTING CYCLE</div>
+            <div className="font-semibold text-indigo-700 pt-2">3. PAYOUT THRESHOLDS & ACCOUNTING CYCLE</div>
             <p>
               Earnings reconcile on a Net-30 monthly calendar. The minimum payout disbursement threshold is $50.00 USD (or local currency equivalent). Balances below the threshold roll over to the subsequent billing period.
             </p>
 
-            <div className="font-semibold text-indigo-400 pt-2">4. PROHIBITED CONTENT & SECURITY</div>
+            <div className="font-semibold text-indigo-700 pt-2">4. PROHIBITED CONTENT & SECURITY</div>
             <p>
               Builds containing malware, cryptominers, unauthorized tracking pixels, or offensive hate speech will be immediately unpublished, with earnings subject to forfeiture.
             </p>
@@ -215,15 +215,15 @@ export default function DeveloperOnboardPage() {
                 type="checkbox"
                 checked={agreedToTerms}
                 onChange={(e) => setAgreedToTerms(e.target.checked)}
-                className="mt-0.5 rounded border-white/20 bg-black/40 text-indigo-600 focus:ring-0"
+                className="mt-0.5 rounded border-slate-300 bg-white text-indigo-600 focus:ring-0"
               />
-              <span className="text-xs text-gray-200 leading-relaxed font-semibold">
+              <span className="text-xs text-slate-800 leading-relaxed font-semibold">
                 I have read, understood, and accept the GameVerse Creator Agreement (v1.0-2026). I agree that this acceptance will be cryptographically timestamped and bound to my account IP address.
               </span>
             </label>
           </div>
 
-          <div className="flex justify-between items-center pt-4 border-t border-white/5">
+          <div className="flex justify-between items-center pt-4 border-t border-slate-100">
             <Button variant="ghost" size="sm" onClick={() => setStep(1)}>
               Back
             </Button>
@@ -241,17 +241,17 @@ export default function DeveloperOnboardPage() {
 
       {/* STEP 3: ACTIVATION COMPLETE */}
       {step === 3 && (
-        <div className="bg-surface rounded-3xl p-8 sm:p-12 border border-white/10 text-center space-y-6">
-          <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 mx-auto flex items-center justify-center shadow-lg shadow-emerald-500/20">
+        <div className="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200 shadow-xs text-center space-y-6">
+          <div className="w-16 h-16 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 mx-auto flex items-center justify-center shadow-xs">
             <CheckCircle2 className="w-8 h-8" />
           </div>
 
           <div className="space-y-2">
-            <h2 className="font-heading font-black text-3xl text-white">
+            <h2 className="font-heading font-black text-3xl text-slate-900">
               Studio Activated Successfully!
             </h2>
-            <p className="text-sm text-gray-300 max-w-md mx-auto leading-relaxed">
-              Your Creator Agreement (v1.0-2026) has been registered. Your studio <span className="font-bold text-white">{studioName}</span> is now active and authorized to submit game builds to the platform.
+            <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+              Your Creator Agreement (v1.0-2026) has been registered. Your studio <span className="font-bold text-slate-900">{studioName}</span> is now active and authorized to submit game builds to the platform.
             </p>
           </div>
 

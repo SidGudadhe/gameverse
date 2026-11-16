@@ -108,18 +108,18 @@ export default function GoogleAccountChooser({
       role="dialog"
       aria-modal="true"
       aria-labelledby="google-sync-title"
-      className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/50 backdrop-blur-md animate-in fade-in duration-200"
       onClick={(e) => {
         if (e.target === e.currentTarget && !selectedEmail && !isLoading) {
           onClose();
         }
       }}
     >
-      <div className="w-full max-w-[440px] bg-[#1F2024] border border-[#3C4043] rounded-2xl shadow-2xl p-6 sm:p-7 relative overflow-hidden text-[#E8EAED] animate-in zoom-in-95 duration-200">
+      <div className="w-full max-w-[440px] bg-white border border-[#DADCE0] rounded-3xl shadow-2xl p-6 sm:p-8 relative overflow-hidden text-[#202124] animate-in zoom-in-95 duration-200">
         {/* Animated Google Progress Bar when authenticating */}
         {(selectedEmail || isLoading) && (
-          <div className="absolute top-0 left-0 right-0 h-1 bg-[#3C4043] overflow-hidden">
-            <div className="h-full bg-[#8AB4F8] animate-pulse w-full" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-[#E8EAED] overflow-hidden">
+            <div className="h-full bg-[#1A73E8] animate-pulse w-full" />
           </div>
         )}
 
@@ -129,14 +129,14 @@ export default function GoogleAccountChooser({
           disabled={!!selectedEmail || isLoading}
           onClick={onClose}
           aria-label="Close Google account chooser"
-          className="absolute top-4 right-4 w-8 h-8 rounded-full hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+          className="absolute top-4 right-4 w-8 h-8 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Google Official Header */}
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center p-2 rounded-xl bg-white/5 border border-white/10 mb-3 shadow-inner">
+          <div className="inline-flex items-center justify-center p-2 rounded-xl bg-slate-50 border border-slate-200 mb-3 shadow-2xs">
             <svg className="w-6 h-6" viewBox="0 0 24 24">
               <path
                 fill="#4285F4"
@@ -156,18 +156,18 @@ export default function GoogleAccountChooser({
               />
             </svg>
           </div>
-          <h2 id="google-sync-title" className="text-xl font-bold text-white tracking-tight">
+          <h2 id="google-sync-title" className="text-xl font-bold text-[#202124] tracking-tight">
             Choose an account
           </h2>
-          <p className="text-xs text-[#9AA0A6] mt-1">
-            to continue to <span className="font-semibold text-white">GameVerse</span>
+          <p className="text-xs text-[#5F6368] mt-1">
+            to continue to <span className="font-semibold text-[#202124]">GameVerse</span>
           </p>
         </div>
 
         {/* Error Alert */}
         {error && (
-          <div className="mb-4 p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-400" />
+          <div className="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-600" />
             <span className="flex-1">{error}</span>
           </div>
         )}
@@ -175,8 +175,8 @@ export default function GoogleAccountChooser({
         {/* Device Accounts List: Zero Typing, 1-Click To Log In */}
         <div className="space-y-2.5 mb-5">
           {loadingAccounts ? (
-            <div className="py-6 text-center text-xs text-gray-400">
-              <div className="w-5 h-5 border-2 border-purple-400 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+            <div className="py-6 text-center text-xs text-slate-500">
+              <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
               Syncing device Google account...
             </div>
           ) : (
@@ -190,33 +190,33 @@ export default function GoogleAccountChooser({
                   onClick={() => handleCardClick(account)}
                   className={`w-full text-left p-3.5 rounded-xl border transition-all flex items-center gap-3.5 group cursor-pointer ${
                     isSelected
-                      ? 'bg-[#8AB4F8]/15 border-[#8AB4F8] ring-1 ring-[#8AB4F8]'
-                      : 'bg-[#282A2D] hover:bg-[#303134] border-[#3C4043] hover:border-[#5F6368]'
+                      ? 'bg-indigo-50/70 border-indigo-500 ring-1 ring-indigo-500'
+                      : 'bg-white hover:bg-[#F8FAFD] border-[#DADCE0] hover:border-[#1A73E8] shadow-2xs hover:shadow-xs'
                   }`}
                 >
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm text-white flex-shrink-0 shadow-md ${
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm text-white flex-shrink-0 shadow-xs ${
                       account.avatarBg || 'bg-gradient-to-tr from-[#4285F4] to-[#34A853]'
                     }`}
                   >
                     {account.initials || 'G'}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-semibold text-white truncate flex items-center gap-1.5">
+                    <div className="text-sm font-semibold text-[#202124] truncate flex items-center gap-1.5">
                       <span>{account.name}</span>
                       {account.isDeviceDefault && (
-                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium">
+                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium">
                           Active Device
                         </span>
                       )}
                     </div>
-                    <div className="text-xs text-[#9AA0A6] truncate">{account.email}</div>
+                    <div className="text-xs text-[#5F6368] truncate">{account.email}</div>
                   </div>
                   <div className="flex-shrink-0">
                     {isSelected ? (
-                      <div className="w-5 h-5 border-2 border-[#8AB4F8] border-t-transparent rounded-full animate-spin" />
+                      <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
                     ) : (
-                      <CheckCircle2 className="w-5 h-5 text-gray-600 group-hover:text-[#8AB4F8] transition-colors" />
+                      <CheckCircle2 className="w-5 h-5 text-slate-300 group-hover:text-indigo-600 transition-colors" />
                     )}
                   </div>
                 </button>
@@ -226,22 +226,22 @@ export default function GoogleAccountChooser({
         </div>
 
         {/* Option to Open in Authentic Google Popup */}
-        <div className="pt-3 border-t border-white/10 mb-4">
+        <div className="pt-3 border-t border-slate-200 mb-4">
           <button
             type="button"
             disabled={!!selectedEmail || isLoading}
             onClick={handleOpenGooglePopup}
-            className="w-full py-2.5 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-gray-300 hover:text-white flex items-center justify-center gap-2 border border-white/5 transition-all cursor-pointer"
+            className="w-full py-2.5 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-xs font-semibold text-slate-700 hover:text-slate-900 flex items-center justify-center gap-2 border border-slate-200 transition-all cursor-pointer"
           >
-            <ExternalLink className="w-3.5 h-3.5 text-[#8AB4F8]" />
+            <ExternalLink className="w-3.5 h-3.5 text-indigo-600" />
             <span>Open in Google Account Popup Window</span>
           </button>
         </div>
 
         {/* Security / Privacy Trust Guarantee */}
-        <div className="pt-2 text-[11px] text-[#9AA0A6] text-center leading-relaxed">
-          <div className="flex items-center justify-center gap-1.5 text-gray-400 mb-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+        <div className="pt-2 text-[11px] text-[#5F6368] text-center leading-relaxed">
+          <div className="flex items-center justify-center gap-1.5 text-slate-600 mb-1 font-medium">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
             <span>Protected by Google Identity Services</span>
           </div>
           To continue, Google will share your verified name, email address, and avatar with GameVerse.

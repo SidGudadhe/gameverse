@@ -10,10 +10,10 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#090D16",
-        surface: "#111827",
-        elevated: "#1F2937",
-        border: "rgba(255, 255, 255, 0.08)",
+        background: "#F8FAFC",
+        surface: "#FFFFFF",
+        elevated: "#F1F5F9",
+        border: "#E2E8F0",
         primary: {
           DEFAULT: "#6366F1",
           hover: "#4F46E5",

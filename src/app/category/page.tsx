@@ -50,29 +50,29 @@ export default function AllCategoriesPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
       {/* Breadcrumb Navigation */}
-      <div className="flex items-center gap-2 text-xs text-gray-400">
-        <Link href="/" className="hover:text-white transition-colors flex items-center gap-1">
+      <div className="flex items-center gap-2 text-xs text-slate-500">
+        <Link href="/" className="hover:text-slate-900 transition-colors flex items-center gap-1">
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Home</span>
         </Link>
         <span>/</span>
-        <span className="text-gray-200 font-medium">Categories</span>
+        <span className="text-slate-800 font-medium">Categories</span>
       </div>
 
       {/* Hero Category Directory Banner */}
-      <div className="relative rounded-3xl p-6 sm:p-8 border border-white/10 overflow-hidden bg-gradient-to-r from-indigo-900/40 via-slate-900/60 to-purple-900/30">
+      <div className="relative rounded-3xl p-6 sm:p-8 border border-slate-200 overflow-hidden bg-gradient-to-r from-indigo-50 via-slate-50 to-blue-50 shadow-sm">
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <Badge variant="cyan">GAME CATALOG</Badge>
-              <span className="text-xs text-indigo-300 font-mono">
+              <span className="text-xs text-indigo-700 font-mono font-medium">
                 {categories.length} Genres &bull; {allGames.length} Playable Titles
               </span>
             </div>
-            <h1 className="font-heading font-black text-3xl sm:text-4xl text-white tracking-tight">
+            <h1 className="font-heading font-black text-3xl sm:text-4xl text-slate-900 tracking-tight">
               All Game Categories
             </h1>
-            <p className="text-gray-300 text-xs sm:text-sm max-w-2xl leading-relaxed">
+            <p className="text-slate-600 text-xs sm:text-sm max-w-2xl leading-relaxed">
               Find instant browser games by your favorite genre. Pick any category below to filter games, or explore popular picks.
             </p>
           </div>
@@ -83,14 +83,14 @@ export default function AllCategoriesPage() {
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="font-heading font-bold text-lg text-white">
+            <h2 className="font-heading font-bold text-lg text-slate-900">
               Browse by Category
             </h2>
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-slate-500">
               Select a genre to filter and explore games
             </p>
           </div>
-          <span className="text-xs text-indigo-400 font-mono font-medium px-2.5 py-1 rounded-full bg-indigo-950/60 border border-indigo-500/20">
+          <span className="text-xs text-indigo-700 font-mono font-medium px-2.5 py-1 rounded-full bg-indigo-50 border border-indigo-200">
             {categories.length} Categories
           </span>
         </div>
@@ -98,20 +98,20 @@ export default function AllCategoriesPage() {
       </div>
 
       {/* All Playable Games Directory */}
-      <section className="space-y-4 pt-4 border-t border-white/10">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
+      <section className="space-y-4 pt-4 border-t border-slate-200">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
           <div>
-            <h2 className="font-heading font-black text-2xl text-white">
+            <h2 className="font-heading font-black text-2xl text-slate-900">
               All Available Games
             </h2>
-            <p className="text-gray-400 text-xs">
+            <p className="text-slate-500 text-xs">
               Every verified game across all categories on GameVerse
             </p>
           </div>
 
           {/* Sort Toolbar */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-400 mr-1 flex items-center gap-1">
+            <span className="text-xs text-slate-500 mr-1 flex items-center gap-1">
               <SlidersHorizontal className="w-3.5 h-3.5" />
               <span>Sort:</span>
             </span>
@@ -128,8 +128,8 @@ export default function AllCategoriesPage() {
                   onClick={() => setSortBy(item.id as any)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
                     isSelected
-                      ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/30'
-                      : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'
+                      ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/20'
+                      : 'bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200 border border-slate-200'
                   }`}
                 >
                   <ItemIcon className="w-3 h-3" />
@@ -141,11 +141,11 @@ export default function AllCategoriesPage() {
         </div>
 
         {loading ? (
-          <div className="py-16 text-center text-gray-400 text-xs">
+          <div className="py-16 text-center text-slate-400 text-xs">
             Loading game catalog...
           </div>
         ) : allGames.length === 0 ? (
-          <div className="py-16 text-center text-gray-400 text-sm">
+          <div className="py-16 text-center text-slate-500 text-sm">
             No published games found at this moment.
           </div>
         ) : (

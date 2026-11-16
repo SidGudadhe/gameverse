@@ -133,19 +133,19 @@ export default function AdminLoginPage() {
       {showErrorPopup && (
         <div
           role="alert"
-          className="fixed top-6 right-6 z-50 max-w-sm w-full bg-slate-900/95 border border-rose-500/50 rounded-2xl p-4 shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-top-4 flex items-start gap-3"
+          className="fixed top-6 right-6 z-50 max-w-sm w-full bg-white border border-rose-200 rounded-2xl p-4 shadow-2xl animate-in fade-in slide-in-from-top-4 flex items-start gap-3"
         >
-          <div className="w-9 h-9 rounded-xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center flex-shrink-0 text-rose-400">
+          <div className="w-9 h-9 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center flex-shrink-0 text-rose-600">
             <AlertCircle className="w-5 h-5" />
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="text-sm font-bold text-white">{errorTitle}</h4>
-            <p className="text-xs text-rose-300/90 mt-0.5">{error || 'Invalid email or password.'}</p>
+            <h4 className="text-sm font-bold text-slate-900">{errorTitle}</h4>
+            <p className="text-xs text-rose-700 mt-0.5">{error || 'Invalid email or password.'}</p>
           </div>
           <button
             type="button"
             onClick={() => setShowErrorPopup(false)}
-            className="text-gray-400 hover:text-white transition-colors p-1 rounded-lg"
+            className="text-slate-400 hover:text-slate-700 transition-colors p-1 rounded-lg"
             aria-label="Close notification"
           >
             <X className="w-4 h-4" />
@@ -153,24 +153,24 @@ export default function AdminLoginPage() {
         </div>
       )}
 
-      <div className="w-full max-w-md space-y-6 bg-slate-900/90 p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden backdrop-blur-xl">
+      <div className="w-full max-w-md space-y-6 bg-white p-8 rounded-3xl border border-slate-200 shadow-xl relative overflow-hidden">
         <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-2xl bg-rose-600/20 border border-rose-500/30 flex items-center justify-center mx-auto text-rose-400 shadow-lg shadow-rose-600/20">
+          <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center mx-auto text-rose-600 shadow-xs">
             <ShieldCheck className="w-6 h-6" />
           </div>
           <div className="flex items-center justify-center gap-1.5 pt-1">
             <Badge variant="danger">ADMIN OPERATIONS SUITE</Badge>
           </div>
-          <h1 className="font-heading font-black text-2xl text-white">
+          <h1 className="font-heading font-black text-2xl text-slate-900">
             Staff & QA Sign In
           </h1>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-slate-500">
             Internal administrative command center. Security audit logging is active for all sign-in attempts.
           </p>
         </div>
 
         {error && (
-          <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-center gap-2">
+          <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
             <AlertCircle className="w-4 h-4 flex-shrink-0" />
             <span>{error}</span>
           </div>
@@ -199,29 +199,29 @@ export default function AdminLoginPage() {
             />
           </div>
 
-          <Button type="submit" variant="primary" className="w-full bg-rose-600 hover:bg-rose-500" isLoading={loading}>
+          <Button type="submit" variant="primary" className="w-full bg-rose-600 hover:bg-rose-700 text-white shadow-xs" isLoading={loading}>
             Sign In to Admin Console
           </Button>
         </form>
 
         {/* Quick Test Account */}
-        <div className="pt-3 border-t border-white/5 space-y-2">
-          <div className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider text-center">
+        <div className="pt-3 border-t border-slate-100 space-y-2">
+          <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider text-center">
             One-Click Admin Test Account
           </div>
           <button
             type="button"
             onClick={() => loadTestAccount('admin@gameverse.com')}
-            className="w-full p-2.5 rounded-xl bg-rose-600/10 hover:bg-rose-600/20 text-rose-300 border border-rose-500/30 text-xs text-center transition-colors font-medium flex items-center justify-center gap-2"
+            className="w-full p-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs text-center transition-colors font-semibold flex items-center justify-center gap-2"
           >
             <ShieldCheck className="w-4 h-4" />
             <span>Load Admin Account (admin@gameverse.com)</span>
           </button>
         </div>
 
-        <div className="text-center text-xs text-gray-400 pt-1">
+        <div className="text-center text-xs text-slate-500 pt-1">
           Need Staff Access?{' '}
-          <Link href="/admin/auth/signup" className="text-rose-400 hover:text-rose-300 font-semibold">
+          <Link href="/admin/auth/signup" className="text-rose-600 hover:text-rose-700 font-semibold">
             Register with Security Key
           </Link>
         </div>

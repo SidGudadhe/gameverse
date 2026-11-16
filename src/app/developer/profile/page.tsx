@@ -47,12 +47,12 @@ export default function StudioProfilePage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-8">
       {/* Header */}
-      <div className="border-b border-white/10 pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="border-b border-slate-200 pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-heading font-black text-2xl sm:text-3xl text-white">
+          <h1 className="font-heading font-black text-2xl sm:text-3xl text-slate-900">
             Studio & Developer Profile
           </h1>
-          <p className="text-gray-400 text-xs sm:text-sm mt-0.5">
+          <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
             Manage your studio identity, public bio, portfolio links, and publishing credentials.
           </p>
         </div>
@@ -66,7 +66,7 @@ export default function StudioProfilePage() {
       </div>
 
       {saved && (
-        <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs flex items-center gap-2">
+        <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4" />
           <span>Profile changes successfully saved to database.</span>
         </div>
@@ -74,27 +74,27 @@ export default function StudioProfilePage() {
 
       <form onSubmit={handleSave} className="space-y-6">
         {/* Studio Identity Card */}
-        <div className="bg-surface rounded-3xl p-6 sm:p-8 border border-white/10 space-y-6">
-          <h2 className="font-heading font-bold text-lg text-white flex items-center gap-2">
-            <Building className="w-5 h-5 text-indigo-400" />
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+          <h2 className="font-heading font-bold text-lg text-slate-900 flex items-center gap-2">
+            <Building className="w-5 h-5 text-indigo-600" />
             <span>Studio Identity</span>
           </h2>
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
             <div className="relative group cursor-pointer">
-              <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 p-0.5 shadow-lg shadow-indigo-600/30">
-                <div className="w-full h-full bg-surface rounded-2xl flex items-center justify-center font-heading font-black text-2xl text-white">
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 p-0.5 shadow-sm">
+                <div className="w-full h-full bg-slate-50 rounded-2xl flex items-center justify-center font-heading font-black text-2xl text-slate-800">
                   PF
                 </div>
               </div>
-              <div className="absolute inset-0 bg-black/50 rounded-2xl opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+              <div className="absolute inset-0 bg-slate-900/40 rounded-2xl opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                 <Camera className="w-5 h-5 text-white" />
               </div>
             </div>
 
             <div className="space-y-1">
-              <div className="font-bold text-white text-base">{studioName}</div>
-              <p className="text-xs text-gray-400">
+              <div className="font-bold text-slate-900 text-base">{studioName}</div>
+              <p className="text-xs text-slate-500">
                 Recommended avatar size: 400x400 PNG or SVG.
               </p>
             </div>
@@ -137,7 +137,7 @@ export default function StudioProfilePage() {
           </div>
 
           <div className="space-y-1.5 text-left">
-            <label className="block text-xs font-semibold text-gray-300">
+            <label className="block text-xs font-semibold text-slate-700">
               Studio Bio / About
             </label>
             <textarea
@@ -145,11 +145,11 @@ export default function StudioProfilePage() {
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               placeholder="Describe your studio's mission and game portfolio..."
-              className="w-full bg-black/40 text-gray-100 placeholder-gray-500 text-xs sm:text-sm rounded-xl p-3 border border-white/10 focus:border-indigo-500 focus:outline-none"
+              className="w-full bg-slate-50 text-slate-900 placeholder-slate-400 text-xs sm:text-sm rounded-xl p-3 border border-slate-200 focus:border-indigo-500 focus:bg-white focus:outline-none transition-colors"
             />
           </div>
 
-          <div className="flex justify-end pt-4 border-t border-white/5">
+          <div className="flex justify-end pt-4 border-t border-slate-100">
             <Button type="submit" variant="primary" isLoading={loading}>
               Save Studio Profile
             </Button>

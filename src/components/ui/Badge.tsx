@@ -18,13 +18,13 @@ export function Badge({
   };
 
   const variantStyles = {
-    default: 'bg-white/10 text-gray-300 border-white/10',
-    featured: 'bg-indigo-600/90 text-white border-indigo-400/40 shadow-sm shadow-indigo-600/30 font-bold uppercase',
-    success: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
-    warning: 'bg-amber-500/10 text-amber-300 border-amber-500/30',
-    danger: 'bg-rose-500/10 text-rose-400 border-rose-500/30',
-    cyan: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30 font-mono',
-    engine: 'bg-black/60 backdrop-blur-md text-cyan-300 border-cyan-500/30 font-mono',
+    default: 'bg-slate-100 text-slate-700 border-slate-200',
+    featured: 'bg-indigo-600 text-white border-indigo-500 shadow-sm font-bold uppercase',
+    success: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    warning: 'bg-amber-50 text-amber-800 border-amber-200',
+    danger: 'bg-rose-50 text-rose-700 border-rose-200',
+    cyan: 'bg-cyan-50 text-cyan-700 border-cyan-200 font-mono',
+    engine: 'bg-slate-100 text-cyan-800 border-cyan-200 font-mono',
   };
 
   return (

@@ -44,9 +44,13 @@ export default function GoogleSignIn({
   const [successMsg, setSuccessMsg] = useState('');
   const [showFallbackChooser, setShowFallbackChooser] = useState(false);
 
-  const clientId =
-    process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
-    '109823456789-gameverseplayerauth2026.apps.googleusercontent.com';
+  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
+  const isRealGoogleClientId =
+    Boolean(clientId) &&
+    !clientId.includes('YOUR_GOOGLE_CLIENT_ID') &&
+    !clientId.includes('gameverseplayerauth2026') &&
+    !clientId.includes('placeholder') &&
+    /^\d+-[a-zA-Z0-9_-]+\.apps\.googleusercontent\.com$/.test(clientId);
 
   // Handle the real verified credential returned from Google Identity Services
   const handleCredentialResponse = useCallback(
@@ -91,8 +95,13 @@ export default function GoogleSignIn({
     [setSession, onSuccess, onError]
   );
 
-  // Initialize official Google Identity Services
+  // Initialize official Google Identity Services only when a real client ID is configured
   useEffect(() => {
+    if (!isRealGoogleClientId) {
+      setGsiLoaded(false);
+      return;
+    }
+
     let checkInterval: NodeJS.Timeout | null = null;
     let attempts = 0;
 
@@ -155,7 +164,7 @@ export default function GoogleSignIn({
     return () => {
       if (checkInterval) clearInterval(checkInterval);
     };
-  }, [clientId, mode, enableOneTap, handleCredentialResponse]);
+  }, [clientId, mode, enableOneTap, isRealGoogleClientId, handleCredentialResponse]);
 
   // Fallback 1-click account selector if GSI iframe is blocked or clicked
   const handleFallbackAccountSelect = async (account: GoogleAccount) => {

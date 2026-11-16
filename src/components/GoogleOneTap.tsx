@@ -7,12 +7,16 @@ export default function GoogleOneTap() {
   const { isAuthenticated, loading, setSession } = useAuth();
   const initializedRef = useRef(false);
 
-  const clientId =
-    process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
-    '109823456789-gameverseplayerauth2026.apps.googleusercontent.com';
+  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
+  const isRealGoogleClientId =
+    Boolean(clientId) &&
+    !clientId.includes('YOUR_GOOGLE_CLIENT_ID') &&
+    !clientId.includes('gameverseplayerauth2026') &&
+    !clientId.includes('placeholder') &&
+    /^\d+-[a-zA-Z0-9_-]+\.apps\.googleusercontent\.com$/.test(clientId);
 
   useEffect(() => {
-    if (loading || isAuthenticated || initializedRef.current) return;
+    if (loading || isAuthenticated || initializedRef.current || !isRealGoogleClientId) return;
 
     let checkInterval: NodeJS.Timeout | null = null;
     let attempts = 0;

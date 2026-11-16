@@ -6,10 +6,18 @@ export async function GET(req: NextRequest) {
   const origin = req.nextUrl.origin || 'http://localhost:3000';
   const clientId = process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
-  if (clientId) {
+  // Only redirect to live Google OAuth if a real, verified Google Client ID from Google Cloud Console is configured
+  const isRealGoogleClientId =
+    Boolean(clientId) &&
+    !clientId?.includes('YOUR_GOOGLE_CLIENT_ID') &&
+    !clientId?.includes('gameverseplayerauth2026') &&
+    !clientId?.includes('placeholder') &&
+    /^\d+-[a-zA-Z0-9_-]+\.apps\.googleusercontent\.com$/.test(clientId || '');
+
+  if (isRealGoogleClientId) {
     const redirectUri = `${origin}/api/auth/google/callback`;
     const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(
-      clientId
+      clientId!
     )}&redirect_uri=${encodeURIComponent(
       redirectUri
     )}&response_type=code&scope=openid%20email%20profile&prompt=select_account`;

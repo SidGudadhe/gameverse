@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import GoogleSignIn from './GoogleSignIn';
+import GameVerseLogo from './ui/GameVerseLogo';
 
 export default function CrazyGamesAuthModal() {
   const router = useRouter();
@@ -264,9 +265,7 @@ export default function CrazyGamesAuthModal() {
 
         {/* Brand Header */}
         <div className="text-center mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center mx-auto shadow-md shadow-indigo-500/25 mb-3 border border-indigo-200">
-            <Gamepad2 className="w-6 h-6 text-white" />
-          </div>
+          <GameVerseLogo size="lg" className="mx-auto mb-3 shadow-md shadow-indigo-500/25" />
           <h2
             id="crazygames-auth-title"
             className="text-2xl font-black font-heading text-slate-900 tracking-tight"

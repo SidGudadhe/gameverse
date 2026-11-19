@@ -15,6 +15,11 @@ import { verifyToken } from '@/lib/auth';
 export const metadata: Metadata = {
   title: 'GameVerse — Play Free Instant Browser Games (HTML5 & WebGL)',
   description: 'Instant play thousands of high performance HTML5, WebGL, and WASM games in your browser. No downloads or installs required.',
+  icons: {
+    icon: '/logo.jpg',
+    shortcut: '/logo.jpg',
+    apple: '/logo.jpg',
+  },
 };
 
 export default function RootLayout({

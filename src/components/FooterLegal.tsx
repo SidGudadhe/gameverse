@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ShieldCheck, Cookie } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import GameVerseLogo from '@/components/ui/GameVerseLogo';
 
 export default function FooterLegal() {
   const pathname = usePathname();
@@ -23,7 +24,8 @@ export default function FooterLegal() {
     <footer className="border-t border-slate-200 bg-white py-12 mt-20 text-slate-500">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 text-xs">
         <div className="flex flex-col sm:flex-row items-center gap-3">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
+            <GameVerseLogo size="xs" />
             <span className="font-heading font-black text-slate-900 text-base tracking-wider">GAMEVERSE</span>
             <span>© 2026 GameVerse Portal Ltd.</span>
           </div>

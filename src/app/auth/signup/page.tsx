@@ -18,6 +18,7 @@ import {
 import { AuthTransitionSkeleton } from '@/components/ui/Skeleton';
 import { useAuth } from '@/context/AuthContext';
 import GoogleSignIn from '@/components/GoogleSignIn';
+import GameVerseLogo from '@/components/ui/GameVerseLogo';
 
 function PlayerSignupContent() {
   const router = useRouter();
@@ -175,9 +176,7 @@ function PlayerSignupContent() {
 
         {/* Brand Header */}
         <div className="text-center mb-6">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center mx-auto shadow-lg shadow-indigo-500/25 mb-3 border border-indigo-200">
-            <Gamepad2 className="w-7 h-7 text-white" />
-          </div>
+          <GameVerseLogo size="xl" className="mx-auto mb-3 shadow-xl shadow-indigo-500/25" />
           <h1 className="text-2xl font-black font-heading text-slate-900 tracking-tight">
             Create Your Account
           </h1>

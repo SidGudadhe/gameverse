@@ -30,6 +30,7 @@ import {
   Wallet,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import GameVerseLogo from '@/components/ui/GameVerseLogo';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -232,19 +233,12 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         {/* Gamer Brand Logo */}
         <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-500 flex items-center justify-center shadow-md shadow-indigo-500/25 group-hover:scale-105 transition-transform">
-              <Gamepad2 className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <span className="font-heading font-black text-2xl tracking-wider text-slate-900">
-                GAME<span className="text-indigo-600">VERSE</span>
-              </span>
-              <span className="text-[10px] text-slate-500 block -mt-1 tracking-wider uppercase font-semibold">
-                Instant Browser Games
-              </span>
-            </div>
-          </Link>
+          <GameVerseLogo
+            href="/"
+            size="md"
+            showText={true}
+            subtitle="Instant Browser Games"
+          />
 
           {/* Desktop Player Navigation Links (ONLY GAMER FEATURES) */}
           <nav

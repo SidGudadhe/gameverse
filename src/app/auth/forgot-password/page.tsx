@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Mail, ArrowLeft, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import GameVerseLogo from '@/components/ui/GameVerseLogo';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -44,7 +45,8 @@ export default function ForgotPasswordPage() {
           </Link>
         </div>
 
-        <div className="space-y-1.5">
+        <div className="space-y-2 text-center">
+          <GameVerseLogo size="xl" className="mx-auto shadow-lg shadow-indigo-500/25 mb-2" />
           <h1 className="font-heading font-black text-2xl text-slate-900">
             Reset Password
           </h1>

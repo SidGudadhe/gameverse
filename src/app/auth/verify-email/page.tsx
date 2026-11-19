@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { CheckCircle2, XCircle, ArrowRight, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import GameVerseLogo from '@/components/ui/GameVerseLogo';
 
 function VerifyEmailContent() {
   const searchParams = useSearchParams();
@@ -42,6 +43,7 @@ function VerifyEmailContent() {
 
   return (
     <div className="w-full max-w-md space-y-6 bg-white p-8 rounded-3xl border border-slate-200 shadow-xl text-center">
+      <GameVerseLogo size="xl" className="mx-auto shadow-md shadow-indigo-500/20" />
       {status === 'loading' && (
         <div className="space-y-4 py-8 animate-pulse">
           <div className="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-200 flex items-center justify-center mx-auto text-indigo-600">

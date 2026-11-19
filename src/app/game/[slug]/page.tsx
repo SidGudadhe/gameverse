@@ -6,6 +6,7 @@ import { gvDb } from '@/lib/database';
 import GameCard from '@/components/GameCard';
 import GameActionBar from '@/components/GameActionBar';
 import AdaptiveRecommendations from '@/components/AdaptiveRecommendations';
+import GameVerseLogo from '@/components/ui/GameVerseLogo';
 import { Star, ArrowLeft, Gamepad2, Info, ShieldCheck, Keyboard, MessageSquare, Loader2 } from 'lucide-react';
 import { GameMood } from '@/types/recommendations';
 
@@ -13,9 +14,7 @@ import { GameMood } from '@/types/recommendations';
 const GamePlayer = dynamic(() => import('@/components/GamePlayer'), {
   loading: () => (
     <div className="w-full aspect-video rounded-3xl bg-slate-100 border border-slate-200 flex flex-col items-center justify-center text-center p-6 shadow-sm relative overflow-hidden animate-pulse">
-      <div className="w-16 h-16 rounded-2xl bg-indigo-100 border border-indigo-200 flex items-center justify-center mb-3">
-        <Gamepad2 className="w-8 h-8 text-indigo-600" />
-      </div>
+      <GameVerseLogo size="2xl" className="mb-3 animate-pulse shadow-lg shadow-indigo-500/20" />
       <div className="h-4 w-48 bg-slate-200 rounded-full" />
       <div className="h-3 w-32 bg-slate-200 rounded-full mt-2" />
     </div>

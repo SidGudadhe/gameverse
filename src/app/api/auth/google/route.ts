@@ -17,10 +17,32 @@ async function verifyGoogleIdToken(token: string): Promise<{
   sub?: string;
   error?: string;
 }> {
+  // Fast path for automated testing suites & CI execution
+  if (process.env.NODE_ENV === 'test' || process.env.VITEST === 'true') {
+    try {
+      const decoded: any = jwt.decode(token);
+      if (
+        decoded &&
+        decoded.email &&
+        (decoded.iss === 'https://accounts.google.com' || decoded.iss === 'accounts.google.com')
+      ) {
+        return {
+          valid: true,
+          email: decoded.email,
+          name: decoded.name || decoded.given_name || decoded.email.split('@')[0],
+          picture: decoded.picture,
+          sub: decoded.sub || 'test-google-sub',
+        };
+      }
+    } catch {}
+    return { valid: false, error: 'Google ID token verification failed.' };
+  }
+
   try {
     const res = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(token)}`, {
       method: 'GET',
       headers: { Accept: 'application/json' },
+      signal: AbortSignal.timeout(4000),
     });
 
     if (res.ok) {
@@ -40,22 +62,6 @@ async function verifyGoogleIdToken(token: string): Promise<{
       }
     }
   } catch {}
-
-  // Fallback verification for automated test suites or sandbox execution
-  if (process.env.NODE_ENV === 'test' || process.env.VITEST === 'true') {
-    try {
-      const decoded: any = jwt.decode(token);
-      if (decoded && decoded.email) {
-        return {
-          valid: true,
-          email: decoded.email,
-          name: decoded.name || decoded.given_name || decoded.email.split('@')[0],
-          picture: decoded.picture,
-          sub: decoded.sub || 'test-google-sub',
-        };
-      }
-    } catch {}
-  }
 
   return { valid: false, error: 'Google ID token verification failed.' };
 }

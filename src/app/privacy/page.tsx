@@ -258,7 +258,7 @@ export default function PrivacyPolicyPage() {
 
       {/* Account Erasure Confirmation Modal */}
       {erasureModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
           <div className="bg-white border border-rose-200 rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl relative">
             <div className="flex items-center gap-3 text-rose-600">
               <AlertTriangle className="w-6 h-6 flex-shrink-0" />

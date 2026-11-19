@@ -200,9 +200,9 @@ export default function PlayerMyProfilePage() {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="animate-pulse space-y-8">
-          <div className="h-8 w-48 bg-white/5 rounded-xl" />
-          <div className="h-64 bg-surface rounded-3xl border border-white/5" />
-          <div className="h-96 bg-surface rounded-3xl border border-white/5" />
+          <div className="h-8 w-48 bg-slate-200 rounded-xl" />
+          <div className="h-64 bg-white rounded-3xl border border-slate-200 shadow-xs" />
+          <div className="h-96 bg-white rounded-3xl border border-slate-200 shadow-xs" />
         </div>
       </div>
     );
@@ -398,8 +398,8 @@ export default function PlayerMyProfilePage() {
                   className="w-full h-full object-cover"
                 />
                 {imageProcessing && (
-                  <div className="absolute inset-0 bg-slate-900/40 flex items-center justify-center">
-                    <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+                  <div className="absolute inset-0 bg-white/80 backdrop-blur-xs flex items-center justify-center">
+                    <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
                   </div>
                 )}
               </div>

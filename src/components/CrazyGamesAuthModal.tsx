@@ -87,15 +87,15 @@ export default function CrazyGamesAuthModal() {
 
     switch (score) {
       case 1:
-        return { score: 1, label: 'Weak', color: 'bg-rose-500 text-rose-400', percent: 25 };
+        return { score: 1, label: 'Weak', color: 'bg-rose-500 text-rose-600', percent: 25 };
       case 2:
-        return { score: 2, label: 'Fair', color: 'bg-amber-500 text-amber-400', percent: 50 };
+        return { score: 2, label: 'Fair', color: 'bg-amber-500 text-amber-600', percent: 50 };
       case 3:
-        return { score: 3, label: 'Good', color: 'bg-indigo-500 text-indigo-400', percent: 75 };
+        return { score: 3, label: 'Good', color: 'bg-indigo-500 text-indigo-600', percent: 75 };
       case 4:
-        return { score: 4, label: 'Strong', color: 'bg-emerald-500 text-emerald-400', percent: 100 };
+        return { score: 4, label: 'Strong', color: 'bg-emerald-500 text-emerald-600', percent: 100 };
       default:
-        return { score: 1, label: 'Weak', color: 'bg-rose-500 text-rose-400', percent: 20 };
+        return { score: 1, label: 'Weak', color: 'bg-rose-500 text-rose-600', percent: 20 };
     }
   }, [password]);
 
@@ -240,40 +240,40 @@ export default function CrazyGamesAuthModal() {
       role="dialog"
       aria-modal="true"
       aria-labelledby="crazygames-auth-title"
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-200"
       onClick={(e) => {
         if (e.target === e.currentTarget) closeAuthModal();
       }}
     >
       <div
         ref={modalRef}
-        className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl p-6 sm:p-8 relative overflow-hidden text-slate-100 animate-in zoom-in-95 duration-200 max-h-[92vh] overflow-y-auto"
+        className="w-full max-w-md bg-white border border-slate-200 rounded-3xl shadow-2xl p-6 sm:p-8 relative overflow-hidden text-slate-800 animate-in zoom-in-95 duration-200 max-h-[92vh] overflow-y-auto"
       >
         {/* Top Glow Accent */}
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-purple-600 via-indigo-500 to-cyan-400" />
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400" />
 
         {/* Close Button */}
         <button
           type="button"
           onClick={closeAuthModal}
           aria-label="Close authentication modal"
-          className="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 cursor-pointer"
+          className="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Brand Header */}
         <div className="text-center mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center mx-auto shadow-md shadow-purple-600/30 mb-3 border border-purple-400/30">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center mx-auto shadow-md shadow-indigo-500/25 mb-3 border border-indigo-200">
             <Gamepad2 className="w-6 h-6 text-white" />
           </div>
           <h2
             id="crazygames-auth-title"
-            className="text-2xl font-black font-heading text-white tracking-tight"
+            className="text-2xl font-black font-heading text-slate-900 tracking-tight"
           >
             {mode === 'LOGIN' ? 'Log in to GameVerse' : 'Create Your Account'}
           </h2>
-          <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
+          <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
             {mode === 'LOGIN'
               ? 'Save your game progress, unlock payouts, and track favorites.'
               : 'Create your free gamer profile to save progress and join leaderboards.'}
@@ -284,9 +284,9 @@ export default function CrazyGamesAuthModal() {
         {error && (
           <div
             role="alert"
-            className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2.5 animate-in fade-in"
+            className="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2.5 animate-in fade-in"
           >
-            <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-400" />
+            <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-600" />
             <span className="flex-1">{error}</span>
           </div>
         )}
@@ -294,9 +294,9 @@ export default function CrazyGamesAuthModal() {
         {successMsg && (
           <div
             role="status"
-            className="mb-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-center gap-2.5 animate-in fade-in"
+            className="mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs flex items-center gap-2.5 animate-in fade-in"
           >
-            <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-emerald-400" />
+            <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-emerald-600" />
             <span className="flex-1">{successMsg}</span>
           </div>
         )}
@@ -319,18 +319,18 @@ export default function CrazyGamesAuthModal() {
 
         {/* ================= VISUAL DIVIDER "OR" ================= */}
         <div className="relative flex items-center justify-center my-5">
-          <div className="border-t border-slate-800 w-full" />
-          <span className="bg-slate-900 px-3 text-[11px] text-slate-400 font-bold uppercase tracking-wider">
+          <div className="border-t border-slate-200 w-full" />
+          <span className="bg-white px-3 text-[11px] text-slate-400 font-bold uppercase tracking-wider">
             OR
           </span>
-          <div className="border-t border-slate-800 w-full" />
+          <div className="border-t border-slate-200 w-full" />
         </div>
 
         {/* ================= METHOD 2: DIRECT EMAIL & PASSWORD FORM ================= */}
         {mode === 'LOGIN' ? (
           <form onSubmit={handleEmailLogin} className="space-y-3.5">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Email Address
               </label>
               <div className="relative">
@@ -342,20 +342,20 @@ export default function CrazyGamesAuthModal() {
                   placeholder="name@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 transition-all"
                 />
               </div>
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-semibold text-slate-300">
+                <label className="text-xs font-semibold text-slate-700">
                   Password
                 </label>
                 <Link
                   href="/auth/forgot-password"
                   onClick={closeAuthModal}
-                  className="text-[11px] text-purple-400 hover:text-purple-300 font-medium"
+                  className="text-[11px] text-indigo-600 hover:text-indigo-700 font-semibold"
                 >
                   Forgot?
                 </Link>
@@ -369,13 +369,13 @@ export default function CrazyGamesAuthModal() {
                   placeholder="••••••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl pl-10 pr-10 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-10 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                 >
                   {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                 </button>
@@ -388,16 +388,16 @@ export default function CrazyGamesAuthModal() {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-3.5 h-3.5 rounded border-slate-700 bg-slate-950 text-purple-600 focus:ring-0 cursor-pointer"
+                  className="w-3.5 h-3.5 rounded border-slate-300 text-indigo-600 focus:ring-0 cursor-pointer"
                 />
-                <span className="text-[11px] text-slate-400 select-none">Remember Me</span>
+                <span className="text-[11px] text-slate-600 select-none">Remember Me</span>
               </label>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-purple-600/20 transition-all active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition-all active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
             >
               {loading ? (
                 <>
@@ -412,7 +412,7 @@ export default function CrazyGamesAuthModal() {
         ) : (
           <form onSubmit={handleSignup} className="space-y-3.5">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Gamer Tag / Username
               </label>
               <div className="relative">
@@ -424,13 +424,13 @@ export default function CrazyGamesAuthModal() {
                   placeholder="e.g. CyberNinja99"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Email Address
               </label>
               <div className="relative">
@@ -442,13 +442,13 @@ export default function CrazyGamesAuthModal() {
                   placeholder="name@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Password (min 8 chars)
               </label>
               <div className="relative">
@@ -460,31 +460,31 @@ export default function CrazyGamesAuthModal() {
                   placeholder="••••••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl pl-10 pr-10 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-10 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                 >
                   {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                 </button>
               </div>
 
-              {/* Dynamic Password Strength Indicator */}
+              {/* Dynamic Password Strength Indicator on Light Track */}
               {password && (
                 <div className="mt-1.5 space-y-1">
                   <div className="flex items-center justify-between text-[10px]">
-                    <span className="text-slate-400">Strength:</span>
-                    <span className={`font-semibold ${passwordStrength.color.split(' ')[1]}`}>
+                    <span className="text-slate-500 font-medium">Strength:</span>
+                    <span className={`font-bold ${passwordStrength.color.split(' ')[1]}`}>
                       {passwordStrength.label}
                     </span>
                   </div>
-                  <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden flex gap-0.5">
+                  <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden flex gap-0.5 border border-slate-200/60">
                     <div
                       className={`h-full rounded-full transition-all duration-300 ${
-                        passwordStrength.score >= 1 ? passwordStrength.color.split(' ')[0] : 'bg-slate-700'
+                        passwordStrength.score >= 1 ? passwordStrength.color.split(' ')[0] : 'bg-slate-200'
                       }`}
                       style={{ width: `${passwordStrength.percent}%` }}
                     />
@@ -494,7 +494,7 @@ export default function CrazyGamesAuthModal() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Confirm Password
               </label>
               <div className="relative">
@@ -506,23 +506,23 @@ export default function CrazyGamesAuthModal() {
                   placeholder="••••••••••••"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className={`w-full bg-slate-950/80 border rounded-xl pl-10 pr-10 py-2 text-xs text-white placeholder-slate-500 focus:outline-none ${
+                  className={`w-full bg-slate-50 border rounded-xl pl-10 pr-10 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none transition-all ${
                     confirmPassword && password !== confirmPassword
-                      ? 'border-rose-500/80'
-                      : 'border-slate-700/80 focus:border-purple-500'
+                      ? 'border-rose-400 bg-rose-50/30'
+                      : 'border-slate-200 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100'
                   }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                 >
                   {showConfirmPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                 </button>
               </div>
               {confirmPassword && password !== confirmPassword && (
-                <p className="text-[10px] text-rose-400 mt-1">Passwords do not match.</p>
+                <p className="text-[10px] text-rose-600 font-medium mt-1">Passwords do not match.</p>
               )}
             </div>
 
@@ -533,9 +533,9 @@ export default function CrazyGamesAuthModal() {
                   required
                   checked={termsAgreed}
                   onChange={(e) => setTermsAgreed(e.target.checked)}
-                  className="mt-0.5 w-3.5 h-3.5 rounded border-slate-700 text-purple-600 focus:ring-0"
+                  className="mt-0.5 w-3.5 h-3.5 rounded border-slate-300 text-indigo-600 focus:ring-0"
                 />
-                <span className="text-[10px] text-slate-400">
+                <span className="text-[10px] text-slate-600">
                   I agree to the Terms of Service & Privacy Policy.
                 </span>
               </label>
@@ -544,7 +544,7 @@ export default function CrazyGamesAuthModal() {
             <button
               type="submit"
               disabled={loading || (confirmPassword.length > 0 && password !== confirmPassword)}
-              className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-purple-600/20 transition-all active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition-all active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
             >
               {loading ? (
                 <>
@@ -559,14 +559,14 @@ export default function CrazyGamesAuthModal() {
         )}
 
         {/* Mode Switcher */}
-        <div className="text-center text-xs text-slate-400 pt-5 mt-5 border-t border-slate-800">
+        <div className="text-center text-xs text-slate-500 pt-5 mt-5 border-t border-slate-100">
           {mode === 'LOGIN' ? (
             <>
               Don&apos;t have an account yet?{' '}
               <button
                 type="button"
                 onClick={() => openAuthModal('SIGNUP')}
-                className="text-purple-400 hover:text-purple-300 font-bold transition-colors cursor-pointer"
+                className="text-indigo-600 hover:text-indigo-700 font-bold transition-colors cursor-pointer"
               >
                 Create Account
               </button>
@@ -577,7 +577,7 @@ export default function CrazyGamesAuthModal() {
               <button
                 type="button"
                 onClick={() => openAuthModal('LOGIN')}
-                className="text-purple-400 hover:text-purple-300 font-bold transition-colors cursor-pointer"
+                className="text-indigo-600 hover:text-indigo-700 font-bold transition-colors cursor-pointer"
               >
                 Sign In
               </button>

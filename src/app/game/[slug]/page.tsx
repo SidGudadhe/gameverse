@@ -12,12 +12,12 @@ import { GameMood } from '@/types/recommendations';
 // Dynamic code-splitting for heavy client components
 const GamePlayer = dynamic(() => import('@/components/GamePlayer'), {
   loading: () => (
-    <div className="w-full aspect-video rounded-3xl bg-slate-950 border border-slate-200 flex flex-col items-center justify-center text-center p-6 shadow-xl relative overflow-hidden animate-pulse">
-      <div className="w-16 h-16 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center mb-3">
-        <Gamepad2 className="w-8 h-8 text-indigo-400" />
+    <div className="w-full aspect-video rounded-3xl bg-slate-100 border border-slate-200 flex flex-col items-center justify-center text-center p-6 shadow-sm relative overflow-hidden animate-pulse">
+      <div className="w-16 h-16 rounded-2xl bg-indigo-100 border border-indigo-200 flex items-center justify-center mb-3">
+        <Gamepad2 className="w-8 h-8 text-indigo-600" />
       </div>
-      <div className="h-4 w-48 bg-white/10 rounded-full" />
-      <div className="h-3 w-32 bg-white/5 rounded-full mt-2" />
+      <div className="h-4 w-48 bg-slate-200 rounded-full" />
+      <div className="h-3 w-32 bg-slate-200 rounded-full mt-2" />
     </div>
   ),
   ssr: false,

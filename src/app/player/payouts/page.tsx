@@ -452,13 +452,13 @@ export default function PlayerPayoutsPage() {
     return (
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="animate-pulse space-y-6">
-          <div className="h-6 w-36 bg-slate-800 rounded-md" />
-          <div className="h-28 bg-[#121826] rounded-2xl border border-slate-800" />
+          <div className="h-6 w-36 bg-slate-200 rounded-md" />
+          <div className="h-28 bg-white rounded-2xl border border-slate-200 shadow-xs" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="h-24 bg-[#121826] rounded-2xl border border-slate-800" />
-            <div className="h-24 bg-[#121826] rounded-2xl border border-slate-800" />
+            <div className="h-24 bg-white rounded-2xl border border-slate-200 shadow-xs" />
+            <div className="h-24 bg-white rounded-2xl border border-slate-200 shadow-xs" />
           </div>
-          <div className="h-80 bg-[#121826] rounded-2xl border border-slate-800" />
+          <div className="h-80 bg-white rounded-2xl border border-slate-200 shadow-xs" />
         </div>
       </div>
     );

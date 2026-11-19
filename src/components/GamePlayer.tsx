@@ -356,8 +356,8 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
         isFullscreen
           ? 'fixed inset-0 z-50 h-screen w-screen flex flex-col justify-center'
           : isTheater
-          ? 'max-w-none rounded-2xl border border-white/10 shadow-2xl'
-          : 'rounded-3xl border border-white/10 shadow-2xl'
+          ? 'max-w-none rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/50'
+          : 'rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50'
       }`}
     >
       {/* ================= PARENT-LEVEL FLOATING HUD OVERLAY ================= */}

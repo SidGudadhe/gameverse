@@ -282,7 +282,7 @@ export default function GoogleSignIn({
           type="button"
           disabled={loading}
           onClick={handleGoogleButtonClick}
-          className="w-full bg-white hover:bg-slate-50 text-slate-800 font-semibold py-3 px-4 rounded-xl border border-slate-300 shadow-xs hover:shadow transition-all flex items-center justify-center gap-3 text-sm active:scale-[0.99] disabled:opacity-70 cursor-pointer"
+          className="w-full bg-white hover:bg-slate-50/80 text-slate-800 font-semibold py-3 px-4 rounded-xl border border-slate-200 hover:border-slate-300 shadow-xs hover:shadow-sm transition-all flex items-center justify-center gap-3 text-sm active:scale-[0.99] disabled:opacity-70 cursor-pointer"
         >
           <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
             <path

@@ -154,3 +154,15 @@ export function PortalShellSkeleton({ portal = 'DEVELOPER' }: { portal?: 'DEVELO
     </div>
   );
 }
+
+export function FavoritesSkeleton() {
+  return <RecommendationsSkeleton count={8} />;
+}
+
+export function HistorySkeleton() {
+  return <RecommendationsSkeleton count={8} />;
+}
+
+export function PayoutsSkeleton() {
+  return <PortalShellSkeleton portal="DEVELOPER" />;
+}

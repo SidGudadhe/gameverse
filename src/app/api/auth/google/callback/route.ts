@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { gvDb } from '@/lib/database';
 import { generateToken } from '@/lib/auth';
 
+const DEFAULT_PASSWORD_HASH = '$2a$10$xwgNcEA.gPkAUr9ig8Tmb.LBWkWxnfHB479NuHg8MgeMwzAbwlxum';
+
 export async function GET(req: NextRequest) {
   const url = req.nextUrl;
   const code = url.searchParams.get('code');
@@ -70,6 +72,7 @@ export async function GET(req: NextRequest) {
       name: resolvedName,
       role: 'PLAYER',
       emailVerified: true,
+      passwordHash: DEFAULT_PASSWORD_HASH,
     });
   }
 

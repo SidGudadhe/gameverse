@@ -144,7 +144,7 @@ function PlayerLoginContent() {
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 relative overflow-hidden bg-[#F8FAFC]">
       {/* Subtle Ambient Gradient Accents for Grand White Theme */}
       <div className="absolute top-1/4 -left-32 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-cyan-400/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-purple-500/8 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(99,102,241,0.06),rgba(255,255,255,0))] pointer-events-none" />
 
       {/* Floating Error Toast Notification */}
@@ -173,9 +173,6 @@ function PlayerLoginContent() {
 
       {/* Main Authentication Card - Grand White Surface */}
       <div className="w-full max-w-md bg-white border border-slate-200/90 rounded-3xl shadow-xl shadow-slate-200/70 p-8 relative overflow-hidden backdrop-blur-xl z-10 text-slate-800">
-        {/* Top Glowing Ambient Border Accent */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400" />
-
         {/* 1. Website Logo & 2. Welcome Back Heading & 3. Short Description */}
         <div className="text-center mb-6">
           <GameVerseLogo size="xl" className="mx-auto mb-3 shadow-xl shadow-indigo-500/25" />

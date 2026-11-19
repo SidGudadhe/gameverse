@@ -41,7 +41,7 @@ export default function NavigationProgressBar() {
 
   return (
     <div className="fixed top-0 left-0 right-0 h-[2.5px] z-[99999] pointer-events-none overflow-hidden bg-transparent">
-      <div className="h-full bg-gradient-to-r from-indigo-500 via-cyan-400 to-indigo-500 shadow-sm shadow-cyan-400/50 animate-[progress_1s_ease-in-out_infinite]" />
+      <div className="h-full bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 shadow-sm shadow-indigo-500/30 animate-[progress_1s_ease-in-out_infinite]" />
     </div>
   );
 }

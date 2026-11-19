@@ -250,9 +250,6 @@ export default function CrazyGamesAuthModal() {
         ref={modalRef}
         className="w-full max-w-md bg-white border border-slate-200 rounded-3xl shadow-2xl p-6 sm:p-8 relative overflow-hidden text-slate-800 animate-in zoom-in-95 duration-200 max-h-[92vh] overflow-y-auto"
       >
-        {/* Top Glow Accent */}
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400" />
-
         {/* Close Button */}
         <button
           type="button"

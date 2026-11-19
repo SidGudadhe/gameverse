@@ -4,7 +4,7 @@ export default function GlobalLoading() {
   return (
     <div className="w-full min-h-[60vh] max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
       {/* Top subtle neon progress line */}
-      <div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-cyan-400 to-indigo-500 animate-pulse z-[9999]" />
+      <div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 animate-pulse z-[9999]" />
 
       <div className="space-y-8 animate-pulse">
         {/* Banner Skeleton */}

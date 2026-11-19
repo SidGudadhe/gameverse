@@ -4,7 +4,7 @@ import { Play, Star, Users } from 'lucide-react';
 import { Game } from '@/types';
 
 interface GameCardProps {
-  game: Game & { matchReason?: string; matchScore?: number };
+  game: Game;
   aspect?: '16/9' | '4/3';
 }
 
@@ -54,12 +54,6 @@ export default function GameCard({ game, aspect = '16/9' }: GameCardProps) {
           <p className="text-slate-500 text-xs line-clamp-1 mt-0.5">
             {game.developerName}
           </p>
-          {game.matchReason && (
-            <div className="mt-1.5 flex items-center gap-1.5 text-[10px] text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100/80 font-medium truncate">
-              <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0" />
-              <span className="truncate">{game.matchReason}</span>
-            </div>
-          )}
         </div>
 
         <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs text-slate-500">

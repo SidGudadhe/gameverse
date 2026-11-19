@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { email, password, portal: rawPortal } = body || {};
+  const { email, password, portal: rawPortal, rememberMe } = body || {};
   const portal: 'PLAYER' | 'DEVELOPER' | 'ADMIN' =
     rawPortal === 'DEVELOPER' || rawPortal === 'ADMIN' ? rawPortal : 'PLAYER';
 
@@ -181,12 +181,14 @@ export async function POST(req: NextRequest) {
       token,
     });
 
+    const sessionMaxAge = rememberMe ? 30 * 24 * 60 * 60 : 7 * 24 * 60 * 60;
+
     response.cookies.set('gameverse_session', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 7 * 24 * 60 * 60,
+      maxAge: sessionMaxAge,
     });
 
     return response;

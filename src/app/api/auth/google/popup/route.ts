@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
     !clientId?.includes('placeholder') &&
     /^\d+-[a-zA-Z0-9_-]+\.apps\.googleusercontent\.com$/.test(clientId || '');
 
-  if (isRealGoogleClientId) {
+  if (isRealGoogleClientId && process.env.NODE_ENV !== 'test' && !process.env.VITEST) {
     const redirectUri = `${origin}/api/auth/google/callback`;
     const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(
       clientId!

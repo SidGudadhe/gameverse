@@ -314,6 +314,4 @@ export default function AdminAuditLogsPage() {
       )}
     </div>
   );
-    </div>
-  );
 }

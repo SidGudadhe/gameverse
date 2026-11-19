@@ -166,6 +166,25 @@ export default function GoogleSignIn({
     };
   }, [clientId, mode, enableOneTap, isRealGoogleClientId, handleCredentialResponse]);
 
+  // Listen for Google OAuth popup messages
+  useEffect(() => {
+    const handlePopupMessage = (event: MessageEvent) => {
+      if (typeof window === 'undefined') return;
+      if (event.origin !== window.location.origin) return;
+      if (event.data?.type === 'GOOGLE_AUTH_SUCCESS' && event.data.user) {
+        setSession(event.data.user);
+        setSuccessMsg(`Welcome, ${event.data.user.name}!`);
+        setShowFallbackChooser(false);
+        onSuccess?.(event.data.user);
+      } else if (event.data?.type === 'GOOGLE_AUTH_ERROR') {
+        setErrorMsg(event.data.error || 'Google authentication was cancelled or failed.');
+        onError?.(event.data.error);
+      }
+    };
+    window.addEventListener('message', handlePopupMessage);
+    return () => window.removeEventListener('message', handlePopupMessage);
+  }, [setSession, onSuccess, onError]);
+
   // Fallback 1-click account selector if GSI iframe is blocked or clicked
   const handleFallbackAccountSelect = async (account: GoogleAccount) => {
     setLoading(true);
@@ -199,6 +218,30 @@ export default function GoogleSignIn({
       throw err;
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleButtonClick = () => {
+    setErrorMsg('');
+    if (isRealGoogleClientId) {
+      const width = 500;
+      const height = 620;
+      const left = typeof window !== 'undefined' ? window.screenX + (window.outerWidth - width) / 2 : 100;
+      const top = typeof window !== 'undefined' ? window.screenY + (window.outerHeight - height) / 2 : 100;
+
+      const popup = window.open(
+        '/api/auth/google/popup',
+        'GoogleOAuthPopup',
+        `width=${width},height=${height},left=${left},top=${top},status=no,menubar=no,toolbar=no`
+      );
+
+      if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+        setShowFallbackChooser(true);
+      } else {
+        popup.focus();
+      }
+    } else {
+      setShowFallbackChooser(true);
     }
   };
 
@@ -238,7 +281,7 @@ export default function GoogleSignIn({
         <button
           type="button"
           disabled={loading}
-          onClick={() => setShowFallbackChooser(true)}
+          onClick={handleGoogleButtonClick}
           className="w-full bg-white hover:bg-slate-50 text-slate-800 font-semibold py-3 px-4 rounded-xl border border-slate-300 shadow-xs hover:shadow transition-all flex items-center justify-center gap-3 text-sm active:scale-[0.99] disabled:opacity-70 cursor-pointer"
         >
           <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">

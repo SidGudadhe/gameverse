@@ -827,6 +827,48 @@
       "emailVerified": false,
       "twoFactorEnabled": false,
       "createdAt": "2026-11-16T09:18:47.953Z"
+    },
+    {
+      "id": "usr_low_balance_test",
+      "email": "lowbal@gameverse.test",
+      "name": "LowBal",
+      "role": "PLAYER",
+      "passwordHash": "hash",
+      "emailVerified": false,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-19T13:20:55.760Z"
+    },
+    {
+      "id": "usr-1795094456928-pqehj",
+      "email": "crazygamer_test@gamer.com",
+      "name": "CrazySpeedRunner",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$SwcPP.p.0g8aPW1hByUIn.2Mi9mIYdn7lLthsD5aQOvrMm35qIOYe",
+      "emailVerified": true,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-19T13:20:56.928Z"
+    },
+    {
+      "id": "usr-google-1795094456975-tzcvj",
+      "email": "mauli.player.1795094456974@gmail.com",
+      "name": "Mauli Real Gamer",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$xwgNcEA.gPkAUr9ig8Tmb.LBWkWxnfHB479NuHg8MgeMwzAbwlxum",
+      "emailVerified": true,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-19T13:20:56.975Z",
+      "avatarUrl": "https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=150&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "usr-google-1795094466621-k7wgg",
+      "email": "verified.gamer.1795094463186@gmail.com",
+      "name": "Verified Gamer Pro",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$xwgNcEA.gPkAUr9ig8Tmb.LBWkWxnfHB479NuHg8MgeMwzAbwlxum",
+      "emailVerified": true,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-19T13:21:06.621Z",
+      "avatarUrl": "https://lh3.googleusercontent.com/a/custom-avatar-url"
     }
   ],
   "profiles": [
@@ -1015,7 +1057,7 @@
       "username": "player_l_test",
       "displayName": "Elite Champion",
       "createdAt": "2026-11-12T10:07:13.526Z",
-      "updatedAt": "2026-11-16T09:18:32.223Z",
+      "updatedAt": "2026-11-19T13:20:55.790Z",
       "bio": "Competitive speedrunner and arcade fan",
       "favoriteGenre": "Racing",
       "avatarUrl": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP..."
@@ -1397,6 +1439,30 @@
       "userId": "usr-1794820727953-gvfhv",
       "username": "test_player_1794820727953",
       "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1795094455760",
+      "userId": "usr_low_balance_test",
+      "username": "lowbal",
+      "displayName": "LowBal"
+    },
+    {
+      "id": "prof-1795094456930",
+      "userId": "usr-1795094456928-pqehj",
+      "username": "crazygamer_test",
+      "displayName": "CrazySpeedRunner"
+    },
+    {
+      "id": "prof-1795094456975",
+      "userId": "usr-google-1795094456975-tzcvj",
+      "username": "mauli.player.1795094456974",
+      "displayName": "Mauli Real Gamer"
+    },
+    {
+      "id": "prof-1795094466623",
+      "userId": "usr-google-1795094466621-k7wgg",
+      "username": "verified.gamer.1795094463186",
+      "displayName": "Verified Gamer Pro"
     }
   ],
   "categories": [
@@ -18116,8 +18182,8 @@
       "id": "hist-1794478033519-1nmu",
       "userId": "usr_player_portal_test",
       "gameId": "game-neon-runner",
-      "lastPlayedAt": "2026-11-16T09:18:32.155Z",
-      "totalPlayMinutes": 4
+      "lastPlayedAt": "2026-11-19T13:20:55.719Z",
+      "totalPlayMinutes": 6
     }
   ],
   "reviews": [],
@@ -18156,7 +18222,7 @@
       "updatedAt": "2026-11-12T10:38:40.061Z"
     },
     {
-      "id": "ppm-1794820712334-9omn",
+      "id": "ppm-1795094455892-hvnc",
       "userId": "usr_player_portal_test",
       "method": "UPI",
       "accountDetails": "player1@okaxis",
@@ -18164,11 +18230,11 @@
       "label": "Personal GPay",
       "provider": "GPAY",
       "isDefault": false,
-      "createdAt": "2026-11-16T09:18:32.334Z",
-      "updatedAt": "2026-11-16T09:18:32.349Z"
+      "createdAt": "2026-11-19T13:20:55.892Z",
+      "updatedAt": "2026-11-19T13:20:55.906Z"
     },
     {
-      "id": "ppm-1794820712339-97yo",
+      "id": "ppm-1795094455897-lkmt",
       "userId": "usr_player_portal_test",
       "method": "UPI",
       "accountDetails": "9876543210@paytm",
@@ -18176,11 +18242,11 @@
       "label": "Paytm Wallet",
       "provider": "PAYTM",
       "isDefault": true,
-      "createdAt": "2026-11-16T09:18:32.339Z",
-      "updatedAt": "2026-11-16T09:18:32.350Z"
+      "createdAt": "2026-11-19T13:20:55.897Z",
+      "updatedAt": "2026-11-19T13:20:55.906Z"
     },
     {
-      "id": "ppm-1794820712343-s6vs",
+      "id": "ppm-1795094455900-utxk",
       "userId": "usr_player_portal_test",
       "method": "UPI",
       "accountDetails": "player4@upi",
@@ -18188,13 +18254,13 @@
       "label": "BHIM UPI",
       "provider": "BHIM",
       "isDefault": false,
-      "createdAt": "2026-11-16T09:18:32.343Z",
-      "updatedAt": "2026-11-16T09:18:32.350Z"
+      "createdAt": "2026-11-19T13:20:55.899Z",
+      "updatedAt": "2026-11-19T13:20:55.906Z"
     }
   ],
   "playerPayoutRequests": [
     {
-      "id": "payout-req-1794820712353-i2jx",
+      "id": "payout-req-1795094455910-k05n",
       "userId": "usr_player_portal_test",
       "amount": 600,
       "currency": "INR",
@@ -18202,8 +18268,8 @@
       "accountDetails": "player2@ybl",
       "beneficiaryName": "Player Two",
       "status": "PENDING",
-      "requestedAt": "2026-11-16T09:18:32.353Z",
-      "transactionRef": "TXN-GV-MWJ1WSYP"
+      "requestedAt": "2026-11-19T13:20:55.910Z",
+      "transactionRef": "TXN-GV-MWNKW2UE"
     },
     {
       "id": "payout-req-1794480838171-g4le",
@@ -18237,11 +18303,26 @@
       "method": "UPI",
       "accountDetails": "lowbal@upi",
       "status": "PAID",
-      "requestedAt": "2026-11-16T09:18:32.206Z",
+      "requestedAt": "2026-11-19T13:20:55.762Z",
       "transactionRef": "TXN-PAID-1"
     }
   ],
   "financialRecords": [
+    {
+      "id": "led-1795094455881-r9la",
+      "creatorId": "usr_dev_payout_test",
+      "gameId": "all-titles",
+      "gameTitle": "Studio Creator Revenue Distribution",
+      "period": "Nov 2026",
+      "grossRevenue": 250,
+      "deductions": 0,
+      "netRevenue": 250,
+      "creatorShare": 250,
+      "status": "PROCESSING",
+      "payoutMethod": "BANK_WIRE",
+      "payoutReference": "PO-DEV-MWNKW2SF",
+      "createdAt": "2026-11-19T13:20:55.881Z"
+    },
     {
       "id": "led-1794820712321-p3h8",
       "creatorId": "usr_dev_payout_test",
@@ -18299,6 +18380,162 @@
     }
   ],
   "auditLogs": [
+    {
+      "id": "log-1795094467474-6w1t",
+      "createdAt": "2026-11-19T13:21:07.474Z",
+      "previousHash": "7f5fd66cb3ec2962415029e7d981c3a9e61f9c147674d47fad3969490dcd50ae",
+      "tamperHash": "09057bcaaf055724d5b9f921e8b0319eb22dde5fe10d46803ec7ecb73c83393e",
+      "actorId": "usr-google-1795094466621-k7wgg",
+      "actorName": "Verified Gamer Pro",
+      "action": "USER_LOGOUT",
+      "targetType": "USER",
+      "targetId": "usr-google-1795094466621-k7wgg",
+      "details": {},
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795094467463-t8rg",
+      "createdAt": "2026-11-19T13:21:07.463Z",
+      "previousHash": "9b6979d370331bf44057529fbd3d4ba3705b4b73fae579b22041940b32b1a5a6",
+      "tamperHash": "7f5fd66cb3ec2962415029e7d981c3a9e61f9c147674d47fad3969490dcd50ae",
+      "actorId": "usr-google-1795094466621-k7wgg",
+      "actorName": "Verified Gamer Pro",
+      "action": "USER_LOGIN",
+      "targetType": "USER",
+      "targetId": "usr-google-1795094466621-k7wgg",
+      "details": {
+        "role": "PLAYER",
+        "provider": "GOOGLE_AUTH_SYNC"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795094466624-p20g",
+      "createdAt": "2026-11-19T13:21:06.624Z",
+      "previousHash": "bc08728d25651c968a79c5cda9ca19504398536a9a2304d5cb90a3fc3aa553f1",
+      "tamperHash": "9b6979d370331bf44057529fbd3d4ba3705b4b73fae579b22041940b32b1a5a6",
+      "actorId": "usr-google-1795094466621-k7wgg",
+      "actorName": "Verified Gamer Pro",
+      "action": "USER_REGISTERED_GOOGLE_SSO",
+      "targetType": "USER",
+      "targetId": "usr-google-1795094466621-k7wgg",
+      "details": {
+        "provider": "GOOGLE_AUTH",
+        "email": "verified.gamer.1795094463186@gmail.com"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795094459664-t45q",
+      "createdAt": "2026-11-19T13:20:59.664Z",
+      "previousHash": "389848b8b5037db0ecb723142b558c97e7e73ca2a7d5f5fb24636764068e0e58",
+      "tamperHash": "bc08728d25651c968a79c5cda9ca19504398536a9a2304d5cb90a3fc3aa553f1",
+      "actorId": "usr-1795094456928-pqehj",
+      "actorName": "CrazySpeedRunner",
+      "action": "USER_LOGIN",
+      "targetType": "USER",
+      "targetId": "usr-1795094456928-pqehj",
+      "details": {
+        "role": "PLAYER"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795094458172-1t2z",
+      "createdAt": "2026-11-19T13:20:58.172Z",
+      "previousHash": "f0a85519eccc7b22ba577745fe476ffcd0de5be8ce47f4ba83b0325b5aaebabf",
+      "tamperHash": "389848b8b5037db0ecb723142b558c97e7e73ca2a7d5f5fb24636764068e0e58",
+      "actorId": "usr-google-1794731237527-l9oa9",
+      "actorName": "CrazyGamer_Google",
+      "action": "USER_LOGIN",
+      "targetType": "USER",
+      "targetId": "usr-google-1794731237527-l9oa9",
+      "details": {
+        "role": "PLAYER",
+        "provider": "GOOGLE_AUTH_SYNC"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795094458168-u0zz",
+      "createdAt": "2026-11-19T13:20:58.168Z",
+      "previousHash": "57a627df7e59f7b4ef7eb70685f83a750e6eb3ccc80134e51890cbe4b8ae6185",
+      "tamperHash": "f0a85519eccc7b22ba577745fe476ffcd0de5be8ce47f4ba83b0325b5aaebabf",
+      "actorId": "usr-google-1794820714357-o3gqg",
+      "actorName": "GIS Real Gamer",
+      "action": "USER_LOGIN",
+      "targetType": "USER",
+      "targetId": "usr-google-1794820714357-o3gqg",
+      "details": {
+        "role": "PLAYER",
+        "provider": "GOOGLE_AUTH_SYNC"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795094456975-iu1e",
+      "createdAt": "2026-11-19T13:20:56.975Z",
+      "previousHash": "1dc052959148ee094ff479e1f5c9b44e991e52c506a00d404e31bca5ef607186",
+      "tamperHash": "57a627df7e59f7b4ef7eb70685f83a750e6eb3ccc80134e51890cbe4b8ae6185",
+      "actorId": "usr-google-1795094456975-tzcvj",
+      "actorName": "Mauli Real Gamer",
+      "action": "USER_REGISTERED_GOOGLE_SSO",
+      "targetType": "USER",
+      "targetId": "usr-google-1795094456975-tzcvj",
+      "details": {
+        "provider": "GOOGLE_AUTH",
+        "email": "mauli.player.1795094456974@gmail.com"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795094456970-xbk4",
+      "createdAt": "2026-11-19T13:20:56.970Z",
+      "previousHash": "3c415560f855a46dc0e6eaec119e133c6391856ffba8c68e8effb027fab6e7c6",
+      "tamperHash": "1dc052959148ee094ff479e1f5c9b44e991e52c506a00d404e31bca5ef607186",
+      "actorId": "usr-google-1794735571504-xa21f",
+      "actorName": "Sid Gudadhe",
+      "action": "USER_LOGIN",
+      "targetType": "USER",
+      "targetId": "usr-google-1794735571504-xa21f",
+      "details": {
+        "role": "PLAYER",
+        "provider": "GOOGLE_AUTH_SYNC"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795094456962-3tam",
+      "createdAt": "2026-11-19T13:20:56.962Z",
+      "previousHash": "b878b2b15304f8cb2d10b8d04f69939e8078aebb09443e858d5ee89a092f25fa",
+      "tamperHash": "3c415560f855a46dc0e6eaec119e133c6391856ffba8c68e8effb027fab6e7c6",
+      "actorId": "usr-google-1794820713732-b976c",
+      "actorName": "AlexChenGamer",
+      "action": "USER_LOGIN",
+      "targetType": "USER",
+      "targetId": "usr-google-1794820713732-b976c",
+      "details": {
+        "role": "PLAYER",
+        "provider": "GOOGLE_AUTH_SYNC"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795094456942-yxsb",
+      "createdAt": "2026-11-19T13:20:56.942Z",
+      "previousHash": "c445b53617f4d1e28233d87908233487324f1fb657f6017fe9acdc81dd198836",
+      "tamperHash": "b878b2b15304f8cb2d10b8d04f69939e8078aebb09443e858d5ee89a092f25fa",
+      "actorId": "usr-google-1794820713732-b976c",
+      "actorName": "AlexChenGamer",
+      "action": "USER_LOGIN",
+      "targetType": "USER",
+      "targetId": "usr-google-1794820713732-b976c",
+      "details": {
+        "role": "PLAYER",
+        "provider": "GOOGLE_AUTH_SYNC"
+      },
+      "ipAddress": "127.0.0.1"
+    },
     {
       "id": "log-1794820722901-bvqs",
       "createdAt": "2026-11-16T09:18:42.901Z",
@@ -19358,7 +19595,7 @@
       "notifyOnQaUpdate": true,
       "notifyOnPayout": true,
       "notifyOnPlayerReport": false,
-      "updatedAt": "2026-11-16T09:18:32.329Z"
+      "updatedAt": "2026-11-19T13:20:55.886Z"
     }
   ],
   "supportTickets": [
@@ -19409,16 +19646,16 @@
       "lifetimeWithdrawn": 1300,
       "totalEarned": 1500,
       "currency": "INR",
-      "updatedAt": "2026-11-16T09:18:32.211Z"
+      "updatedAt": "2026-11-19T13:20:55.766Z"
     },
     {
       "userId": "usr_player_portal_test",
-      "availableBalance": 970,
+      "availableBalance": 980,
       "inProcessing": 600,
       "lifetimeWithdrawn": 0,
-      "totalEarned": 1570,
+      "totalEarned": 1580,
       "currency": "INR",
-      "updatedAt": "2026-11-16T09:18:32.352Z"
+      "updatedAt": "2026-11-19T13:20:55.910Z"
     }
   ]
 }

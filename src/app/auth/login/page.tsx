@@ -13,7 +13,6 @@ import {
   X,
   ArrowRight,
   CheckCircle2,
-  Sparkles,
   ShieldCheck,
 } from 'lucide-react';
 import { AuthTransitionSkeleton } from '@/components/ui/Skeleton';

@@ -371,9 +371,8 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => openAuthModal('SIGNUP')}
-                className="bg-gradient-to-r from-[#6A38EB] to-[#8B5CF6] hover:from-[#5b2bd9] hover:to-[#7c3aed] text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md shadow-purple-600/20 transition-all active:scale-95 cursor-pointer flex items-center gap-1.5"
+                className="bg-gradient-to-r from-[#6A38EB] to-[#8B5CF6] hover:from-[#5b2bd9] hover:to-[#7c3aed] text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md shadow-purple-600/20 transition-all active:scale-95 cursor-pointer flex items-center justify-center"
               >
-                <Sparkles className="w-3.5 h-3.5" />
                 <span>Join Free</span>
               </button>
             </div>

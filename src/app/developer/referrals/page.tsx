@@ -110,14 +110,14 @@ export default function DeveloperReferralsPage() {
           <div className="flex items-center gap-2">
             <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold px-2.5 py-0.5 rounded-full uppercase flex items-center gap-1">
               <Sparkles className="w-3 h-3" />
-              <span>70% Net Revenue Split</span>
+              <span>Creator Promotion Bonus</span>
             </span>
           </div>
           <h1 className="font-heading font-black text-2xl sm:text-3xl text-slate-900 mt-1.5">
             Creator Promotion & Referral Engine
           </h1>
           <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
-            Create tracked campaigns, share directly to social communities, and earn a +20% bonus boost on referred gameplay.
+            Create tracked campaigns, share directly to social communities, and earn an enhanced bonus boost on referred gameplay.
           </p>
         </div>
 
@@ -290,7 +290,7 @@ export default function DeveloperReferralsPage() {
 
               <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-[11px] text-emerald-800 flex items-center gap-2">
                 <Sparkles className="w-4 h-4 flex-shrink-0 text-emerald-600" />
-                <span>Automatically applies +20% Creator Promotion Bonus (70% Net Revenue Split).</span>
+                <span>Automatically applies Creator Promotion Bonus for direct player referrals.</span>
               </div>
 
               <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">

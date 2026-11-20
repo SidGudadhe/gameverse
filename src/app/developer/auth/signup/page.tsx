@@ -83,7 +83,7 @@ export default function DeveloperSignupPage() {
             Register Game Studio
           </h1>
           <p className="text-xs text-slate-500">
-            Join GameVerse Creator Network. Upload ZIP games, reach millions of gamers, and earn 70% ad revenue.
+            Join GameVerse Creator Network. Upload ZIP games, reach millions of gamers, and monetize with automated ad payouts.
           </p>
         </div>
 
@@ -173,7 +173,7 @@ export default function DeveloperSignupPage() {
               />
               <span className="text-[11px] text-slate-600 leading-relaxed">
                 I accept the GameVerse Creator Terms, Sandbox Security Rules, and{' '}
-                <span className="text-indigo-600 font-semibold">Creator Revenue Agreement (70% net revenue split)</span>.
+                <span className="text-indigo-600 font-semibold">Creator Revenue & Publishing Agreement</span>.
               </span>
             </label>
           </div>

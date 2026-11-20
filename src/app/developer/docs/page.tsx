@@ -153,7 +153,7 @@ GV_SDK.ready();`;
           <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
             <DollarSign className="w-5 h-5" />
           </div>
-          <h3 className="font-bold text-slate-900 text-sm">70% Revenue Share</h3>
+          <h3 className="font-bold text-slate-900 text-sm">Automated Monetization</h3>
           <p className="text-xs text-slate-500 leading-relaxed">
             Automated monetization with transparent monthly ledger reconciliation and direct payouts.
           </p>

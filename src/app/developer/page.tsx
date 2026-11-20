@@ -401,7 +401,7 @@ export default function DeveloperPage() {
             </h1>
 
             <p className="text-slate-600 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
-              Join thousands of indie developers and studios publishing HTML5, WebGL, and WASM games on GameVerse. Zero server costs, 70-80% revenue share, and direct instant payouts.
+              Join thousands of indie developers and studios publishing HTML5, WebGL, and WASM games on GameVerse. Zero server costs, competitive ad revenue sharing, and direct instant payouts.
             </p>
 
             {/* CTA Buttons */}
@@ -453,10 +453,10 @@ export default function DeveloperPage() {
               <DollarSign className="w-6 h-6" />
             </div>
             <h3 className="font-heading font-bold text-lg text-slate-900">
-              Industry-Leading Revenue Share
+              Lucrative Ad Monetization
             </h3>
             <p className="text-slate-500 text-xs sm:text-sm leading-relaxed">
-              Earn up to 80% ad revenue share from interstitial, rewarded video, and banner impressions served to active players across your games.
+              Monetize directly from interstitial, rewarded video, and banner impressions served to active players across your games.
             </p>
           </div>
 

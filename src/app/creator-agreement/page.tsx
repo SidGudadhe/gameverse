@@ -15,7 +15,7 @@ export default function CreatorAgreementPage() {
           Independent Creator Publishing Agreement
         </h1>
         <p className="text-slate-600 text-sm">
-          Clear, transparent terms governing game distribution, 50%–70% net revenue sharing, double-entry financial accounting, and sandbox compliance.
+          Clear, transparent terms governing game distribution, creator net revenue sharing, double-entry financial accounting, and sandbox compliance.
         </p>
       </div>
 
@@ -38,12 +38,12 @@ export default function CreatorAgreementPage() {
             <span className="text-slate-900">Revenue Sharing & Calculation Engine</span>
           </h2>
           <p>
-            Monetization is driven by pre-roll, interstitial, and rewarded ad formats integrated into our non-intrusive player HUD. Revenue is calculated according to the following formulas:
+            Monetization is driven by pre-roll, interstitial, and rewarded ad formats integrated into our non-intrusive player HUD. Revenue is calculated according to the transparent platform model:
           </p>
           <div className="bg-slate-50 border border-emerald-200 rounded-xl p-4 font-mono text-xs space-y-2 text-emerald-800">
-            <div>Net Ad Revenue = Gross Revenue − 10% Platform Operating/Network Deduction</div>
-            <div>Standard Organic Creator Share = 50% of Net Ad Revenue</div>
-            <div>Creator Referral Attributed Share = 70% of Net Ad Revenue (20% bonus incentive)</div>
+            <div>Net Ad Revenue = Gross Revenue − Platform Operating & Network Deductions</div>
+            <div>Standard Organic Creator Share = Competitive Tiered Net Ad Revenue Share</div>
+            <div>Creator Referral Attributed Share = Enhanced Referral-Attributed Payout Bonus</div>
           </div>
         </section>
 

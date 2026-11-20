@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
 import {
   BarChart3,
   Users,
@@ -11,14 +10,9 @@ import {
   Monitor,
   Tablet,
   Download,
-  Share2,
-  Calendar,
-  Filter,
   ArrowUpRight,
   TrendingUp,
   Activity,
-  Bot,
-  CheckCircle2,
 } from 'lucide-react';
 
 export default function StudioAnalyticsPage() {
@@ -73,13 +67,6 @@ export default function StudioAnalyticsPage() {
     tabletPct: 5,
   };
 
-  const acquisition = data?.acquisition || {
-    organicStarts: 0,
-    referralStarts: 0,
-    organicPct: 100,
-    referralPct: 0,
-    referralTokens: [],
-  };
 
   const retention = data?.retention || {
     day1Pct: 24.5,
@@ -396,66 +383,6 @@ export default function StudioAnalyticsPage() {
         </div>
       </div>
 
-      {/* Acquisition & Referral Section */}
-      <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <h2 className="font-heading font-bold text-lg text-slate-900">
-              Traffic Acquisition & Creator Referral Links
-            </h2>
-            <p className="text-slate-500 text-xs">
-              Attribution tracking for organic discovery vs direct creator promotion links (?ref=cr_...)
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-semibold px-3 py-1 rounded-xl">
-              {acquisition.organicPct}% Organic
-            </span>
-            <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold px-3 py-1 rounded-xl">
-              {acquisition.referralPct}% Creator Links
-            </span>
-          </div>
-        </div>
-
-        {acquisition.referralTokens.length === 0 ? (
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-500 text-xs flex items-center justify-between">
-            <span>No creator referral campaigns active yet. Generate links on any of your game landing pages.</span>
-            <Link
-              href="/developer/games"
-              className="text-indigo-600 hover:text-indigo-700 font-semibold text-xs flex items-center gap-1"
-            >
-              <span>View Game Links</span>
-              <ArrowUpRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="border-b border-slate-200 text-slate-700 font-semibold">
-                <tr>
-                  <th className="py-2.5 px-3">Referral Token</th>
-                  <th className="py-2.5 px-3">Click Starts</th>
-                  <th className="py-2.5 px-3">Unique Players</th>
-                  <th className="py-2.5 px-3">Total Playtime</th>
-                  <th className="py-2.5 px-3">Monetization Share</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200 text-slate-700">
-                {acquisition.referralTokens.map((t: any, idx: number) => (
-                  <tr key={idx} className="hover:bg-slate-50">
-                    <td className="py-2.5 px-3 font-mono text-indigo-700 font-bold">{t.token}</td>
-                    <td className="py-2.5 px-3 font-semibold text-slate-900">{t.clicks}</td>
-                    <td className="py-2.5 px-3">{t.uniquePlayers}</td>
-                    <td className="py-2.5 px-3">{t.playMinutes} mins</td>
-                    <td className="py-2.5 px-3 text-emerald-700 font-semibold">Tier 1 (+20% Referral Bonus)</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
       {/* Per-Game Performance Table */}
       <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
         <div className="flex items-center justify-between">
@@ -523,13 +450,18 @@ export default function StudioAnalyticsPage() {
                     </td>
                     <td className="py-3 px-4 text-amber-700 font-mono">{g.ivtCount}</td>
                     <td className="py-3 px-4 text-right">
-                      <Link
-                        href={`/developer/analytics/${g.id}`}
-                        className="inline-flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-700 font-semibold"
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedGameId(g.id);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className="inline-flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-700 font-semibold cursor-pointer"
+                        title="Filter analytics for this game"
                       >
-                        <span>Deep Dive</span>
+                        <span>Filter Game</span>
                         <ArrowUpRight className="w-3.5 h-3.5" />
-                      </Link>
+                      </button>
                     </td>
                   </tr>
                 ))

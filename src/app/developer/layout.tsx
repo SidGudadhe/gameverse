@@ -39,7 +39,7 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
     { href: '/developer/profile', label: 'Studio Profile', icon: UserCheck },
     { href: '/developer/settings', label: 'Settings', icon: Settings },
     { href: '/developer/payouts', label: 'Revenue Ledger', icon: DollarSign },
-    { href: '/docs/publishing-guide', label: 'Docs & SDK', icon: BookOpen },
+    { href: '/developer/docs', label: 'Docs & SDK', icon: BookOpen },
     { href: '/developer/support', label: 'Developer Support', icon: HelpCircle },
   ];
 
@@ -57,8 +57,14 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
     return <div className="min-h-screen bg-[#F8FAFC]">{children}</div>;
   }
 
-  // Not logged in -> Prompt login
+  // Public Developer Landing and Documentation are viewable before login
+  const isPublicDeveloperPage = pathname === '/developer' || pathname === '/developer/docs';
+
   if (!isAuthenticated) {
+    if (isPublicDeveloperPage) {
+      return <div className="min-h-screen bg-[#F8FAFC]">{children}</div>;
+    }
+
     return (
       <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-white border border-slate-200 rounded-3xl p-8 text-center shadow-xl">

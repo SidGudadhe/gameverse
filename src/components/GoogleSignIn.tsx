@@ -7,6 +7,7 @@ import GoogleAccountChooser, { GoogleAccount } from './GoogleAccountChooser';
 
 interface GoogleSignInProps {
   mode?: 'LOGIN' | 'SIGNUP';
+  portal?: 'PLAYER' | 'DEVELOPER' | 'ADMIN';
   onSuccess?: (user: any) => void;
   onError?: (error: string) => void;
   className?: string;
@@ -31,6 +32,7 @@ declare global {
 
 export default function GoogleSignIn({
   mode = 'LOGIN',
+  portal = 'PLAYER',
   onSuccess,
   onError,
   className = '',
@@ -70,7 +72,7 @@ export default function GoogleSignIn({
         const res = await fetch('/api/auth/google', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ credential: response.credential }),
+          body: JSON.stringify({ credential: response.credential, portal }),
         });
 
         const data = await res.json();
@@ -197,6 +199,7 @@ export default function GoogleSignIn({
           email: account.email,
           name: account.name,
           avatarUrl: account.avatarUrl,
+          portal,
         }),
       });
 

@@ -34,6 +34,8 @@ export interface User {
   twoFactorEnabled?: boolean;
   twoFactorSecret?: string;
   createdAt: string;
+  deletionRequestedAt?: string;
+  scheduledDeletionAt?: string;
 }
 
 export interface CreatorAgreement {

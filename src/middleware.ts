@@ -107,7 +107,8 @@ export function middleware(request: NextRequest) {
 
   // 5. Strict Role Gate for Developer Studio Portal (/developer and /api/developer)
   const isDevAuthRoute = pathname.startsWith('/developer/auth');
-  const isDevPath = pathname.startsWith('/developer') && !isDevAuthRoute;
+  const isDevPublicRoute = pathname === '/developer' || pathname === '/developer/docs';
+  const isDevPath = pathname.startsWith('/developer') && !isDevAuthRoute && !isDevPublicRoute;
   const isDevApi = pathname.startsWith('/api/developer');
   const isOnboardRoute = pathname === '/developer/onboard' || pathname === '/api/developer/onboard';
 

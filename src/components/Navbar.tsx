@@ -57,7 +57,7 @@ export default function Navbar() {
       { href: '/developer/submit', label: 'Submit Game', icon: Sparkles },
       { href: '/developer/analytics', label: 'Analytics', icon: BarChart3 },
       { href: '/developer/payouts', label: 'Payouts', icon: DollarSign },
-      { href: '/docs/publishing-guide', label: 'SDK Docs', icon: Code },
+      { href: '/developer/docs', label: 'SDK Docs', icon: Code },
     ];
 
     return (

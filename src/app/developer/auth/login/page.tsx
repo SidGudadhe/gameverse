@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
 import { useAuth } from '@/context/AuthContext';
+import GoogleSignIn from '@/components/GoogleSignIn';
 
 export default function DeveloperLoginPage() {
   const router = useRouter();
@@ -120,6 +121,24 @@ export default function DeveloperLoginPage() {
             <span>{error}</span>
           </div>
         )}
+
+        {/* 1. Google Single Sign-On for Developers */}
+        <div className="space-y-3">
+          <GoogleSignIn
+            portal="DEVELOPER"
+            mode="LOGIN"
+            onSuccess={() => {
+              router.push('/developer');
+            }}
+          />
+
+          <div className="relative flex items-center justify-center my-4">
+            <div className="border-t border-slate-200 w-full" />
+            <span className="bg-white px-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider relative z-10">
+              Or sign in with Studio Email
+            </span>
+          </div>
+        </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
           <Input

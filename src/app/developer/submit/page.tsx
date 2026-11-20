@@ -64,6 +64,100 @@ export default function GameSubmitPage() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submittedData, setSubmittedData] = useState<any>(null);
 
+  // Draft persistence & Submissions Status tab
+  const [showDraftBanner, setShowDraftBanner] = useState(false);
+  const [activeTab, setActiveTab] = useState<'upload' | 'status'>('upload');
+  const [statusGames, setStatusGames] = useState<any[]>([]);
+
+  // Load existing draft and catalog status on mount
+  React.useEffect(() => {
+    fetch('/api/developer/games')
+      .then((r) => r.json())
+      .then((data) => setStatusGames(data.games || data.data || []))
+      .catch(() => {});
+
+    try {
+      const saved = localStorage.getItem('gv_pending_game_draft');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.title || parsed.shortDescription) {
+          setShowDraftBanner(true);
+        }
+      }
+    } catch {}
+  }, []);
+
+  // Auto-save draft whenever user fills information
+  React.useEffect(() => {
+    if (title || shortDescription || fullDescription) {
+      const draft = {
+        title,
+        slug,
+        category,
+        categoryName,
+        engine,
+        orientation,
+        shortDescription,
+        fullDescription,
+        controls,
+        versionNumber,
+        changelog,
+        thumbnailUrl,
+        bannerUrl,
+        aiDisclosure,
+        licensingNotes,
+        savedAt: new Date().toLocaleTimeString(),
+      };
+      localStorage.setItem('gv_pending_game_draft', JSON.stringify(draft));
+    }
+  }, [
+    title,
+    slug,
+    category,
+    categoryName,
+    engine,
+    orientation,
+    shortDescription,
+    fullDescription,
+    controls,
+    versionNumber,
+    changelog,
+    thumbnailUrl,
+    bannerUrl,
+    aiDisclosure,
+    licensingNotes,
+  ]);
+
+  const handleResumeDraft = () => {
+    try {
+      const saved = localStorage.getItem('gv_pending_game_draft');
+      if (saved) {
+        const d = JSON.parse(saved);
+        if (d.title) setTitle(d.title);
+        if (d.slug) setSlug(d.slug);
+        if (d.category) setCategory(d.category);
+        if (d.categoryName) setCategoryName(d.categoryName);
+        if (d.engine) setEngine(d.engine);
+        if (d.orientation) setOrientation(d.orientation);
+        if (d.shortDescription) setShortDescription(d.shortDescription);
+        if (d.fullDescription) setFullDescription(d.fullDescription);
+        if (d.controls) setControls(d.controls);
+        if (d.versionNumber) setVersionNumber(d.versionNumber);
+        if (d.changelog) setChangelog(d.changelog);
+        if (d.thumbnailUrl) setThumbnailUrl(d.thumbnailUrl);
+        if (d.bannerUrl) setBannerUrl(d.bannerUrl);
+        if (d.aiDisclosure) setAiDisclosure(d.aiDisclosure);
+        if (d.licensingNotes) setLicensingNotes(d.licensingNotes);
+        setShowDraftBanner(false);
+      }
+    } catch {}
+  };
+
+  const handleDiscardDraft = () => {
+    localStorage.removeItem('gv_pending_game_draft');
+    setShowDraftBanner(false);
+  };
+
   // Auto-generate slug from title
   const handleTitleChange = (val: string) => {
     setTitle(val);
@@ -155,6 +249,7 @@ export default function GameSubmitPage() {
       if (!res.ok) {
         setSubmitError(data.error || 'Failed to submit game build.');
       } else {
+        localStorage.removeItem('gv_pending_game_draft');
         setSubmittedData(data);
       }
     } catch (err: any) {
@@ -237,16 +332,200 @@ export default function GameSubmitPage() {
       </div>
 
       {/* Header */}
-      <div>
-        <h1 className="font-heading font-black text-3xl text-slate-900">
-          Submit Game Build & Metadata
-        </h1>
-        <p className="text-slate-600 text-xs sm:text-sm mt-1">
-          Upload your runnable HTML5/WebGL ZIP archive. Files are scanned, hashed with SHA-256, and isolated on our sandbox runtime.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+        <div>
+          <h1 className="font-heading font-black text-3xl text-slate-900">
+            Game Upload & Review Pipeline
+          </h1>
+          <p className="text-slate-600 text-xs sm:text-sm mt-1">
+            Upload HTML5/WebGL ZIP archives, monitor review stages, and resume pending drafts.
+          </p>
+        </div>
+
+        {/* Tab Switcher (Upload vs Status Pipeline) */}
+        <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-2xl border border-slate-200 text-xs font-semibold">
+          <button
+            type="button"
+            onClick={() => setActiveTab('upload')}
+            className={`px-4 py-2 rounded-xl transition-all cursor-pointer ${
+              activeTab === 'upload'
+                ? 'bg-white text-indigo-700 font-bold shadow-xs border border-slate-200'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Upload New Build
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('status')}
+            className={`px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
+              activeTab === 'status'
+                ? 'bg-white text-indigo-700 font-bold shadow-xs border border-slate-200'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <span>Submissions & Status</span>
+            <span className="px-1.5 py-0.2 rounded-full bg-indigo-50 text-indigo-700 text-[10px] font-mono font-bold">
+              {statusGames.length}
+            </span>
+          </button>
+        </div>
       </div>
 
-      {submitError && (
+      {/* Draft Persistence Banner (Requested by User) */}
+      {showDraftBanner && activeTab === 'upload' && (
+        <div className="p-4 sm:p-5 rounded-2xl bg-amber-50 border-2 border-amber-300 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-in fade-in">
+          <div className="flex items-start gap-3">
+            <Sparkles className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+            <div className="space-y-0.5">
+              <h4 className="text-sm font-bold text-amber-950">
+                Pending Draft Found!
+              </h4>
+              <p className="text-xs text-amber-900 leading-relaxed">
+                Aapne pehle ek game ki details half-fill ki thi jo complete nahi hui thi. Kya aap wahi se continue karna chahte hain?
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 self-end sm:self-center">
+            <button
+              type="button"
+              onClick={handleDiscardDraft}
+              className="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
+            >
+              Discard
+            </button>
+            <button
+              type="button"
+              onClick={handleResumeDraft}
+              className="px-4 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs shadow-xs transition-all active:scale-95 cursor-pointer flex items-center gap-1"
+            >
+              <span>Continue Draft</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* SUBMISSIONS & STATUS VIEW (When on 'status' tab) */}
+      {activeTab === 'status' ? (
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs">
+            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-1">
+              <span className="text-[10px] font-bold text-slate-400 uppercase">Live in Catalog</span>
+              <div className="font-heading font-black text-2xl text-emerald-600">
+                {statusGames.filter((g) => g.status === 'PUBLISHED').length}
+              </div>
+            </div>
+            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-1">
+              <span className="text-[10px] font-bold text-slate-400 uppercase">Under Review (QA)</span>
+              <div className="font-heading font-black text-2xl text-amber-600">
+                {statusGames.filter((g) => g.status === 'QA_TESTING').length}
+              </div>
+            </div>
+            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-1">
+              <span className="text-[10px] font-bold text-slate-400 uppercase">Drafts & Pending</span>
+              <div className="font-heading font-black text-2xl text-indigo-600">
+                {statusGames.filter((g) => g.status === 'DRAFT').length + (showDraftBanner ? 1 : 0)}
+              </div>
+            </div>
+            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-1">
+              <span className="text-[10px] font-bold text-slate-400 uppercase">Suspended / Action</span>
+              <div className="font-heading font-black text-2xl text-rose-600">
+                {statusGames.filter((g) => g.status === 'SUSPENDED' || g.status === 'REJECTED').length}
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-xs overflow-hidden">
+            <div className="p-5 border-b border-slate-200">
+              <h3 className="font-heading font-bold text-base text-slate-900">
+                All Submissions & Review Pipeline
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Track whether each title is Live, Pending Review, in Draft state, or Suspended.
+              </p>
+            </div>
+
+            <div className="divide-y divide-slate-100 text-xs">
+              {showDraftBanner && (
+                <div className="p-5 bg-amber-50/50 flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
+                      <FileArchive className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-slate-900 text-sm">
+                        Unsaved Local Draft (Incomplete Submission)
+                      </div>
+                      <span className="text-[11px] text-amber-800 font-medium">
+                        User back gaya tha — click continue to finish upload
+                      </span>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      handleResumeDraft();
+                      setActiveTab('upload');
+                    }}
+                    className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs shadow-xs transition-all cursor-pointer"
+                  >
+                    Continue Draft
+                  </button>
+                </div>
+              )}
+
+              {statusGames.map((game) => (
+                <div key={game.id} className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50 transition-colors">
+                  <div className="flex items-center gap-3.5">
+                    <img
+                      src={game.thumbnailUrl}
+                      alt=""
+                      className="w-14 h-9 rounded-lg object-cover bg-slate-100 border border-slate-200"
+                    />
+                    <div>
+                      <div className="font-bold text-slate-900 text-sm">{game.title}</div>
+                      <div className="text-[11px] text-slate-500 font-mono">
+                        {game.categoryName} &bull; {game.engine} &bull; {game.currentVersionId || 'v1.0.0'}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 self-end sm:self-center">
+                    <span
+                      className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-lg border ${
+                        game.status === 'PUBLISHED'
+                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                          : game.status === 'QA_TESTING'
+                          ? 'bg-amber-50 text-amber-800 border-amber-200'
+                          : game.status === 'SUSPENDED' || game.status === 'REJECTED'
+                          ? 'bg-rose-50 text-rose-700 border-rose-200'
+                          : 'bg-slate-100 text-slate-700 border-slate-200'
+                      }`}
+                    >
+                      {game.status === 'PUBLISHED'
+                        ? 'Live in Catalog'
+                        : game.status === 'QA_TESTING'
+                        ? 'Pending Review'
+                        : game.status}
+                    </span>
+
+                    <Link
+                      href={`/developer/submit?edit=${game.id}`}
+                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-semibold text-xs transition-colors"
+                    >
+                      Update Build
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {activeTab === 'upload' && submitError && (
         <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-3">
           <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5 text-rose-600" />
           <div>
@@ -256,7 +535,8 @@ export default function GameSubmitPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      {activeTab === 'upload' && (
+        <form onSubmit={handleSubmit} className="space-y-8">
         {/* ================= SECTION 1: ARCHIVE UPLOAD ================= */}
         <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-6 shadow-xs">
           <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
@@ -742,6 +1022,7 @@ export default function GameSubmitPage() {
           </Button>
         </div>
       </form>
+      )}
     </div>
   );
 }

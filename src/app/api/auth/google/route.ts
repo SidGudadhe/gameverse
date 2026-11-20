@@ -114,16 +114,17 @@ export async function POST(req: NextRequest) {
   const gamerName = resolvedName.trim() || normalizedEmail.split('@')[0];
 
   try {
+    const portal = body.portal === 'DEVELOPER' || body.portal === 'ADMIN' ? body.portal : 'PLAYER';
     let user = gvDb.findUserByEmail(normalizedEmail);
 
     if (!user) {
-      // Create new Player account registered through real Google Auth SSO
+      // Create new account registered through real Google Auth SSO
       const newUserId = `usr-google-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
       user = gvDb.createUser({
         id: newUserId,
         email: normalizedEmail,
         name: gamerName,
-        role: 'PLAYER',
+        role: portal,
         emailVerified: true,
         passwordHash: DEFAULT_PASSWORD_HASH,
       });
@@ -138,14 +139,23 @@ export async function POST(req: NextRequest) {
         action: 'USER_REGISTERED_GOOGLE_SSO',
         targetType: 'USER',
         targetId: user.id,
-        details: { provider: 'GOOGLE_AUTH', email: normalizedEmail },
+        details: { provider: 'GOOGLE_AUTH', email: normalizedEmail, role: portal },
         ipAddress: ip,
       });
     } else {
-      // Ensure only PLAYER accounts can authenticate via Player Google SSO
-      if (user.role !== 'PLAYER') {
+      // Ensure cross-portal role validation
+      if (portal === 'DEVELOPER' && user.role === 'PLAYER') {
+        // Upgrade Player account to Developer if authenticating on Developer Portal
+        const updatedUser = gvDb.updateUser(user.id, { role: 'DEVELOPER', emailVerified: true });
+        if (updatedUser) user = updatedUser;
+      } else if (portal === 'PLAYER' && user.role !== 'PLAYER') {
         return NextResponse.json(
           { success: false, error: 'This Google account is linked to a non-player portal. Please use your dedicated login.' },
+          { status: 403 }
+        );
+      } else if (portal === 'ADMIN' && user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN') {
+        return NextResponse.json(
+          { success: false, error: 'Access denied: Admin credentials required for Admin Portal.' },
           { status: 403 }
         );
       }
@@ -169,7 +179,7 @@ export async function POST(req: NextRequest) {
         action: 'USER_LOGIN',
         targetType: 'USER',
         targetId: user.id,
-        details: { role: user.role, provider: 'GOOGLE_AUTH_SYNC' },
+        details: { role: user.role, provider: 'GOOGLE_AUTH_SYNC', portal },
         ipAddress: ip,
       });
     }

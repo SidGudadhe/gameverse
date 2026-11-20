@@ -179,7 +179,7 @@ export function evaluateLaunchReadiness(): LaunchReadinessReport {
     gates.push({
       id: 'FINANCIAL_LEDGER',
       title: 'Financial Ledger & Payout Pipeline',
-      description: 'Automated Net-30 revenue settlements, $50 minimum threshold, and double-entry auditing.',
+      description: 'Automated Net-30 revenue settlements, double-entry financial ledger, and multi-channel payouts.',
       passed,
       score: passed ? 100 : 0,
       details: {
@@ -195,7 +195,7 @@ export function evaluateLaunchReadiness(): LaunchReadinessReport {
     gates.push({
       id: 'FINANCIAL_LEDGER',
       title: 'Financial Ledger & Payout Pipeline',
-      description: 'Automated Net-30 revenue settlements, $50 minimum threshold, and double-entry auditing.',
+      description: 'Automated Net-30 revenue settlements, double-entry financial ledger, and multi-channel payouts.',
       passed: false,
       score: 0,
       details: { error: err.message },

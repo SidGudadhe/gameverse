@@ -7,7 +7,7 @@ import {
   Code2,
   Package,
   ShieldCheck,
-  DollarSign,
+  IndianRupee,
   Layers,
   FileCode,
   Terminal,
@@ -218,11 +218,11 @@ GV_SDK.ready();`;
 
         <div className="bg-white border border-slate-200 p-5 rounded-2xl shadow-xs">
           <div className="flex items-center gap-3 mb-2">
-            <DollarSign className="w-5 h-5 text-amber-600" />
+            <IndianRupee className="w-5 h-5 text-amber-600" />
             <h3 className="font-bold text-slate-900 text-sm">Monetization</h3>
           </div>
           <p className="text-slate-500 text-xs">
-            50%–70% creator revenue share, Net-30 monthly settlements, and $50 payout threshold.
+            Competitive creator revenue share, Net-30 monthly settlements, and ₹500 payout threshold.
           </p>
         </div>
       </div>
@@ -390,15 +390,15 @@ GV_SDK.ready();`;
       {/* 4. Monetization & Payout Terms */}
       <section className="space-y-4">
         <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-          <DollarSign className="w-5 h-5 text-amber-600" />
+          <IndianRupee className="w-5 h-5 text-amber-600" />
           <span>4. Revenue Sharing & Payout Terms</span>
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white border border-slate-200 p-5 rounded-2xl shadow-xs space-y-2">
-            <div className="text-xs text-slate-500 uppercase tracking-wider font-mono">REVENUE SHARE</div>
-            <div className="text-2xl font-black text-slate-900">50% – 70%</div>
+            <div className="text-xs text-slate-500 uppercase tracking-wider font-mono">REVENUE DISTRIBUTION</div>
+            <div className="text-2xl font-black text-slate-900">Tiered Creator Share</div>
             <p className="text-xs text-slate-500">
-              50% base creator revenue share, increasing up to 70% based on monthly retention tiers and referral traffic volume.
+              Transparent creator revenue distribution, enhanced based on monthly retention tiers and catalog traffic volume.
             </p>
           </div>
 
@@ -412,9 +412,9 @@ GV_SDK.ready();`;
 
           <div className="bg-white border border-slate-200 p-5 rounded-2xl shadow-xs space-y-2">
             <div className="text-xs text-slate-500 uppercase tracking-wider font-mono">MINIMUM THRESHOLD</div>
-            <div className="text-2xl font-black text-emerald-600">$50.00 USD</div>
+            <div className="text-2xl font-black text-emerald-600">₹500.00 INR</div>
             <p className="text-xs text-slate-500">
-              Disbursements initiate automatically to Stripe Connect, PayPal, or Wire Transfer once eligible balance reaches $50.
+              Disbursements initiate automatically to Bank Wire (NEFT/IMPS) or Instant UPI once eligible balance reaches ₹500.
             </p>
           </div>
         </div>

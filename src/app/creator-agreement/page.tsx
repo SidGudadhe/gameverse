@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Sparkles, DollarSign, ShieldAlert, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Sparkles, IndianRupee, ShieldAlert, CheckCircle2, ArrowRight } from 'lucide-react';
 
 export default function CreatorAgreementPage() {
   return (
@@ -34,7 +34,7 @@ export default function CreatorAgreementPage() {
         {/* Section 2 */}
         <section className="space-y-3 bg-white border border-slate-200 rounded-2xl p-6 shadow-xs">
           <h2 className="font-heading font-bold text-lg text-slate-900 flex items-center gap-2">
-            <DollarSign className="w-5 h-5 text-emerald-600" />
+            <IndianRupee className="w-5 h-5 text-emerald-600" />
             <span className="text-slate-900">Revenue Sharing & Calculation Engine</span>
           </h2>
           <p>
@@ -58,8 +58,8 @@ export default function CreatorAgreementPage() {
           </p>
           <ul className="list-disc list-inside space-y-1.5 text-slate-700 pl-2">
             <li><strong className="text-slate-900">Net-30 Settlement:</strong> Ad network earnings from month <em>M</em> are audited and finalized on the 1st of month <em>M+2</em>.</li>
-            <li><strong className="text-slate-900">Minimum Payout Threshold:</strong> Payout requests require an accumulated finalized balance of at least <strong>$50.00 USD</strong>.</li>
-            <li><strong className="text-slate-900">Supported Disbursement Channels:</strong> Bank Wire (SWIFT/NEFT), UPI, and verified PayPal.</li>
+            <li><strong className="text-slate-900">Minimum Payout Threshold:</strong> Payout requests require an accumulated finalized balance of at least <strong>₹500.00 INR (Indian Rupees)</strong>.</li>
+            <li><strong className="text-slate-900">Supported Disbursement Channels:</strong> Direct Bank Wire (NEFT/IMPS) and Instant UPI (VPA).</li>
           </ul>
         </section>
 

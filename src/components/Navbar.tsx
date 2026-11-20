@@ -19,7 +19,7 @@ import {
   History,
   LayoutDashboard,
   BarChart3,
-  DollarSign,
+  IndianRupee,
   ClipboardList,
   FileText,
   CheckCircle2,

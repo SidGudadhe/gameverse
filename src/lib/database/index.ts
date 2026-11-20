@@ -52,12 +52,24 @@ export interface EmailVerificationToken {
 export interface DeveloperSettings {
   id: string;
   userId: string;
-  payoutMethod: 'BANK_WIRE' | 'UPI' | 'PAYPAL';
-  payoutDetails: Record<string, string>;
-  notifyOnQaUpdate: boolean;
-  notifyOnPayout: boolean;
-  notifyOnPlayerReport: boolean;
-  updatedAt: string;
+  payoutMethod?: 'BANK_WIRE' | 'UPI' | 'BANK_AND_UPI' | 'PAYPAL' | 'STRIPE';
+  payoutDetails?: Record<string, string>;
+  bankAccount?: {
+    accountNumber: string;
+    ifscCode: string;
+    beneficiaryName: string;
+    bankName: string;
+  };
+  upi?: {
+    upiId: string;
+    beneficiaryName?: string;
+  };
+  studioVerified?: boolean;
+  currency?: string;
+  notifyOnQaUpdate?: boolean;
+  notifyOnPayout?: boolean;
+  notifyOnPlayerReport?: boolean;
+  updatedAt?: string;
 }
 
 export interface SupportTicket {
@@ -325,12 +337,13 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
       gameId: 'game-neon-runner',
       gameTitle: 'Neon Cyber Runner 2088',
       period: 'October 2026',
-      grossRevenue: 480.50,
-      deductions: 32.20,
-      netRevenue: 448.30,
-      creatorShare: 224.15,
+      grossRevenue: 24500.0,
+      deductions: 2450.0,
+      netRevenue: 22050.0,
+      creatorShare: 18500.0,
+      currency: 'INR',
       status: 'FINALIZED',
-      paidAt: '2026-11-01T00:00:00.000Z',
+      createdAt: '2026-11-01T00:00:00.000Z',
     },
     {
       id: 'led-002',
@@ -338,11 +351,63 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
       gameId: 'game-neon-runner',
       gameTitle: 'Neon Cyber Runner 2088',
       period: 'November 2026 (MTD)',
-      grossRevenue: 310.80,
-      deductions: 18.40,
-      netRevenue: 292.40,
-      creatorShare: 146.20,
+      grossRevenue: 8500.0,
+      deductions: 850.0,
+      netRevenue: 7650.0,
+      creatorShare: 6450.0,
+      currency: 'INR',
       status: 'ESTIMATED',
+      createdAt: '2026-11-15T00:00:00.000Z',
+    },
+    {
+      id: 'led-003',
+      creatorId: 'usr-dev-1',
+      gameId: 'all-titles',
+      gameTitle: 'Studio Creator Revenue Distribution',
+      period: 'October 2026',
+      grossRevenue: 12500.0,
+      deductions: 0,
+      netRevenue: 12500.0,
+      creatorShare: 12500.0,
+      currency: 'INR',
+      status: 'SUCCESS',
+      payoutMethod: 'BANK_WIRE',
+      payoutReference: 'UTR-HDFC-9928172601',
+      paidAt: '2026-11-02T14:30:00.000Z',
+      createdAt: '2026-11-02T10:00:00.000Z',
+    },
+    {
+      id: 'led-004',
+      creatorId: 'usr-dev-1',
+      gameId: 'all-titles',
+      gameTitle: 'Studio Creator Revenue Distribution',
+      period: 'November 2026',
+      grossRevenue: 3500.0,
+      deductions: 0,
+      netRevenue: 3500.0,
+      creatorShare: 3500.0,
+      currency: 'INR',
+      status: 'PENDING',
+      payoutMethod: 'UPI',
+      payoutReference: 'UPI-AXIS-8827361902',
+      createdAt: '2026-11-18T09:15:00.000Z',
+    },
+    {
+      id: 'led-005',
+      creatorId: 'usr-dev-1',
+      gameId: 'all-titles',
+      gameTitle: 'Studio Creator Revenue Distribution',
+      period: 'September 2026',
+      grossRevenue: 1500.0,
+      deductions: 0,
+      netRevenue: 1500.0,
+      creatorShare: 1500.0,
+      currency: 'INR',
+      status: 'REJECT',
+      payoutMethod: 'BANK_WIRE',
+      payoutReference: 'PO-DEV-REJ-44102',
+      rejectionReason: 'Invalid IFSC code verification failed with destination branch',
+      createdAt: '2026-10-15T11:20:00.000Z',
     },
   ],
   auditLogs: [
@@ -364,12 +429,26 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
     {
       id: 'set-dev-1',
       userId: 'usr-dev-1',
-      payoutMethod: 'BANK_WIRE',
+      payoutMethod: 'BANK_AND_UPI',
       payoutDetails: {
-        accountHolder: 'PixelForge Studios Ltd',
-        iban: 'GB29NWBK60161331926819',
-        swift: 'NWBKGB2L',
+        accountHolder: 'PixelForge Studios Pvt Ltd',
+        accountNumber: '918273645012',
+        ifscCode: 'HDFC0001234',
+        bankName: 'HDFC Bank',
+        upiId: 'pixelforge@okhdfcbank',
       },
+      bankAccount: {
+        accountNumber: '918273645012',
+        ifscCode: 'HDFC0001234',
+        beneficiaryName: 'PixelForge Studios Pvt Ltd',
+        bankName: 'HDFC Bank',
+      },
+      upi: {
+        upiId: 'pixelforge@okhdfcbank',
+        beneficiaryName: 'PixelForge Studios',
+      },
+      studioVerified: true,
+      currency: 'INR',
       notifyOnQaUpdate: true,
       notifyOnPayout: true,
       notifyOnPlayerReport: false,
@@ -959,8 +1038,10 @@ class GameVerseDatabase {
       settings = {
         id: `set-${Date.now()}`,
         userId,
-        payoutMethod: 'BANK_WIRE',
+        payoutMethod: 'BANK_AND_UPI',
         payoutDetails: {},
+        studioVerified: true,
+        currency: 'INR',
         notifyOnQaUpdate: true,
         notifyOnPayout: true,
         notifyOnPlayerReport: false,
@@ -1422,6 +1503,8 @@ class GameVerseDatabase {
       status: data.status,
       payoutMethod: data.payoutMethod,
       payoutReference: data.payoutReference,
+      currency: data.currency || 'INR',
+      rejectionReason: data.rejectionReason,
       finalizedAt: data.finalizedAt,
       paidAt: data.paidAt,
       createdAt: data.createdAt || new Date().toISOString(),

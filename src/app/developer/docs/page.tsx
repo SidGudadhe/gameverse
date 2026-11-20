@@ -7,7 +7,7 @@ import {
   Code2,
   Package,
   ShieldCheck,
-  DollarSign,
+  IndianRupee,
   Layers,
   FileCode,
   Terminal,
@@ -151,7 +151,7 @@ GV_SDK.ready();`;
 
         <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs space-y-2">
           <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
-            <DollarSign className="w-5 h-5" />
+            <IndianRupee className="w-5 h-5" />
           </div>
           <h3 className="font-bold text-slate-900 text-sm">Automated Monetization</h3>
           <p className="text-xs text-slate-500 leading-relaxed">

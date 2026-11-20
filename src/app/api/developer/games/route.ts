@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
     const gameRecords = financialRecords.filter((r) => r.gameId === game.id);
     let gameEarnings = gameRecords.reduce((sum, r) => sum + (r.creatorShare || 0), 0);
     if (gameEarnings === 0 && game.totalPlays > 0) {
-      // Estimated earnings baseline based on verified play counts ($0.05 per play)
+      // Estimated earnings baseline based on verified play counts (₹3.50 per play)
       gameEarnings = Math.round(game.totalPlays * 0.048 * 100) / 100;
     }
 

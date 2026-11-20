@@ -11,7 +11,7 @@ import {
   Eye,
   Upload,
   Sparkles,
-  DollarSign,
+  IndianRupee,
   Star,
   Copy,
   Check,
@@ -136,7 +136,7 @@ export default function MyGamesPage() {
             Total Catalog Revenue
           </span>
           <div className="font-heading font-black text-2xl text-emerald-600 font-mono">
-            ${totalCatalogEarnings.toFixed(2)}
+            ₹{totalCatalogEarnings.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
           <span className="text-[10px] text-slate-400">Net creator ad share</span>
         </div>
@@ -261,7 +261,7 @@ export default function MyGamesPage() {
                           Earnings
                         </span>
                         <div className="font-heading font-bold text-base text-emerald-600 font-mono">
-                          ${(game.earnings ?? 120.5).toFixed(2)}
+                          ₹{Number(game.earnings ?? 120.5).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </div>
                         <span className="text-[10px] text-emerald-700 font-medium block">
                           Ad Revenue

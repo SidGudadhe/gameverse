@@ -7,7 +7,7 @@ import {
   Plus,
   Gamepad2,
   Clock,
-  DollarSign,
+  IndianRupee,
   Wallet,
   Users,
   BarChart3,
@@ -228,11 +228,11 @@ export default function DeveloperPage() {
                   Total Revenue
                 </span>
                 <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
-                  <DollarSign className="w-5 h-5" />
+                  <IndianRupee className="w-5 h-5" />
                 </div>
               </div>
-              <div className="font-heading font-black text-4xl text-slate-900">
-                ${totalEarned.toFixed(2)}
+              <div className="font-heading font-black text-4xl text-slate-900 font-mono">
+                ₹{totalEarned.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
               <p className="text-xs text-slate-500 leading-snug">
                 Accumulated creator earnings from ad monetization and player engagement.
@@ -487,7 +487,7 @@ export default function DeveloperPage() {
           {/* Card 1: Revenue Share */}
           <div className="bg-white rounded-3xl p-7 border border-slate-200 shadow-xs space-y-3 hover:border-emerald-300 transition-all group">
             <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <DollarSign className="w-6 h-6" />
+              <IndianRupee className="w-6 h-6" />
             </div>
             <h3 className="font-heading font-bold text-lg text-slate-900">
               Lucrative Ad Monetization

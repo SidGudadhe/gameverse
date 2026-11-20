@@ -208,7 +208,7 @@ export default function DeveloperSupportPage() {
               <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
                 <div className="font-semibold text-slate-900">When are payouts disbursed?</div>
                 <p className="text-slate-600 text-[11px]">
-                  Payouts can be requested directly from your Revenue page to your saved destination once your balance meets the $10 minimum.
+                  Payouts can be requested directly from your Revenue page to your saved destination once your balance meets the ₹500 minimum (Indian Rupees).
                 </p>
               </div>
             </div>

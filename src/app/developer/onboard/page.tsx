@@ -200,7 +200,7 @@ export default function DeveloperOnboardPage() {
 
             <div className="font-semibold text-indigo-700 pt-2">3. PAYOUT THRESHOLDS & ACCOUNTING CYCLE</div>
             <p>
-              Earnings reconcile on a Net-30 monthly calendar. The minimum payout disbursement threshold is $50.00 USD (or local currency equivalent). Balances below the threshold roll over to the subsequent billing period.
+              Earnings reconcile on a Net-30 monthly calendar. The minimum payout disbursement threshold is ₹500.00 INR (Indian Rupees). Balances below the threshold roll over to the subsequent billing period.
             </p>
 
             <div className="font-semibold text-indigo-700 pt-2">4. PROHIBITED CONTENT & SECURITY</div>

@@ -23,7 +23,7 @@ export function getCreatorPayoutSummary(creatorId: string): PayoutSummary {
     Math.round(estimatedRecords.reduce((acc, r) => acc + r.creatorShare, 0) * 100) / 100;
 
   // Lifetime Disbursed Paid Amount
-  const paidRecords = records.filter((r) => r.status === 'PAID');
+  const paidRecords = records.filter((r) => r.status === 'PAID' || r.status === 'SUCCESS');
   const lifetimePaid =
     Math.round(paidRecords.reduce((acc, r) => acc + r.creatorShare, 0) * 100) / 100;
 
@@ -31,13 +31,16 @@ export function getCreatorPayoutSummary(creatorId: string): PayoutSummary {
   const lifetimeEarnings =
     Math.round(
       records
-        .filter((r) => ['FINALIZED', 'PROCESSING', 'PAID'].includes(r.status))
+        .filter((r) => ['FINALIZED', 'PROCESSING', 'PAID', 'SUCCESS', 'PENDING'].includes(r.status))
         .reduce((acc, r) => acc + r.creatorShare, 0) * 100
     ) / 100;
 
   // Payout method configuration check
   const details = settings.payoutDetails || {};
-  const isConfigured = Object.keys(details).length > 0 && Object.values(details).some((v) => !!v);
+  const isConfigured =
+    (!!settings.bankAccount && !!settings.bankAccount.accountNumber) ||
+    (!!settings.upi && !!settings.upi.upiId) ||
+    (Object.keys(details).length > 0 && Object.values(details).some((v) => !!v));
 
   const thresholdMet = availableBalance >= MINIMUM_PAYOUT_THRESHOLD;
   const thresholdProgress =
@@ -53,9 +56,13 @@ export function getCreatorPayoutSummary(creatorId: string): PayoutSummary {
     threshold: MINIMUM_PAYOUT_THRESHOLD,
     thresholdMet,
     thresholdProgress,
+    currency: settings.currency || 'INR',
+    studioVerified: settings.studioVerified ?? true,
     payoutMethod: {
-      method: settings.payoutMethod,
+      method: settings.payoutMethod || 'BANK_AND_UPI',
       details,
+      bankAccount: settings.bankAccount,
+      upi: settings.upi,
       isConfigured,
     },
   };
@@ -63,7 +70,7 @@ export function getCreatorPayoutSummary(creatorId: string): PayoutSummary {
 
 /**
  * Initiates a payout request for all eligible finalized earnings.
- * Enforces the $50 minimum threshold and payout configuration.
+ * Enforces the minimum threshold and payout configuration.
  */
 export function requestPayout(creatorId: string): {
   success: boolean;

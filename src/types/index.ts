@@ -223,7 +223,16 @@ export interface DeveloperAnalytics {
   period: string;
 }
 
-export type FinancialLedgerStatus = 'ESTIMATED' | 'FINALIZED' | 'PROCESSING' | 'PAID' | 'ON_HOLD';
+export type FinancialLedgerStatus =
+  | 'SUCCESS'
+  | 'PENDING'
+  | 'REJECT'
+  | 'ESTIMATED'
+  | 'FINALIZED'
+  | 'PROCESSING'
+  | 'PAID'
+  | 'ON_HOLD'
+  | 'REJECTED';
 
 export interface FinancialLedgerRecord {
   id: string;
@@ -235,9 +244,11 @@ export interface FinancialLedgerRecord {
   deductions: number;
   netRevenue: number;
   creatorShare: number;
+  currency?: string;
   status: FinancialLedgerStatus;
   payoutMethod?: string;
   payoutReference?: string;
+  rejectionReason?: string;
   finalizedAt?: string;
   paidAt?: string;
   createdAt?: string;
@@ -251,9 +262,21 @@ export interface PayoutSummary {
   threshold: number;
   thresholdMet: boolean;
   thresholdProgress: number;
+  currency?: string;
+  studioVerified?: boolean;
   payoutMethod?: {
-    method: 'BANK_WIRE' | 'UPI' | 'PAYPAL';
+    method: 'BANK_WIRE' | 'UPI' | 'BANK_AND_UPI' | 'PAYPAL';
     details: Record<string, string>;
+    bankAccount?: {
+      accountNumber: string;
+      ifscCode: string;
+      beneficiaryName: string;
+      bankName: string;
+    };
+    upi?: {
+      upiId: string;
+      beneficiaryName?: string;
+    };
     isConfigured: boolean;
   };
 }

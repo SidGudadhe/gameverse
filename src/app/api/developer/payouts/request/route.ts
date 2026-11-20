@@ -11,9 +11,64 @@ export async function POST(req: NextRequest) {
     if (errorResponse) return errorResponse;
 
     const body = await req.json().catch(() => ({}));
-    const { action = 'REQUEST_PAYOUT', payoutMethod, payoutDetails, amount, note } = body;
+    const { action = 'REQUEST_PAYOUT', payoutMethod, payoutDetails, amount, note, bankAccount, upi } = body;
 
-    // 1. Save or Update Developer Payout Method
+    // 1. Save or Update Bank Account & UPI Details
+    if (action === 'SAVE_BANK_AND_UPI') {
+      const current = gvDb.getDeveloperSettings(user!.userId);
+      const newBank = bankAccount || current.bankAccount;
+      const newUpi = upi || current.upi;
+
+      if (!newBank?.accountNumber && !newUpi?.upiId) {
+        return NextResponse.json(
+          { error: 'Please provide at least a valid Indian Bank Account or UPI ID.' },
+          { status: 400 }
+        );
+      }
+
+      const payoutDetailsMap: Record<string, string> = {
+        ...(newBank?.accountNumber ? { accountNumber: newBank.accountNumber } : {}),
+        ...(newBank?.ifscCode ? { ifscCode: newBank.ifscCode } : {}),
+        ...(newBank?.bankName ? { bankName: newBank.bankName } : {}),
+        ...(newBank?.beneficiaryName ? { beneficiaryName: newBank.beneficiaryName } : {}),
+        ...(newUpi?.upiId ? { upiId: newUpi.upiId } : {}),
+      };
+
+      const updated = gvDb.updateDeveloperSettings(user!.userId, {
+        payoutMethod: 'BANK_AND_UPI',
+        bankAccount: newBank,
+        upi: newUpi,
+        payoutDetails: payoutDetailsMap,
+        currency: 'INR',
+      });
+
+      return NextResponse.json({
+        success: true,
+        message: 'Bank account and UPI details saved successfully!',
+        settings: updated,
+      });
+    }
+
+    // 2. Toggle Studio Verification (Demo/Test verification flow)
+    if (action === 'TOGGLE_VERIFICATION') {
+      const current = gvDb.getDeveloperSettings(user!.userId);
+      const newVerified = body.studioVerified !== undefined ? Boolean(body.studioVerified) : !Boolean(current.studioVerified ?? true);
+
+      const updated = gvDb.updateDeveloperSettings(user!.userId, {
+        studioVerified: newVerified,
+      });
+
+      return NextResponse.json({
+        success: true,
+        studioVerified: newVerified,
+        message: newVerified
+          ? 'Studio verification approved! Earnings and payouts are now active.'
+          : 'Studio verification paused. Monetization earnings and withdrawals are locked.',
+        settings: updated,
+      });
+    }
+
+    // 3. Save or Update Developer Payout Method (Legacy & Generic)
     if (action === 'SAVE_METHOD') {
       const rawDetails = payoutDetails || body.accountDetails;
       if (!payoutMethod || !rawDetails) {
@@ -48,11 +103,13 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // 2. Delete / Reset Developer Payout Method
+    // 4. Delete / Reset Developer Payout Method
     if (action === 'DELETE_METHOD') {
       const updated = gvDb.updateDeveloperSettings(user!.userId, {
         payoutMethod: undefined,
         payoutDetails: {},
+        bankAccount: undefined,
+        upi: undefined,
       });
 
       return NextResponse.json({
@@ -62,12 +119,29 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // 3. Request Payout with Amount
+    // 5. Request Payout with Amount
     const settings = gvDb.getDeveloperSettings(user!.userId);
-    const method = payoutMethod || settings?.payoutMethod;
-    const details = payoutDetails || settings?.payoutDetails;
 
-    if (!method || !details) {
+    // Business Rule: Unverified studio cannot withdraw or earn
+    if (settings.studioVerified === false) {
+      return NextResponse.json(
+        {
+          error:
+            'Studio Verification Required: Your studio is not verified. Earnings and withdrawal requests are blocked until studio verification is complete.',
+        },
+        { status: 400 }
+      );
+    }
+
+    const method =
+      payoutMethod ||
+      (settings?.bankAccount?.accountNumber ? 'BANK_WIRE' : settings?.upi?.upiId ? 'UPI' : settings?.payoutMethod);
+    const hasConfig =
+      !!settings?.bankAccount?.accountNumber ||
+      !!settings?.upi?.upiId ||
+      (settings?.payoutDetails && Object.keys(settings.payoutDetails).length > 0);
+
+    if (!method || !hasConfig) {
       return NextResponse.json(
         { error: 'Please configure and save your payout method first.' },
         { status: 400 }
@@ -84,6 +158,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const destinationLabel =
+      method === 'UPI'
+        ? `UPI (${settings.upi?.upiId || settings.payoutDetails?.upiId || 'VPA'})`
+        : `Bank Wire (${settings.bankAccount?.bankName || 'Direct Account'} - ${settings.bankAccount?.accountNumber?.slice(-4) || 'Saved'})`;
+
     const payoutReference = `PO-DEV-${Date.now().toString(36).toUpperCase()}`;
 
     // Record in ledger so it shows in developer payout history table
@@ -96,14 +175,18 @@ export async function POST(req: NextRequest) {
       deductions: 0,
       netRevenue: numAmount,
       creatorShare: numAmount,
-      status: 'PROCESSING',
+      currency: 'INR',
+      status: 'PENDING',
       payoutMethod: method,
       payoutReference,
     });
 
     return NextResponse.json({
       success: true,
-      message: `Payout request for $${numAmount.toFixed(2)} submitted successfully!`,
+      message: `Payout request for ₹${numAmount.toLocaleString('en-IN', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })} submitted successfully!`,
       amount: numAmount,
       payoutReference,
       record,

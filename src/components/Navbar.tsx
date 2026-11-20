@@ -51,15 +51,6 @@ export default function Navbar() {
   // PORTAL A: DEVELOPER STUDIO WEBSITE NAVBAR
   // =========================================================================
   if (isDevPortal) {
-    const devLinks = [
-      { href: '/developer', label: 'Overview', icon: LayoutDashboard, exact: true },
-      { href: '/developer/games', label: 'My Games', icon: Gamepad2 },
-      { href: '/developer/submit', label: 'Submit Game', icon: Sparkles },
-      { href: '/developer/analytics', label: 'Analytics', icon: BarChart3 },
-      { href: '/developer/payouts', label: 'Payouts', icon: DollarSign },
-      { href: '/developer/docs', label: 'SDK Docs', icon: Code },
-    ];
-
     return (
       <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
@@ -80,32 +71,15 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Desktop Studio Links */}
-          <nav className="hidden lg:flex items-center gap-1 bg-slate-100 px-2 py-1 rounded-xl border border-slate-200 text-xs font-semibold">
-            {devLinks.map((item) => {
-              const Icon = item.icon;
-              const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors ${
-                    isActive
-                      ? 'bg-white text-cyan-700 shadow-xs border border-slate-200/80 font-bold'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-                  }`}
-                >
-                  <Icon className="w-3.5 h-3.5" />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-
           {/* Studio Right Actions */}
           <div className="flex items-center gap-3">
             {isAuthenticated ? (
-              <>
+              <div className="flex items-center gap-3">
+                {user?.name && (
+                  <span className="hidden sm:inline-block text-xs font-semibold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
+                    {user.name}
+                  </span>
+                )}
                 <Link
                   href="/developer/submit"
                   className="hidden sm:flex items-center gap-1.5 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-md transition-all active:scale-95"
@@ -121,18 +95,18 @@ export default function Navbar() {
                 >
                   <LogOut className="w-4 h-4" />
                 </button>
-              </>
+              </div>
             ) : (
               <div className="flex items-center gap-2">
                 <Link
                   href="/developer/auth/login"
-                  className="text-xs font-semibold text-slate-700 hover:text-slate-900 px-3 py-2 rounded-xl hover:bg-slate-100 transition-colors"
+                  className="text-xs font-semibold text-slate-700 hover:text-slate-900 px-3.5 py-2 rounded-xl hover:bg-slate-100 transition-colors"
                 >
                   Studio Sign In
                 </Link>
                 <Link
                   href="/developer/auth/signup"
-                  className="bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-md transition-all active:scale-95"
+                  className="bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-md transition-all active:scale-95"
                 >
                   Join as Creator
                 </Link>

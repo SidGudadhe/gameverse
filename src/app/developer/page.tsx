@@ -111,14 +111,14 @@ export default function DeveloperPage() {
             <div className="flex items-center gap-2">
               <span className="flex h-2 w-2 rounded-full bg-cyan-600 animate-pulse" />
               <span className="text-[11px] font-bold text-cyan-600 uppercase tracking-wider">
-                Developer Studio Workspace
+                Developer Studio Home
               </span>
             </div>
             <h1 className="font-heading font-black text-2xl sm:text-3xl text-slate-900 mt-1">
               {user?.name || 'Studio Creator'}
             </h1>
             <p className="text-slate-600 text-xs sm:text-sm mt-0.5">
-              Welcome back to your creator command center. Monitor game telemetry, playtime, and revenue ledger.
+              Welcome back to your creator command center. Monitor game telemetry, catalog titles, and playtime metrics.
             </p>
           </div>
 
@@ -128,7 +128,7 @@ export default function DeveloperPage() {
               className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-4 py-2.5 rounded-xl border border-slate-200 transition-all flex items-center gap-1.5"
             >
               <Wallet className="w-4 h-4 text-emerald-600" />
-              <span>Withdrawals</span>
+              <span>Revenue & Withdrawals</span>
             </Link>
             <Link
               href="/developer/submit"
@@ -140,10 +140,10 @@ export default function DeveloperPage() {
           </div>
         </div>
 
-        {/* 3 CORE KPI METRIC CARDS (Requested by User) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {/* CORE KPI METRIC CARDS */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           {/* KPI 1: Total Uploaded Games */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs relative overflow-hidden flex flex-col justify-between">
+          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs relative overflow-hidden flex flex-col justify-between hover:border-indigo-300 transition-all">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
@@ -181,11 +181,12 @@ export default function DeveloperPage() {
                 <span>Manage All Games</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
+              <span className="text-[11px] font-mono text-slate-400">Catalog Sync</span>
             </div>
           </div>
 
           {/* KPI 2: Total Playtime of Games */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs relative overflow-hidden flex flex-col justify-between">
+          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs relative overflow-hidden flex flex-col justify-between hover:border-cyan-300 transition-all">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
@@ -211,51 +212,7 @@ export default function DeveloperPage() {
                 <span>View Session Analytics</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
-            </div>
-          </div>
-
-          {/* KPI 3: Earning Overview (Account Balance = Total Earning - Withdrawn) */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs relative overflow-hidden flex flex-col justify-between hover:border-emerald-300 transition-all">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center">
-                  <Wallet className="w-6 h-6" />
-                </div>
-                <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold">
-                  Ready to Withdraw
-                </span>
-              </div>
-              <div>
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">
-                  Available Balance (In Account)
-                </span>
-                <div className="font-heading font-black text-3xl sm:text-4xl text-emerald-600 font-mono mt-1">
-                  ${availableBalance.toFixed(2)}
-                </div>
-              </div>
-              
-              {/* Formula clarification */}
-              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-[11px] text-slate-600 space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span>Lifetime Earnings:</span>
-                  <span className="font-mono font-bold text-slate-900">${totalEarned.toFixed(2)}</span>
-                </div>
-                <div className="flex items-center justify-between text-rose-600">
-                  <span>Total Withdrawn:</span>
-                  <span className="font-mono font-bold">-${totalWithdrawn.toFixed(2)}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
-              <Link
-                href="/developer/payouts"
-                className="text-emerald-700 hover:text-emerald-800 font-bold flex items-center gap-1"
-              >
-                <span>Request Payout</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-              <span className="text-[11px] font-mono text-slate-400">Instant Settlement</span>
+              <span className="text-[11px] font-mono text-slate-400">Live Telemetry</span>
             </div>
           </div>
         </div>

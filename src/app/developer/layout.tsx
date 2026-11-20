@@ -32,7 +32,7 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
   const isOnboardPage = pathname === '/developer/onboard';
 
   const navLinks = [
-    { href: '/developer', label: 'Overview', icon: LayoutDashboard, exact: true },
+    { href: '/developer', label: 'Home', icon: LayoutDashboard, exact: true },
     { href: '/developer/games', label: 'My Games', icon: Gamepad2 },
     { href: '/developer/analytics', label: 'Analytics', icon: BarChart3 },
     { href: '/developer/referrals', label: 'Referrals & Social', icon: Share2 },

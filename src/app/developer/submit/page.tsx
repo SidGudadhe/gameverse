@@ -308,7 +308,7 @@ export default function GameSubmitPage() {
             href="/developer"
             className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-6 py-3 rounded-xl border border-slate-200 transition-colors"
           >
-            Return to Studio Overview
+            Return to Studio Home
           </Link>
         </div>
       </div>

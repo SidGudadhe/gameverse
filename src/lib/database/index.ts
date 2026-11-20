@@ -494,7 +494,7 @@ class GameVerseDatabase {
       if (fs.existsSync(DATA_FILE)) {
         const raw = fs.readFileSync(DATA_FILE, 'utf-8');
         const parsed = JSON.parse(raw);
-        return {
+        const state: DatabaseState = {
           ...INITIAL_DATABASE_STATE,
           ...parsed,
           developerSettings: parsed.developerSettings || INITIAL_DATABASE_STATE.developerSettings || [],
@@ -514,6 +514,39 @@ class GameVerseDatabase {
           playerWallets: parsed.playerWallets || INITIAL_DATABASE_STATE.playerWallets || [],
           financialRecords: parsed.financialRecords || INITIAL_DATABASE_STATE.financialRecords || [],
         };
+
+        // Migration: Ensure usr-dev-1 has bankAccount, upi, studioVerified, and seed INR financial records
+        const dev1Settings = state.developerSettings.find((s: any) => s.userId === 'usr-dev-1');
+        if (dev1Settings) {
+          if (!dev1Settings.bankAccount) {
+            dev1Settings.bankAccount = {
+              accountNumber: '918273645012',
+              ifscCode: 'HDFC0001234',
+              beneficiaryName: 'PixelForge Studios Pvt Ltd',
+              bankName: 'HDFC Bank',
+            };
+          }
+          if (!dev1Settings.upi) {
+            dev1Settings.upi = {
+              upiId: 'pixelforge@okhdfcbank',
+              beneficiaryName: 'PixelForge Studios',
+            };
+          }
+          if (dev1Settings.studioVerified === undefined) {
+            dev1Settings.studioVerified = true;
+          }
+          dev1Settings.currency = 'INR';
+          dev1Settings.payoutMethod = 'BANK_AND_UPI';
+        }
+
+        // Ensure records for usr-dev-1 include SUCCESS, PENDING, REJECT
+        for (const initialRec of INITIAL_DATABASE_STATE.financialRecords) {
+          if (!state.financialRecords.some((r: any) => r.id === initialRec.id)) {
+            state.financialRecords.push(initialRec);
+          }
+        }
+
+        return state;
       }
     } catch (e) {
       console.warn('Failed to load database file, using in-memory baseline:', e);

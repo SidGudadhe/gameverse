@@ -190,7 +190,7 @@ export default function PayoutsPage() {
       if (res.ok) {
         setIsEditingMethod(false);
         setSuccessMsg(
-          'Developer payout method successfully saved! Ab aapko baar-baar payment information dalne ki zaroorat nahi hai.'
+          'Developer payout method saved successfully.'
         );
         await fetchPayoutData();
       } else {
@@ -271,7 +271,7 @@ export default function PayoutsPage() {
       const data = await res.json();
       if (res.ok) {
         setSuccessMsg(
-          `Payout request for $${numAmount.toFixed(2)} submitted successfully! Aapka request settlement history table me add ho gaya hai.`
+          `Payout request for $${numAmount.toFixed(2)} submitted successfully and queued for disbursement.`
         );
         setRequestNote('');
         await fetchPayoutData();

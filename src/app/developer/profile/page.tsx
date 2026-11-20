@@ -129,7 +129,7 @@ export default function StudioProfilePage() {
           daysRemaining: data.daysRemaining || 30,
         });
         setDeletionMessage(
-          'Account deletion requested! Aapke pas 30 days ka time hai. Agar aap cancel nahi karenge to 30 days baad account delete ho jayega.'
+          'Account deletion request submitted. You have a 30-day grace period to cancel before your account and titles are permanently deleted.'
         );
       } else {
         alert(data.error || 'Failed to request account deletion.');
@@ -342,8 +342,8 @@ export default function StudioProfilePage() {
             <span>Danger Zone: Developer Account Deletion</span>
           </h2>
           <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-            Agar aap apna developer account delete karna chahte hain, to yahan se deletion request submit kar sakte hain. Request padne ke baad{' '}
-            <strong className="text-slate-800">30 din ka grace period</strong> hota hai. Agar aap 30 din me request cancel nahi karte hain, to account automatically permanently delete ho jayega.
+            Submit a request to permanently delete your developer account and catalog titles. A{' '}
+            <strong className="text-slate-800">30-day grace period</strong> applies. If you do not cancel the request within 30 days, your account will be permanently purged.
           </p>
         </div>
 

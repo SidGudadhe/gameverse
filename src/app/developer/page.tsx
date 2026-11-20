@@ -94,8 +94,8 @@ export default function DeveloperPage() {
     }, 0);
     const playtimeHours = Math.round((totalPlaytimeMinutes / 60) * 10) / 10;
 
-    // Earning calculation according to user specification:
-    // earning = account me kitna paisa hai (availableBalance), total revenue, and withdrawn amount
+    // Creator revenue telemetry:
+    // Available balance, gross total revenue, and cumulative withdrawn amount
     const totalEarned = summary?.totalEarned ?? 1540.0;
     const totalWithdrawn = summary?.totalWithdrawn ?? 420.0;
     const availableBalance = summary?.availableBalance ?? Math.max(0, totalEarned - totalWithdrawn);

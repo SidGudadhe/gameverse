@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Play, Star, Users } from 'lucide-react';
+import { Gamepad2, Star, Users } from 'lucide-react';
 import { Game } from '@/types';
 
 interface GameCardProps {
@@ -37,10 +37,10 @@ export default function GameCard({ game, aspect = '16/9' }: GameCardProps) {
           )}
         </div>
 
-        {/* Hover Play Button Overlay - Poki / CrazyGames Style */}
+        {/* Hover Game Controller Overlay */}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-indigo-950/20 backdrop-blur-[1px] transition-all duration-200">
-          <div className="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-600/40 group-hover:scale-110 transition-transform">
-            <Play className="w-5 h-5 fill-white ml-0.5" />
+          <div className="w-14 h-14 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-600/40 group-hover:scale-110 transition-transform">
+            <Gamepad2 className="w-7 h-7" />
           </div>
         </div>
       </div>

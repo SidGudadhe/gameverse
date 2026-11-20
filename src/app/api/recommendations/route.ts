@@ -3,9 +3,12 @@ import { extractAuth } from '@/lib/security/middleware';
 import {
   getPersonalizedRecommendations,
   getSearchFallbackRecommendations,
+  getTopMoodsByUserAffinity,
+  getSortedCategoriesByAffinity,
   MOOD_DEFINITIONS,
   GameMood,
 } from '@/lib/recommendations';
+import { gvDb } from '@/lib/database';
 
 export const dynamic = 'force-dynamic';
 
@@ -46,6 +49,13 @@ export async function GET(req: NextRequest) {
 
     const activeMoodDef = MOOD_DEFINITIONS[result.dominantMood] || MOOD_DEFINITIONS.ALL;
 
+    // 3. Compute affinity-sorted mood order for this user
+    const topMoods = getTopMoodsByUserAffinity(userId);
+
+    // 4. Compute affinity-sorted categories for this user
+    const rawCategories = gvDb.getCategories();
+    const sortedCategories = getSortedCategoriesByAffinity(rawCategories, userId);
+
     return NextResponse.json({
       success: true,
       type: 'PERSONALIZED',
@@ -54,6 +64,10 @@ export async function GET(req: NextRequest) {
       moodMetadata: activeMoodDef,
       recommendations: result.games,
       total: result.games.length,
+      // Affinity-sorted mood buttons (most-loved mood first after ALL)
+      topMoods,
+      // Affinity-sorted categories (most-played category first)
+      sortedCategories,
     });
   } catch (err: any) {
     return NextResponse.json(

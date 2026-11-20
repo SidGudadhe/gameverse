@@ -192,6 +192,73 @@ export function getPersonalizedRecommendations(options: {
 }
 
 /**
+ * Returns mood filter buttons sorted by user's actual affinity.
+ * The mood the user most loves (based on play history, favorites, ratings)
+ * floats to the top — ALL is always first as the default "catch-all".
+ *
+ * Logic:
+ *  - For each mood, sum the user's categoryWeights for all categories that
+ *    belong to that mood's `relevantCategories`.
+ *  - Sort descending by that total weight.
+ *  - `ALL` is always pinned first.
+ */
+export function getTopMoodsByUserAffinity(
+  userId?: string
+): { mood: GameMood; affinityScore: number }[] {
+  const moods: GameMood[] = ['ALL', 'ADRENALINE', 'EXPLORATION', 'RELAX_PUZZLE', 'RETRO_NOSTALGIA'];
+
+  if (!userId) {
+    // No user: return default order with zero scores
+    return moods.map((mood) => ({ mood, affinityScore: 0 }));
+  }
+
+  const profile = computePlayerAffinity(userId);
+
+  const scored = moods
+    .filter((m) => m !== 'ALL')
+    .map((mood) => {
+      const def = MOOD_DEFINITIONS[mood];
+      const affinityScore = def.relevantCategories.reduce(
+        (sum, catId) => sum + (profile.categoryWeights[catId] || 0),
+        0
+      );
+      return { mood, affinityScore };
+    })
+    .sort((a, b) => b.affinityScore - a.affinityScore);
+
+  // ALL is always first
+  return [{ mood: 'ALL' as GameMood, affinityScore: Infinity }, ...scored];
+}
+
+/**
+ * Returns categories sorted by user's playtime/favorites affinity.
+ * The category the user has played the most floats to the front.
+ * Falls back to default DB order if user has no history.
+ */
+export function getSortedCategoriesByAffinity(
+  categories: Array<{ id: string; name: string; slug: string; count: number }>,
+  userId?: string
+): Array<{ id: string; name: string; slug: string; count: number; affinityScore: number }> {
+  if (!userId) {
+    return categories.map((c) => ({ ...c, affinityScore: 0 }));
+  }
+
+  const profile = computePlayerAffinity(userId);
+
+  return [...categories]
+    .map((cat) => ({
+      ...cat,
+      affinityScore: profile.categoryWeights[cat.id] || 0,
+    }))
+    .sort((a, b) => {
+      // Primary: affinity score (higher = more played by user)
+      if (b.affinityScore !== a.affinityScore) return b.affinityScore - a.affinityScore;
+      // Secondary: game count (more games = more valuable category)
+      return b.count - a.count;
+    });
+}
+
+/**
  * Smart Fallback Recommender for Search (Zero Results Handlers)
  * When a user searches for an uncatalogued game, finds the closest thematic match.
  */

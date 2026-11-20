@@ -6,10 +6,13 @@ import {
   getGameMoodAffinity,
   getPersonalizedRecommendations,
   getSearchFallbackRecommendations,
+  getTopMoodsByUserAffinity,
+  getSortedCategoriesByAffinity,
   MOOD_DEFINITIONS,
   GameMood,
 } from '../src/lib/recommendations';
 import { GET as getRecommendationsRoute } from '../src/app/api/recommendations/route';
+import { GET as getCategoriesRoute } from '../src/app/api/categories/route';
 import { POST as pingRoute } from '../src/app/api/analytics/ping/route';
 import { generateToken } from '../src/lib/auth';
 
@@ -212,5 +215,75 @@ describe('Adaptive Recommendation Engine & Smart Search Fallback', () => {
     expect(inGameRecs.games.length).toBeLessThanOrEqual(4);
     // Ensure the game itself is never recommended to itself
     expect(inGameRecs.games.some((g) => g.id === arcadeGame.id)).toBe(false);
+  });
+
+  // 12. User Attraction / Category Affinity Ordering for Recommended Moods
+  it('12. should place the user highest attraction mood first right after ALL in mood buttons', () => {
+    const affinityUser = 'usr-affinity-order-test';
+    const rpgGame = sampleGames.find((g) => g.categoryId === 'cat-rpg');
+    if (rpgGame) {
+      // Simulate heavy playtime in RPG (Exploration)
+      gvDb.recordPlayHistory(affinityUser, rpgGame.id, 1800); // 30 min
+      gvDb.addFavorite(affinityUser, rpgGame.id);
+
+      const topMoods = getTopMoodsByUserAffinity(affinityUser);
+      expect(topMoods[0].mood).toBe('ALL'); // ALL is always pinned first
+      // Second mood must be EXPLORATION because RPG has highest affinity points
+      expect(topMoods[1].mood).toBe('EXPLORATION');
+      expect(topMoods[1].affinityScore).toBeGreaterThan(0);
+    }
+  });
+
+  // 13. Category Nav Sorting by Attraction / User Affinity
+  it('13. should rank user most played / preferred category first in category lists', () => {
+    const affinityUser = 'usr-cat-order-test';
+    const puzzleGame = sampleGames.find((g) => g.categoryId === 'cat-puzzle');
+    if (puzzleGame) {
+      gvDb.recordPlayHistory(affinityUser, puzzleGame.id, 2400); // 40 min
+      gvDb.addFavorite(affinityUser, puzzleGame.id);
+
+      const rawCategories = gvDb.getCategories();
+      const sorted = getSortedCategoriesByAffinity(rawCategories, affinityUser);
+
+      // The puzzle category should be at the very top of categories
+      expect(sorted[0].id).toBe('cat-puzzle');
+      expect(sorted[0].affinityScore).toBeGreaterThan(0);
+    }
+  });
+
+  // 14. API returns affinity-sorted moods and categories
+  it('14. should return affinity-sorted topMoods and sortedCategories in /api/recommendations', async () => {
+    const token = generateToken({ userId: testUserId, role: 'PLAYER', email: 'test@gameverse.io', name: 'Test Gamer' });
+    const req = new NextRequest('http://localhost:3000/api/recommendations', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const res = await getRecommendationsRoute(req);
+    const data = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(data.topMoods).toBeDefined();
+    expect(data.topMoods[0].mood).toBe('ALL');
+    expect(data.sortedCategories).toBeDefined();
+    expect(Array.isArray(data.sortedCategories)).toBe(true);
+  });
+
+  // 15. /api/categories returns affinity-sorted list for logged-in user
+  it('15. should return affinity-sorted categories in /api/categories for authenticated user', async () => {
+    const affinityUser = 'usr-cat-api-test';
+    const arcadeGame = sampleGames.find((g) => g.categoryId === 'cat-arcade');
+    if (arcadeGame) {
+      gvDb.recordPlayHistory(affinityUser, arcadeGame.id, 3000);
+    }
+
+    const token = generateToken({ userId: affinityUser, role: 'PLAYER', email: 'cat@gameverse.io', name: 'Cat Gamer' });
+    const req = new NextRequest('http://localhost:3000/api/categories', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const res = await getCategoriesRoute(req);
+    const data = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(data.categories[0].id).toBe('cat-arcade');
+    expect(data.categories[0].affinityScore).toBeGreaterThan(0);
   });
 });

@@ -27,6 +27,7 @@ export interface CategoryNavItem {
   name: string;
   slug: string;
   count: number;
+  affinityScore?: number;
 }
 
 interface CategoryNavChipsProps {
@@ -51,6 +52,7 @@ export default function CategoryNavChips({
         const res = await fetch('/api/categories');
         if (res.ok) {
           const data = await res.json();
+          // Categories already affinity-sorted by the server for logged-in users
           const cats: CategoryNavItem[] = data.categories || [];
           setCategories(cats);
           const total = cats.reduce((sum, c) => sum + (c.count || 0), 0);
@@ -68,6 +70,9 @@ export default function CategoryNavChips({
 
   const normalizedActive = (activeSlug || '').toLowerCase();
   const isAllActive = !normalizedActive || normalizedActive === 'all';
+
+  // The first category returned with a non-zero affinityScore is the user's #1 favourite
+  const topAffinityIdx = categories.findIndex((c) => (c.affinityScore || 0) > 0);
 
   return (
     <div className={`flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none ${className}`}>
@@ -90,19 +95,25 @@ export default function CategoryNavChips({
         </span>
       </Link>
 
-      {categories.map((cat) => {
+      {categories.map((cat, idx) => {
         const isCatActive =
           normalizedActive === cat.slug.toLowerCase() ||
           normalizedActive === cat.id.toLowerCase() ||
           normalizedActive === cat.name.toLowerCase();
 
+        // Mark the first category with positive affinity as the user's favourite
+        const isTopAffinity = idx === topAffinityIdx && (cat.affinityScore || 0) > 0;
+
         return (
           <Link
             key={cat.id}
             href={`/category/${cat.slug}`}
-            className={`flex-shrink-0 flex items-center gap-2 font-medium text-xs px-4 py-2 rounded-xl transition-all border ${
+            title={isTopAffinity ? 'Your most-played category' : cat.name}
+            className={`relative flex-shrink-0 flex items-center gap-2 font-medium text-xs px-4 py-2 rounded-xl transition-all border ${
               isCatActive
                 ? 'bg-indigo-600 text-white font-semibold border-indigo-500 shadow-sm'
+                : isTopAffinity
+                ? 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold border-indigo-300'
                 : 'bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 border-slate-200'
             }`}
           >
@@ -115,6 +126,13 @@ export default function CategoryNavChips({
             >
               ({cat.count})
             </span>
+            {/* Dot indicator for user's most-played category */}
+            {isTopAffinity && !isCatActive && (
+              <span
+                className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-indigo-500 border border-white"
+                aria-label="Your favourite category"
+              />
+            )}
           </Link>
         );
       })}

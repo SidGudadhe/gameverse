@@ -1,18 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import {
-  Sparkles,
-  Zap,
-  Compass,
-  Brain,
-  Gamepad,
-  Flame,
-  ArrowRight,
-  TrendingUp,
-  Loader2,
-} from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
 import GameCard from '@/components/GameCard';
 import { RecommendationsSkeleton } from '@/components/ui/Skeleton';
 import { MOOD_DEFINITIONS, GameMood } from '@/types/recommendations';
@@ -25,7 +13,17 @@ interface AdaptiveRecommendationsProps {
   limit?: number;
 }
 
-const recCache = new Map<string, any[]>();
+// All possible mood button definitions (label + icon, ordered by affinity dynamically)
+const MOOD_META: Record<GameMood, { label: string; icon: string }> = {
+  ALL:              { label: 'All Picks',       icon: '✨' },
+  ADRENALINE:       { label: 'Action & Speed',  icon: '⚡' },
+  RELAX_PUZZLE:     { label: 'Puzzle & Casual', icon: '🧩' },
+  EXPLORATION:      { label: 'Adventure',       icon: '🗺️' },
+  RETRO_NOSTALGIA:  { label: 'Arcade Classic',  icon: '🕹️' },
+};
+
+// Cache: keyed by mood+excludeGameId+limit → { games, topMoods }
+const recCache = new Map<string, { games: any[]; topMoods: { mood: GameMood; affinityScore: number }[] }>();
 
 export default function AdaptiveRecommendations({
   initialMood = 'ALL',
@@ -35,14 +33,25 @@ export default function AdaptiveRecommendations({
   limit = 8,
 }: AdaptiveRecommendationsProps) {
   const [activeMood, setActiveMood] = useState<GameMood>(initialMood);
-  const cacheKey = `${initialMood}_${excludeGameId || ''}_${limit}`;
-  const [recommendations, setRecommendations] = useState<any[]>(() => recCache.get(cacheKey) || []);
-  const [loading, setLoading] = useState(!recCache.has(cacheKey));
 
-  const fetchRecommendations = async (mood: GameMood) => {
+  // Affinity-ordered mood buttons — initially default order
+  const defaultMoodOrder: GameMood[] = ['ALL', 'ADRENALINE', 'RELAX_PUZZLE', 'EXPLORATION', 'RETRO_NOSTALGIA'];
+  const [moodOrder, setMoodOrder] = useState<GameMood[]>(defaultMoodOrder);
+
+  const cacheKey = `${activeMood}_${excludeGameId || ''}_${limit}`;
+  const [recommendations, setRecommendations] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchRecommendations = useCallback(async (mood: GameMood) => {
     const key = `${mood}_${excludeGameId || ''}_${limit}`;
-    if (recCache.has(key)) {
-      setRecommendations(recCache.get(key)!);
+    const cached = recCache.get(key);
+
+    if (cached) {
+      setRecommendations(cached.games);
+      // Always update mood order from latest cached response
+      if (cached.topMoods?.length > 0) {
+        setMoodOrder(cached.topMoods.map((m) => m.mood));
+      }
       setLoading(false);
       return;
     }
@@ -57,28 +66,33 @@ export default function AdaptiveRecommendations({
       const res = await fetch(`/api/recommendations?${params.toString()}`);
       if (res.ok) {
         const data = await res.json();
-        const recs = data.recommendations || [];
-        recCache.set(key, recs);
-        setRecommendations(recs);
+        const games = data.recommendations || [];
+        // topMoods: affinity-sorted mood order returned by server
+        const topMoods: { mood: GameMood; affinityScore: number }[] = data.topMoods || [];
+
+        recCache.set(key, { games, topMoods });
+        setRecommendations(games);
+
+        // Update mood button order if server returned affinity data
+        if (topMoods.length > 0) {
+          setMoodOrder(topMoods.map((m) => m.mood));
+        }
       }
     } catch (err) {
       console.error('Failed to load personalized recommendations:', err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [excludeGameId, limit]);
 
   useEffect(() => {
     fetchRecommendations(activeMood);
-  }, [activeMood]);
+  }, [activeMood, fetchRecommendations]);
 
-  const moodButtons: { key: GameMood; label: string; icon: string }[] = [
-    { key: 'ALL', label: 'All Picks', icon: '✨' },
-    { key: 'ADRENALINE', label: 'Action & Speed', icon: '⚡' },
-    { key: 'RELAX_PUZZLE', label: 'Puzzle & Casual', icon: '🧩' },
-    { key: 'EXPLORATION', label: 'Adventure', icon: '🗺️' },
-    { key: 'RETRO_NOSTALGIA', label: 'Arcade Classic', icon: '🕹️' },
-  ];
+  // Build ordered mood buttons from moodOrder (affinity-sorted)
+  const orderedMoodButtons = moodOrder
+    .filter((key) => MOOD_META[key])
+    .map((key) => ({ key, ...MOOD_META[key] }));
 
   return (
     <section className="space-y-6 pt-4 pb-2">
@@ -99,23 +113,39 @@ export default function AdaptiveRecommendations({
           </p>
         </div>
 
-        {/* Quick Mood Filter Pills */}
+        {/* Affinity-Sorted Mood Filter Pills */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-          {moodButtons.map((btn) => {
+          {orderedMoodButtons.map((btn, idx) => {
             const isSelected = activeMood === btn.key;
+            // First non-ALL button with high affinity gets a subtle "top pick" ring
+            const isTopPick = idx === 1 && btn.key !== 'ALL';
 
             return (
               <button
                 key={btn.key}
                 onClick={() => setActiveMood(btn.key)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all active:scale-95 cursor-pointer ${
+                title={
+                  isTopPick
+                    ? `Your most-played category — ${MOOD_DEFINITIONS[btn.key]?.tagline || ''}`
+                    : MOOD_DEFINITIONS[btn.key]?.tagline || ''
+                }
+                className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all active:scale-95 cursor-pointer ${
                   isSelected
                     ? 'bg-indigo-600 text-white shadow-sm'
+                    : isTopPick
+                    ? 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-300'
                     : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'
                 }`}
               >
                 <span>{btn.icon}</span>
                 <span>{btn.label}</span>
+                {/* "Top Pick" indicator dot for the highest-affinity mood */}
+                {isTopPick && !isSelected && (
+                  <span
+                    className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-indigo-500 border border-white"
+                    aria-label="Your top category"
+                  />
+                )}
               </button>
             );
           })}

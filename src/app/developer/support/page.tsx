@@ -199,7 +199,7 @@ export default function DeveloperSupportPage() {
               </div>
 
               <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-                <div className="font-semibold text-slate-900">How is the 50% net split calculated?</div>
+                <div className="font-semibold text-slate-900">How is net creator revenue calculated?</div>
                 <p className="text-slate-600 text-[11px]">
                   Net revenue equals gross ad earnings minus direct network transaction fees and invalid-traffic deductions.
                 </p>
@@ -208,7 +208,7 @@ export default function DeveloperSupportPage() {
               <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
                 <div className="font-semibold text-slate-900">When are payouts disbursed?</div>
                 <p className="text-slate-600 text-[11px]">
-                  Payouts process on a Net-30 monthly schedule once your account balance meets the $50 threshold.
+                  Payouts can be requested directly from your Revenue page to your saved destination once your balance meets the $10 minimum.
                 </p>
               </div>
             </div>

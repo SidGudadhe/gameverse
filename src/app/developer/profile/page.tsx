@@ -193,13 +193,6 @@ export default function StudioProfilePage() {
             Manage your studio identity, public bio, portfolio links, and publishing credentials.
           </p>
         </div>
-
-        <div className="flex items-center gap-2">
-          <Badge variant="success">
-            <ShieldCheck className="w-3.5 h-3.5 mr-1" />
-            Creator Agreement: v1.0-2026 (Active)
-          </Badge>
-        </div>
       </div>
 
       {/* Account Deletion Active Alert Banner */}

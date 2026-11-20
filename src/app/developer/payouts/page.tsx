@@ -13,7 +13,6 @@ import {
   CreditCard,
   Coins,
   ExternalLink,
-  Sparkles,
   ArrowUpRight,
   RefreshCw,
   Check,
@@ -331,9 +330,6 @@ export default function PayoutsPage() {
               Payout Option Active
             </span>
           </div>
-          <p className="text-slate-500 text-xs sm:text-sm mt-1">
-            Save your payout method once, then simply enter your desired withdrawal amount to submit instant settlement requests.
-          </p>
         </div>
 
         {/* Action Button */}
@@ -345,19 +341,6 @@ export default function PayoutsPage() {
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </button>
-        </div>
-      </div>
-
-      {/* Rate Engine Update Notice */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-indigo-50 border border-indigo-200 flex items-start gap-3.5">
-        <Sparkles className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
-        <div className="space-y-1">
-          <h3 className="text-sm font-bold text-slate-900">
-            Payout Calculation & Revenue Distribution
-          </h3>
-          <p className="text-xs text-indigo-950 leading-relaxed">
-            Developer payouts are active. Verified earnings formulas and rate tiers are finalized by platform administrators. Player traffic, gameplay sessions, and engagement durations across all your published titles are tracked in real-time.
-          </p>
         </div>
       </div>
 
@@ -408,9 +391,6 @@ export default function PayoutsPage() {
             <div className="font-heading font-black text-3xl text-emerald-600 font-mono">
               ${(summary?.availableBalance ?? 0).toFixed(2)}
             </div>
-            <p className="text-[11px] text-slate-500">
-              Payout option active hai. Rate calculation formula jald finalize kiya jayega.
-            </p>
           </div>
 
           <div className="mt-4 pt-4 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
@@ -459,7 +439,7 @@ export default function PayoutsPage() {
                     : 'NOT CONFIGURED'}
                 </p>
                 <p className="text-[11px] text-slate-500 font-mono truncate">
-                  {accountDetails || 'Setup below to unlock instant payouts'}
+                  {accountDetails || 'Not configured'}
                 </p>
               </div>
             </div>
@@ -487,9 +467,6 @@ export default function PayoutsPage() {
             <div className="font-heading font-black text-2xl text-slate-900">
               Verified Creator
             </div>
-            <p className="text-[11px] text-slate-500">
-              Account is in good standing and eligible for settlements.
-            </p>
           </div>
 
           <div className="mt-4 pt-4 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
@@ -597,9 +574,6 @@ export default function PayoutsPage() {
               <Coins className="w-5 h-5 text-amber-500" />
               <span>1. Payout Destination (Saved Method)</span>
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Select and save your preferred payout destination once. You can update or change this destination at any time.
-            </p>
           </div>
 
           {isMethodConfigured && !isEditingMethod && (
@@ -655,17 +629,7 @@ export default function PayoutsPage() {
                     Beneficiary / Studio: <span className="text-slate-800 font-medium">{beneficiaryName}</span>
                   </p>
                 )}
-                <p className="text-[11px] text-slate-400">
-                  Ready for automatic settlement disbursement
-                </p>
               </div>
-            </div>
-
-            <div className="flex items-center gap-2 self-end sm:self-center">
-              <span className="text-xs text-emerald-700 font-semibold bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200 flex items-center gap-1.5">
-                <Check className="w-3.5 h-3.5" />
-                <span>Ready for Direct Payout</span>
-              </span>
             </div>
           </div>
         ) : !isMethodConfigured && !isEditingMethod ? (
@@ -677,7 +641,7 @@ export default function PayoutsPage() {
             <div>
               <h3 className="text-base font-bold text-slate-900">No Payout Method Saved</h3>
               <p className="text-xs text-slate-500 max-w-md mx-auto mt-1">
-                Save your Bank Wire, UPI ID, PayPal, or Stripe account once so you can request payouts by entering the amount.
+                Add a Bank Wire, UPI ID, PayPal, or Stripe account to enable withdrawals.
               </p>
             </div>
             <button
@@ -796,11 +760,8 @@ export default function PayoutsPage() {
         <div className="border-b border-slate-200 pb-4">
           <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
             <Wallet className="w-5 h-5 text-emerald-600" />
-            <span>2. Request Payout (Enter Amount)</span>
+            <span>2. Request Payout</span>
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Your saved payout destination is automatically connected. Enter your withdrawal amount to submit the request.
-          </p>
         </div>
 
         <form onSubmit={handleSubmitPayoutRequest} className="space-y-6">
@@ -919,11 +880,8 @@ export default function PayoutsPage() {
         <div className="p-6 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h2 className="font-heading font-bold text-lg text-slate-900">
-              History of all withdrawal requests submitted from your account
+              Payout & Withdrawal History
             </h2>
-            <p className="text-xs text-slate-500 mt-0.5">
-              View live status, disbursement methods, and transaction reference IDs for all settlement requests.
-            </p>
           </div>
 
           {/* Search + Status Filter Tabs */}

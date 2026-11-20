@@ -382,7 +382,7 @@ export default function GameSubmitPage() {
                 Pending Draft Found!
               </h4>
               <p className="text-xs text-amber-900 leading-relaxed">
-                Aapne pehle ek game ki details half-fill ki thi jo complete nahi hui thi. Kya aap wahi se continue karna chahte hain?
+                You have an unfinished draft from your previous session. Resume editing or discard to start fresh.
               </p>
             </div>
           </div>

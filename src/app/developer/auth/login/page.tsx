@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
 import { useAuth } from '@/context/AuthContext';
 import GoogleSignIn from '@/components/GoogleSignIn';
+import DeveloperLogo from '@/components/ui/DeveloperLogo';
 
 export default function DeveloperLoginPage() {
   const router = useRouter();
@@ -101,9 +102,7 @@ export default function DeveloperLoginPage() {
 
       <div className="w-full max-w-md space-y-6 bg-white p-8 rounded-3xl border border-slate-200 shadow-xl relative overflow-hidden">
         <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-200 flex items-center justify-center mx-auto text-indigo-600">
-            <Code className="w-6 h-6" />
-          </div>
+          <DeveloperLogo size="xl" className="mx-auto mb-2" />
           <div className="flex items-center justify-center gap-1.5 pt-1">
             <Badge variant="cyan">DEVELOPER STUDIO PORTAL</Badge>
           </div>

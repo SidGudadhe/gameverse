@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import GameVerseLogo from '@/components/ui/GameVerseLogo';
+import DeveloperLogo from '@/components/ui/DeveloperLogo';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -56,19 +57,12 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           {/* Studio Brand */}
           <div className="flex items-center gap-3">
-            <Link href="/developer" className="flex items-center gap-2 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 to-indigo-600 flex items-center justify-center shadow-md shadow-cyan-600/20 group-hover:scale-105 transition-transform">
-                <Code className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <span className="font-heading font-black text-xl tracking-wider text-slate-900 flex items-center gap-1.5">
-                  GAMEVERSE <span className="text-cyan-600">STUDIO</span>
-                </span>
-                <span className="text-[10px] font-mono text-cyan-700 block -mt-1 tracking-widest uppercase font-semibold">
-                  Creator Workspace
-                </span>
-              </div>
-            </Link>
+            <DeveloperLogo
+              href="/developer"
+              size="md"
+              showText
+              subtitle="Creator Workspace"
+            />
           </div>
 
           {/* Studio Right Actions */}

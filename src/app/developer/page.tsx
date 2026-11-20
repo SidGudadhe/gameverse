@@ -215,25 +215,30 @@ export default function DeveloperPage() {
           </div>
 
           {/* KPI 3: Earning Overview (Account Balance = Total Earning - Withdrawn) */}
-          <div className="bg-gradient-to-br from-emerald-50 via-white to-slate-50 rounded-3xl p-6 border border-emerald-200 shadow-xs relative overflow-hidden flex flex-col justify-between">
+          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs relative overflow-hidden flex flex-col justify-between hover:border-emerald-300 transition-all">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider">
-                  Available Balance
-                </span>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center">
+                  <Wallet className="w-6 h-6" />
+                </div>
+                <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold">
                   Ready to Withdraw
                 </span>
               </div>
-              <div className="font-heading font-black text-4xl text-emerald-700 font-mono">
-                ${availableBalance.toFixed(2)}
+              <div>
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">
+                  Available Balance (In Account)
+                </span>
+                <div className="font-heading font-black text-3xl sm:text-4xl text-emerald-600 font-mono mt-1">
+                  ${availableBalance.toFixed(2)}
+                </div>
               </div>
               
               {/* Formula clarification */}
-              <div className="p-2.5 rounded-xl bg-white/80 border border-emerald-200/80 text-[11px] text-slate-600 space-y-1">
+              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-[11px] text-slate-600 space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <span>Lifetime Gross:</span>
-                  <span className="font-mono font-bold text-slate-800">${totalEarned.toFixed(2)}</span>
+                  <span>Lifetime Earnings:</span>
+                  <span className="font-mono font-bold text-slate-900">${totalEarned.toFixed(2)}</span>
                 </div>
                 <div className="flex items-center justify-between text-rose-600">
                   <span>Total Withdrawn:</span>
@@ -242,7 +247,7 @@ export default function DeveloperPage() {
               </div>
             </div>
 
-            <div className="mt-5 pt-4 border-t border-emerald-200/60 flex items-center justify-between text-xs">
+            <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
               <Link
                 href="/developer/payouts"
                 className="text-emerald-700 hover:text-emerald-800 font-bold flex items-center gap-1"
@@ -250,7 +255,7 @@ export default function DeveloperPage() {
                 <span>Request Payout</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
-              <span className="text-[11px] font-mono text-slate-400">Min $10</span>
+              <span className="text-[11px] font-mono text-slate-400">Instant Settlement</span>
             </div>
           </div>
         </div>
@@ -423,7 +428,7 @@ export default function DeveloperPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] animate-fade-in">
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-12 pb-20 border-b border-slate-200 bg-gradient-to-b from-indigo-50/50 via-white to-[#F8FAFC]">
+      <section className="relative overflow-hidden pt-12 pb-20 border-b border-slate-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl mx-auto text-center space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-50 border border-cyan-200 text-cyan-800 text-xs font-bold tracking-wide">

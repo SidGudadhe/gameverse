@@ -191,8 +191,19 @@ GV_SDK.ready();`;
           </button>
         </div>
 
-        <div className="relative rounded-2xl overflow-hidden bg-slate-900 text-slate-100 p-5 font-mono text-xs overflow-x-auto">
-          <pre>{sdkProtocolCode}</pre>
+        <div className="rounded-2xl overflow-hidden border border-slate-800 bg-slate-900 shadow-sm">
+          <div className="bg-slate-800/90 px-4 py-2.5 border-b border-slate-700/80 flex items-center justify-between text-[11px] font-mono text-slate-400">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80 inline-block" />
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80 inline-block" />
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80 inline-block" />
+              <span className="ml-2 text-slate-300 font-semibold">gv-sdk.js</span>
+            </div>
+            <span>JavaScript postMessage</span>
+          </div>
+          <div className="p-5 font-mono text-xs overflow-x-auto text-slate-100 leading-relaxed">
+            <pre>{sdkProtocolCode}</pre>
+          </div>
         </div>
       </div>
 

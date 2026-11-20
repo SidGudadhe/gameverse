@@ -127,35 +127,37 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       {/* Studio Sub-Navigation Bar */}
-      <div className="border-b border-slate-200 bg-white/95 backdrop-blur-sm sticky top-16 z-40 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-12 flex items-center justify-between gap-4 overflow-x-auto scrollbar-none">
-          <nav className="flex items-center gap-1 text-xs font-semibold text-slate-600">
-            {navLinks.map((item) => {
-              const Icon = item.icon;
-              const isActive = item.exact
-                ? pathname === item.href
-                : pathname.startsWith(item.href);
+      <div className="border-b border-slate-200 bg-white sticky top-16 z-40 shadow-xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-12 flex items-center justify-between gap-4">
+          <div className="flex-1 overflow-x-auto scrollbar-none py-1">
+            <nav className="flex items-center gap-1 text-xs font-semibold text-slate-600 min-w-max">
+              {navLinks.map((item) => {
+                const Icon = item.icon;
+                const isActive = item.exact
+                  ? pathname === item.href
+                  : pathname.startsWith(item.href);
 
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors ${
-                    isActive
-                      ? 'bg-indigo-50 text-indigo-700 border border-indigo-200 font-semibold'
-                      : 'hover:text-slate-900 hover:bg-slate-100 text-slate-600'
-                  }`}
-                >
-                  <Icon className="w-3.5 h-3.5" />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors ${
+                      isActive
+                        ? 'bg-indigo-50 text-indigo-700 border border-indigo-200 font-semibold shadow-xs'
+                        : 'hover:text-slate-900 hover:bg-slate-100 text-slate-600'
+                    }`}
+                  >
+                    <Icon className="w-3.5 h-3.5" />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
 
           <Link
             href="/developer/submit"
-            className="flex-shrink-0 flex items-center gap-1.5 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-xs transition-transform active:scale-95"
+            className="flex-shrink-0 flex items-center gap-1.5 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-xs font-bold px-3.5 py-1.5 rounded-xl shadow-xs transition-transform active:scale-95"
           >
             <Plus className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Upload Build</span>

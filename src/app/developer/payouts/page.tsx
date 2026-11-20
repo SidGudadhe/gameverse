@@ -683,7 +683,7 @@ export default function PayoutsPage() {
             <button
               type="button"
               onClick={() => setIsEditingMethod(true)}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs px-5 py-2.5 rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>Choose & Save Payout Method</span>
@@ -707,14 +707,14 @@ export default function PayoutsPage() {
                       onClick={() => setMethodType(pm.id)}
                       className={`p-4 rounded-2xl border text-left transition-all flex items-start gap-3.5 cursor-pointer ${
                         isSelected
-                          ? 'bg-amber-50 border-amber-300 shadow-xs'
+                          ? 'bg-indigo-50/70 border-indigo-400 shadow-xs'
                           : 'bg-white border-slate-200 hover:border-slate-300 text-slate-600 hover:text-slate-900'
                       }`}
                     >
                       <div
                         className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
                           isSelected
-                            ? 'bg-amber-500 text-white font-bold'
+                            ? 'bg-indigo-600 text-white font-bold'
                             : 'bg-slate-100 text-slate-500'
                         }`}
                       >
@@ -723,7 +723,7 @@ export default function PayoutsPage() {
                       <div>
                         <div
                           className={`text-sm font-semibold ${
-                            isSelected ? 'text-slate-900' : 'text-slate-800'
+                            isSelected ? 'text-indigo-950 font-bold' : 'text-slate-800'
                           }`}
                         >
                           {pm.name}
@@ -749,7 +749,7 @@ export default function PayoutsPage() {
                   onChange={(e) => setAccountDetails(e.target.value)}
                   placeholder={selectedMethodObj?.placeholder}
                   required
-                  className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all font-mono"
+                  className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-all font-mono"
                 />
               </div>
 
@@ -762,7 +762,7 @@ export default function PayoutsPage() {
                   value={beneficiaryName}
                   onChange={(e) => setBeneficiaryName(e.target.value)}
                   placeholder={selectedMethodObj?.secondaryPlaceholder || 'e.g. PixelForge Studios'}
-                  className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-all"
+                  className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-all"
                 />
               </div>
             </div>
@@ -781,7 +781,7 @@ export default function PayoutsPage() {
               <button
                 type="submit"
                 disabled={savingMethod}
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs px-6 py-2.5 rounded-xl shadow-xs transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-6 py-2.5 rounded-xl shadow-xs transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
               >
                 <Check className="w-4 h-4" />
                 <span>{savingMethod ? 'Saving Method...' : 'Save Payout Method'}</span>

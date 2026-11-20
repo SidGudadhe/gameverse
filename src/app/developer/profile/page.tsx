@@ -266,8 +266,8 @@ export default function StudioProfilePage() {
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
             <div className="relative group cursor-pointer">
-              <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 p-0.5 shadow-sm">
-                <div className="w-full h-full bg-slate-50 rounded-2xl flex items-center justify-center font-heading font-black text-2xl text-slate-800">
+              <div className="w-20 h-20 rounded-2xl border-2 border-indigo-200 bg-indigo-50/60 p-0.5 shadow-xs">
+                <div className="w-full h-full bg-white rounded-xl flex items-center justify-center font-heading font-black text-2xl text-indigo-700">
                   {studioName.substring(0, 2).toUpperCase() || 'PF'}
                 </div>
               </div>

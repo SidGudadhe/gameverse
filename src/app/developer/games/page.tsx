@@ -204,12 +204,12 @@ export default function MyGamesPage() {
                     {/* Status Badge */}
                     <div className="absolute top-3 left-3">
                       <span
-                        className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-lg border shadow-xs backdrop-blur-sm ${
+                        className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-lg border shadow-xs ${
                           game.status === 'PUBLISHED'
-                            ? 'bg-emerald-500/95 text-white border-emerald-400'
+                            ? 'bg-emerald-600 text-white border-emerald-500'
                             : game.status === 'QA_TESTING'
-                            ? 'bg-amber-500/95 text-white border-amber-400'
-                            : 'bg-slate-800/90 text-white border-slate-700'
+                            ? 'bg-amber-600 text-white border-amber-500'
+                            : 'bg-slate-800 text-white border-slate-700'
                         }`}
                       >
                         {game.status === 'PUBLISHED' ? 'Live in Catalog' : game.status}
@@ -218,7 +218,7 @@ export default function MyGamesPage() {
 
                     {/* Category Pill */}
                     <div className="absolute top-3 right-3">
-                      <span className="bg-white/95 backdrop-blur-sm text-slate-800 text-[11px] font-semibold px-2.5 py-1 rounded-lg border border-slate-200 shadow-xs">
+                      <span className="bg-white text-slate-800 text-[11px] font-bold px-2.5 py-1 rounded-lg border border-slate-200 shadow-sm">
                         {game.categoryName}
                       </span>
                     </div>

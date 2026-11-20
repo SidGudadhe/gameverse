@@ -374,7 +374,7 @@ export default function GameSubmitPage() {
 
       {/* Draft Persistence Banner (Requested by User) */}
       {showDraftBanner && activeTab === 'upload' && (
-        <div className="p-4 sm:p-5 rounded-2xl bg-amber-50 border-2 border-amber-300 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-in fade-in">
+        <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/80 border border-amber-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-in fade-in">
           <div className="flex items-start gap-3">
             <Sparkles className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
             <div className="space-y-0.5">
@@ -398,7 +398,7 @@ export default function GameSubmitPage() {
             <button
               type="button"
               onClick={handleResumeDraft}
-              className="px-4 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs shadow-xs transition-all active:scale-95 cursor-pointer flex items-center gap-1"
+              className="px-4 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-xs transition-all active:scale-95 cursor-pointer flex items-center gap-1.5"
             >
               <span>Continue Draft</span>
               <ArrowRight className="w-3.5 h-3.5" />

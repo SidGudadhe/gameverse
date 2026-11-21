@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import GameCard from '@/components/GameCard';
 import CategoryNavChips from '@/components/CategoryNavChips';
+import WebAdBanner from '@/components/ads/WebAdBanner';
 import { Badge } from '@/components/ui/Badge';
 import { EmptyState } from '@/components/ui/EmptyState';
 
@@ -201,7 +202,14 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {filteredGames.map((game) => (
+          {filteredGames.slice(0, 2).map((game) => (
+            <GameCard key={game.id} game={game} />
+          ))}
+
+          {/* 4. CATEGORY PAGE NATIVE AD (Placement: Category listing ke beech sponsored content) */}
+          <WebAdBanner placement="CATEGORY_NATIVE" />
+
+          {filteredGames.slice(2).map((game) => (
             <GameCard key={game.id} game={game} />
           ))}
         </div>

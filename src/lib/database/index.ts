@@ -1490,6 +1490,11 @@ class GameVerseDatabase {
           PREROLL: { impressions: 0, gross: 0, creatorShare: 0 },
           INTERSTITIAL: { impressions: 0, gross: 0, creatorShare: 0 },
           REWARDED: { impressions: 0, gross: 0, creatorShare: 0 },
+          BONUS_REWARD: { impressions: 0, gross: 0, creatorShare: 0 },
+          BANNER: { impressions: 0, gross: 0, creatorShare: 0 },
+          NATIVE: { impressions: 0, gross: 0, creatorShare: 0 },
+          DISPLAY: { impressions: 0, gross: 0, creatorShare: 0 },
+          SPONSORED_LISTING: { impressions: 0, gross: 0, creatorShare: 0 },
         },
       };
     }
@@ -1506,6 +1511,11 @@ class GameVerseDatabase {
       PREROLL: { impressions: 0, gross: 0, creatorShare: 0 },
       INTERSTITIAL: { impressions: 0, gross: 0, creatorShare: 0 },
       REWARDED: { impressions: 0, gross: 0, creatorShare: 0 },
+      BONUS_REWARD: { impressions: 0, gross: 0, creatorShare: 0 },
+      BANNER: { impressions: 0, gross: 0, creatorShare: 0 },
+      NATIVE: { impressions: 0, gross: 0, creatorShare: 0 },
+      DISPLAY: { impressions: 0, gross: 0, creatorShare: 0 },
+      SPONSORED_LISTING: { impressions: 0, gross: 0, creatorShare: 0 },
     };
 
     let totalImpressions = 0;

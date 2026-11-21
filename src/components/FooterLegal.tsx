@@ -7,6 +7,7 @@ import { ShieldCheck, Cookie } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import GameVerseLogo from '@/components/ui/GameVerseLogo';
 import DeveloperLogo from '@/components/ui/DeveloperLogo';
+import WebAdBanner from '@/components/ads/WebAdBanner';
 
 export default function FooterLegal() {
   const pathname = usePathname();
@@ -24,7 +25,15 @@ export default function FooterLegal() {
   };
 
   return (
-    <footer className="border-t border-slate-200 bg-white py-12 mt-20 text-slate-500">
+    <div className="w-full mt-20">
+      {/* 7. FOOTER DISPLAY AD (Placement: Page ke bottom mein footer ke upar) */}
+      {!isDevPortal && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
+          <WebAdBanner placement="FOOTER_DISPLAY" />
+        </div>
+      )}
+
+      <footer className="border-t border-slate-200 bg-white py-12 text-slate-500">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 text-xs">
         <div className="flex flex-col sm:flex-row items-center gap-3">
           {isDevPortal ? (
@@ -66,5 +75,6 @@ export default function FooterLegal() {
         </div>
       </div>
     </footer>
-  );
+  </div>
+);
 }

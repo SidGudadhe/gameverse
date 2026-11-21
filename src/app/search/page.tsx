@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import WebAdBanner from '@/components/ads/WebAdBanner';
 
 const POPULAR_TAGS = ['Retro', 'Runner', 'Cyberpunk', 'Dungeon', 'Physics', 'Pixel', 'WebGL'];
 
@@ -175,6 +176,9 @@ function SearchContent() {
           ))}
         </div>
       </div>
+
+      {/* 5. SEARCH RESULTS SPONSORED LISTING (Placement: Search results mein sponsored game) */}
+      <WebAdBanner placement="SEARCH_SPONSORED" />
 
       {/* Results Grid */}
       {games.length > 0 ? (

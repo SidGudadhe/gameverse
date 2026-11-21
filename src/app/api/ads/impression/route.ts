@@ -24,9 +24,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!['PREROLL', 'INTERSTITIAL', 'REWARDED'].includes(format)) {
+    if (!['PREROLL', 'INTERSTITIAL', 'REWARDED', 'BONUS_REWARD', 'BANNER', 'NATIVE', 'DISPLAY', 'SPONSORED_LISTING'].includes(format)) {
       return NextResponse.json(
-        { error: 'Invalid ad format. Must be PREROLL, INTERSTITIAL, or REWARDED' },
+        { error: 'Invalid ad format. Must be a valid platform ad format' },
         { status: 400 }
       );
     }

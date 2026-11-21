@@ -196,7 +196,15 @@ export interface ReferralLink {
   createdAt: string;
 }
 
-export type AdFormat = 'PREROLL' | 'INTERSTITIAL' | 'REWARDED';
+export type AdFormat =
+  | 'PREROLL'
+  | 'INTERSTITIAL'
+  | 'REWARDED'
+  | 'BONUS_REWARD'
+  | 'BANNER'
+  | 'NATIVE'
+  | 'DISPLAY'
+  | 'SPONSORED_LISTING';
 
 export interface AdImpression {
   id: string;

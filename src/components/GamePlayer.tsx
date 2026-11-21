@@ -15,6 +15,12 @@ import {
   HelpCircle,
   Sparkles,
   Loader2,
+  Tag,
+  Award,
+  Heart,
+  Coins,
+  X,
+  CheckCircle2,
 } from 'lucide-react';
 import { Game, AdFormat } from '@/types';
 import AdOverlay from './AdOverlay';
@@ -40,6 +46,8 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
     format: AdFormat;
   } | null>(null);
   const [adLoading, setAdLoading] = useState(false);
+  const [showInGameBanner, setShowInGameBanner] = useState(true);
+  const [rewardToast, setRewardToast] = useState<string | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -132,11 +140,22 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
     setIsPlaying(true);
   };
 
-  const handleAdComplete = async (durationSeconds: number, skipped: boolean) => {
+  const handleAdComplete = async (durationSeconds: number, skipped: boolean, rewardClaimed?: string) => {
     const format = activeAd?.format || 'PREROLL';
     const currentSession = sessionTokenRef.current;
     setActiveAd(null);
     setIsPlaying(true);
+
+    if (rewardClaimed) {
+      const msg =
+        rewardClaimed === 'COINS'
+          ? '🪙 Reward Unlocked: +100 Coins credited to player account!'
+          : rewardClaimed === 'DOUBLE_REWARD'
+          ? '✨ Reward Unlocked: 2x XP Multiplier & Bonus Reward Activated!'
+          : '💖 Reward Unlocked: Extra Life / Revive Activated!';
+      setRewardToast(msg);
+      setTimeout(() => setRewardToast(null), 5000);
+    }
 
     if (currentSession) {
       const referralToken =
@@ -162,7 +181,37 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
       }
     }
 
-    sendToRunner('GV_AD_COMPLETED', { format, durationSeconds, skipped });
+    sendToRunner('GV_AD_COMPLETED', { format, durationSeconds, skipped, rewardClaimed });
+    if (rewardClaimed) {
+      sendToRunner('GV_REWARD_GRANTED', {
+        reward: rewardClaimed,
+        amount: rewardClaimed === 'COINS' ? 100 : 1,
+      });
+    }
+    sendToRunner('GV_RESUME');
+  };
+
+  // Helper for developers / QA / testing to simulate any in-game ad format immediately
+  const triggerManualAd = async (format: AdFormat, simActiveSeconds?: number) => {
+    let sessionToken = sessionTokenRef.current;
+    if (!sessionToken) {
+      sessionToken = `sess-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+      sessionTokenRef.current = sessionToken;
+    }
+    const secs = simActiveSeconds !== undefined ? simActiveSeconds : activeSecondsRef.current;
+    sendToRunner('GV_PAUSE');
+    try {
+      const res = await fetch(
+        `/api/ads/slot?gameId=${game.id}&sessionToken=${sessionToken}&format=${format}&activeSeconds=${secs}`
+      );
+      if (res.ok) {
+        const data = await res.json();
+        if (data.eligible && data.ad) {
+          setActiveAd({ ad: data.ad, format });
+          return;
+        }
+      }
+    } catch {}
     sendToRunner('GV_RESUME');
   };
 
@@ -509,16 +558,109 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
           </div>
         ) : (
           /* ================= HARDENED MULTI-ORIGIN SANDBOX IFRAME ================= */
-          <iframe
-            ref={iframeRef}
-            src={resolvedUrl}
-            title={game.title}
-            className="w-full h-full border-0 bg-black"
-            sandbox="allow-scripts allow-same-origin allow-pointer-lock"
-            allow="fullscreen; autoplay; gamepad; focus-without-user-activation"
-            loading="lazy"
-          />
+          <div className="relative w-full h-full">
+            <iframe
+              ref={iframeRef}
+              src={resolvedUrl}
+              title={game.title}
+              className="w-full h-full border-0 bg-black"
+              sandbox="allow-scripts allow-same-origin allow-pointer-lock"
+              allow="fullscreen; autoplay; gamepad; focus-without-user-activation"
+              loading="lazy"
+            />
+
+            {/* Placement C: In-game Banner Ad (Main Menu / Lobby / Shop / Level Selection - 728x90) */}
+            {showInGameBanner && isPlaying && !activeAd && (
+              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-25 w-[94%] max-w-2xl bg-slate-950/95 border-2 border-dashed border-amber-400 rounded-xl p-2 sm:p-2.5 shadow-2xl backdrop-blur-md flex items-center justify-between gap-3 text-white animate-in fade-in slide-in-from-bottom-2">
+                <div className="flex items-center gap-2.5 truncate">
+                  <span className="bg-amber-500 text-slate-950 text-[10px] font-mono font-black px-2 py-0.5 rounded uppercase tracking-wider shrink-0">
+                    [ IN-GAME BANNER AD ]
+                  </span>
+                  <div className="truncate text-left">
+                    <span className="text-xs font-bold text-white block truncate">
+                      HyperDrive Ultra X10 Wireless Gaming Headset — Zero Latency
+                    </span>
+                    <span className="text-[10px] text-amber-300 font-mono block truncate">
+                      Placement: Main menu, lobby, shop aur level selection screen par banner (728x90)
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <a
+                    href="https://example.com/hyperdrive"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-[11px] rounded-lg transition-all"
+                  >
+                    View Gear
+                  </a>
+                  <button
+                    onClick={() => setShowInGameBanner(false)}
+                    title="Close In-Game Banner"
+                    className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         )}
+
+        {/* Rewarded Ad Claimed Notification Toast */}
+        {rewardToast && (
+          <div className="absolute top-16 left-1/2 -translate-x-1/2 z-50 bg-emerald-500 text-slate-950 px-4 py-2 rounded-2xl shadow-2xl font-bold text-xs flex items-center gap-2 border-2 border-white animate-bounce">
+            <CheckCircle2 className="w-4 h-4 text-slate-950 shrink-0" />
+            <span>{rewardToast}</span>
+          </div>
+        )}
+      </div>
+
+      {/* ================= IN-GAME ADS INTERACTIVE TEST BAR ================= */}
+      <div className="bg-slate-950 border-t border-slate-800 px-4 py-3 text-xs text-slate-300 flex flex-col md:flex-row items-center justify-between gap-3 shadow-sm font-mono">
+        <div className="flex items-center gap-2 text-amber-400 font-bold text-[11px] uppercase tracking-wide">
+          <Tag className="w-4 h-4 text-amber-400 shrink-0" />
+          <span>In-Game Ad Testing Triggers (100x Deep Placements):</span>
+        </div>
+
+        <div className="flex items-center gap-2 flex-wrap justify-center">
+          <button
+            onClick={() => triggerManualAd('PREROLL')}
+            className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-semibold transition-colors cursor-pointer"
+          >
+            1. Pre-roll Ad (4-Step)
+          </button>
+          <button
+            onClick={() => triggerManualAd('INTERSTITIAL', 60)}
+            className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-semibold transition-colors cursor-pointer"
+          >
+            2. Midgame Skippable (10s)
+          </button>
+          <button
+            onClick={() => triggerManualAd('INTERSTITIAL', 200)}
+            className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-semibold transition-colors cursor-pointer"
+          >
+            3. Midgame Unskippable (3+ Min)
+          </button>
+          <button
+            onClick={() => triggerManualAd('REWARDED')}
+            className="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-semibold transition-colors cursor-pointer"
+          >
+            4. Rewarded Ad (Life/Coins)
+          </button>
+          <button
+            onClick={() => triggerManualAd('BONUS_REWARD')}
+            className="px-2.5 py-1 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 text-[11px] font-semibold transition-colors cursor-pointer"
+          >
+            5. Bonus Reward Ad (2x)
+          </button>
+          <button
+            onClick={() => setShowInGameBanner(!showInGameBanner)}
+            className="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-[11px] font-semibold transition-colors cursor-pointer"
+          >
+            {showInGameBanner ? 'Hide In-Game Banner' : 'Show In-Game Banner'}
+          </button>
+        </div>
       </div>
     </div>
   );

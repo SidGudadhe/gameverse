@@ -13,6 +13,9 @@ export async function GET(req: NextRequest) {
     const sessionToken = searchParams.get('sessionToken');
     const format = (searchParams.get('format') as AdFormat) || 'PREROLL';
     const activeSeconds = parseInt(searchParams.get('activeSeconds') || '0', 10);
+    const isRestart = searchParams.get('isRestart') === 'true' || searchParams.get('trigger') === 'restart' || searchParams.get('trigger') === 'game_over';
+    const isNextLevel = searchParams.get('isNextLevel') === 'true' || searchParams.get('trigger') === 'next_level';
+    const trigger = searchParams.get('trigger') || undefined;
 
     if (!gameId || !sessionToken) {
       return NextResponse.json(
@@ -21,9 +24,9 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    if (!['PREROLL', 'INTERSTITIAL', 'REWARDED'].includes(format)) {
+    if (!['PREROLL', 'INTERSTITIAL', 'REWARDED', 'BONUS_REWARD', 'BANNER'].includes(format)) {
       return NextResponse.json(
-        { error: 'Invalid ad format. Must be PREROLL, INTERSTITIAL, or REWARDED' },
+        { error: 'Invalid ad format. Must be PREROLL, INTERSTITIAL, REWARDED, BONUS_REWARD, or BANNER' },
         { status: 400 }
       );
     }
@@ -38,12 +41,17 @@ export async function GET(req: NextRequest) {
     const userAgent = req.headers.get('user-agent');
     const { isBot } = detectBot(userAgent);
 
+    const safeActiveSeconds = isNaN(activeSeconds) ? 0 : activeSeconds;
+
     const eligibility = checkAdEligibility({
       gameId,
       sessionToken,
       format,
-      activeSeconds: isNaN(activeSeconds) ? 0 : activeSeconds,
+      activeSeconds: safeActiveSeconds,
       isIvt: isBot,
+      isRestart,
+      isNextLevel,
+      trigger,
     });
 
     if (!eligibility.eligible) {
@@ -55,13 +63,15 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    const ad = getRandomAdCreative(format);
+    const ad = getRandomAdCreative(format, safeActiveSeconds);
 
     return NextResponse.json({
       eligible: true,
       format,
       ad,
       skipOffsetSeconds: ad.skipOffsetSeconds,
+      isUnskippable: Boolean(ad.isUnskippable || eligibility.isUnskippable),
+      placementText: ad.placementText,
     });
   } catch (error: any) {
     console.error('Error checking ad slot eligibility:', error);

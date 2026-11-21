@@ -5,6 +5,11 @@ export const AD_RATES: Record<AdFormat, { ecpm: number; ratePerImpression: numbe
   PREROLL: { ecpm: 4.5, ratePerImpression: 0.0045 },
   INTERSTITIAL: { ecpm: 6.0, ratePerImpression: 0.006 },
   REWARDED: { ecpm: 8.0, ratePerImpression: 0.008 },
+  BONUS_REWARD: { ecpm: 8.5, ratePerImpression: 0.0085 },
+  BANNER: { ecpm: 1.5, ratePerImpression: 0.0015 },
+  NATIVE: { ecpm: 2.5, ratePerImpression: 0.0025 },
+  DISPLAY: { ecpm: 2.0, ratePerImpression: 0.002 },
+  SPONSORED_LISTING: { ecpm: 3.0, ratePerImpression: 0.003 },
 };
 
 export const AD_CONFIG = {
@@ -12,8 +17,9 @@ export const AD_CONFIG = {
   STANDARD_CREATOR_SHARE_RATE: 0.5, // 50% net share for standard organic plays
   REFERRAL_CREATOR_SHARE_RATE: 0.7, // 70% net share for referral-attributed plays
   MIN_VIEW_DURATION_SECONDS: 3, // Minimum seconds to count as completed impression
-  INTERSTITIAL_COOLDOWN_SECONDS: 180, // 180 seconds active gameplay between interstitials
-  REWARDED_COOLDOWN_SECONDS: 60, // 60 seconds cooldown between rewarded ad requests
+  INTERSTITIAL_COOLDOWN_SECONDS: 180, // 180 seconds active gameplay threshold for unskippable
+  SKIPPABLE_OFFSET_SECONDS: 10, // Skip unlocks after 10 seconds for game over restart / early levels
+  REWARDED_COOLDOWN_SECONDS: 15, // 15 seconds cooldown between rewarded ad requests
 };
 
 export interface MockAdCreative {
@@ -26,7 +32,17 @@ export interface MockAdCreative {
   ctaUrl: string;
   imageUrl: string;
   durationSeconds: number;
-  skipOffsetSeconds: number; // 0 for rewarded (unskippable)
+  skipOffsetSeconds: number; // 0 for unskippable, 10 for skippable midgame, 3 for preroll
+  isUnskippable?: boolean;
+  placementText?: string;
+  rewardType?: 'EXTRA_LIFE' | 'COINS' | 'DOUBLE_REWARD' | 'NEXT_LIFE';
+  rewardLabel?: string;
+  stepFlow?: {
+    step1: string;
+    step2: string;
+    step3: string;
+    step4: string;
+  };
 }
 
 export const MOCK_AD_CREATIVES: MockAdCreative[] = [
@@ -84,13 +100,59 @@ export const MOCK_AD_CREATIVES: MockAdCreative[] = [
   },
 ];
 
-export function getRandomAdCreative(format: AdFormat): MockAdCreative {
+export function getRandomAdCreative(format: AdFormat, activeSeconds = 0): MockAdCreative {
   const randomIndex = Math.floor(Math.random() * MOCK_AD_CREATIVES.length);
-  const creative = { ...MOCK_AD_CREATIVES[randomIndex] };
-  if (format === 'REWARDED') {
+  const creative: MockAdCreative = { ...MOCK_AD_CREATIVES[randomIndex] };
+
+  if (format === 'PREROLL') {
+    creative.durationSeconds = 8;
+    creative.skipOffsetSeconds = 3; // Pre-roll runs through the 4-step sequence (3s skip threshold for tests)
+    creative.placementText = '[ PRE-ROLL AD: 1. Game Load -> 2. Video Ad -> 3. Ad Complete -> 4. Game Start ]';
+    creative.stepFlow = {
+      step1: '1. Game load hona start hota hai.',
+      step2: '2. Video advertisement show hota hai.',
+      step3: '3. Advertisement complete hota hai.',
+      step4: '4. Game start hota hai.',
+    };
+  } else if (format === 'INTERSTITIAL') {
+    // 3-minute rule:
+    // If game has been played for 3+ minutes (>= 180s), it is an UNSKIPPABLE ad!
+    // If under 3 minutes (e.g. game over restart / early level), it is SKIPPABLE after 10s!
+    if (activeSeconds >= AD_CONFIG.INTERSTITIAL_COOLDOWN_SECONDS) {
+      creative.isUnskippable = true;
+      creative.skipOffsetSeconds = 0;
+      creative.durationSeconds = 12;
+      creative.placementText = '[ IN-GAME AD: Midgame / Interstitial Unskippable Ad (3+ Min Gameplay Natural Break) ]';
+    } else {
+      creative.isUnskippable = false;
+      creative.skipOffsetSeconds = AD_CONFIG.SKIPPABLE_OFFSET_SECONDS; // Skip unlocked after 10s
+      creative.durationSeconds = 15;
+      creative.placementText = '[ IN-GAME AD: Midgame / Interstitial Skippable Ad (Skip available after 10s) ]';
+    }
+  } else if (format === 'REWARDED') {
+    creative.isUnskippable = true;
     creative.skipOffsetSeconds = 0; // Rewarded ads must be watched in full
     creative.durationSeconds = 15;
+    creative.rewardType = 'EXTRA_LIFE';
+    creative.rewardLabel = 'Extra Life / Revive + 100 In-Game Coins';
+    creative.placementText = '[ IN-GAME REWARDED AD: Extra Life / Revive / Bonus Coins Claim ]';
+  } else if (format === 'BONUS_REWARD') {
+    creative.isUnskippable = true;
+    creative.skipOffsetSeconds = 0;
+    creative.durationSeconds = 15;
+    creative.rewardType = 'DOUBLE_REWARD';
+    creative.rewardLabel = 'Level Complete 2x Multiplier & Bonus Coins';
+    creative.placementText = '[ IN-GAME BONUS REWARD AD: Level Complete 2x Reward Claim ]';
+  } else if (format === 'BANNER') {
+    creative.placementText = '[ IN-GAME BANNER AD: Main Menu / Lobby / Shop / Level Selection - 728x90 ]';
+  } else if (format === 'NATIVE') {
+    creative.placementText = '[ NATIVE AD: Sponsored Content In-Grid Promotion ]';
+  } else if (format === 'DISPLAY') {
+    creative.placementText = '[ DISPLAY AD: Website Display Advertisement ]';
+  } else if (format === 'SPONSORED_LISTING') {
+    creative.placementText = '[ SPONSORED LISTING: Top Search Partner Game ]';
   }
+
   return creative;
 }
 
@@ -137,8 +199,11 @@ export function checkAdEligibility(params: {
   format: AdFormat;
   activeSeconds?: number;
   isIvt?: boolean;
-}): { eligible: boolean; cooldownRemainingSeconds: number; reason?: string } {
-  const { sessionToken, format, activeSeconds = 0, isIvt = false } = params;
+  isRestart?: boolean;
+  isNextLevel?: boolean;
+  trigger?: 'restart' | 'next_level' | 'game_over' | 'periodic' | 'manual' | string;
+}): { eligible: boolean; cooldownRemainingSeconds: number; reason?: string; isUnskippable?: boolean } {
+  const { sessionToken, format, activeSeconds = 0, isIvt = false, isRestart, isNextLevel, trigger } = params;
 
   if (isIvt) {
     return {
@@ -148,7 +213,7 @@ export function checkAdEligibility(params: {
     };
   }
 
-  // PREROLL: Only 1 preroll permitted per session start
+  // PREROLL: 1 preroll per session start
   if (format === 'PREROLL') {
     const existingPreroll = gvDb.getRecentAdImpression(sessionToken, 'PREROLL');
     if (existingPreroll) {
@@ -161,8 +226,47 @@ export function checkAdEligibility(params: {
     return { eligible: true, cooldownRemainingSeconds: 0 };
   }
 
-  // INTERSTITIAL: 180 seconds active gameplay cooldown between impressions
+  // INTERSTITIAL (Midgame / Next Level / Game Over restart):
+  // Rules:
+  // 1. If restart / next level (second game / game over restart):
+  //    - If activeSeconds >= 180s (3+ mins): Unskippable ad!
+  //    - If activeSeconds < 180s (under 3 mins): Skippable ad after 10s!
+  // 2. If standard during-gameplay check without restart/next-level:
+  //    - Requires 180s active gameplay cooldown or minimum active playtime.
   if (format === 'INTERSTITIAL') {
+    const isRestartOrNextLevel = Boolean(
+      isRestart ||
+      isNextLevel ||
+      trigger === 'restart' ||
+      trigger === 'next_level' ||
+      trigger === 'game_over'
+    );
+
+    if (isRestartOrNextLevel) {
+      const isUnskippable = activeSeconds >= AD_CONFIG.INTERSTITIAL_COOLDOWN_SECONDS;
+
+      // Minimum 15-second spam protection between consecutive midgame calls
+      const existingInterstitial = gvDb.getRecentAdImpression(sessionToken, 'INTERSTITIAL');
+      if (existingInterstitial) {
+        const lastImpressionTime = new Date(existingInterstitial.createdAt).getTime();
+        const elapsedSeconds = Math.floor((Date.now() - lastImpressionTime) / 1000);
+        if (elapsedSeconds < 15) {
+          return {
+            eligible: false,
+            cooldownRemainingSeconds: 15 - elapsedSeconds,
+            reason: `Midgame cooldown active. Please wait ${15 - elapsedSeconds}s.`,
+          };
+        }
+      }
+
+      return {
+        eligible: true,
+        cooldownRemainingSeconds: 0,
+        isUnskippable,
+      };
+    }
+
+    // Standard during-gameplay interstitial (no restart / next-level trigger)
     const existingInterstitial = gvDb.getRecentAdImpression(sessionToken, 'INTERSTITIAL');
     if (existingInterstitial) {
       const lastImpressionTime = new Date(existingInterstitial.createdAt).getTime();
@@ -177,7 +281,6 @@ export function checkAdEligibility(params: {
         };
       }
     } else {
-      // If no interstitial was served yet, enforce minimum active gameplay time before first interstitial
       if (activeSeconds < AD_CONFIG.INTERSTITIAL_COOLDOWN_SECONDS) {
         const remaining = AD_CONFIG.INTERSTITIAL_COOLDOWN_SECONDS - activeSeconds;
         return {
@@ -187,12 +290,17 @@ export function checkAdEligibility(params: {
         };
       }
     }
-    return { eligible: true, cooldownRemainingSeconds: 0 };
+
+    return {
+      eligible: true,
+      cooldownRemainingSeconds: 0,
+      isUnskippable: true,
+    };
   }
 
-  // REWARDED: Optional, user-initiated, 60s cooldown between claims
-  if (format === 'REWARDED') {
-    const existingRewarded = gvDb.getRecentAdImpression(sessionToken, 'REWARDED');
+  // REWARDED & BONUS_REWARD: Optional, user-initiated
+  if (format === 'REWARDED' || format === 'BONUS_REWARD') {
+    const existingRewarded = gvDb.getRecentAdImpression(sessionToken, format);
     if (existingRewarded) {
       const lastImpressionTime = new Date(existingRewarded.createdAt).getTime();
       const elapsedSeconds = Math.floor((Date.now() - lastImpressionTime) / 1000);
@@ -204,7 +312,7 @@ export function checkAdEligibility(params: {
         };
       }
     }
-    return { eligible: true, cooldownRemainingSeconds: 0 };
+    return { eligible: true, cooldownRemainingSeconds: 0, isUnskippable: true };
   }
 
   return { eligible: true, cooldownRemainingSeconds: 0 };

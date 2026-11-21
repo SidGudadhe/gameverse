@@ -4,6 +4,7 @@ import { gvDb } from '@/lib/database';
 import HeroCarousel from '@/components/HeroCarousel';
 import GameCard from '@/components/GameCard';
 import AdaptiveRecommendations from '@/components/AdaptiveRecommendations';
+import WebAdBanner from '@/components/ads/WebAdBanner';
 import { Flame, Trophy, Sparkles, Gamepad2, ArrowRight } from 'lucide-react';
 
 export default function HomePage() {
@@ -29,6 +30,9 @@ export default function HomePage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-12">
+      {/* 1. HOMEPAGE TOP BANNER AD (Placement: Website header ke neeche) */}
+      <WebAdBanner placement="HOMEPAGE_TOP" />
+
       {/* Featured Hero Showcase */}
       <HeroCarousel featuredGames={featuredGames.length > 0 ? featuredGames : allGames} />
 
@@ -39,7 +43,7 @@ export default function HomePage() {
         limit={8}
       />
 
-      {/* Trending Games Section */}
+      {/* Trending Games Section (With 2. Homepage Middle Native Ad) */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -63,13 +67,18 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-5">
-          {trendingGames.slice(0, 6).map((game) => (
+          {trendingGames.slice(0, 2).map((game) => (
+            <GameCard key={`trend-${game.id}`} game={game} />
+          ))}
+          {/* 2. HOMEPAGE MIDDLE NATIVE AD (Placement: Games ke beech sponsored content) */}
+          <WebAdBanner placement="HOMEPAGE_MIDDLE_NATIVE" />
+          {trendingGames.slice(2, 5).map((game) => (
             <GameCard key={`trend-${game.id}`} game={game} />
           ))}
         </div>
       </section>
 
-      {/* Most Popular All Time */}
+      {/* Most Popular All Time (With 3. Homepage Sidebar Display Ad) */}
       <section className="space-y-4 pt-6 border-t border-slate-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -92,10 +101,16 @@ export default function HomePage() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-5">
-          {mostPlayedGames.slice(0, 6).map((game) => (
-            <GameCard key={`popular-${game.id}`} game={game} />
-          ))}
+        <div className="flex flex-col lg:flex-row gap-6 items-start">
+          <div className="flex-1 w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-5">
+            {mostPlayedGames.slice(0, 4).map((game) => (
+              <GameCard key={`popular-${game.id}`} game={game} />
+            ))}
+          </div>
+          {/* 3. HOMEPAGE SIDEBAR DISPLAY AD (Placement: Right-side advertisement) */}
+          <div className="w-full lg:w-[320px] shrink-0 flex justify-center">
+            <WebAdBanner placement="HOMEPAGE_SIDEBAR" />
+          </div>
         </div>
       </section>
 

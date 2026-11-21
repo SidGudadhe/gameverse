@@ -6,6 +6,7 @@ import { gvDb } from '@/lib/database';
 import GameCard from '@/components/GameCard';
 import GameActionBar from '@/components/GameActionBar';
 import AdaptiveRecommendations from '@/components/AdaptiveRecommendations';
+import WebAdBanner from '@/components/ads/WebAdBanner';
 import GameVerseLogo from '@/components/ui/GameVerseLogo';
 import { Star, ArrowLeft, Gamepad2, Info, ShieldCheck, Keyboard, MessageSquare, Loader2, User, Sparkles, Bot } from 'lucide-react';
 import { GameMood } from '@/types/recommendations';
@@ -154,6 +155,9 @@ export default function GamePage({ params }: GamePageProps) {
           thumbnailUrl={game.thumbnailUrl}
         />
       </div>
+
+      {/* 6. GAME DETAIL PAGE BANNER AD (Placement: Play button ke neeche) */}
+      <WebAdBanner placement="GAME_DETAIL_BANNER" />
 
       {/* 1. SIMILAR GAMES SUGGESTIONS (Directly below game player - Poki / CrazyGames Pattern) */}
       <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">

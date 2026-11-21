@@ -1,14 +1,28 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Volume2, VolumeX, ExternalLink, SkipForward, Award, ShieldCheck } from 'lucide-react';
+import {
+  Volume2,
+  VolumeX,
+  ExternalLink,
+  SkipForward,
+  Award,
+  ShieldCheck,
+  CheckCircle2,
+  Play,
+  Heart,
+  Coins,
+  Sparkles,
+  Layers,
+  Tag,
+} from 'lucide-react';
 import { MockAdCreative } from '../lib/ads';
 import { AdFormat } from '../types';
 
 interface AdOverlayProps {
   ad: MockAdCreative;
   format: AdFormat;
-  onAdComplete: (durationSeconds: number, skipped: boolean) => void;
+  onAdComplete: (durationSeconds: number, skipped: boolean, rewardClaimed?: string) => void;
   onAdClicked?: () => void;
 }
 
@@ -21,13 +35,23 @@ export default function AdOverlay({
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   const [hasClicked, setHasClicked] = useState(false);
+  const [selectedReward, setSelectedReward] = useState<'EXTRA_LIFE' | 'COINS' | 'DOUBLE_REWARD'>(
+    format === 'BONUS_REWARD' ? 'DOUBLE_REWARD' : 'EXTRA_LIFE'
+  );
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const totalDuration = ad.durationSeconds || 10;
-  const skipOffset = ad.skipOffsetSeconds;
-  const canSkip = skipOffset > 0 && elapsedSeconds >= skipOffset;
+  const totalDuration = ad.durationSeconds || (format === 'REWARDED' || format === 'BONUS_REWARD' ? 15 : 10);
+  const isUnskippable = Boolean(ad.isUnskippable || format === 'REWARDED' || format === 'BONUS_REWARD');
+  // If skippable, skip unlocks after ad.skipOffsetSeconds (10 seconds for midgame/restart)
+  const skipOffset = isUnskippable ? 0 : ad.skipOffsetSeconds || 10;
+  const canSkip = !isUnskippable && elapsedSeconds >= skipOffset;
   const remainingSeconds = Math.max(0, totalDuration - elapsedSeconds);
   const skipCountdown = Math.max(0, skipOffset - elapsedSeconds);
+
+  // Pre-roll 4-Step calculation
+  const isPreroll = format === 'PREROLL';
+  const prerollStep =
+    elapsedSeconds < 2 ? 1 : elapsedSeconds < totalDuration - 1 ? 2 : elapsedSeconds < totalDuration ? 3 : 4;
 
   useEffect(() => {
     timerRef.current = setInterval(() => {
@@ -35,7 +59,7 @@ export default function AdOverlay({
         const next = prev + 1;
         if (next >= totalDuration) {
           if (timerRef.current) clearInterval(timerRef.current);
-          onAdComplete(totalDuration, false);
+          onAdComplete(totalDuration, false, selectedReward);
           return totalDuration;
         }
         return next;
@@ -45,7 +69,7 @@ export default function AdOverlay({
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [totalDuration, onAdComplete]);
+  }, [totalDuration, onAdComplete, selectedReward]);
 
   const handleSkip = () => {
     if (!canSkip) return;
@@ -62,56 +86,189 @@ export default function AdOverlay({
   const progressPercent = Math.min(100, (elapsedSeconds / totalDuration) * 100);
 
   return (
-    <div className="absolute inset-0 z-40 flex flex-col justify-between bg-[#080B14]/95 backdrop-blur-md overflow-hidden animate-fade-in select-none">
+    <div className="absolute inset-0 z-40 flex flex-col justify-between bg-[#080B14]/95 backdrop-blur-md overflow-hidden animate-fade-in select-none text-white">
+      {/* ================= IDENTIFIABLE AD TEXT HEADER BAR ================= */}
+      <div className="bg-amber-500 text-slate-950 font-mono font-black text-[11px] sm:text-xs tracking-wider uppercase px-4 py-1.5 flex items-center justify-between shadow-md z-20">
+        <div className="flex items-center gap-2 truncate">
+          <Tag className="w-3.5 h-3.5 text-slate-950 shrink-0" />
+          <span className="truncate">
+            {ad.placementText || `[ IN-GAME AD: ${format} • Video Advertisement Placement ]`}
+          </span>
+        </div>
+        <span className="text-[10px] bg-slate-900 text-amber-300 font-bold px-2 py-0.5 rounded shrink-0">
+          {isUnskippable ? 'UNSKIPPABLE' : `SKIPPABLE AFTER ${skipOffset}s`}
+        </span>
+      </div>
+
       {/* Top Banner Control Bar */}
       <div className="relative z-10 flex items-center justify-between p-4 sm:p-5 bg-gradient-to-b from-black/80 to-transparent">
-        {/* Left: Ad attribution badge */}
-        <div className="flex items-center gap-2">
+        {/* Left: Ad attribution badge & status */}
+        <div className="flex items-center gap-2 flex-wrap">
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700/60 backdrop-blur-md text-[11px] font-medium text-slate-300">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-            <span className="font-semibold text-amber-300">Ad</span>
+            <span className="font-semibold text-amber-300">In-Game Video Ad</span>
             <span className="text-slate-500">•</span>
             <span>GameVerse Network</span>
           </div>
 
-          {format === 'REWARDED' && (
-            <div className="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-full bg-indigo-500/20 border border-indigo-500/40 text-[11px] font-semibold text-indigo-300">
-              <Award className="w-3.5 h-3.5 text-indigo-400" />
-              <span>Watch to claim bonus reward</span>
+          {(format === 'REWARDED' || format === 'BONUS_REWARD') && (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-[11px] font-semibold text-amber-300">
+              <Award className="w-3.5 h-3.5 text-amber-400" />
+              <span>{ad.rewardLabel || 'Watch in full to claim bonus rewards'}</span>
             </div>
           )}
         </div>
 
-        {/* Right: Audio mute & Skip button */}
+        {/* Right: Audio mute & Skip / Countdown Controls */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsMuted(!isMuted)}
             title={isMuted ? 'Unmute' : 'Mute'}
-            className="w-8 h-8 rounded-lg bg-black/60 hover:bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center border border-slate-700/60 transition-all"
+            className="w-8 h-8 rounded-lg bg-black/60 hover:bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center border border-slate-700/60 transition-all cursor-pointer"
           >
             {isMuted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4" />}
           </button>
 
           {/* Skip / Countdown Button */}
-          {format === 'REWARDED' ? (
-            <div className="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs font-mono text-slate-300">
-              Reward in <span className="font-bold text-amber-400">{remainingSeconds}s</span>
+          {isUnskippable ? (
+            <div className="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs font-mono text-slate-300 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+              <span>
+                {format === 'REWARDED' || format === 'BONUS_REWARD' ? 'Reward in' : 'Ad finishes in'}{' '}
+                <span className="font-bold text-amber-400">{remainingSeconds}s</span>
+              </span>
             </div>
           ) : canSkip ? (
             <button
               onClick={handleSkip}
-              className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-semibold text-xs shadow-lg shadow-indigo-600/30 transition-all active:scale-95 cursor-pointer animate-pulse"
+              className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-indigo-600 to-cyan-500 hover:from-amber-400 text-white font-bold text-xs shadow-lg shadow-indigo-600/30 transition-all active:scale-95 cursor-pointer animate-pulse border border-white/20"
             >
               <span>Skip Ad</span>
               <SkipForward className="w-3.5 h-3.5" />
             </button>
           ) : (
-            <div className="px-3.5 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800/80 text-xs text-slate-400 font-mono">
+            <div className="px-3.5 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-xs text-slate-400 font-mono">
               Skip in <span className="font-bold text-slate-200">{skipCountdown}s</span>
             </div>
           )}
         </div>
       </div>
+
+      {/* ================= PRE-ROLL 4-STEP SEQUENCE INDICATOR (User Explicit Requirement) ================= */}
+      {isPreroll && (
+        <div className="relative z-10 max-w-2xl mx-auto w-full px-4 mb-2">
+          <div className="bg-slate-900/90 border border-amber-400/60 rounded-2xl p-3 shadow-lg">
+            <div className="text-[10px] font-mono font-bold text-amber-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <Sparkles className="w-3 h-3 text-amber-400" />
+              <span>Pre-roll Ad 4-Step Sequence:</span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] font-medium">
+              {/* Step 1 */}
+              <div
+                className={`p-2 rounded-xl border flex items-center gap-1.5 transition-all ${
+                  prerollStep >= 1
+                    ? 'bg-emerald-950/60 border-emerald-500/60 text-emerald-300'
+                    : 'bg-slate-800/40 border-slate-700/40 text-slate-500'
+                }`}
+              >
+                <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-emerald-400" />
+                <span className="truncate">1. Game Load</span>
+              </div>
+
+              {/* Step 2 */}
+              <div
+                className={`p-2 rounded-xl border flex items-center gap-1.5 transition-all ${
+                  prerollStep === 2
+                    ? 'bg-amber-950/80 border-amber-400 text-amber-300 font-bold shadow-xs animate-pulse'
+                    : prerollStep > 2
+                    ? 'bg-emerald-950/60 border-emerald-500/60 text-emerald-300'
+                    : 'bg-slate-800/40 border-slate-700/40 text-slate-500'
+                }`}
+              >
+                <Play className="w-3.5 h-3.5 shrink-0 text-amber-400" />
+                <span className="truncate">2. Video Ad</span>
+              </div>
+
+              {/* Step 3 */}
+              <div
+                className={`p-2 rounded-xl border flex items-center gap-1.5 transition-all ${
+                  prerollStep === 3
+                    ? 'bg-amber-950/80 border-amber-400 text-amber-300 font-bold shadow-xs animate-pulse'
+                    : prerollStep > 3
+                    ? 'bg-emerald-950/60 border-emerald-500/60 text-emerald-300'
+                    : 'bg-slate-800/40 border-slate-700/40 text-slate-500'
+                }`}
+              >
+                <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-amber-400" />
+                <span className="truncate">3. Ad Complete</span>
+              </div>
+
+              {/* Step 4 */}
+              <div
+                className={`p-2 rounded-xl border flex items-center gap-1.5 transition-all ${
+                  prerollStep >= 4
+                    ? 'bg-emerald-950/80 border-emerald-400 text-emerald-300 font-bold shadow-xs'
+                    : 'bg-slate-800/40 border-slate-700/40 text-slate-500'
+                }`}
+              >
+                <Play className="w-3.5 h-3.5 shrink-0 text-emerald-400" />
+                <span className="truncate">4. Game Start</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= REWARDED AD CHOICE SELECTOR (User Requirement: Extra Life or Coins) ================= */}
+      {(format === 'REWARDED' || format === 'BONUS_REWARD') && (
+        <div className="relative z-10 max-w-xl mx-auto w-full px-4 mb-2">
+          <div className="bg-slate-900/90 border border-amber-500/60 rounded-2xl p-3 text-center shadow-lg">
+            <span className="text-[10px] font-mono text-amber-300 font-bold uppercase tracking-wider block mb-1.5">
+              Select Player In-Game Reward:
+            </span>
+            <div className="flex items-center justify-center gap-2">
+              <button
+                type="button"
+                onClick={() => setSelectedReward('EXTRA_LIFE')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                  selectedReward === 'EXTRA_LIFE'
+                    ? 'bg-rose-600 text-white shadow-sm ring-2 ring-rose-400'
+                    : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                }`}
+              >
+                <Heart className="w-3.5 h-3.5 fill-rose-400 text-rose-400" />
+                <span>Extra Life / Revive</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedReward('COINS')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                  selectedReward === 'COINS'
+                    ? 'bg-amber-500 text-slate-950 shadow-sm ring-2 ring-amber-300'
+                    : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                }`}
+              >
+                <Coins className="w-3.5 h-3.5 text-amber-400" />
+                <span>+100 Coins</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedReward('DOUBLE_REWARD')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                  selectedReward === 'DOUBLE_REWARD'
+                    ? 'bg-indigo-600 text-white shadow-sm ring-2 ring-indigo-400'
+                    : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-indigo-300" />
+                <span>2x XP Multiplier</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Center Simulated Ad Media Presentation */}
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-6 text-center max-w-xl mx-auto">
@@ -161,23 +318,23 @@ export default function AdOverlay({
       </div>
 
       {/* Bottom Progress Bar & Telemetry Footer */}
-      <div className="relative z-10 w-full bg-slate-950/80 border-t border-slate-800/80 px-4 py-2.5 flex items-center justify-between text-[11px] text-slate-500">
+      <div className="relative z-10 w-full bg-slate-950/90 border-t border-slate-800 px-4 py-2.5 flex items-center justify-between text-[11px] text-slate-400">
         <div className="flex items-center gap-2">
-          <span className="font-mono text-slate-400">
-            {format} AD {elapsedSeconds}s / {totalDuration}s
+          <span className="font-mono text-amber-300 font-bold">
+            {format} VIDEO AD &bull; {elapsedSeconds}s / {totalDuration}s
           </span>
         </div>
 
         {/* Animated Progress Track */}
         <div className="w-32 sm:w-48 h-1.5 bg-slate-800 rounded-full overflow-hidden mx-4">
           <div
-            className="h-full bg-gradient-to-r from-indigo-500 to-cyan-400 transition-all duration-300"
+            className="h-full bg-gradient-to-r from-amber-400 via-indigo-500 to-cyan-400 transition-all duration-300"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
 
-        <span className="hidden sm:inline text-slate-500 font-mono text-[10px]">
-          GameVerse Ads SDK v1.0
+        <span className="hidden sm:inline text-slate-400 font-mono text-[10px]">
+          GameVerse Ads SDK v2.0 • Double-Entry Ledger Integrated
         </span>
       </div>
     </div>

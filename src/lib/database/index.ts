@@ -29,6 +29,10 @@ import {
   GameReview,
   AuditLog,
   CookieConsentPreferences,
+  GameUploadSession,
+  GameFileManifest,
+  GameRollbackRecord,
+  GameStorageMetrics,
 } from '../../types';
 
 export type { AuditLog };
@@ -120,6 +124,10 @@ export interface DatabaseState {
   playerPayoutMethods: PlayerPayoutMethod[];
   playerPayoutRequests: PlayerPayoutRequest[];
   playerWallets?: PlayerWallet[];
+  uploadSessions?: GameUploadSession[];
+  manifests?: GameFileManifest[];
+  rollbackHistory?: GameRollbackRecord[];
+  storageMetrics?: GameStorageMetrics[];
 }
 
 const DATA_DIR = path.join(process.cwd(), '.data');
@@ -528,6 +536,10 @@ class GameVerseDatabase {
           playerPayoutRequests: parsed.playerPayoutRequests || INITIAL_DATABASE_STATE.playerPayoutRequests || [],
           playerWallets: parsed.playerWallets || INITIAL_DATABASE_STATE.playerWallets || [],
           financialRecords: parsed.financialRecords || INITIAL_DATABASE_STATE.financialRecords || [],
+          uploadSessions: parsed.uploadSessions || [],
+          manifests: parsed.manifests || [],
+          rollbackHistory: parsed.rollbackHistory || [],
+          storageMetrics: parsed.storageMetrics || [],
         };
 
         // Migration: Ensure usr-dev-1 has bankAccount, upi, studioVerified, and seed INR financial records
@@ -2093,6 +2105,114 @@ class GameVerseDatabase {
     this.state.playerPayoutRequests.unshift(request);
     this.persistState();
     return request;
+  }
+
+  // ================= UPLOAD SESSIONS =================
+  createUploadSession(sessionData: Partial<GameUploadSession> & {
+    gameId: string;
+    developerId: string;
+    fileName: string;
+  }): GameUploadSession {
+    const id = sessionData.id || `upl-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
+    const now = new Date().toISOString();
+    const session: GameUploadSession = {
+      id,
+      gameId: sessionData.gameId,
+      developerId: sessionData.developerId,
+      fileName: sessionData.fileName,
+      fileSizeBytes: sessionData.fileSizeBytes || 0,
+      status: sessionData.status || 'INITIALIZED',
+      uploadUrl: sessionData.uploadUrl || '',
+      storageKey: sessionData.storageKey || `games/${sessionData.gameId}/uploads/${id}.zip`,
+      expiresAt: sessionData.expiresAt || new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+      createdAt: now,
+      errorMessage: sessionData.errorMessage,
+    };
+    if (!this.state.uploadSessions) this.state.uploadSessions = [];
+    this.state.uploadSessions.push(session);
+    this.persistState();
+    return session;
+  }
+
+  getUploadSession(id: string): GameUploadSession | null {
+    if (!this.state.uploadSessions) return null;
+    return this.state.uploadSessions.find((s) => s.id === id) || null;
+  }
+
+  updateUploadSession(id: string, updates: Partial<GameUploadSession>): GameUploadSession | null {
+    if (!this.state.uploadSessions) this.state.uploadSessions = [];
+    const session = this.state.uploadSessions.find((s) => s.id === id);
+    if (!session) return null;
+    Object.assign(session, updates);
+    this.persistState();
+    return session;
+  }
+
+  // ================= GAME MANIFESTS =================
+  createManifest(manifestData: Omit<GameFileManifest, 'id' | 'createdAt'> & { id?: string }): GameFileManifest {
+    const id = manifestData.id || `mnf-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
+    const manifest: GameFileManifest = {
+      ...manifestData,
+      id,
+      createdAt: new Date().toISOString(),
+    };
+    if (!this.state.manifests) this.state.manifests = [];
+    this.state.manifests.push(manifest);
+    this.persistState();
+    return manifest;
+  }
+
+  getManifestByVersionId(versionId: string): GameFileManifest | null {
+    if (!this.state.manifests) return null;
+    return this.state.manifests.find((m) => m.versionId === versionId) || null;
+  }
+
+  // ================= ROLLBACK HISTORY =================
+  recordRollback(rollbackData: Omit<GameRollbackRecord, 'id' | 'createdAt'>): GameRollbackRecord {
+    const id = `rb-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
+    const record: GameRollbackRecord = {
+      ...rollbackData,
+      id,
+      createdAt: new Date().toISOString(),
+    };
+    if (!this.state.rollbackHistory) this.state.rollbackHistory = [];
+    this.state.rollbackHistory.push(record);
+    this.persistState();
+    return record;
+  }
+
+  getRollbackHistory(gameId?: string): GameRollbackRecord[] {
+    if (!this.state.rollbackHistory) return [];
+    if (gameId) {
+      return this.state.rollbackHistory.filter((r) => r.gameId === gameId);
+    }
+    return this.state.rollbackHistory;
+  }
+
+  // ================= STORAGE METRICS =================
+  getStorageMetrics(gameId: string): GameStorageMetrics | null {
+    if (!this.state.storageMetrics) return null;
+    return this.state.storageMetrics.find((m) => m.gameId === gameId) || null;
+  }
+
+  updateStorageMetrics(gameId: string, developerId: string, updates: Partial<GameStorageMetrics>): GameStorageMetrics {
+    if (!this.state.storageMetrics) this.state.storageMetrics = [];
+    let metrics = this.state.storageMetrics.find((m) => m.gameId === gameId);
+    if (!metrics) {
+      metrics = {
+        id: `stm-${gameId}`,
+        gameId,
+        developerId,
+        totalStorageBytes: 0,
+        totalAssetsCount: 0,
+        totalBandwidthBytesServed: 0,
+        lastCalculatedAt: new Date().toISOString(),
+      };
+      this.state.storageMetrics.push(metrics);
+    }
+    Object.assign(metrics, updates, { lastCalculatedAt: new Date().toISOString() });
+    this.persistState();
+    return metrics;
   }
 }
 

@@ -413,4 +413,87 @@ export interface CookieConsentPreferences {
   version: string;
 }
 
+// ================= GAME HOSTING, STORAGE & CDN TYPES =================
+
+export type StorageProviderType = 'cloudflare_r2' | 'aws_s3' | 'local_isolated';
+
+export interface StorageConfig {
+  provider: StorageProviderType;
+  bucket: string;
+  region?: string;
+  endpoint?: string;
+  accessKeyId?: string;
+  secretAccessKey?: string;
+  publicCdnDomain: string;
+  gameServingDomain: string;
+  enableHttps: boolean;
+  maxUploadSizeBytes: number;
+}
+
+export type UploadSessionStatus =
+  | 'INITIALIZED'
+  | 'UPLOADING'
+  | 'UPLOADED'
+  | 'PROCESSING'
+  | 'COMPLETED'
+  | 'FAILED'
+  | 'EXPIRED';
+
+export interface GameUploadSession {
+  id: string;
+  gameId: string;
+  developerId: string;
+  fileName: string;
+  fileSizeBytes: number;
+  status: UploadSessionStatus;
+  uploadUrl: string;
+  storageKey: string;
+  expiresAt: string;
+  createdAt: string;
+  errorMessage?: string;
+}
+
+export interface GameManifestEntry {
+  path: string;
+  sizeBytes: number;
+  sha256: string;
+  contentType: string;
+  storageKey: string;
+  cdnUrl: string;
+}
+
+export interface GameFileManifest {
+  id: string;
+  versionId: string;
+  gameId: string;
+  entryPoint: string;
+  files: GameManifestEntry[];
+  totalFilesCount: number;
+  totalSizeBytes: number;
+  manifestHash: string;
+  createdAt: string;
+}
+
+export interface GameRollbackRecord {
+  id: string;
+  gameId: string;
+  fromVersionId: string;
+  toVersionId: string;
+  triggeredBy: string;
+  triggeredByName: string;
+  triggeredByRole: UserRole;
+  reason: string;
+  createdAt: string;
+}
+
+export interface GameStorageMetrics {
+  id: string;
+  gameId: string;
+  developerId: string;
+  totalStorageBytes: number;
+  totalAssetsCount: number;
+  totalBandwidthBytesServed: number;
+  lastCalculatedAt: string;
+}
+
 

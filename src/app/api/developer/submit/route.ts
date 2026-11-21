@@ -4,6 +4,8 @@ import fs from 'fs';
 import { requireRole } from '@/lib/security/middleware';
 import { gvDb } from '@/lib/database';
 import { validateAndScanZip, extractArchiveSafely, computeSha256 } from '@/lib/security';
+import { gameverseStorage } from '@/lib/storage';
+import { scanAndValidateGameZip } from '@/lib/storage/scanner';
 import { AIDisclosure, Orientation } from '@/types';
 
 export async function POST(req: NextRequest) {
@@ -127,7 +129,26 @@ export async function POST(req: NextRequest) {
       suspiciousFilesDetected: [],
     };
 
-    if (tempUploadId) {
+    if (body.uploadSessionId) {
+      const session = gvDb.getUploadSession(body.uploadSessionId);
+      if (session) {
+        const storageObj = await gameverseStorage.getObject(session.storageKey);
+        if (storageObj && storageObj.body) {
+          const rawBuffer = storageObj.body;
+          archiveChecksum = computeSha256(rawBuffer);
+          archiveSizeBytes = rawBuffer.length;
+          const scan = scanAndValidateGameZip(rawBuffer, { customEntryPoint: 'index.html' });
+          if (!scan.passed) {
+            return NextResponse.json(
+              { success: false, error: 'Uploaded archive failed security validation.', scanResults: scan },
+              { status: 422 }
+            );
+          }
+          scanResults = scan;
+          extractArchiveSafely(rawBuffer, targetDir);
+        }
+      }
+    } else if (tempUploadId) {
       const stagingDir = path.join(process.cwd(), '.data', 'staging', tempUploadId);
       const rawZipPath = path.join(stagingDir, '__raw_build.zip');
 

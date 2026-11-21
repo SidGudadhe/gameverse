@@ -28,6 +28,9 @@ export default function GameSubmitPage() {
   // Build & File state
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStage, setUploadStage] = useState<'IDLE' | 'SESSION' | 'UPLOADING' | 'SCANNING' | 'COMPLETE' | 'FAILED'>('IDLE');
+  const [uploadSessionId, setUploadSessionId] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [scanResult, setScanResult] = useState<any>(null);
   const [tempUploadId, setTempUploadId] = useState<string | null>(null);
@@ -210,7 +213,7 @@ export default function GameSubmitPage() {
     setSlug(generated);
   };
 
-  // Real upload to /api/developer/upload
+  // Real Presigned Direct Upload & Security Scanning Pipeline
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0];
     if (!selected) return;
@@ -219,26 +222,105 @@ export default function GameSubmitPage() {
     setUploading(true);
     setUploadError(null);
     setScanResult(null);
-
-    const formData = new FormData();
-    formData.append('file', selected);
+    setUploadProgress(0);
+    setUploadStage('SESSION');
 
     try {
-      const res = await fetch('/api/developer/upload', {
+      // Step 1: Create Secure Presigned Upload Session
+      const sessionRes = await fetch('/api/developer/upload/session', {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fileName: selected.name,
+          fileSizeBytes: selected.size,
+          versionNumber: versionNumber || '1.0.0',
+        }),
       });
 
-      const data = await res.json();
-      if (!res.ok) {
-        setUploadError(data.error || 'Upload failed security scan.');
-        if (data.scanResult) setScanResult(data.scanResult);
+      const sessionData = await sessionRes.json();
+      if (!sessionRes.ok) {
+        throw new Error(sessionData.error || 'Failed to initialize upload session.');
+      }
+
+      setUploadSessionId(sessionData.session.id);
+      setUploadStage('UPLOADING');
+
+      // Step 2: Direct Upload with Real Progress Tracking
+      await new Promise<void>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('PUT', sessionData.uploadUrl);
+
+        if (sessionData.headers) {
+          Object.entries(sessionData.headers).forEach(([k, v]) => {
+            xhr.setRequestHeader(k, v as string);
+          });
+        }
+
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const percent = Math.round((event.loaded / event.total) * 100);
+            setUploadProgress(percent);
+          }
+        };
+
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            resolve();
+          } else {
+            reject(new Error(`Storage rejected upload with status ${xhr.status}`));
+          }
+        };
+
+        xhr.onerror = () => reject(new Error('Network error during upload.'));
+        xhr.send(selected);
+      });
+
+      setUploadProgress(100);
+      setUploadStage('SCANNING');
+
+      // Step 3: Deep Security Verification & Manifest Calculation
+      const processRes = await fetch('/api/developer/upload/process', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionId: sessionData.session.id,
+          versionNumber: versionNumber || '1.0.0',
+          entryPoint: 'index.html',
+        }),
+      });
+
+      const processData = await processRes.json();
+      if (!processRes.ok) {
+        setUploadStage('FAILED');
+        setUploadError(processData.error || 'Security verification failed.');
+        if (processData.scanResult) setScanResult(processData.scanResult);
       } else {
-        setScanResult(data.scanResult);
-        setTempUploadId(data.tempUploadId);
+        setUploadStage('COMPLETE');
+        setScanResult(processData.scanResult);
       }
     } catch (err: any) {
-      setUploadError(`Upload connection error: ${err.message}`);
+      // Graceful fallback to legacy /api/developer/upload if presigned fails
+      try {
+        const formData = new FormData();
+        formData.append('file', selected);
+        const res = await fetch('/api/developer/upload', {
+          method: 'POST',
+          body: formData,
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setUploadStage('FAILED');
+          setUploadError(data.error || 'Upload failed security scan.');
+          if (data.scanResult) setScanResult(data.scanResult);
+        } else {
+          setUploadStage('COMPLETE');
+          setScanResult(data.scanResult);
+          setTempUploadId(data.tempUploadId);
+        }
+      } catch (fallbackErr: any) {
+        setUploadStage('FAILED');
+        setUploadError(`Upload connection error: ${err.message}`);
+      }
     } finally {
       setUploading(false);
     }
@@ -279,6 +361,7 @@ export default function GameSubmitPage() {
         rightsConfirmed: true,
         prohibitedContentConfirmed: true,
         tempUploadId: tempUploadId || undefined,
+        uploadSessionId: uploadSessionId || undefined,
       };
 
       const res = await fetch('/api/developer/submit', {
@@ -624,7 +707,11 @@ export default function GameSubmitPage() {
                 <div>
                   <p className="text-sm font-semibold text-slate-900">
                     {uploading
-                      ? 'Scanning & staging archive...'
+                      ? uploadStage === 'SESSION'
+                        ? 'Creating secure upload session...'
+                        : uploadStage === 'UPLOADING'
+                        ? `Direct uploading to storage (${uploadProgress}%)...`
+                        : 'Scanning & verifying archive integrity...'
                       : file
                       ? file.name
                       : 'Choose or drag & drop game ZIP archive'}
@@ -636,12 +723,42 @@ export default function GameSubmitPage() {
               </div>
             </label>
 
+            {/* Live Upload Progress Bar */}
+            {uploading && (
+              <div className="space-y-1.5 p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
+                <div className="flex items-center justify-between text-xs font-semibold text-slate-700">
+                  <span className="flex items-center gap-1.5 text-indigo-700">
+                    <span className="inline-block w-2 h-2 rounded-full bg-indigo-600 animate-ping" />
+                    {uploadStage === 'SESSION'
+                      ? 'Generating Presigned Session...'
+                      : uploadStage === 'UPLOADING'
+                      ? 'Uploading bundle to Cloud Object Storage...'
+                      : 'Running Deep Security & Manifest Scan...'}
+                  </span>
+                  <span>{uploadProgress}%</span>
+                </div>
+                <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                  <div
+                    className="bg-gradient-to-r from-indigo-500 via-cyan-500 to-indigo-600 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
             {uploadError && (
               <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-3">
                 <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5 text-rose-600" />
-                <div>
+                <div className="space-y-1">
                   <p className="font-bold">Security Scan Rejected Archive</p>
                   <p>{uploadError}</p>
+                  {scanResult?.scanErrors && scanResult.scanErrors.length > 0 && (
+                    <ul className="list-disc pl-4 mt-1 space-y-0.5 text-rose-700">
+                      {scanResult.scanErrors.map((err: string, i: number) => (
+                        <li key={i}>{err}</li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               </div>
             )}
@@ -650,16 +767,16 @@ export default function GameSubmitPage() {
               <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs space-y-2">
                 <div className="flex items-center gap-2 font-bold text-emerald-700">
                   <CheckCircle className="w-4 h-4 text-emerald-600" />
-                  <span>Archive Verified & Scanned Successfully</span>
+                  <span>Archive Verified & Scanned Successfully (Cloud Stored)</span>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-emerald-200 text-slate-700 font-mono text-[11px]">
                   <div>
                     <span className="text-slate-500 block">Entry Point:</span>
-                    <span className="text-emerald-700 font-bold">index.html (OK)</span>
+                    <span className="text-emerald-700 font-bold">{scanResult.entryPoint || 'index.html'} (OK)</span>
                   </div>
                   <div>
                     <span className="text-slate-500 block">Files Count:</span>
-                    <span>{scanResult.extractedFilesCount} files</span>
+                    <span>{scanResult.totalFilesCount || scanResult.extractedFilesCount} files</span>
                   </div>
                   <div>
                     <span className="text-slate-500 block">Decompressed:</span>

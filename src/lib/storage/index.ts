@@ -355,6 +355,15 @@ export class GameverseStorageService {
   }
 
   /**
+   * Constructs the canonical storage key for a versioned game asset.
+   * e.g. games/game-001/versions/v1.0.0/index.html
+   */
+  public getGameAssetStorageKey(gameId: string, versionId: string, relativePath: string): string {
+    const cleanRel = relativePath.replace(/\\/g, '/').replace(/^\/+/, '');
+    return `games/${gameId}/versions/${versionId}/${cleanRel}`;
+  }
+
+  /**
    * Resolves the immutable public CDN URL for an asset.
    * e.g. https://cdn.gameverse.com/games/game-001/versions/v1/assets/main.wasm
    */
@@ -364,12 +373,26 @@ export class GameverseStorageService {
   }
 
   /**
+   * Resolves the direct CDN URL for a key. Alias of getPublicCdnUrl.
+   */
+  public getCdnUrl(key: string): string {
+    return this.getPublicCdnUrl(key);
+  }
+
+  /**
    * Resolves the stable, isolated player URL for an active game title.
    * Resolves to the game-serving domain (e.g. https://play.gameverse.com/game-001/)
    * Users playing this game load static assets directly from the CDN without touching the application server.
    */
   public getStableGameUrl(gameSlug: string): string {
     return `${this.config.gameServingDomain}/${gameSlug}/`;
+  }
+
+  /**
+   * Alias of getStableGameUrl
+   */
+  public getStableGamePlayerUrl(gameSlug: string): string {
+    return this.getStableGameUrl(gameSlug);
   }
 
   /**

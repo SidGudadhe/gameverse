@@ -2139,6 +2139,10 @@ class GameVerseDatabase {
     return this.state.uploadSessions.find((s) => s.id === id) || null;
   }
 
+  getUploadSessionById(id: string): GameUploadSession | null {
+    return this.getUploadSession(id);
+  }
+
   updateUploadSession(id: string, updates: Partial<GameUploadSession>): GameUploadSession | null {
     if (!this.state.uploadSessions) this.state.uploadSessions = [];
     const session = this.state.uploadSessions.find((s) => s.id === id);
@@ -2146,6 +2150,22 @@ class GameVerseDatabase {
     Object.assign(session, updates);
     this.persistState();
     return session;
+  }
+
+  updateUploadSessionStatus(
+    id: string,
+    status: GameUploadSession['status'],
+    metadata?: Record<string, any>
+  ): GameUploadSession | null {
+    const existing = this.getUploadSession(id);
+    const updatedMeta = metadata
+      ? { ...(existing?.metadata || {}), ...metadata }
+      : existing?.metadata;
+    return this.updateUploadSession(id, {
+      status,
+      metadata: updatedMeta,
+      completedAt: status === 'COMPLETED' ? new Date().toISOString() : undefined,
+    });
   }
 
   // ================= GAME MANIFESTS =================
@@ -2179,6 +2199,10 @@ class GameVerseDatabase {
     this.state.rollbackHistory.push(record);
     this.persistState();
     return record;
+  }
+
+  createRollbackRecord(rollbackData: Omit<GameRollbackRecord, 'id' | 'createdAt'>): GameRollbackRecord {
+    return this.recordRollback(rollbackData);
   }
 
   getRollbackHistory(gameId?: string): GameRollbackRecord[] {

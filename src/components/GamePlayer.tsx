@@ -71,13 +71,18 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
   isPlayingRef.current = isPlaying;
   isPausedRef.current = isPaused;
 
-  // Resolved sandbox runner route with optional isolated origin support (fallback to relative origin on local dev)
+  // Resolved sandbox runner route with Direct CDN Delivery support (offloading application server)
   const sandboxOrigin =
     typeof window !== 'undefined' && window.location.hostname === 'localhost' && window.location.port === '3000'
       ? ''
       : process.env.NEXT_PUBLIC_SANDBOX_ORIGIN || '';
+
+  const cdnBase = process.env.NEXT_PUBLIC_CDN_ORIGIN || '';
   const resolvedUrl =
-    sandboxUrl || `${sandboxOrigin}/api/sandbox/files/${game.id}/${game.currentVersionId || 'v1'}/index.html`;
+    sandboxUrl ||
+    (game as any).cdnUrl ||
+    (cdnBase ? `${cdnBase}/games/${game.id}/versions/${game.currentVersionId || 'v1'}/index.html` : '') ||
+    `${sandboxOrigin}/api/sandbox/files/${game.id}/${game.currentVersionId || 'v1'}/index.html`;
 
   // ================= TELEMETRY PING PIPELINE =================
   const sendTelemetryPing = useCallback(

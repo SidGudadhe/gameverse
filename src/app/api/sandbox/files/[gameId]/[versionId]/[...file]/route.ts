@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import path from 'path';
 import fs from 'fs';
+import { gameverseStorage, getContentTypeForPath } from '@/lib/storage';
+import { gvDb } from '@/lib/database';
 
 const MIME_TYPES: Record<string, string> = {
   '.html': 'text/html; charset=utf-8',
@@ -52,6 +54,31 @@ export async function GET(
     }
 
     if (!fs.existsSync(targetFile) || fs.statSync(targetFile).isDirectory()) {
+      // 1. Try fetching from Cloud Storage (R2 / S3 / Local driver)
+      try {
+        const ver = gvDb.getVersionById(versionId);
+        let cloudObj = await gameverseStorage.getObject(
+          gameverseStorage.getGameAssetStorageKey(gameId, versionId, relativePath)
+        );
+        if (!cloudObj && ver && ver.versionNumber !== versionId) {
+          cloudObj = await gameverseStorage.getObject(
+            gameverseStorage.getGameAssetStorageKey(gameId, ver.versionNumber, relativePath)
+          );
+        }
+
+        if (cloudObj && cloudObj.body) {
+          const headers = new Headers();
+          headers.set('Content-Type', cloudObj.contentType || getContentTypeForPath(relativePath));
+          headers.set('Content-Security-Policy', "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:;");
+          headers.set('X-Content-Type-Options', 'nosniff');
+          headers.set('Cache-Control', 'public, max-age=3600');
+          if (cloudObj.etag) headers.set('ETag', cloudObj.etag);
+          return new NextResponse(cloudObj.body, { status: 200, headers });
+        }
+      } catch {
+        // Fall back to placeholder if entry point, or 404
+      }
+
       // If the entry index.html is missing, render a friendly GameVerse placeholder rather than a black screen
       if (relativePath === 'index.html') {
         const placeholderHtml = `<!DOCTYPE html>
@@ -135,6 +162,8 @@ export async function GET(
         const headers = new Headers();
         headers.set('Content-Type', 'text/html; charset=utf-8');
         headers.set('Cache-Control', 'no-store');
+        headers.set('Content-Security-Policy', "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:;");
+        headers.set('X-Content-Type-Options', 'nosniff');
         return new NextResponse(placeholderHtml, { status: 200, headers });
       }
 

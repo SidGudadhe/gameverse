@@ -39,3 +39,5 @@ next-env.d.ts
 !/public/sandboxed-games/.gitkeep
 /.data/test_sandbox/
 /.data/staging/
+/.data/cloud_storage_bucket/
+/.data/games/

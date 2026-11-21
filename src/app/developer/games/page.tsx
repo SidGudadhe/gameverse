@@ -21,6 +21,15 @@ import {
   AlertCircle,
   FileCode,
   Shield,
+  History,
+  RotateCcw,
+  Sliders,
+  X,
+  Layers,
+  AlertTriangle,
+  UploadCloud,
+  CheckCircle,
+  RefreshCw,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -34,7 +43,39 @@ export default function MyGamesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  useEffect(() => {
+  // ================= MODAL STATE (IN-PAGE WORKFLOWS) =================
+  // 1. Game Versions & Rollback Modal
+  const [versionsModalGame, setVersionsModalGame] = useState<any | null>(null);
+  const [versionsList, setVersionsList] = useState<any[]>([]);
+  const [rollbackHistory, setRollbackHistory] = useState<any[]>([]);
+  const [loadingVersions, setLoadingVersions] = useState(false);
+  const [rollbackTarget, setRollbackTarget] = useState<any | null>(null);
+  const [rollbackReason, setRollbackReason] = useState('');
+  const [rollbackSubmitting, setRollbackSubmitting] = useState(false);
+  const [rollbackFeedback, setRollbackFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // 2. Update Build Modal
+  const [updateModalGame, setUpdateModalGame] = useState<any | null>(null);
+  const [updateVersionNum, setUpdateVersionNum] = useState('');
+  const [updateChangelog, setUpdateChangelog] = useState('');
+  const [updateFile, setUpdateFile] = useState<File | null>(null);
+  const [updateUploading, setUpdateUploading] = useState(false);
+  const [updateProgress, setUpdateProgress] = useState(0);
+  const [updateStage, setUpdateStage] = useState<'IDLE' | 'SESSION' | 'UPLOADING' | 'SCANNING' | 'COMPLETE' | 'FAILED'>('IDLE');
+  const [updateError, setUpdateError] = useState<string | null>(null);
+  const [updateScanResult, setUpdateScanResult] = useState<any | null>(null);
+  const [updateSuccessMsg, setUpdateSuccessMsg] = useState<string | null>(null);
+
+  // 3. Settings Modal
+  const [settingsModalGame, setSettingsModalGame] = useState<any | null>(null);
+  const [settingsTitle, setSettingsTitle] = useState('');
+  const [settingsDesc, setSettingsDesc] = useState('');
+  const [settingsControls, setSettingsControls] = useState('');
+  const [settingsOrientation, setSettingsOrientation] = useState('LANDSCAPE');
+  const [settingsSaving, setSettingsSaving] = useState(false);
+  const [settingsFeedback, setSettingsFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  const loadGames = () => {
     fetch('/api/developer/games')
       .then((res) => res.json())
       .then((data) => {
@@ -46,6 +87,10 @@ export default function MyGamesPage() {
       .finally(() => {
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    loadGames();
   }, []);
 
   const handleCopyLink = (game: any) => {
@@ -56,6 +101,233 @@ export default function MyGamesPage() {
     setTimeout(() => {
       setCopiedId((prev) => (prev === game.id ? null : prev));
     }, 2000);
+  };
+
+  // ================= VERSIONS & ROLLBACK HANDLERS =================
+  const openVersionsModal = async (game: any) => {
+    setVersionsModalGame(game);
+    setLoadingVersions(true);
+    setRollbackTarget(null);
+    setRollbackFeedback(null);
+    try {
+      const res = await fetch(`/api/developer/games/${game.id}/versions`);
+      const data = await res.json();
+      if (res.ok) {
+        setVersionsList(data.versions || []);
+        setRollbackHistory(data.rollbacks || []);
+      }
+    } catch (err) {
+      console.error('Error fetching versions:', err);
+    } finally {
+      setLoadingVersions(false);
+    }
+  };
+
+  const handleExecuteRollback = async () => {
+    if (!versionsModalGame || !rollbackTarget || !rollbackReason.trim()) return;
+    setRollbackSubmitting(true);
+    setRollbackFeedback(null);
+
+    try {
+      const res = await fetch(`/api/developer/games/${versionsModalGame.id}/rollback`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          targetVersionId: rollbackTarget.id,
+          reason: rollbackReason.trim(),
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setRollbackFeedback({ type: 'error', text: data.error || 'Rollback failed.' });
+      } else {
+        setRollbackFeedback({
+          type: 'success',
+          text: `Successfully rolled back to version ${rollbackTarget.versionNumber}! All users now receive this stable build.`,
+        });
+        setRollbackTarget(null);
+        setRollbackReason('');
+        // Refresh versions and games list
+        openVersionsModal(versionsModalGame);
+        loadGames();
+      }
+    } catch (err: any) {
+      setRollbackFeedback({ type: 'error', text: `Rollback network error: ${err.message}` });
+    } finally {
+      setRollbackSubmitting(false);
+    }
+  };
+
+  // ================= UPDATE BUILD HANDLERS =================
+  const openUpdateModal = (game: any) => {
+    setUpdateModalGame(game);
+    const existingVer = game.versionNumber || '1.0.0';
+    const parts = existingVer.split('.');
+    let nextMinor = '1.1.0';
+    if (parts.length === 3 && !isNaN(Number(parts[1]))) {
+      nextMinor = `${parts[0]}.${Number(parts[1]) + 1}.0`;
+    }
+    setUpdateVersionNum(nextMinor);
+    setUpdateChangelog('Optimized game asset loading, bug fixes, and stability improvements.');
+    setUpdateFile(null);
+    setUpdateUploading(false);
+    setUpdateProgress(0);
+    setUpdateStage('IDLE');
+    setUpdateError(null);
+    setUpdateScanResult(null);
+    setUpdateSuccessMsg(null);
+  };
+
+  const handleUpdateFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = e.target.files?.[0];
+    if (!selected || !updateModalGame) return;
+
+    setUpdateFile(selected);
+    setUpdateUploading(true);
+    setUpdateError(null);
+    setUpdateScanResult(null);
+    setUpdateProgress(0);
+    setUpdateStage('SESSION');
+
+    try {
+      // Step 1: Create Presigned Session
+      const sessionRes = await fetch('/api/developer/upload/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          gameId: updateModalGame.id,
+          fileName: selected.name,
+          fileSizeBytes: selected.size,
+          versionNumber: updateVersionNum,
+        }),
+      });
+
+      const sessionData = await sessionRes.json();
+      if (!sessionRes.ok) {
+        throw new Error(sessionData.error || 'Failed to initialize upload session.');
+      }
+
+      setUpdateStage('UPLOADING');
+
+      // Step 2: Upload to Cloud Storage
+      await new Promise<void>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('PUT', sessionData.uploadUrl);
+
+        if (sessionData.headers) {
+          Object.entries(sessionData.headers).forEach(([k, v]) => {
+            xhr.setRequestHeader(k, v as string);
+          });
+        }
+
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const percent = Math.round((event.loaded / event.total) * 100);
+            setUpdateProgress(percent);
+          }
+        };
+
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) resolve();
+          else reject(new Error(`Storage rejected upload with status ${xhr.status}`));
+        };
+
+        xhr.onerror = () => reject(new Error('Network error during upload to cloud storage.'));
+        xhr.send(selected);
+      });
+
+      setUpdateProgress(100);
+      setUpdateStage('SCANNING');
+
+      // Step 3: Deep Security Verification
+      const processRes = await fetch('/api/developer/upload/process', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionId: sessionData.session.id,
+          gameId: updateModalGame.id,
+          versionNumber: updateVersionNum,
+          entryPoint: 'index.html',
+        }),
+      });
+
+      const processData = await processRes.json();
+      if (!processRes.ok) {
+        setUpdateStage('FAILED');
+        setUpdateError(processData.error || 'Security verification rejected archive.');
+        if (processData.scanResult) setUpdateScanResult(processData.scanResult);
+      } else {
+        setUpdateStage('COMPLETE');
+        setUpdateScanResult(processData.scanResult);
+
+        // Step 4: Register new Version in catalog
+        const verRes = await fetch(`/api/developer/games/${updateModalGame.id}/versions`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            versionNumber: updateVersionNum,
+            changelog: updateChangelog,
+            entryPoint: 'index.html',
+            uploadSessionId: sessionData.session.id,
+          }),
+        });
+
+        const verData = await verRes.json();
+        if (!verRes.ok) {
+          setUpdateError(verData.error || 'Failed to register version in catalog.');
+        } else {
+          setUpdateSuccessMsg(`Version ${updateVersionNum} successfully processed, manifest registered, and submitted for QA review!`);
+          loadGames();
+        }
+      }
+    } catch (err: any) {
+      setUpdateStage('FAILED');
+      setUpdateError(`Upload workflow error: ${err.message}`);
+    } finally {
+      setUpdateUploading(false);
+    }
+  };
+
+  // ================= SETTINGS HANDLERS =================
+  const openSettingsModal = (game: any) => {
+    setSettingsModalGame(game);
+    setSettingsTitle(game.title || '');
+    setSettingsDesc(game.shortDescription || '');
+    setSettingsControls(game.controlsGuide || 'Keyboard & Mouse');
+    setSettingsOrientation(game.orientation || 'LANDSCAPE');
+    setSettingsFeedback(null);
+  };
+
+  const handleSaveSettings = async () => {
+    if (!settingsModalGame || !settingsTitle.trim()) return;
+    setSettingsSaving(true);
+    setSettingsFeedback(null);
+
+    try {
+      const res = await fetch(`/api/developer/games/${settingsModalGame.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: settingsTitle.trim(),
+          shortDescription: settingsDesc.trim(),
+          controlsGuide: settingsControls.trim(),
+          orientation: settingsOrientation,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setSettingsFeedback({ type: 'error', text: data.error || 'Failed to update settings.' });
+      } else {
+        setSettingsFeedback({ type: 'success', text: 'Game settings updated successfully.' });
+        loadGames();
+      }
+    } catch (err: any) {
+      setSettingsFeedback({ type: 'error', text: `Settings save error: ${err.message}` });
+    } finally {
+      setSettingsSaving(false);
+    }
   };
 
   const filteredGames = games.filter((g) => {
@@ -82,14 +354,14 @@ export default function MyGamesPage() {
             <div className="flex items-center gap-2">
               <span className="flex h-2 w-2 rounded-full bg-cyan-600" />
               <span className="text-[11px] font-bold text-cyan-600 uppercase tracking-wider">
-                Studio Games Catalog
+                Studio Games Catalog & Delivery
               </span>
             </div>
             <h1 className="font-heading font-black text-2xl sm:text-3xl text-slate-900 mt-1">
-              My Studio Games & Performance
+              My Studio Games & Versions
             </h1>
             <p className="text-slate-600 text-xs sm:text-sm mt-0.5">
-              Individual telemetry, playtime hours, revenue generated, and direct player links for every title.
+              Cloudflare R2 storage, edge CDN delivery, live version management, and instant rollback controls.
             </p>
           </div>
         </div>
@@ -132,7 +404,7 @@ export default function MyGamesPage() {
           <div className="font-heading font-black text-2xl text-indigo-600">
             {totalPlays.toLocaleString()}
           </div>
-          <span className="text-[10px] text-slate-400">Catalog-wide sessions</span>
+          <span className="text-[10px] text-slate-400">Edge CDN cached streams</span>
         </div>
 
         <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs space-y-1">
@@ -183,7 +455,7 @@ export default function MyGamesPage() {
         </div>
       </div>
 
-      {/* Games Detailed Grid (Separate Information for Each Game) */}
+      {/* Games Detailed Grid */}
       {filteredGames.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredGames.map((game) => {
@@ -206,7 +478,7 @@ export default function MyGamesPage() {
                     />
 
                     {/* Status Badge */}
-                    <div className="absolute top-3 left-3">
+                    <div className="absolute top-3 left-3 flex items-center gap-1.5">
                       <span
                         className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-lg border shadow-xs ${
                           game.status === 'PUBLISHED'
@@ -216,8 +488,14 @@ export default function MyGamesPage() {
                             : 'bg-slate-800 text-white border-slate-700'
                         }`}
                       >
-                        {game.status === 'PUBLISHED' ? 'Live in Catalog' : game.status}
+                        {game.status === 'PUBLISHED' ? 'Live on CDN' : game.status}
                       </span>
+
+                      {game.currentVersionId && (
+                        <span className="bg-slate-900/80 text-white text-[10px] font-mono font-bold px-2 py-0.5 rounded-md backdrop-blur-xs">
+                          {game.currentVersionId.replace(/^ver-[^-]+-/, 'v').replace(/_/g, '.')}
+                        </span>
+                      )}
                     </div>
 
                     {/* Category Pill */}
@@ -247,7 +525,6 @@ export default function MyGamesPage() {
 
                     {/* Separate Metric Grid for this Game */}
                     <div className="grid grid-cols-3 gap-2.5 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-center">
-                      {/* Metric 1: Playtime */}
                       <div className="space-y-0.5">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
                           Playtime
@@ -261,7 +538,6 @@ export default function MyGamesPage() {
                         </span>
                       </div>
 
-                      {/* Metric 2: Earnings */}
                       <div className="space-y-0.5 border-x border-slate-200">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
                           Earnings
@@ -274,7 +550,6 @@ export default function MyGamesPage() {
                         </span>
                       </div>
 
-                      {/* Metric 3: Performance */}
                       <div className="space-y-0.5">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
                           Performance
@@ -289,11 +564,11 @@ export default function MyGamesPage() {
                       </div>
                     </div>
 
-                    {/* Direct Playable Link Section (Requested by User) */}
+                    {/* Direct Playable Link */}
                     <div className="p-3 rounded-xl bg-indigo-50/60 border border-indigo-100 flex items-center justify-between gap-3 text-xs">
                       <div className="min-w-0 flex-1">
                         <span className="text-[10px] font-bold text-indigo-700 uppercase tracking-wider block">
-                          Direct Game URL:
+                          Direct CDN Game URL:
                         </span>
                         <a
                           href={`/game/${game.slug}`}
@@ -327,15 +602,27 @@ export default function MyGamesPage() {
                   </div>
                 </div>
 
-                {/* Bottom Action Footer */}
-                <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs">
-                  <Link
-                    href={`/developer/analytics/${game.id}`}
-                    className="text-slate-600 hover:text-indigo-600 font-semibold flex items-center gap-1"
-                  >
-                    <BarChart3 className="w-3.5 h-3.5" />
-                    <span>Analytics</span>
-                  </Link>
+                {/* Bottom Action Footer with Real Version Management & Update Actions */}
+                <div className="p-4 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => openVersionsModal(game)}
+                      className="text-slate-700 hover:text-indigo-600 font-semibold flex items-center gap-1.5 cursor-pointer bg-white px-2.5 py-1.5 rounded-lg border border-slate-200"
+                      title="Inspect version history, manifests, and rollback"
+                    >
+                      <History className="w-3.5 h-3.5 text-indigo-600" />
+                      <span>Versions & Rollback</span>
+                    </button>
+
+                    <button
+                      onClick={() => openSettingsModal(game)}
+                      className="text-slate-600 hover:text-slate-900 font-semibold flex items-center gap-1 cursor-pointer"
+                      title="Configure game metadata and settings"
+                    >
+                      <Sliders className="w-3.5 h-3.5" />
+                      <span>Settings</span>
+                    </button>
+                  </div>
 
                   <div className="flex items-center gap-2">
                     <Link
@@ -344,16 +631,16 @@ export default function MyGamesPage() {
                       className="bg-white hover:bg-slate-100 text-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 transition-colors flex items-center gap-1 font-semibold"
                     >
                       <ExternalLink className="w-3 h-3" />
-                      <span>Play Preview</span>
+                      <span>Play</span>
                     </Link>
 
-                    <Link
-                      href={`/developer/submit?edit=${game.id}`}
-                      className="bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-1.5 rounded-xl shadow-xs transition-colors flex items-center gap-1 font-semibold"
+                    <button
+                      onClick={() => openUpdateModal(game)}
+                      className="bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-1.5 rounded-xl shadow-xs transition-all active:scale-95 flex items-center gap-1.5 font-semibold cursor-pointer"
                     >
                       <Upload className="w-3.5 h-3.5" />
                       <span>Update Build</span>
-                    </Link>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -371,6 +658,436 @@ export default function MyGamesPage() {
             setSearchQuery('');
           }}
         />
+      )}
+
+      {/* ================= 1. VERSIONS & ROLLBACK MODAL ================= */}
+      {versionsModalGame && (
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
+          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 border border-slate-200 shadow-2xl space-y-6 my-8">
+            <div className="flex items-start justify-between border-b border-slate-200 pb-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-md uppercase">
+                    Version Management & Rollback
+                  </span>
+                </div>
+                <h3 className="font-heading font-black text-xl text-slate-900 mt-1">
+                  {versionsModalGame.title} — Builds History
+                </h3>
+                <p className="text-slate-500 text-xs">
+                  Every uploaded build is preserved immutably. Roll back to any prior version instantly.
+                </p>
+              </div>
+
+              <button
+                onClick={() => setVersionsModalGame(null)}
+                className="p-1.5 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {rollbackFeedback && (
+              <div
+                className={`p-3.5 rounded-xl text-xs flex items-start gap-2 ${
+                  rollbackFeedback.type === 'success'
+                    ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
+                    : 'bg-rose-50 border border-rose-200 text-rose-800'
+                }`}
+              >
+                {rollbackFeedback.type === 'success' ? (
+                  <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                ) : (
+                  <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                )}
+                <span>{rollbackFeedback.text}</span>
+              </div>
+            )}
+
+            {/* Versions List */}
+            {loadingVersions ? (
+              <div className="py-8 text-center text-slate-400 text-xs flex items-center justify-center gap-2">
+                <RefreshCw className="w-4 h-4 animate-spin text-indigo-600" />
+                <span>Loading version builds...</span>
+              </div>
+            ) : versionsList.length > 0 ? (
+              <div className="space-y-3">
+                <span className="text-xs font-bold text-slate-700 block">Available Builds:</span>
+                <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+                  {versionsList.map((ver) => {
+                    const isCurrent = ver.isCurrent;
+
+                    return (
+                      <div
+                        key={ver.id}
+                        className={`p-3.5 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs ${
+                          isCurrent
+                            ? 'bg-emerald-50/70 border-emerald-300 shadow-xs'
+                            : 'bg-slate-50 border-slate-200 hover:border-slate-300'
+                        }`}
+                      >
+                        <div className="space-y-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="font-heading font-black text-sm text-slate-900">
+                              v{ver.versionNumber}
+                            </span>
+                            {isCurrent && (
+                              <span className="bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                Currently Live on CDN
+                              </span>
+                            )}
+                            <span className="text-[10px] font-mono text-slate-500">
+                              {new Date(ver.createdAt).toLocaleDateString()}
+                            </span>
+                          </div>
+
+                          <p className="text-slate-600 text-xs truncate max-w-md">
+                            {ver.changelog || 'No release notes.'}
+                          </p>
+
+                          <div className="flex items-center gap-3 text-[11px] text-slate-500 font-mono">
+                            <span>Status: <strong className="text-slate-800">{ver.status}</strong></span>
+                            {ver.archiveChecksum && (
+                              <span className="truncate max-w-[120px]" title={ver.archiveChecksum}>
+                                SHA: {ver.archiveChecksum.substring(0, 8)}...
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          {isCurrent ? (
+                            <span className="text-emerald-700 font-bold text-xs flex items-center gap-1">
+                              <CheckCircle2 className="w-4 h-4" />
+                              <span>Active</span>
+                            </span>
+                          ) : (
+                            <button
+                              onClick={() => {
+                                setRollbackTarget(ver);
+                                setRollbackReason(`Rollback to v${ver.versionNumber} for gameplay stability.`);
+                              }}
+                              className="px-3 py-1.5 rounded-xl bg-white hover:bg-amber-50 text-amber-700 border border-amber-300 font-bold text-xs flex items-center gap-1 cursor-pointer transition-colors shadow-2xs"
+                            >
+                              <RotateCcw className="w-3.5 h-3.5" />
+                              <span>Rollback to this</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <p className="text-slate-500 text-xs">No version history records found.</p>
+            )}
+
+            {/* Inline Rollback Confirmation Dialog */}
+            {rollbackTarget && (
+              <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 space-y-3 animate-in fade-in">
+                <div className="flex items-center gap-2 font-bold text-amber-900 text-sm">
+                  <RotateCcw className="w-4 h-4 text-amber-600" />
+                  <span>Confirm Rollback to Version {rollbackTarget.versionNumber}</span>
+                </div>
+                <p className="text-xs text-amber-800">
+                  This action will atomically switch the live CDN player pointer to <strong>v{rollbackTarget.versionNumber}</strong>. Existing player sessions will complete safely and all new players will instantly receive this restored version.
+                </p>
+                <div>
+                  <label className="block text-[11px] font-bold text-amber-900 uppercase tracking-wider mb-1">
+                    Audit Rollback Reason (Mandatory):
+                  </label>
+                  <input
+                    type="text"
+                    value={rollbackReason}
+                    onChange={(e) => setRollbackReason(e.target.value)}
+                    placeholder="e.g. Critical regression on mobile WebGL controls, restoring stable v1.0.0"
+                    className="w-full bg-white border border-amber-300 rounded-xl px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-amber-600"
+                  />
+                </div>
+                <div className="flex items-center justify-end gap-2 pt-1">
+                  <button
+                    onClick={() => setRollbackTarget(null)}
+                    disabled={rollbackSubmitting}
+                    className="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-amber-100/50 cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleExecuteRollback}
+                    disabled={rollbackSubmitting || !rollbackReason.trim()}
+                    className="px-4 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold shadow-xs cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+                  >
+                    {rollbackSubmitting ? (
+                      <>
+                        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                        <span>Switching Pointer...</span>
+                      </>
+                    ) : (
+                      <>
+                        <RotateCcw className="w-3.5 h-3.5" />
+                        <span>Confirm & Roll Back Now</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Rollback Audit Trail */}
+            {rollbackHistory.length > 0 && (
+              <div className="space-y-2 border-t border-slate-200 pt-4 text-xs">
+                <span className="font-bold text-slate-700 block">Past Rollback Audit Log:</span>
+                <div className="space-y-1.5 max-h-36 overflow-y-auto font-mono text-[11px] text-slate-600">
+                  {rollbackHistory.map((r) => (
+                    <div key={r.id} className="p-2 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-between">
+                      <span>Restored to <strong>{r.toVersionId}</strong>: &quot;{r.reason}&quot;</span>
+                      <span className="text-slate-400 text-[10px]">{new Date(r.createdAt).toLocaleDateString()}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ================= 2. UPDATE BUILD MODAL ================= */}
+      {updateModalGame && (
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
+          <div className="bg-white rounded-3xl max-w-xl w-full p-6 border border-slate-200 shadow-2xl space-y-5 my-8">
+            <div className="flex items-start justify-between border-b border-slate-200 pb-4">
+              <div>
+                <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-md uppercase">
+                  Deploy Update
+                </span>
+                <h3 className="font-heading font-black text-xl text-slate-900 mt-1">
+                  Upload Update Build — {updateModalGame.title}
+                </h3>
+                <p className="text-slate-500 text-xs">
+                  Upload a new HTML5 ZIP package to create a new version without deleting the previous version.
+                </p>
+              </div>
+
+              <button
+                onClick={() => setUpdateModalGame(null)}
+                className="p-1.5 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {updateSuccessMsg && (
+              <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>{updateSuccessMsg}</span>
+              </div>
+            )}
+
+            {updateError && (
+              <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2">
+                <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-bold">Build Update Failed</p>
+                  <p>{updateError}</p>
+                </div>
+              </div>
+            )}
+
+            {!updateSuccessMsg && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      New SemVer Version:
+                    </label>
+                    <input
+                      type="text"
+                      value={updateVersionNum}
+                      onChange={(e) => setUpdateVersionNum(e.target.value)}
+                      placeholder="e.g. 1.1.0"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-mono focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Current Live Version:
+                    </label>
+                    <div className="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-600 font-mono">
+                      {updateModalGame.currentVersionId ? updateModalGame.currentVersionId.replace(/^ver-[^-]+-/, 'v').replace(/_/g, '.') : 'v1.0.0'}
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Release Notes / Changelog:
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={updateChangelog}
+                    onChange={(e) => setUpdateChangelog(e.target.value)}
+                    placeholder="Describe changes in this update..."
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-900 focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+
+                {/* Upload Zone */}
+                <div>
+                  <label className="block border-2 border-dashed border-slate-300 hover:border-indigo-400 rounded-2xl p-6 text-center cursor-pointer transition-colors bg-slate-50 hover:bg-slate-100/60">
+                    <input
+                      type="file"
+                      accept=".zip"
+                      onChange={handleUpdateFileSelect}
+                      className="hidden"
+                      disabled={updateUploading}
+                    />
+                    <div className="space-y-2">
+                      <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-200 mx-auto flex items-center justify-center">
+                        <UploadCloud className="w-5 h-5" />
+                      </div>
+                      <p className="text-xs font-semibold text-slate-900">
+                        {updateUploading
+                          ? `Uploading & Scanning (${updateProgress}%)...`
+                          : updateFile
+                          ? updateFile.name
+                          : 'Select new HTML5 game .zip file'}
+                      </p>
+                      <p className="text-[11px] text-slate-500">
+                        Direct multipart transfer to Cloudflare R2 object storage with deep ZIP verification.
+                      </p>
+                    </div>
+                  </label>
+                </div>
+
+                {/* Upload Progress Bar */}
+                {updateUploading && (
+                  <div className="space-y-1.5 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                    <div className="flex items-center justify-between font-semibold text-slate-700">
+                      <span className="text-indigo-600 flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-indigo-600 animate-ping inline-block" />
+                        {updateStage === 'UPLOADING' ? 'Streaming directly to cloud storage...' : 'Verifying build manifest & security...'}
+                      </span>
+                      <span>{updateProgress}%</span>
+                    </div>
+                    <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                      <div
+                        className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${updateProgress}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ================= 3. SETTINGS MODAL ================= */}
+      {settingsModalGame && (
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 border border-slate-200 shadow-2xl space-y-5 my-8">
+            <div className="flex items-start justify-between border-b border-slate-200 pb-4">
+              <div>
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                  Game Settings
+                </span>
+                <h3 className="font-heading font-black text-xl text-slate-900 mt-1">
+                  {settingsModalGame.title}
+                </h3>
+              </div>
+
+              <button
+                onClick={() => setSettingsModalGame(null)}
+                className="p-1.5 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {settingsFeedback && (
+              <div
+                className={`p-3.5 rounded-xl text-xs flex items-center gap-2 ${
+                  settingsFeedback.type === 'success'
+                    ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
+                    : 'bg-rose-50 border border-rose-200 text-rose-800'
+                }`}
+              >
+                {settingsFeedback.type === 'success' ? (
+                  <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                ) : (
+                  <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+                )}
+                <span>{settingsFeedback.text}</span>
+              </div>
+            )}
+
+            <div className="space-y-4 text-xs">
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Title:</label>
+                <input
+                  type="text"
+                  value={settingsTitle}
+                  onChange={(e) => setSettingsTitle(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Short Description:</label>
+                <textarea
+                  rows={2}
+                  value={settingsDesc}
+                  onChange={(e) => setSettingsDesc(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Orientation:</label>
+                  <select
+                    value={settingsOrientation}
+                    onChange={(e) => setSettingsOrientation(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
+                  >
+                    <option value="LANDSCAPE">Landscape</option>
+                    <option value="PORTRAIT">Portrait</option>
+                    <option value="ANY">Any / Responsive</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Controls Guide:</label>
+                  <input
+                    type="text"
+                    value={settingsControls}
+                    onChange={(e) => setSettingsControls(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
+                <button
+                  onClick={() => setSettingsModalGame(null)}
+                  className="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 font-semibold cursor-pointer"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={handleSaveSettings}
+                  disabled={settingsSaving}
+                  className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold cursor-pointer disabled:opacity-50"
+                >
+                  {settingsSaving ? 'Saving...' : 'Save Settings'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { gvDb } from '@/lib/database';
 import GameCard from '@/components/GameCard';
-import { User, Heart, Gamepad2, Sparkles, ArrowLeft, Calendar, Shield } from 'lucide-react';
+import { User, Heart, Gamepad2, Sparkles, Calendar, Shield } from 'lucide-react';
 
 interface PlayerProfilePageProps {
   params: {
@@ -30,16 +30,7 @@ export default function PlayerProfilePage({ params }: PlayerProfilePageProps) {
     : '2026';
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
-      {/* Back link */}
-      <Link
-        href="/"
-        className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 transition-colors"
-      >
-        <ArrowLeft className="w-3.5 h-3.5" />
-        <span>Back to Explore</span>
-      </Link>
-
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-8 space-y-6 animate-fade-in">
       {/* Hero Profile Card */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs relative overflow-hidden">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 relative z-10 text-center sm:text-left">

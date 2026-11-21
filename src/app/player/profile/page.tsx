@@ -7,7 +7,6 @@ import {
   Heart,
   History,
   Sparkles,
-  ArrowLeft,
   Calendar,
   Save,
   CheckCircle2,
@@ -242,17 +241,7 @@ export default function PlayerMyProfilePage() {
   const defaultAvatar = `https://api.dicebear.com/7.x/bottts/svg?seed=${username || 'gamer'}`;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
-      {/* Breadcrumb Navigation */}
-      <div className="flex items-center gap-2 text-xs text-slate-500">
-        <Link href="/" className="hover:text-slate-900 transition-colors flex items-center gap-1">
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Home</span>
-        </Link>
-        <span>/</span>
-        <span className="text-slate-800 font-medium">Gamer Profile</span>
-      </div>
-
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-8 space-y-6 animate-fade-in">
       {/* Header Banner */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs relative overflow-hidden">
         <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-indigo-500/5 via-cyan-400/5 to-transparent blur-3xl pointer-events-none" />

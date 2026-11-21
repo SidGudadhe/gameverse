@@ -5,7 +5,6 @@ import Link from 'next/link';
 import {
   Wallet,
   Lock,
-  ArrowLeft,
   CheckCircle2,
   Clock,
   Gamepad2,
@@ -465,17 +464,7 @@ export default function PlayerPayoutsPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 animate-fade-in text-slate-800">
-      {/* Breadcrumb Navigation */}
-      <div className="flex items-center gap-2 text-xs text-slate-500">
-        <Link href="/" className="hover:text-slate-900 transition-colors flex items-center gap-1">
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Home</span>
-        </Link>
-        <span>/</span>
-        <span className="text-slate-800 font-medium">Rewards & Payouts</span>
-      </div>
-
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-8 space-y-5 animate-fade-in text-slate-800">
       {/* Top Header & Platform Gateway Status */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
         <div>

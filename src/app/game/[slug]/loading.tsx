@@ -3,16 +3,7 @@ import GameVerseLogo from '@/components/ui/GameVerseLogo';
 
 export default function GameSlugLoading() {
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 animate-pulse">
-      {/* Breadcrumb Skeleton */}
-      <div className="flex items-center gap-2">
-        <div className="h-4 w-16 rounded bg-slate-200" />
-        <span className="text-slate-300">/</span>
-        <div className="h-4 w-24 rounded bg-slate-200" />
-        <span className="text-slate-300">/</span>
-        <div className="h-4 w-32 rounded bg-slate-200" />
-      </div>
-
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-8 space-y-4 animate-pulse">
       {/* Big Game Player Viewport Skeleton */}
       <div className="w-full aspect-video rounded-3xl bg-slate-100 border border-slate-200 flex flex-col items-center justify-center text-center p-6 shadow-sm relative overflow-hidden">
         <GameVerseLogo size="2xl" className="mb-3 animate-pulse shadow-lg shadow-indigo-500/20" />

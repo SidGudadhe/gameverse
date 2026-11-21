@@ -8,7 +8,7 @@ import GameActionBar from '@/components/GameActionBar';
 import AdaptiveRecommendations from '@/components/AdaptiveRecommendations';
 import WebAdBanner from '@/components/ads/WebAdBanner';
 import GameVerseLogo from '@/components/ui/GameVerseLogo';
-import { Star, ArrowLeft, Gamepad2, Info, ShieldCheck, Keyboard, MessageSquare, Loader2, User, Sparkles, Bot } from 'lucide-react';
+import { Star, Gamepad2, Info, ShieldCheck, Keyboard, MessageSquare, Loader2, User, Sparkles, Bot } from 'lucide-react';
 import { GameMood } from '@/types/recommendations';
 
 // Dynamic code-splitting for heavy client components
@@ -101,21 +101,7 @@ export default function GamePage({ params }: GamePageProps) {
   const referralToken = `cr_${game.developerId.replace(/[^a-zA-Z0-9]/g, '').substring(0, 8)}`;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-      {/* Clean Breadcrumb Navigation */}
-      <div className="flex items-center gap-2 text-xs text-slate-500">
-        <Link href="/" className="hover:text-slate-900 transition-colors flex items-center gap-1 font-medium">
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Home</span>
-        </Link>
-        <span>/</span>
-        <Link href={`/category/${game.categoryId}`} className="hover:text-slate-900 transition-colors font-medium">
-          {game.categoryName}
-        </Link>
-        <span>/</span>
-        <span className="text-slate-800 font-semibold truncate max-w-[200px]">{game.title}</span>
-      </div>
-
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-8 space-y-4">
       {/* Embedded Responsive Game Player Viewport */}
       <div className="relative">
         <GamePlayer game={game} />

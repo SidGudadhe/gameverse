@@ -2,14 +2,7 @@ import React from 'react';
 
 export default function PlayerLoading() {
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 animate-pulse">
-      {/* Breadcrumb Skeleton */}
-      <div className="flex items-center gap-2">
-        <div className="h-4 w-16 rounded bg-slate-200" />
-        <div className="h-3 w-3 rounded-full bg-slate-200" />
-        <div className="h-4 w-32 rounded bg-slate-200" />
-      </div>
-
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-8 space-y-6 animate-pulse">
       {/* Header Skeleton */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
         <div className="space-y-2">

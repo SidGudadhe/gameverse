@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Heart, Search, ArrowLeft, Gamepad2, Sparkles, Trash2, Play } from 'lucide-react';
+import { Heart, Search, Gamepad2, Sparkles, Trash2, Play } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import GameCard from '@/components/GameCard';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -73,17 +73,7 @@ export default function PlayerFavoritesPage() {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
-      {/* Breadcrumb Navigation */}
-      <div className="flex items-center gap-2 text-xs text-slate-500">
-        <Link href="/" className="hover:text-slate-900 transition-colors flex items-center gap-1">
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Home</span>
-        </Link>
-        <span>/</span>
-        <span className="text-slate-800 font-medium">Favorites</span>
-      </div>
-
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-8 space-y-6 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
         <div>

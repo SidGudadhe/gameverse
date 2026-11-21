@@ -23,6 +23,7 @@ import {
   CheckCircle2,
   ShieldCheck,
   ShieldAlert,
+  ExternalLink,
 } from 'lucide-react';
 import { Game, AdFormat } from '@/types';
 import AdOverlay from './AdOverlay';

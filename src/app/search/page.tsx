@@ -98,83 +98,31 @@ function SearchContent() {
   };
 
   return (
-    <div className="space-y-4">
-      {/* Header & Filter Controls */}
-      <div className="space-y-3 border-b border-slate-200 pb-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <Badge variant="cyan" size="sm">GLOBAL SEARCH</Badge>
-            <span className="text-xs text-slate-500 font-mono">
-              {totalCount} {totalCount === 1 ? 'game found' : 'games found'}
-            </span>
-          </div>
-          <h1 className="font-heading font-black text-xl sm:text-2xl text-slate-900 mt-0.5">
-            Discover & Search Games
-          </h1>
-          <p className="text-slate-500 text-xs mt-0.5">
-            Instant search across verified HTML5, WebGL, and WASM browser titles.
-          </p>
+    <div className="space-y-3 pt-2">
+      {/* Search Bar + Sort Control */}
+      <div className="flex items-center gap-2.5">
+        <div className="relative flex-1">
+          <SearchIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search by game title, mechanics, tags, or studio..."
+            className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-2xs"
+          />
         </div>
 
-        {/* Search Bar + Controls */}
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1">
-            <SearchIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by game title, mechanics, tags, or studio..."
-              className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-xs"
-            />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 shadow-xs"
-            >
-              <option value="all">All Categories</option>
-              <option value="cat-arcade">Arcade</option>
-              <option value="cat-action">Action</option>
-              <option value="cat-puzzle">Puzzle</option>
-              <option value="cat-strategy">Strategy</option>
-              <option value="cat-rpg">RPG</option>
-              <option value="cat-sports">Sports</option>
-              <option value="cat-casual">Casual</option>
-            </select>
-
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
-              className="bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 shadow-xs"
-            >
-              <option value="trending">Sort: Trending</option>
-              <option value="popular">Sort: Most Played</option>
-              <option value="top_rated">Sort: Top Rated</option>
-              <option value="newest">Sort: Newest</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Quick Tag Suggestion Chips */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none text-xs text-slate-500">
-          <span className="font-semibold text-slate-700">Popular:</span>
-          {POPULAR_TAGS.map((tag) => (
-            <button
-              key={tag}
-              onClick={() => setQuery(tag)}
-              className={`px-2.5 py-1 rounded-lg border transition-colors ${
-                query.toLowerCase() === tag.toLowerCase()
-                  ? 'bg-indigo-50 text-indigo-700 border-indigo-300 font-semibold'
-                  : 'bg-slate-100 border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-200'
-              }`}
-            >
-              {tag}
-            </button>
-          ))}
-        </div>
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value as any)}
+          aria-label="Sort games"
+          className="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 shadow-2xs shrink-0 cursor-pointer"
+        >
+          <option value="trending">Sort: Trending</option>
+          <option value="popular">Sort: Most Played</option>
+          <option value="top_rated">Sort: Top Rated</option>
+          <option value="newest">Sort: Newest</option>
+        </select>
       </div>
 
       {/* 5. SEARCH RESULTS SPONSORED LISTING (Placement: Search results mein sponsored game) */}

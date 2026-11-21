@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ExternalLink, Tag, ShieldCheck, Sparkles, X, Info } from 'lucide-react';
+import { ExternalLink, X, Shield, Info } from 'lucide-react';
 
 export type WebAdPlacement =
   | 'HOMEPAGE_TOP'
@@ -20,118 +20,167 @@ interface WebAdBannerProps {
 const PLACEMENT_CONFIG: Record<
   WebAdPlacement,
   {
-    tagText: string;
     format: string;
     dimensions: string;
-    exampleLocation: string;
     headline: string;
+    subtext: string;
     sponsor: string;
+    domain: string;
+    badge?: string;
     cta: string;
     ctaUrl: string;
     imageUrl: string;
   }
 > = {
   HOMEPAGE_TOP: {
-    tagText: '[ ADVERTISEMENT: Homepage Top Banner ]',
-    format: 'Banner',
+    format: 'Leaderboard',
     dimensions: '728x90 / 970x90',
-    exampleLocation: 'Website header ke neeche • Top Banner placement',
-    headline: 'HyperDrive Ultra X10 Wireless Gaming Headset — 7.1 Spatial Audio',
-    sponsor: 'HyperDrive Gear',
-    cta: 'Explore Gear',
-    ctaUrl: 'https://example.com/hyperdrive',
+    headline: 'Razer BlackShark V2 Pro — Wireless Esports Gaming Headset',
+    subtext: 'TriForce Titanium 50mm Drivers • Ultra-Wideband Mic • Zero-Latency Wireless',
+    sponsor: 'Razer Inc.',
+    domain: 'razer.com',
+    badge: 'Official Esports Choice',
+    cta: 'Shop Now',
+    ctaUrl: 'https://razer.com',
     imageUrl: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=400&q=80',
   },
   HOMEPAGE_MIDDLE_NATIVE: {
-    tagText: '[ SPONSORED CONTENT / NATIVE AD: Homepage Middle ]',
-    format: 'Native ad',
+    format: 'Native Sponsored Card',
     dimensions: 'In-Grid Game Card',
-    exampleLocation: 'Games ke beech sponsored content',
-    headline: 'CyberShield Gaming VPN — Zero Ping & Anti-DDoS Node Routing',
-    sponsor: 'Aegis Security',
-    cta: 'Play with Low Ping',
-    ctaUrl: 'https://example.com/cybershield',
+    headline: 'NordVPN — Stabilize Gaming Ping & Prevent ISP Bandwidth Throttling',
+    subtext: 'Direct fiber optic gaming nodes across 111 countries • 70% Off + 3 Months Free',
+    sponsor: 'NordVPN',
+    domain: 'nordvpn.com',
+    badge: 'DDoS Defense',
+    cta: 'Get 70% Off',
+    ctaUrl: 'https://nordvpn.com',
     imageUrl: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=400&q=80',
   },
   HOMEPAGE_SIDEBAR: {
-    tagText: '[ ADVERTISEMENT: Homepage Sidebar Display Ad ]',
-    format: 'Display ad',
-    dimensions: '300x250 Medium Rectangle',
-    exampleLocation: 'Right-side advertisement feed',
-    headline: 'Quantum Cloud AI Studio — Generative 3D Shaders & WebGL Tools',
-    sponsor: 'Quantum AI Systems',
-    cta: 'Try Free Studio',
-    ctaUrl: 'https://example.com/quantum',
-    imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=400&q=80',
+    format: 'Medium Rectangle',
+    dimensions: '300x250',
+    headline: 'Samsung Odyssey Neo G9 — 49" 240Hz Curved Gaming Monitor',
+    subtext: 'Quantum Mini-LED • 1000R Dual QHD • 1ms Response Time',
+    sponsor: 'Samsung Electronics',
+    domain: 'samsung.com',
+    badge: 'CES Award Winner',
+    cta: 'Explore Display',
+    ctaUrl: 'https://samsung.com',
+    imageUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=400&q=80',
   },
   CATEGORY_NATIVE: {
-    tagText: '[ SPONSORED CONTENT / NATIVE AD: Category Page ]',
-    format: 'Native ad',
-    dimensions: 'Category Listing Grid Card',
-    exampleLocation: 'Racing games listing ke beech native ad',
-    headline: 'PixelPulse Zero-Sugar Energy Drink — Esports Endurance',
-    sponsor: 'Pixel Labs Co.',
-    cta: 'Claim 20% Off',
-    ctaUrl: 'https://example.com/pixelpulse',
-    imageUrl: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=400&q=80',
+    format: 'Native Category Card',
+    dimensions: 'In-Grid Card',
+    headline: 'Spotify Premium — Game to High-Tempo Soundtracks with No Ads',
+    subtext: 'Millions of esports OSTs and synthwave tracks • Unlimited skips & offline playback',
+    sponsor: 'Spotify',
+    domain: 'spotify.com',
+    badge: 'Ad-Free OSTs',
+    cta: 'Try 3 Months Free',
+    ctaUrl: 'https://spotify.com',
+    imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=400&q=80',
   },
   SEARCH_SPONSORED: {
-    tagText: '[ SPONSORED LISTING: Search Results Partner Game ]',
-    format: 'Sponsored listing',
+    format: 'Sponsored Listing',
     dimensions: 'Featured Search Result',
-    exampleLocation: 'Search results list mein top sponsored game',
-    headline: 'Galaxy Odyssey 3D: Star Vanguard — Official Featured Release',
+    headline: 'Galaxy Odyssey 3D: Star Vanguard — Featured Action Release',
+    subtext: 'Explore planetary bases & pilot interstellar starfighters in real-time WebGL 3D',
     sponsor: 'Vanguard Interactive',
-    cta: 'Play Sponsored Game',
+    domain: 'gameverse.com',
+    badge: 'Featured Partner Game',
+    cta: 'Play Now (Free)',
     ctaUrl: '/game/galaxy-odyssey-3d',
-    imageUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=400&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1614680376593-902f749f7ffc?auto=format&fit=crop&w=400&q=80',
   },
   GAME_DETAIL_BANNER: {
-    tagText: '[ ADVERTISEMENT: Game Detail Page Banner ]',
-    format: 'Banner',
-    dimensions: '728x90 Leaderboard',
-    exampleLocation: 'Play button ke neeche banner ad placement',
-    headline: 'HyperDrive Ultra X10 Wireless Gaming Headset — Zero Latency Sound',
-    sponsor: 'HyperDrive Gear',
-    cta: 'Get 25% Off',
-    ctaUrl: 'https://example.com/hyperdrive',
-    imageUrl: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=400&q=80',
+    format: 'Leaderboard',
+    dimensions: '728x90',
+    headline: 'PlayStation 5 Pro — 4K 120FPS with Spectral Super Resolution',
+    subtext: 'Advanced Ray Tracing • DualSense Haptic Feedback • Ultra-Fast 2TB SSD',
+    sponsor: 'Sony PlayStation',
+    domain: 'playstation.com',
+    badge: 'Next-Gen Visuals',
+    cta: 'Discover PS5 Pro',
+    ctaUrl: 'https://playstation.com',
+    imageUrl: 'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=400&q=80',
   },
   FOOTER_DISPLAY: {
-    tagText: '[ ADVERTISEMENT: Footer Display Ad ]',
-    format: 'Display ad',
-    dimensions: '970x90 Super Leaderboard',
-    exampleLocation: 'Page ke bottom mein footer ke upar advertisement',
-    headline: 'Quantum Cloud AI & CyberShield Gaming Node Network',
-    sponsor: 'GameVerse Partner Network',
-    cta: 'Learn More',
-    ctaUrl: 'https://example.com/partners',
-    imageUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=400&q=80',
+    format: 'Super Leaderboard',
+    dimensions: '970x90',
+    headline: 'Discord Nitro — 4K 60FPS Streaming, 500MB Uploads & Soundboard Perks',
+    subtext: 'Level up your voice chat with custom animated emojis, avatars, and 2 Free Server Boosts',
+    sponsor: 'Discord',
+    domain: 'discord.com',
+    badge: 'Gamer Essential',
+    cta: 'Upgrade to Nitro',
+    ctaUrl: 'https://discord.com',
+    imageUrl: 'https://images.unsplash.com/photo-1614680376593-902f749f7ffc?auto=format&fit=crop&w=400&q=80',
   },
 };
 
 export default function WebAdBanner({ placement, className = '' }: WebAdBannerProps) {
   const config = PLACEMENT_CONFIG[placement];
   const [dismissed, setDismissed] = useState(false);
+  const [showAdChoicesInfo, setShowAdChoicesInfo] = useState(false);
 
   if (dismissed || !config) return null;
 
-  // 1. NATIVE AD IN GRIDS (Looks like a GameCard with clear SPONSORED tags)
+  // AdChoices Header helper
+  const renderAdChoicesHeader = () => (
+    <div className="relative flex items-center justify-between px-3 py-1 bg-black/40 border-b border-slate-800/60 text-[10px] text-slate-400 select-none">
+      <div className="flex items-center gap-1.5 font-sans">
+        <span className="bg-slate-800 text-slate-300 font-bold px-1.5 py-0.2 rounded text-[9px] border border-slate-700">
+          Ad
+        </span>
+        <span className="text-slate-400">•</span>
+        <span className="text-slate-300 font-medium">{config.sponsor}</span>
+        <span className="text-slate-500">({config.domain})</span>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            setShowAdChoicesInfo(!showAdChoicesInfo);
+          }}
+          title="AdChoices • Google Display Network Standard"
+          className="flex items-center gap-1 hover:text-white transition-colors cursor-pointer"
+        >
+          <svg className="w-2.5 h-2.5 text-cyan-400 fill-cyan-400" viewBox="0 0 16 16">
+            <polygon points="2,2 14,8 2,14" />
+          </svg>
+          <span className="font-semibold text-[9px]">AdChoices</span>
+        </button>
+        <button
+          onClick={() => setDismissed(true)}
+          title="Dismiss ad"
+          className="hover:text-white transition-colors cursor-pointer"
+        >
+          <X className="w-3 h-3" />
+        </button>
+      </div>
+
+      {showAdChoicesInfo && (
+        <div className="absolute right-2 top-full mt-1 w-60 bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-left shadow-2xl z-50 text-[11px] text-slate-300">
+          <p className="font-bold text-white mb-0.5 flex items-center gap-1">
+            <Info className="w-3 h-3 text-cyan-400" />
+            Ads by GameVerse Network
+          </p>
+          <p className="text-[10px] text-slate-400 leading-normal">
+            Targeted display advertising compliant with Google AdSense and IAB standard privacy guidelines.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+
+  // 1. NATIVE AD IN GRIDS (Homepage Middle & Category Page - Looks like a premium GameCard)
   if (placement === 'HOMEPAGE_MIDDLE_NATIVE' || placement === 'CATEGORY_NATIVE') {
     return (
       <div
-        className={`relative flex flex-col rounded-2xl overflow-hidden bg-gradient-to-b from-slate-900 to-indigo-950/90 text-white border-2 border-dashed border-amber-400/80 shadow-md group transition-all duration-300 hover:shadow-indigo-500/20 ${className}`}
+        className={`relative flex flex-col rounded-2xl overflow-hidden bg-slate-900/90 text-white border border-slate-800 shadow-md group transition-all duration-300 hover:shadow-indigo-500/20 hover:border-slate-700 ${className}`}
       >
-        {/* Top Explicit Identification Bar */}
-        <div className="bg-amber-500 text-slate-950 font-mono font-black text-[10px] tracking-wider uppercase px-3 py-1 flex items-center justify-between">
-          <div className="flex items-center gap-1.5 truncate">
-            <Tag className="w-3 h-3 text-slate-950" />
-            <span className="truncate">{config.tagText}</span>
-          </div>
-          <span className="text-[9px] bg-slate-900 text-amber-300 font-bold px-1.5 py-0.2 rounded">
-            {config.format}
-          </span>
-        </div>
+        {renderAdChoicesHeader()}
 
         {/* Thumbnail Artwork */}
         <div className="relative aspect-video w-full overflow-hidden bg-slate-800">
@@ -142,29 +191,33 @@ export default function WebAdBanner({ placement, className = '' }: WebAdBannerPr
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
           <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between">
-            <span className="text-[10px] font-bold text-amber-300 bg-black/70 px-2 py-0.5 rounded-md backdrop-blur-xs font-mono">
+            <span className="text-[9px] font-bold text-cyan-300 bg-black/80 border border-cyan-500/30 px-2 py-0.5 rounded-md backdrop-blur-xs font-sans tracking-wide">
               SPONSORED
             </span>
-            <span className="text-[10px] text-slate-300">{config.sponsor}</span>
+            {config.badge && (
+              <span className="text-[9px] font-medium text-slate-300 bg-black/60 px-2 py-0.5 rounded-md">
+                {config.badge}
+              </span>
+            )}
           </div>
         </div>
 
-        {/* Ad Copy */}
+        {/* Ad Copy & CTA */}
         <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
           <div>
-            <div className="text-[10px] font-mono text-amber-400 font-semibold mb-0.5">
-              {config.exampleLocation}
-            </div>
-            <h4 className="text-sm font-bold leading-snug line-clamp-2 text-white">
+            <h4 className="text-sm font-bold leading-snug line-clamp-2 text-white group-hover:text-cyan-300 transition-colors">
               {config.headline}
             </h4>
+            <p className="text-xs text-slate-400 mt-1 line-clamp-2 leading-relaxed">
+              {config.subtext}
+            </p>
           </div>
 
           <a
             href={config.ctaUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full py-2 px-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all active:scale-95 cursor-pointer"
+            className="w-full py-2.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-indigo-600/30 transition-all active:scale-95 cursor-pointer"
           >
             <span>{config.cta}</span>
             <ExternalLink className="w-3.5 h-3.5" />
@@ -178,118 +231,117 @@ export default function WebAdBanner({ placement, className = '' }: WebAdBannerPr
   if (placement === 'SEARCH_SPONSORED') {
     return (
       <div
-        className={`w-full p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-indigo-500/5 to-transparent border-2 border-dashed border-amber-500/60 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4 ${className}`}
+        className={`w-full rounded-2xl bg-slate-900/90 border border-slate-800 shadow-md overflow-hidden transition-all hover:border-slate-700 ${className}`}
       >
-        <div className="flex items-center gap-3.5">
-          <img
-            src={config.imageUrl}
-            alt=""
-            className="w-16 h-16 rounded-xl object-cover border border-amber-400/50 shadow-sm shrink-0"
-          />
-          <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="bg-amber-500 text-slate-950 font-mono font-black text-[10px] px-2 py-0.5 rounded uppercase tracking-wide">
-                {config.tagText}
-              </span>
-              <span className="text-[10px] font-mono text-slate-500 font-semibold">
-                {config.exampleLocation}
-              </span>
-            </div>
-            <h4 className="font-heading font-black text-slate-900 text-base mt-1">
-              {config.headline}
-            </h4>
-            <div className="text-xs text-slate-600 font-medium">
-              Promoted by <span className="font-semibold text-slate-900">{config.sponsor}</span>
+        {renderAdChoicesHeader()}
+
+        <div className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <img
+              src={config.imageUrl}
+              alt=""
+              className="w-16 h-16 rounded-xl object-cover border border-slate-700/80 shadow-sm shrink-0"
+            />
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="bg-cyan-500/20 text-cyan-300 font-bold text-[10px] px-2 py-0.5 rounded-full border border-cyan-500/30 uppercase tracking-wide">
+                  Sponsored Partner
+                </span>
+                {config.badge && (
+                  <span className="text-[11px] text-slate-400 font-medium">
+                    {config.badge}
+                  </span>
+                )}
+              </div>
+              <h4 className="font-heading font-black text-white text-base mt-1">
+                {config.headline}
+              </h4>
+              <p className="text-xs text-slate-400 mt-0.5 line-clamp-1">
+                {config.subtext}
+              </p>
             </div>
           </div>
-        </div>
 
-        <a
-          href={config.ctaUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="shrink-0 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95"
-        >
-          <span>{config.cta}</span>
-          <ExternalLink className="w-3.5 h-3.5" />
-        </a>
+          <a
+            href={config.ctaUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md shadow-indigo-600/30 flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+          >
+            <span>{config.cta}</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
+        </div>
       </div>
     );
   }
 
-  // 3. SIDEBAR DISPLAY AD (300x250)
+  // 3. SIDEBAR DISPLAY AD (300x250 Medium Rectangle)
   if (placement === 'HOMEPAGE_SIDEBAR') {
     return (
       <div
-        className={`w-full max-w-[320px] rounded-2xl bg-slate-900 text-white p-4 border-2 border-dashed border-amber-400/80 shadow-lg space-y-3 ${className}`}
+        className={`w-full max-w-[320px] rounded-2xl bg-slate-900/90 text-white border border-slate-800 shadow-lg overflow-hidden space-y-3 ${className}`}
       >
-        <div className="bg-amber-500 text-slate-950 font-mono font-black text-[10px] tracking-wider uppercase px-2.5 py-1 rounded flex items-center justify-between">
-          <span className="truncate">{config.tagText}</span>
-          <span>{config.dimensions}</span>
-        </div>
+        {renderAdChoicesHeader()}
 
-        <div className="text-[10px] font-mono text-amber-300 font-semibold">
-          {config.exampleLocation}
-        </div>
-
-        <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-800">
-          <img src={config.imageUrl} alt="" className="w-full h-full object-cover" />
-          <div className="absolute top-2 left-2 bg-black/80 text-[10px] font-mono text-amber-300 px-2 py-0.5 rounded">
-            ADVERTISEMENT
+        <div className="p-4 space-y-3 pt-1">
+          <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-800">
+            <img src={config.imageUrl} alt="" className="w-full h-full object-cover" />
+            <div className="absolute bottom-2 left-2 bg-black/70 text-[9px] font-sans text-white/90 px-2 py-0.5 rounded backdrop-blur-xs">
+              {config.dimensions}
+            </div>
           </div>
+
+          <h4 className="font-heading font-bold text-sm text-white leading-tight">
+            {config.headline}
+          </h4>
+
+          <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+            {config.subtext}
+          </p>
+
+          <a
+            href={config.ctaUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full py-2 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-indigo-600/30 transition-all active:scale-95 cursor-pointer"
+          >
+            <span>{config.cta}</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
         </div>
-
-        <h4 className="font-heading font-bold text-sm text-white leading-tight">
-          {config.headline}
-        </h4>
-
-        <div className="text-[11px] text-slate-400">
-          Sponsor: <span className="text-slate-200 font-semibold">{config.sponsor}</span>
-        </div>
-
-        <a
-          href={config.ctaUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-full py-2 px-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all active:scale-95"
-        >
-          <span>{config.cta}</span>
-          <ExternalLink className="w-3.5 h-3.5" />
-        </a>
       </div>
     );
   }
 
-  // 4. HORIZONTAL BANNERS (HOMEPAGE_TOP, GAME_DETAIL_BANNER, FOOTER_DISPLAY)
+  // 4. HORIZONTAL BANNERS (HOMEPAGE_TOP, GAME_DETAIL_BANNER, FOOTER_DISPLAY - Google Leaderboard Style)
   return (
     <div
-      className={`w-full rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-3.5 sm:p-4 border-2 border-dashed border-amber-400/80 shadow-md relative overflow-hidden transition-all ${className}`}
+      className={`w-full rounded-2xl bg-slate-900/90 text-white border border-slate-800 shadow-md relative overflow-hidden transition-all hover:border-slate-700 ${className}`}
     >
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 relative z-10">
-        {/* Left: Identifiable Ad Marker Tag */}
-        <div className="flex items-center gap-3">
+      {renderAdChoicesHeader()}
+
+      <div className="p-3.5 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-3 relative z-10">
+        {/* Left: Product Artwork & Copy */}
+        <div className="flex items-center gap-3.5 truncate">
           <div className="hidden sm:block w-12 h-12 rounded-xl overflow-hidden bg-slate-800 shrink-0 border border-slate-700">
             <img src={config.imageUrl} alt="" className="w-full h-full object-cover" />
           </div>
 
-          <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="bg-amber-500 text-slate-950 font-mono font-black text-[10px] px-2 py-0.5 rounded uppercase tracking-wider">
-                {config.tagText}
+          <div className="truncate text-left">
+            <div className="flex items-center gap-2">
+              <span className="font-heading font-bold text-sm sm:text-base text-white truncate">
+                {config.headline}
               </span>
-              <span className="text-[10px] font-mono text-amber-300 font-semibold">
-                Format: {config.format} ({config.dimensions})
-              </span>
+              {config.badge && (
+                <span className="hidden md:inline-flex text-[10px] font-medium text-cyan-300 bg-cyan-950/80 border border-cyan-500/30 px-2 py-0.5 rounded-full shrink-0">
+                  {config.badge}
+                </span>
+              )}
             </div>
-
-            <h4 className="font-heading font-bold text-sm sm:text-base text-white mt-1 leading-tight">
-              {config.headline}
-            </h4>
-            <div className="text-[11px] text-slate-400 flex items-center gap-2 mt-0.5">
-              <span>{config.exampleLocation}</span>
-              <span>•</span>
-              <span className="text-slate-300">Sponsor: {config.sponsor}</span>
-            </div>
+            <p className="text-xs text-slate-400 mt-0.5 truncate">
+              {config.subtext}
+            </p>
           </div>
         </div>
 
@@ -299,7 +351,7 @@ export default function WebAdBanner({ placement, className = '' }: WebAdBannerPr
             href={config.ctaUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all active:scale-95 cursor-pointer"
+            className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-indigo-600/30 transition-all active:scale-95 cursor-pointer"
           >
             <span>{config.cta}</span>
             <ExternalLink className="w-3.5 h-3.5" />

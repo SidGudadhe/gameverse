@@ -711,35 +711,43 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
               loading="lazy"
             />
 
-            {/* Placement C: In-game Banner Ad (Main Menu / Lobby / Shop / Level Selection - 728x90) */}
+            {/* Placement C: In-game Banner Ad (Google Display Network / IAB 728x90 Leaderboard Style) */}
             {showInGameBanner && isPlaying && !activeAd && (
-              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-25 w-[94%] max-w-2xl bg-slate-950/95 border-2 border-dashed border-amber-400 rounded-xl p-2 sm:p-2.5 shadow-2xl backdrop-blur-md flex items-center justify-between gap-3 text-white animate-in fade-in slide-in-from-bottom-2">
-                <div className="flex items-center gap-2.5 truncate">
-                  <span className="bg-amber-500 text-slate-950 text-[10px] font-mono font-black px-2 py-0.5 rounded uppercase tracking-wider shrink-0">
-                    [ IN-GAME BANNER AD ]
-                  </span>
+              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-25 w-[96%] max-w-3xl bg-slate-950/95 border border-slate-800/80 rounded-xl p-2 sm:p-2.5 shadow-2xl backdrop-blur-md flex items-center justify-between gap-3 text-white animate-in fade-in slide-in-from-bottom-2">
+                <div className="flex items-center gap-3 truncate">
+                  <img
+                    src="https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=120&q=80"
+                    alt="Razer Gaming Headset"
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover border border-slate-700/80 shrink-0"
+                  />
                   <div className="truncate text-left">
-                    <span className="text-xs font-bold text-white block truncate">
-                      HyperDrive Ultra X10 Wireless Gaming Headset — Zero Latency
-                    </span>
-                    <span className="text-[10px] text-amber-300 font-mono block truncate">
-                      Placement: Main menu, lobby, shop aur level selection screen par banner (728x90)
+                    <div className="flex items-center gap-2">
+                      <span className="text-[9px] bg-slate-800 text-slate-400 border border-slate-700 px-1.5 py-0.2 rounded font-sans font-semibold">
+                        Ad
+                      </span>
+                      <span className="text-xs sm:text-sm font-bold text-white truncate">
+                        Razer BlackShark V2 Pro — Wireless Esports Headset
+                      </span>
+                    </div>
+                    <span className="text-[11px] text-slate-400 block truncate font-sans">
+                      7.1 Spatial Audio • Zero-Latency 2.4GHz • Sponsor: razer.com
                     </span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <a
-                    href="https://example.com/hyperdrive"
+                    href="https://razer.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3 py-1 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-[11px] rounded-lg transition-all"
+                    className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-lg transition-all shadow-md shadow-indigo-600/30 flex items-center gap-1.5"
                   >
-                    View Gear
+                    <span>Shop Now</span>
+                    <ExternalLink className="w-3 h-3" />
                   </a>
                   <button
                     onClick={() => setShowInGameBanner(false)}
-                    title="Close In-Game Banner"
-                    className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white cursor-pointer"
+                    title="Close Ad"
+                    className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white cursor-pointer transition-colors"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
@@ -749,21 +757,18 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
 
             {/* ================= 3-SECOND RESUME COUNTDOWN OVERLAY ================= */}
             {reviveCountdown !== null && isPlaying && (
-              <div className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm animate-fade-in text-white select-none pointer-events-none">
-                <div className="text-center space-y-3">
-                  <div className="w-20 h-20 mx-auto rounded-full bg-rose-500/20 border-2 border-rose-400 flex items-center justify-center text-rose-400 shadow-xl shadow-rose-500/30">
+              <div className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-black/85 backdrop-blur-md animate-fade-in text-white select-none pointer-events-none">
+                <div className="text-center space-y-4">
+                  <div className="w-20 h-20 mx-auto rounded-full bg-rose-500/20 border-2 border-rose-400/80 flex items-center justify-center text-rose-400 shadow-2xl shadow-rose-500/30">
                     <Heart className="w-10 h-10 fill-rose-500 text-rose-400 animate-pulse" />
                   </div>
                   <h3 className="text-2xl sm:text-3xl font-black text-white tracking-wider uppercase">
                     Next Life Activated!
                   </h3>
-                  <p className="text-slate-300 text-xs sm:text-sm font-medium">
-                    Game wahin se continue ho raha hai:
-                  </p>
-                  <div className="text-6xl sm:text-7xl font-black font-mono text-amber-400 animate-ping">
+                  <div className="text-6xl sm:text-7xl font-black font-mono text-[#FFCC00] drop-shadow-lg">
                     {reviveCountdown}
                   </div>
-                  <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-cyan-950/90 border border-cyan-400/60 rounded-full text-xs font-mono text-cyan-300 shadow-md">
+                  <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-cyan-950/90 border border-cyan-400/60 rounded-full text-xs font-mono text-cyan-300 shadow-lg">
                     <ShieldCheck className="w-4 h-4 text-cyan-400" />
                     <span>3-Second Safe Shield Active</span>
                   </div>
@@ -774,43 +779,43 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
             {/* ================= IN-GAME GAME OVER & REWARDED AD OVERLAY ================= */}
             {gameOverModal && isPlaying && !activeAd && (
               <div className="absolute inset-0 z-35 flex flex-col items-center justify-center bg-black/85 backdrop-blur-md text-white p-6 animate-fade-in select-none">
-                <div className="max-w-md w-full bg-slate-900/95 border border-slate-700/80 rounded-3xl p-6 sm:p-8 shadow-2xl text-center space-y-5">
-                  <div className="w-16 h-16 mx-auto rounded-2xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400">
+                <div className="max-w-md w-full bg-slate-900/95 border border-slate-700/80 rounded-3xl p-6 sm:p-8 shadow-2xl text-center space-y-6">
+                  <div className="w-16 h-16 mx-auto rounded-2xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400 shadow-xl shadow-rose-500/20">
                     <Sparkles className="w-8 h-8 text-rose-400 animate-pulse" />
                   </div>
 
                   <div>
-                    <h3 className="text-2xl font-black text-white tracking-wide uppercase">
+                    <h3 className="text-3xl font-black text-white tracking-wide uppercase">
                       Game Over
                     </h3>
-                    <p className="text-slate-400 text-sm mt-1">
-                      Final Score: <span className="text-amber-400 font-mono font-bold text-lg">{gameOverModal.score}</span>
+                    <p className="text-slate-400 text-sm mt-1.5">
+                      Final Score: <span className="text-[#FFCC00] font-mono font-bold text-xl">{gameOverModal.score}</span>
                     </p>
                   </div>
 
-                  <div className="space-y-3 pt-2">
+                  <div className="space-y-3 pt-1">
                     {/* OPTION 1: REWARDED AD (NEXT LIFE - USER RULE: 1 TIME PER GAME LIMIT) */}
                     {!hasRevivedInRun ? (
-                      <div className="space-y-1">
+                      <div className="space-y-1.5">
                         <button
                           onClick={handleAutomaticRewarded}
-                          className="w-full group py-3.5 px-4 rounded-2xl bg-gradient-to-r from-rose-500 via-amber-500 to-amber-600 hover:from-rose-400 hover:to-amber-500 text-slate-950 font-black text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-lg shadow-rose-500/25 transition-all transform hover:-translate-y-0.5 active:scale-95 cursor-pointer"
+                          className="w-full group py-3.5 px-4 rounded-2xl bg-gradient-to-r from-rose-500 via-amber-500 to-amber-600 hover:from-rose-400 hover:to-amber-500 text-slate-950 font-black text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-xl shadow-rose-500/25 transition-all transform hover:-translate-y-0.5 active:scale-95 cursor-pointer"
                         >
                           <Heart className="w-5 h-5 text-slate-950 fill-rose-700 group-hover:scale-110 transition-transform" />
                           <span>Next Life (Continue Game) — Watch Short Ad</span>
                         </button>
-                        <p className="text-[10px] text-amber-300 font-medium">
+                        <p className="text-[11px] text-amber-300 font-medium">
                           ⚡ 1 Next Life per game run • 3-Second Safe Shield included
                         </p>
                       </div>
                     ) : (
-                      <div className="py-3 px-4 rounded-2xl bg-slate-800/90 border border-slate-700 text-center space-y-1">
+                      <div className="py-3 px-4 rounded-2xl bg-slate-800/80 border border-slate-700/80 text-center space-y-1">
                         <div className="flex items-center justify-center gap-2 text-amber-400 font-bold text-xs">
                           <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0" />
                           <span>Next Life Limit Reached (1 Max Per Game)</span>
                         </div>
                         <p className="text-[11px] text-slate-400">
-                          Aap is game me 1 Next Life le chuke hain. Dobara khelne ke liye restart karein.
+                          Revive limit used for this run. Play again below to start a new game!
                         </p>
                       </div>
                     )}
@@ -828,10 +833,6 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
                       <span>Play Again / Restart Game</span>
                     </button>
                   </div>
-
-                  <p className="text-[11px] text-slate-400 font-mono">
-                    💡 Next level / Second game: Ads automatically play based on playtime cooldown.
-                  </p>
                 </div>
               </div>
             )}

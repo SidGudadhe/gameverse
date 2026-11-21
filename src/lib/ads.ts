@@ -26,11 +26,15 @@ export interface MockAdCreative {
   id: string;
   title: string;
   sponsorName: string;
+  domain?: string;
+  rating?: number;
+  badge?: string;
   headline: string;
   description: string;
   ctaText: string;
   ctaUrl: string;
   imageUrl: string;
+  videoUrl?: string;
   durationSeconds: number;
   skipOffsetSeconds: number; // 0 for unskippable, 10 for skippable midgame, 3 for preroll
   isUnskippable?: boolean;
@@ -47,54 +51,98 @@ export interface MockAdCreative {
 
 export const MOCK_AD_CREATIVES: MockAdCreative[] = [
   {
-    id: 'cr-hyperdrive',
-    title: 'HyperDrive Ultra X10',
-    sponsorName: 'HyperDrive Gear',
-    headline: 'Next-Gen Wireless Low Latency Gaming Headset',
+    id: 'cr-razer-blackshark',
+    title: 'Razer BlackShark V2 Pro',
+    sponsorName: 'Razer Inc.',
+    domain: 'razer.com',
+    rating: 4.9,
+    badge: 'Pro Esports Audio',
+    headline: 'Razer BlackShark V2 Pro — Wireless Esports Gaming Headset',
     description:
-      'Immerse in 7.1 spatial audio with lossless 2.4GHz ultra-low latency connection. Engineered for competitive pro gaming.',
+      'Engineered with TriForce Titanium 50mm drivers and ultra-wideband microphone. Zero-latency 2.4GHz wireless audio built for competitive champions.',
     ctaText: 'Shop Now',
-    ctaUrl: 'https://example.com/hyperdrive',
+    ctaUrl: 'https://razer.com',
     imageUrl: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=800&q=80',
     durationSeconds: 10,
     skipOffsetSeconds: 3,
   },
   {
-    id: 'cr-quantum-cloud',
-    title: 'Quantum Cloud AI Studio',
-    sponsorName: 'Quantum AI Systems',
-    headline: 'Generate Real-Time 3D Shaders & WebGL Worlds',
+    id: 'cr-samsung-odyssey',
+    title: 'Samsung Odyssey Neo G9',
+    sponsorName: 'Samsung Electronics',
+    domain: 'samsung.com',
+    rating: 4.8,
+    badge: 'Dual QHD Ultra-Wide',
+    headline: 'Samsung Odyssey Neo G9 — 49" 240Hz Curved Gaming Monitor',
     description:
-      'Empower your indie studio with generative asset pipelines, automated physics rigging, and instant CDN deployment.',
-    ctaText: 'Start Free Trial',
-    ctaUrl: 'https://example.com/quantum',
-    imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
+      'Immerse deeper with Quantum Mini-LED technology, 1000R curved display, and 1ms response time for boundary-pushing esports visuals.',
+    ctaText: 'Explore Display',
+    ctaUrl: 'https://samsung.com',
+    imageUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80',
     durationSeconds: 12,
     skipOffsetSeconds: 3,
   },
   {
-    id: 'cr-pixel-cola',
-    title: 'PixelPulse Energy Drink',
-    sponsorName: 'Pixel Labs Co.',
-    headline: 'Zero Sugar, Pure Focus & Natural Electrolytes',
+    id: 'cr-spotify-premium',
+    title: 'Spotify Premium for Gamers',
+    sponsorName: 'Spotify',
+    domain: 'spotify.com',
+    rating: 4.9,
+    badge: 'Ad-Free Gaming Playlists',
+    headline: 'Spotify Premium — Game to High-Tempo Soundtracks with No Ads',
     description:
-      'Formulated specifically for esports endurance. Zero crash, zero sugar, infused with neuro-vitamins for lightning reaction times.',
-    ctaText: 'Claim 20% Off',
-    ctaUrl: 'https://example.com/pixelpulse',
-    imageUrl: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=80',
+      'Millions of gaming OSTs, synthwave tracks, and lo-fi beats in crystal-clear audio. Unlimited skips and zero ad interruptions while gaming.',
+    ctaText: 'Try 3 Months Free',
+    ctaUrl: 'https://spotify.com',
+    imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
     durationSeconds: 8,
     skipOffsetSeconds: 3,
   },
   {
-    id: 'cr-cyber-shield',
-    title: 'CyberShield Gaming VPN',
-    sponsorName: 'Aegis Security',
-    headline: 'Eliminate Packet Loss & Protect Against DDoS',
+    id: 'cr-nord-vpn',
+    title: 'NordVPN Gaming Shield',
+    sponsorName: 'Nord Security',
+    domain: 'nordvpn.com',
+    rating: 4.9,
+    badge: 'DDoS Defense & Stable Ping',
+    headline: 'NordVPN — Stabilize Gaming Ping & Prevent ISP Bandwidth Throttling',
     description:
-      'Direct fiber optic gaming nodes across 90 countries. Stabilize your ping and safeguard your connection 24/7.',
-    ctaText: 'Protect Your Ping',
-    ctaUrl: 'https://example.com/cybershield',
+      'Next-gen NordLynx protocol with 6,400+ servers globally. Eliminate latency spikes and shield your home IP from competitive DDoS attacks.',
+    ctaText: 'Get 70% Off + 3 Mo',
+    ctaUrl: 'https://nordvpn.com',
     imageUrl: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80',
+    durationSeconds: 10,
+    skipOffsetSeconds: 3,
+  },
+  {
+    id: 'cr-playstation-5',
+    title: 'PlayStation 5 Pro',
+    sponsorName: 'Sony Interactive Entertainment',
+    domain: 'playstation.com',
+    rating: 4.9,
+    badge: 'Next-Gen Visual Fidelity',
+    headline: 'PlayStation 5 Pro — 4K 120FPS with Advanced Ray Tracing',
+    description:
+      'Experience Spectral Super Resolution, ultra-responsive DualSense haptic feedback, and lightning-fast custom 2TB SSD gaming performance.',
+    ctaText: 'Discover PS5 Pro',
+    ctaUrl: 'https://playstation.com',
+    imageUrl: 'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=800&q=80',
+    durationSeconds: 12,
+    skipOffsetSeconds: 3,
+  },
+  {
+    id: 'cr-discord-nitro',
+    title: 'Discord Nitro',
+    sponsorName: 'Discord',
+    domain: 'discord.com',
+    rating: 4.8,
+    badge: 'All-In-One Gamer Pass',
+    headline: 'Discord Nitro — 4K 60FPS Streaming, 500MB Uploads & Soundboard Perks',
+    description:
+      'Level up your voice chat with custom animated emojis, custom profiles across servers, HD screen sharing, and 2 Free Server Boosts.',
+    ctaText: 'Upgrade to Nitro',
+    ctaUrl: 'https://discord.com',
+    imageUrl: 'https://images.unsplash.com/photo-1614680376593-902f749f7ffc?auto=format&fit=crop&w=800&q=80',
     durationSeconds: 10,
     skipOffsetSeconds: 3,
   },

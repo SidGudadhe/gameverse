@@ -197,4 +197,17 @@ describe('100x Deep Ads System & Placements Verification', () => {
       expect(stats.byFormat.SPONSORED_LISTING).toBeDefined();
     });
   });
+
+  describe('7. Authentic Google IMA & AdSense Creative Standards (100x Deep Analysis)', () => {
+    it('should provide authentic brand sponsors with domains, badges and ratings', () => {
+      const ad = getRandomAdCreative('PREROLL');
+      expect(ad.sponsorName).toBeDefined();
+      expect(ad.domain).toBeDefined();
+      expect(ad.domain).toMatch(/\.(com|org|net)$/);
+      expect(ad.rating).toBeGreaterThanOrEqual(4.5);
+      expect(ad.badge).toBeDefined();
+      expect(ad.headline.length).toBeGreaterThan(15);
+      expect(ad.description.length).toBeGreaterThan(30);
+    });
+  });
 });

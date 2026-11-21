@@ -3,6 +3,8 @@ import React, { Suspense } from 'react';
 import { cookies } from 'next/headers';
 import './globals.css';
 import Navbar from '@/components/Navbar';
+import GamerSidebar from '@/components/GamerSidebar';
+import PlayerContentWrapper from '@/components/PlayerContentWrapper';
 import CookieConsent from '@/components/CookieConsent';
 import FooterLegal from '@/components/FooterLegal';
 import NavigationProgressBar from '@/components/NavigationProgressBar';
@@ -10,6 +12,7 @@ import NavigationGuard from '@/components/NavigationGuard';
 import CrazyGamesAuthModal from '@/components/CrazyGamesAuthModal';
 import GoogleOneTap from '@/components/GoogleOneTap';
 import { AuthProvider, AuthUser } from '@/context/AuthContext';
+import { SidebarProvider } from '@/context/SidebarContext';
 import { verifyToken } from '@/lib/auth';
 
 export const metadata: Metadata = {
@@ -57,16 +60,21 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col selection:bg-indigo-500 selection:text-white">
         <AuthProvider initialUser={initialUser}>
-          <NavigationGuard />
-          <CrazyGamesAuthModal />
-          <GoogleOneTap />
-          <Suspense fallback={null}>
-            <NavigationProgressBar />
-          </Suspense>
-          <Navbar />
-          <main className="flex-1 w-full">{children}</main>
-          <CookieConsent />
-          <FooterLegal />
+          <SidebarProvider>
+            <NavigationGuard />
+            <CrazyGamesAuthModal />
+            <GoogleOneTap />
+            <Suspense fallback={null}>
+              <NavigationProgressBar />
+            </Suspense>
+            <Navbar />
+            <GamerSidebar />
+            <PlayerContentWrapper>
+              <main className="flex-1 w-full">{children}</main>
+              <CookieConsent />
+              <FooterLegal />
+            </PlayerContentWrapper>
+          </SidebarProvider>
         </AuthProvider>
       </body>
     </html>

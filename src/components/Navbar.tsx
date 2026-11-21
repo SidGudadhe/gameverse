@@ -30,12 +30,14 @@ import {
   Wallet,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { useSidebar } from '@/context/SidebarContext';
 import GameVerseLogo from '@/components/ui/GameVerseLogo';
 import DeveloperLogo from '@/components/ui/DeveloperLogo';
 
 export default function Navbar() {
   const pathname = usePathname();
   const { user, isAuthenticated, role, logout, openAuthModal } = useAuth();
+  const { toggleCollapse, toggleMobile, isCollapsed } = useSidebar();
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -192,94 +194,41 @@ export default function Navbar() {
   // =========================================================================
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-        {/* Gamer Brand Logo */}
-        <div className="flex items-center gap-6">
+      <div className="w-full px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+        {/* Left: CrazyGames Sidebar Toggle + Brand Logo */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Desktop Sidebar Toggle */}
+          <button
+            type="button"
+            onClick={toggleCollapse}
+            aria-label="Toggle Navigation Sidebar"
+            title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            className="hidden md:flex w-9 h-9 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent hover:border-slate-200 items-center justify-center transition-colors cursor-pointer"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+
+          {/* Mobile Sidebar Drawer Toggle */}
+          <button
+            type="button"
+            onClick={toggleMobile}
+            aria-label="Toggle Mobile Navigation"
+            title="Open navigation menu"
+            className="md:hidden w-9 h-9 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent hover:border-slate-200 flex items-center justify-center transition-colors cursor-pointer"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+
           <GameVerseLogo
             href="/"
             size="md"
             showText={true}
             subtitle="Instant Browser Games"
           />
-
-          {/* Desktop Player Navigation Links (ONLY GAMER FEATURES) */}
-          <nav
-            aria-label="Player navigation"
-            className="hidden md:flex items-center gap-1 text-sm font-medium"
-          >
-            <Link
-              href="/"
-              prefetch={true}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-colors ${
-                pathname === '/'
-                  ? 'bg-indigo-600 text-white shadow-sm font-semibold'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-              }`}
-            >
-              <Gamepad2 className={`w-4 h-4 ${pathname === '/' ? 'text-white' : 'text-indigo-600'}`} />
-              <span>All Games</span>
-            </Link>
-
-            <Link
-              href="/category"
-              prefetch={true}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-colors ${
-                pathname.startsWith('/category')
-                  ? 'bg-indigo-600 text-white shadow-sm font-semibold'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-              }`}
-            >
-              <Layers className={`w-4 h-4 ${pathname.startsWith('/category') ? 'text-white' : 'text-cyan-600'}`} />
-              <span>Categories</span>
-            </Link>
-
-            {isAuthenticated && (
-              <>
-                <Link
-                  href="/player/favorites"
-                  prefetch={true}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-colors ${
-                    pathname.startsWith('/player/favorites')
-                      ? 'bg-indigo-600 text-white font-semibold'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                  }`}
-                >
-                  <FolderHeart className={`w-4 h-4 ${pathname.startsWith('/player/favorites') ? 'text-white' : 'text-rose-500'}`} />
-                  <span>Favorites</span>
-                </Link>
-
-                <Link
-                  href="/player/history"
-                  prefetch={true}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-colors ${
-                    pathname.startsWith('/player/history')
-                      ? 'bg-indigo-600 text-white font-semibold'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                  }`}
-                >
-                  <History className={`w-4 h-4 ${pathname.startsWith('/player/history') ? 'text-white' : 'text-amber-500'}`} />
-                  <span>History</span>
-                </Link>
-
-                <Link
-                  href="/player/payouts"
-                  prefetch={true}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-colors ${
-                    pathname.startsWith('/player/payouts')
-                      ? 'bg-indigo-600 text-white font-semibold'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                  }`}
-                >
-                  <Coins className={`w-4 h-4 ${pathname.startsWith('/player/payouts') ? 'text-white' : 'text-emerald-600'}`} />
-                  <span>Payouts</span>
-                </Link>
-              </>
-            )}
-          </nav>
         </div>
 
-        {/* Global Search Bar (Desktop) */}
-        <div className="flex-1 max-w-md hidden sm:block">
+        {/* Global Search Bar (Desktop - Expanded Center) */}
+        <div className="flex-1 max-w-xl hidden sm:block px-2">
           <form action="/search" method="GET" className="relative">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
@@ -309,7 +258,7 @@ export default function Navbar() {
                   <div className="font-semibold text-slate-800 group-hover:text-indigo-600 transition-colors">
                     {user?.name || 'Player'}
                   </div>
-                  <div className="text-slate-500 text-[10px] font-mono">{role}</div>
+                  <div className="text-slate-500 text-[10px] font-mono font-medium">Player</div>
                 </div>
               </Link>
 
@@ -340,120 +289,16 @@ export default function Navbar() {
             </div>
           )}
 
-          {/* Mobile Hamburger Menu Toggle */}
+          {/* Mobile Search/Menu Quick Trigger */}
           <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={toggleMobile}
             aria-label="Toggle navigation menu"
-            className="md:hidden w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 flex items-center justify-center transition-colors cursor-pointer border border-slate-200"
+            className="sm:hidden w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 flex items-center justify-center transition-colors cursor-pointer border border-slate-200"
           >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            <Search className="w-4 h-4" />
           </button>
         </div>
       </div>
-
-      {/* Mobile Drawer Navigation Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-200 bg-white p-4 space-y-4 animate-in slide-in-from-top-2 duration-200 shadow-xl">
-          <form action="/search" method="GET" className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input
-              type="text"
-              name="q"
-              placeholder="Search games..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-100 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500"
-            />
-          </form>
-
-          <nav aria-label="Mobile navigation" className="space-y-1 text-sm font-medium">
-            <Link
-              href="/"
-              onClick={() => setMobileMenuOpen(false)}
-              className={`flex items-center gap-2 px-3 py-2.5 rounded-xl ${
-                pathname === '/' ? 'bg-indigo-600 text-white font-semibold' : 'text-slate-700 hover:bg-slate-100'
-              }`}
-            >
-              <Gamepad2 className="w-4 h-4 text-indigo-500" />
-              <span>All Games</span>
-            </Link>
-
-            <Link
-              href="/category"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-100"
-            >
-              <Layers className="w-4 h-4 text-cyan-500" />
-              <span>Browse Categories</span>
-            </Link>
-
-            {isAuthenticated ? (
-              <>
-                <Link
-                  href="/player/favorites"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-100"
-                >
-                  <FolderHeart className="w-4 h-4 text-rose-500" />
-                  <span>My Favorites</span>
-                </Link>
-
-                <Link
-                  href="/player/history"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-100"
-                >
-                  <History className="w-4 h-4 text-amber-500" />
-                  <span>Play History</span>
-                </Link>
-
-                <Link
-                  href="/player/payouts"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-100"
-                >
-                  <Coins className="w-4 h-4 text-emerald-500" />
-                  <span>Gamer Payouts</span>
-                </Link>
-
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    logout();
-                  }}
-                  className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-rose-600 hover:bg-rose-50 cursor-pointer"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>Sign Out</span>
-                </button>
-              </>
-            ) : (
-              <div className="pt-2 flex flex-col gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    openAuthModal('LOGIN');
-                  }}
-                  className="w-full text-center py-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl text-sm font-semibold text-slate-800 border border-slate-200 transition-colors cursor-pointer"
-                >
-                  Log in
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    openAuthModal('SIGNUP');
-                  }}
-                  className="w-full text-center py-2.5 bg-gradient-to-r from-[#6A38EB] to-[#8B5CF6] hover:from-[#5b2bd9] hover:to-[#7c3aed] rounded-xl text-sm font-bold text-white shadow-md shadow-purple-600/20 transition-all cursor-pointer"
-                >
-                  Join Free
-                </button>
-              </div>
-            )}
-          </nav>
-        </div>
-      )}
     </header>
   );
 }

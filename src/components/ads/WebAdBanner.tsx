@@ -8,6 +8,7 @@ export type WebAdPlacement =
   | 'HOMEPAGE_MIDDLE_NATIVE'
   | 'HOMEPAGE_SIDEBAR'
   | 'CATEGORY_NATIVE'
+  | 'CATEGORY_BANNER'
   | 'SEARCH_SPONSORED'
   | 'GAME_DETAIL_BANNER'
   | 'FOOTER_DISPLAY';
@@ -79,6 +80,18 @@ const PLACEMENT_CONFIG: Record<
     cta: 'Try 3 Months Free',
     ctaUrl: 'https://spotify.com',
     imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=400&q=80',
+  },
+  CATEGORY_BANNER: {
+    format: 'Leaderboard',
+    dimensions: '728x90 / 970x90',
+    headline: 'SteelSeries Apex Pro TKL — Rapid Trigger Esports Gaming Keyboard',
+    subtext: 'OmniPoint 2.0 Adjustable HyperMagnetic Switches • 0.1ms Latency • Aircraft-Grade Aluminum',
+    sponsor: 'SteelSeries',
+    domain: 'steelseries.com',
+    badge: 'Esports Standard',
+    cta: 'Explore Keyboard',
+    ctaUrl: 'https://steelseries.com',
+    imageUrl: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=400&q=80',
   },
   SEARCH_SPONSORED: {
     format: 'Sponsored Listing',

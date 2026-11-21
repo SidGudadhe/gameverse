@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import CategoryNavChips from '@/components/CategoryNavChips';
 import GameCard from '@/components/GameCard';
+import WebAdBanner from '@/components/ads/WebAdBanner';
 import { Badge } from '@/components/ui/Badge';
 
 export default function AllCategoriesPage() {
@@ -59,20 +60,20 @@ export default function AllCategoriesPage() {
         <span className="text-slate-800 font-medium">Categories</span>
       </div>
 
-      {/* Hero Category Directory Banner */}
-      <div className="relative rounded-3xl p-6 sm:p-8 border border-slate-200 overflow-hidden bg-gradient-to-r from-indigo-50 via-slate-50 to-blue-50 shadow-sm">
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-          <div className="space-y-2">
+      {/* Compact Category Directory Header Banner */}
+      <div className="relative rounded-2xl p-4 sm:p-5 border border-slate-200 overflow-hidden bg-gradient-to-r from-indigo-50/80 via-slate-50 to-blue-50/80 shadow-xs">
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <Badge variant="cyan">GAME CATALOG</Badge>
-              <span className="text-xs text-indigo-700 font-mono font-medium">
+              <Badge variant="cyan" size="sm">GAME CATALOG</Badge>
+              <span className="text-[11px] text-indigo-700 font-mono font-medium">
                 {categories.length} Genres &bull; {allGames.length} Playable Titles
               </span>
             </div>
-            <h1 className="font-heading font-black text-3xl sm:text-4xl text-slate-900 tracking-tight">
+            <h1 className="font-heading font-black text-xl sm:text-2xl text-slate-900 tracking-tight">
               All Game Categories
             </h1>
-            <p className="text-slate-600 text-xs sm:text-sm max-w-2xl leading-relaxed">
+            <p className="text-slate-600 text-xs max-w-2xl leading-normal">
               Find instant browser games by your favorite genre. Pick any category below to filter games, or explore popular picks.
             </p>
           </div>
@@ -80,26 +81,31 @@ export default function AllCategoriesPage() {
       </div>
 
       {/* Category Navigation (Browse by Category) */}
-      <div className="space-y-3">
+      <div className="space-y-2.5">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="font-heading font-bold text-lg text-slate-900">
+            <h2 className="font-heading font-bold text-base sm:text-lg text-slate-900">
               Browse by Category
             </h2>
             <p className="text-xs text-slate-500">
               Select a genre to filter and explore games
             </p>
           </div>
-          <span className="text-xs text-indigo-700 font-mono font-medium px-2.5 py-1 rounded-full bg-indigo-50 border border-indigo-200">
+          <span className="text-xs text-indigo-700 font-mono font-medium px-2.5 py-0.5 rounded-full bg-indigo-50 border border-indigo-200">
             {categories.length} Categories
           </span>
         </div>
         <CategoryNavChips activeSlug="all" />
       </div>
 
+      {/* Banner Ad directly below Category selection */}
+      <div className="w-full">
+        <WebAdBanner placement="CATEGORY_BANNER" />
+      </div>
+
       {/* All Playable Games Directory */}
-      <section className="space-y-4 pt-4 border-t border-slate-200">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+      <section className="space-y-4 pt-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-3">
           <div>
             <h2 className="font-heading font-black text-2xl text-slate-900">
               All Available Games

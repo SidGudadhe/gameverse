@@ -122,32 +122,39 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
         <span className="text-slate-800 font-medium">{meta.name}</span>
       </div>
 
-      {/* Category Navigation Quick Chips */}
-      <CategoryNavChips activeSlug={params.slug} />
-
-      {/* Hero Category Banner */}
-      <div className={`relative rounded-3xl p-6 sm:p-8 border border-slate-200 overflow-hidden bg-gradient-to-r ${meta.gradient} shadow-sm`}>
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-          <div className="flex items-start sm:items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-white border border-slate-200 text-indigo-600 flex items-center justify-center shadow-sm">
-              <Icon className="w-7 h-7" />
+      {/* Hero Category Banner (Compact) */}
+      <div className={`relative rounded-2xl p-4 sm:p-5 border border-slate-200 overflow-hidden bg-gradient-to-r ${meta.gradient} shadow-xs`}>
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-start sm:items-center gap-3.5">
+            <div className="w-11 h-11 rounded-xl bg-white border border-slate-200 text-indigo-600 flex items-center justify-center shadow-xs shrink-0">
+              <Icon className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <Badge variant="cyan">CATEGORY</Badge>
-                <span className="text-xs text-slate-600 font-mono font-medium">
+                <Badge variant="cyan" size="sm">CATEGORY</Badge>
+                <span className="text-[11px] text-slate-600 font-mono font-medium">
                   {filteredGames.length} Instant Playable Games
                 </span>
               </div>
-              <h1 className="font-heading font-black text-3xl sm:text-4xl text-slate-900 mt-1">
+              <h1 className="font-heading font-black text-xl sm:text-2xl text-slate-900 mt-0.5">
                 {meta.name} Games
               </h1>
-              <p className="text-slate-600 text-xs sm:text-sm mt-1 max-w-xl">
+              <p className="text-slate-600 text-xs mt-0.5 max-w-xl">
                 {meta.description}
               </p>
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Category Navigation Quick Chips (Browse by Category) */}
+      <div className="space-y-1.5">
+        <CategoryNavChips activeSlug={params.slug} />
+      </div>
+
+      {/* Banner Ad directly below Category selection */}
+      <div className="w-full">
+        <WebAdBanner placement="CATEGORY_BANNER" />
       </div>
 
       {/* Filter and Sorting Controls Toolbar */}

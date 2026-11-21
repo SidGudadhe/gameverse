@@ -98,20 +98,20 @@ function SearchContent() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4">
       {/* Header & Filter Controls */}
-      <div className="space-y-5 border-b border-slate-200 pb-6">
+      <div className="space-y-3 border-b border-slate-200 pb-3">
         <div>
           <div className="flex items-center gap-2">
-            <Badge variant="cyan">GLOBAL SEARCH</Badge>
+            <Badge variant="cyan" size="sm">GLOBAL SEARCH</Badge>
             <span className="text-xs text-slate-500 font-mono">
               {totalCount} {totalCount === 1 ? 'game found' : 'games found'}
             </span>
           </div>
-          <h1 className="font-heading font-black text-3xl sm:text-4xl text-slate-900 mt-1">
+          <h1 className="font-heading font-black text-xl sm:text-2xl text-slate-900 mt-0.5">
             Discover & Search Games
           </h1>
-          <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
+          <p className="text-slate-500 text-xs mt-0.5">
             Instant search across verified HTML5, WebGL, and WASM browser titles.
           </p>
         </div>
@@ -188,66 +188,74 @@ function SearchContent() {
           ))}
         </div>
       ) : (
-        /* Smart Fallback & Engaging Recommendations when Zero Matches Found */
-        <div className="space-y-10 py-6">
-          <div className="bg-gradient-to-b from-indigo-50/60 via-slate-50 to-white border border-indigo-200 rounded-3xl p-8 sm:p-10 text-center shadow-sm relative overflow-hidden">
-            <div className="w-16 h-16 rounded-2xl bg-indigo-100/70 border border-indigo-200 flex items-center justify-center mx-auto mb-4 text-indigo-600">
-              <Compass className="w-8 h-8 animate-pulse" />
+        /* Ultra-Compact Smart Fallback & Engaging Recommendations when Zero Matches Found */
+        <div className="space-y-4 py-1">
+          <div className="bg-gradient-to-r from-indigo-50/70 via-slate-50 to-white border border-indigo-200/90 rounded-xl px-4 py-2.5 shadow-2xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+            <div className="flex items-center gap-3 truncate">
+              <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
+                <Compass className="w-4 h-4" />
+              </div>
+              <div className="truncate">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-xs sm:text-sm font-bold text-slate-900 tracking-tight">
+                    This Game is Not Available Yet
+                  </h2>
+                  {query && (
+                    <span className="text-[10px] text-indigo-700 font-mono font-semibold bg-indigo-50 px-1.5 py-0.2 rounded border border-indigo-200 truncate max-w-[140px]">
+                      "{query}"
+                    </span>
+                  )}
+                </div>
+                <p className="text-slate-500 text-[11px] truncate mt-0.5">
+                  We searched the entire catalog for "{query || 'this title'}", but it's not available on GameVerse yet. Would you like to play these top-rated and similar popular games instead?
+                </p>
+              </div>
             </div>
 
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              This Game is Not Available Yet
-            </h2>
-            <p className="text-slate-600 text-sm max-w-xl mx-auto mt-2 leading-relaxed">
-              We searched the entire catalog for <span className="font-mono text-indigo-700 font-bold bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">"{query}"</span>, but this title is not available on GameVerse yet.
-            </p>
-            <p className="text-indigo-700 text-sm font-semibold mt-2">
-              Would you like to play these top-rated and similar popular games instead?
-            </p>
-
-            <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
-              <Button
-                variant={requestSent ? 'outline' : 'primary'}
+            <div className="flex items-center gap-2 shrink-0 self-end md:self-center">
+              <button
+                type="button"
                 onClick={handleRequestGame}
                 disabled={requestSent}
-                className="flex items-center gap-2"
+                className="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:bg-emerald-600 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
               >
                 {requestSent ? (
                   <>
-                    <CheckCircle className="w-4 h-4 text-emerald-600" />
-                    <span>Request Logged! Devs Notified</span>
+                    <CheckCircle className="w-3.5 h-3.5" />
+                    <span>Requested!</span>
                   </>
                 ) : (
                   <>
-                    <Send className="w-4 h-4" />
-                    <span>Request "{query || 'This Title'}" to be Added</span>
+                    <Send className="w-3.5 h-3.5" />
+                    <span>Request Title</span>
                   </>
                 )}
-              </Button>
+              </button>
 
-              <Button
-                variant="outline"
+              <button
+                type="button"
                 onClick={() => {
                   setQuery('');
                   setSelectedCategory('all');
                 }}
+                className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-xs font-medium transition-colors cursor-pointer"
               >
-                Browse All Trending Games
-              </Button>
+                Browse Trending
+              </button>
             </div>
           </div>
 
           {/* Curated Alternative Recommendations */}
           {fallbackRecommendations.length > 0 && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
+            <div className="space-y-3 pt-1">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-2">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-amber-500" />
-                  <h3 className="font-heading font-black text-xl text-slate-900">
+                  <Sparkles className="w-4 h-4 text-amber-500" />
+                  <h3 className="font-heading font-black text-base sm:text-lg text-slate-900">
                     Suggested Games You Might Enjoy Instead
                   </h3>
                 </div>
-                <span className="text-xs font-mono text-slate-500">Curated AI Recommendations</span>
+                <span className="text-[11px] font-mono text-slate-500">Popular Alternatives</span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">

@@ -7,7 +7,7 @@ import GameCard from '@/components/GameCard';
 import GameActionBar from '@/components/GameActionBar';
 import AdaptiveRecommendations from '@/components/AdaptiveRecommendations';
 import GameVerseLogo from '@/components/ui/GameVerseLogo';
-import { Star, ArrowLeft, Gamepad2, Info, ShieldCheck, Keyboard, MessageSquare, Loader2 } from 'lucide-react';
+import { Star, ArrowLeft, Gamepad2, Info, ShieldCheck, Keyboard, MessageSquare, Loader2, User, Sparkles, Bot } from 'lucide-react';
 import { GameMood } from '@/types/recommendations';
 
 // Dynamic code-splitting for heavy client components
@@ -43,6 +43,48 @@ export default function GamePage({ params }: GamePageProps) {
   }
 
   const version = game.currentVersionId ? gvDb.getVersionById(game.currentVersionId) : null;
+  const rights = version ? gvDb.getRightsDeclarationByVersionId(version.id) : null;
+
+  // Resolve Developed By choice (AI Developed | Human Developed | AI + Human Developed)
+  let rawDevelopedBy = game.developedBy || (game as any).developmentType || rights?.developedBy;
+  if (!rawDevelopedBy) {
+    const ai = rights?.aiDisclosure;
+    if (ai === 'AI_GENERATED') rawDevelopedBy = 'AI Developed';
+    else if (ai === 'AI_ASSISTED') rawDevelopedBy = 'AI + Human Developed';
+    else rawDevelopedBy = 'Human Developed';
+  } else {
+    if (rawDevelopedBy === 'AI_GENERATED' || rawDevelopedBy.toLowerCase().includes('ai developed') || rawDevelopedBy.toLowerCase() === 'ai') {
+      rawDevelopedBy = 'AI Developed';
+    } else if (rawDevelopedBy === 'AI_ASSISTED' || rawDevelopedBy.toLowerCase().includes('ai + human') || rawDevelopedBy.toLowerCase().includes('ai+human')) {
+      rawDevelopedBy = 'AI + Human Developed';
+    } else {
+      rawDevelopedBy = 'Human Developed';
+    }
+  }
+
+  const developedByConfig = {
+    'Human Developed': {
+      label: 'Human Developed',
+      icon: User,
+      color: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    },
+    'AI + Human Developed': {
+      label: 'AI + Human Developed',
+      icon: Sparkles,
+      color: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+    },
+    'AI Developed': {
+      label: 'AI Developed',
+      icon: Bot,
+      color: 'bg-cyan-50 text-cyan-700 border-cyan-200',
+    },
+  }[rawDevelopedBy as 'Human Developed' | 'AI + Human Developed' | 'AI Developed'] || {
+    label: rawDevelopedBy,
+    icon: User,
+    color: 'bg-slate-50 text-slate-700 border-slate-200',
+  };
+
+  const DevelopedByIcon = developedByConfig.icon;
 
   // Infer initial mood from current game category
   let defaultMood: GameMood = 'ALL';
@@ -171,6 +213,16 @@ export default function GamePage({ params }: GamePageProps) {
               <div className="flex justify-between py-1.5 border-b border-slate-100">
                 <span className="text-slate-500">Developer</span>
                 <span className="text-slate-800 font-semibold">{game.developerName}</span>
+              </div>
+              <div className="flex justify-between items-center py-1.5 border-b border-slate-100">
+                <span className="text-slate-500">Developed by</span>
+                <span
+                  data-testid="game-developed-by"
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${developedByConfig.color}`}
+                >
+                  <DevelopedByIcon className="w-3.5 h-3.5" />
+                  <span>{developedByConfig.label}</span>
+                </span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-slate-100">
                 <span className="text-slate-500">Genre</span>

@@ -44,7 +44,9 @@ export async function POST(req: NextRequest) {
       thumbnailUrl,
       bannerUrl,
       screenshots,
-      aiDisclosure,
+      aiDisclosure: rawAiDisclosure,
+      developedBy: rawDevelopedBy,
+      developmentType: rawDevelopmentType,
       licensingNotes,
       rightsConfirmed,
       prohibitedContentConfirmed,
@@ -69,12 +71,29 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const validAiDisclosures: AIDisclosure[] = ['NONE_HUMAN_ONLY', 'AI_ASSISTED', 'AI_GENERATED'];
-    if (!aiDisclosure || !validAiDisclosures.includes(aiDisclosure)) {
-      return NextResponse.json(
-        { success: false, error: 'Valid AI disclosure level is required.' },
-        { status: 400 }
-      );
+    // Resolve and normalize Developed By choice (AI Developed | Human Developed | AI + Human Developed)
+    let developedBy = rawDevelopedBy || rawDevelopmentType;
+    let aiDisclosure: AIDisclosure = rawAiDisclosure;
+
+    if (developedBy) {
+      const cleanDev = String(developedBy).trim();
+      if (cleanDev === 'AI Developed' || cleanDev === 'AI_GENERATED') {
+        developedBy = 'AI Developed';
+        aiDisclosure = 'AI_GENERATED';
+      } else if (cleanDev === 'AI + Human Developed' || cleanDev === 'AI_ASSISTED') {
+        developedBy = 'AI + Human Developed';
+        aiDisclosure = 'AI_ASSISTED';
+      } else {
+        developedBy = 'Human Developed';
+        aiDisclosure = 'NONE_HUMAN_ONLY';
+      }
+    } else if (aiDisclosure) {
+      if (aiDisclosure === 'AI_GENERATED') developedBy = 'AI Developed';
+      else if (aiDisclosure === 'AI_ASSISTED') developedBy = 'AI + Human Developed';
+      else developedBy = 'Human Developed';
+    } else {
+      developedBy = 'Human Developed';
+      aiDisclosure = 'NONE_HUMAN_ONLY';
     }
 
     // Normalize slug
@@ -178,6 +197,8 @@ export async function POST(req: NextRequest) {
         screenshots: screenshots || [],
         currentVersionId: versionId,
         status: 'SUBMITTED',
+        developedBy,
+        developmentType: developedBy,
       });
     } else {
       game = gvDb.updateGame(game.id, {
@@ -186,6 +207,8 @@ export async function POST(req: NextRequest) {
         shortDescription: shortDescription || game.shortDescription,
         fullDescription: fullDescription || game.fullDescription,
         controlsGuide: controlsGuide || game.controlsGuide,
+        developedBy,
+        developmentType: developedBy,
       });
     }
 
@@ -213,6 +236,7 @@ export async function POST(req: NextRequest) {
     const rights = gvDb.saveRightsDeclaration({
       versionId,
       aiDisclosure,
+      developedBy,
       thirdPartyAssetsDeclared: true,
       licensingNotes: licensingNotes || '',
       rightsConfirmed: true,

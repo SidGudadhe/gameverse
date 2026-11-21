@@ -21,6 +21,7 @@ export type GameStatus =
   | 'UNPUBLISHED';
 
 export type AIDisclosure = 'NONE_HUMAN_ONLY' | 'AI_ASSISTED' | 'AI_GENERATED';
+export type DevelopmentType = 'AI Developed' | 'Human Developed' | 'AI + Human Developed';
 
 export type Orientation = 'LANDSCAPE' | 'PORTRAIT' | 'ANY';
 
@@ -81,6 +82,7 @@ export interface RightsDeclaration {
   id: string;
   versionId: string;
   aiDisclosure: AIDisclosure;
+  developedBy?: DevelopmentType | string;
   thirdPartyAssetsDeclared: boolean;
   licensingNotes: string;
   rightsConfirmed: boolean;
@@ -113,6 +115,8 @@ export interface Game {
   publishedAt?: string;
   createdAt: string;
   updatedAt: string;
+  developedBy?: DevelopmentType | string;
+  developmentType?: DevelopmentType | string;
 }
 
 export interface QaSubmission {

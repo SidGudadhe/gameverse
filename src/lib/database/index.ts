@@ -234,6 +234,8 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
       publishedAt: '2026-11-04T12:00:00.000Z',
       createdAt: '2026-11-03T10:00:00.000Z',
       updatedAt: '2026-11-04T12:00:00.000Z',
+      developedBy: 'Human Developed',
+      developmentType: 'Human Developed',
     },
     {
       id: 'game-voxel-quest',
@@ -259,6 +261,8 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
       publishedAt: '2026-11-05T10:00:00.000Z',
       createdAt: '2026-11-04T12:00:00.000Z',
       updatedAt: '2026-11-05T10:00:00.000Z',
+      developedBy: 'AI + Human Developed',
+      developmentType: 'AI + Human Developed',
     },
   ],
   versions: [
@@ -471,10 +475,21 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
       id: 'rgt-001',
       versionId: 'ver-neon-1',
       aiDisclosure: 'NONE_HUMAN_ONLY',
+      developedBy: 'Human Developed',
       thirdPartyAssetsDeclared: true,
       licensingNotes: 'Original synthwave soundtrack composed in-house. Free commercial font license.',
       rightsConfirmed: true,
       declaredAt: '2026-11-03T11:15:00.000Z',
+    },
+    {
+      id: 'rgt-002',
+      versionId: 'ver-voxel-1',
+      aiDisclosure: 'AI_ASSISTED',
+      developedBy: 'AI + Human Developed',
+      thirdPartyAssetsDeclared: true,
+      licensingNotes: 'Kenney voxel asset pack CC0. Sound effects generated with AI and curated manually.',
+      rightsConfirmed: true,
+      declaredAt: '2026-11-04T12:30:00.000Z',
     },
   ],
   playerWallets: [],
@@ -543,6 +558,36 @@ class GameVerseDatabase {
         for (const initialRec of INITIAL_DATABASE_STATE.financialRecords) {
           if (!state.financialRecords.some((r: any) => r.id === initialRec.id)) {
             state.financialRecords.push(initialRec);
+          }
+        }
+
+        // Ensure seed rights declarations are present
+        for (const initialRgt of INITIAL_DATABASE_STATE.rightsDeclarations) {
+          if (!state.rightsDeclarations.some((r: any) => r.id === initialRgt.id)) {
+            state.rightsDeclarations.push(initialRgt);
+          }
+        }
+
+        // Migration: Ensure all games have developedBy set
+        if (state.games && Array.isArray(state.games)) {
+          for (const g of state.games) {
+            if (g.id === 'game-voxel-quest') {
+              g.developedBy = 'AI + Human Developed';
+              g.developmentType = 'AI + Human Developed';
+            } else if (g.id === 'game-neon-runner') {
+              g.developedBy = 'Human Developed';
+              g.developmentType = 'Human Developed';
+            } else if (!g.developedBy) {
+              const rgt = (state.rightsDeclarations || []).find((r: any) => r.versionId === g.currentVersionId);
+              if (rgt?.aiDisclosure === 'AI_GENERATED') {
+                g.developedBy = 'AI Developed';
+              } else if (rgt?.aiDisclosure === 'AI_ASSISTED') {
+                g.developedBy = 'AI + Human Developed';
+              } else {
+                g.developedBy = 'Human Developed';
+              }
+              g.developmentType = g.developedBy;
+            }
           }
         }
 
@@ -835,6 +880,8 @@ class GameVerseDatabase {
       rating: 0,
       createdAt: now,
       updatedAt: now,
+      developedBy: gameData.developedBy || (gameData.developmentType as any) || 'Human Developed',
+      developmentType: (gameData.developmentType as any) || gameData.developedBy || 'Human Developed',
     };
 
     this.state.games.push(newGame);
@@ -899,15 +946,25 @@ class GameVerseDatabase {
   saveRightsDeclaration(rightsData: {
     versionId: string;
     aiDisclosure: AIDisclosure;
+    developedBy?: any;
     thirdPartyAssetsDeclared: boolean;
     licensingNotes?: string;
     rightsConfirmed: boolean;
   }): RightsDeclaration {
     const id = `rgt-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const inferredDevelopedBy =
+      rightsData.developedBy ||
+      (rightsData.aiDisclosure === 'AI_GENERATED'
+        ? 'AI Developed'
+        : rightsData.aiDisclosure === 'AI_ASSISTED'
+        ? 'AI + Human Developed'
+        : 'Human Developed');
+
     const entry: RightsDeclaration = {
       id,
       versionId: rightsData.versionId,
       aiDisclosure: rightsData.aiDisclosure,
+      developedBy: inferredDevelopedBy,
       thirdPartyAssetsDeclared: rightsData.thirdPartyAssetsDeclared,
       licensingNotes: rightsData.licensingNotes || '',
       rightsConfirmed: rightsData.rightsConfirmed,

@@ -1,17 +1,25 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { CheckCircle2, ShieldCheck, FileText, ArrowRight, Building, Globe, Check } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { useAuth } from '@/context/AuthContext';
 
 export default function DeveloperOnboardPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [step, setStep] = useState<1 | 2 | 3>(1);
-  const [studioName, setStudioName] = useState('PixelForge Studios');
-  const [website, setWebsite] = useState('https://pixelforge.games');
-  const [bio, setBio] = useState('Independent game studio specializing in retro synthwave arcade and puzzle games.');
+  const [studioName, setStudioName] = useState(user?.name || '');
+  const [website, setWebsite] = useState('');
+  const [bio, setBio] = useState('');
+
+  useEffect(() => {
+    if (user?.name && !studioName) {
+      setStudioName(user.name);
+    }
+  }, [user, studioName]);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');

@@ -54,6 +54,7 @@ export default function GameSubmitPage() {
 
   // Legal & AI state
   const [aiDisclosure, setAiDisclosure] = useState<'NONE_HUMAN_ONLY' | 'AI_ASSISTED' | 'AI_GENERATED'>('NONE_HUMAN_ONLY');
+  const [developedBy, setDevelopedBy] = useState<'AI Developed' | 'Human Developed' | 'AI + Human Developed'>('Human Developed');
   const [licensingNotes, setLicensingNotes] = useState('');
   const [rightsConfirmed, setRightsConfirmed] = useState(false);
   const [prohibitedConfirmed, setProhibitedConfirmed] = useState(false);
@@ -73,7 +74,38 @@ export default function GameSubmitPage() {
   React.useEffect(() => {
     fetch('/api/developer/games')
       .then((r) => r.json())
-      .then((data) => setStatusGames(data.games || data.data || []))
+      .then((data) => {
+        const games = data.games || data.data || [];
+        setStatusGames(games);
+
+        // Pre-fill form if URL includes edit parameter (?edit=game-id)
+        if (typeof window !== 'undefined') {
+          const params = new URLSearchParams(window.location.search);
+          const editId = params.get('edit');
+          if (editId) {
+            const target = games.find((g: any) => g.id === editId || g.slug === editId);
+            if (target) {
+              setTitle(target.title || '');
+              setSlug(target.slug || '');
+              if (target.categoryId) setCategory(target.categoryId);
+              if (target.categoryName) setCategoryName(target.categoryName);
+              if (target.engine) setEngine(target.engine);
+              if (target.orientation) setOrientation(target.orientation);
+              if (target.shortDescription) setShortDescription(target.shortDescription);
+              if (target.fullDescription) setFullDescription(target.fullDescription);
+              if (target.controlsGuide) setControls(target.controlsGuide);
+              if (target.thumbnailUrl) setThumbnailUrl(target.thumbnailUrl);
+              if (target.bannerUrl) setBannerUrl(target.bannerUrl);
+              if (target.developedBy) {
+                setDevelopedBy(target.developedBy);
+                if (target.developedBy === 'AI Developed') setAiDisclosure('AI_GENERATED');
+                else if (target.developedBy === 'AI + Human Developed') setAiDisclosure('AI_ASSISTED');
+                else setAiDisclosure('NONE_HUMAN_ONLY');
+              }
+            }
+          }
+        }
+      })
       .catch(() => {});
 
     try {
@@ -105,6 +137,7 @@ export default function GameSubmitPage() {
         thumbnailUrl,
         bannerUrl,
         aiDisclosure,
+        developedBy,
         licensingNotes,
         savedAt: new Date().toLocaleTimeString(),
       };
@@ -125,6 +158,7 @@ export default function GameSubmitPage() {
     thumbnailUrl,
     bannerUrl,
     aiDisclosure,
+    developedBy,
     licensingNotes,
   ]);
 
@@ -147,6 +181,13 @@ export default function GameSubmitPage() {
         if (d.thumbnailUrl) setThumbnailUrl(d.thumbnailUrl);
         if (d.bannerUrl) setBannerUrl(d.bannerUrl);
         if (d.aiDisclosure) setAiDisclosure(d.aiDisclosure);
+        if (d.developedBy) {
+          setDevelopedBy(d.developedBy);
+        } else if (d.aiDisclosure) {
+          if (d.aiDisclosure === 'AI_GENERATED') setDevelopedBy('AI Developed');
+          else if (d.aiDisclosure === 'AI_ASSISTED') setDevelopedBy('AI + Human Developed');
+          else setDevelopedBy('Human Developed');
+        }
         if (d.licensingNotes) setLicensingNotes(d.licensingNotes);
         setShowDraftBanner(false);
       }
@@ -231,6 +272,8 @@ export default function GameSubmitPage() {
         bannerUrl,
         screenshots: [thumbnailUrl],
         aiDisclosure,
+        developedBy,
+        developmentType: developedBy,
         licensingNotes,
         rightsConfirmed: true,
         prohibitedContentConfirmed: true,
@@ -285,6 +328,12 @@ export default function GameSubmitPage() {
             <span>SHA-256 Checksum</span>
             <span className="text-emerald-700 truncate max-w-[260px] font-bold">
               {submittedData.version?.archiveChecksum || 'Computed'}
+            </span>
+          </div>
+          <div className="flex justify-between items-center text-slate-500 border-b border-slate-200 pb-2">
+            <span>Developed by</span>
+            <span className="text-indigo-700 font-bold">
+              {submittedData.game?.developedBy || submittedData.rights?.developedBy || developedBy}
             </span>
           </div>
           <div className="flex justify-between items-center text-slate-500 border-b border-slate-200 pb-2">
@@ -890,59 +939,81 @@ export default function GameSubmitPage() {
               5
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-900">Legal Warranties & AI Disclosures</h2>
-              <p className="text-xs text-slate-500">Strict transparency regarding AI tooling and copyright ownership.</p>
+              <h2 className="text-base font-bold text-slate-900">Developed By & Legal Warranties</h2>
+              <p className="text-xs text-slate-500">Choose who developed your game for the player catalog.</p>
             </div>
           </div>
 
-          {/* AI Disclosure Cards */}
+          {/* Developed By Options */}
           <div className="space-y-2">
             <label className="block text-xs font-semibold text-slate-700">
-              AI Generation Disclosure Tier <span className="text-rose-600">*</span>
+              Developed by <span className="text-rose-600">*</span>
             </label>
+            <p className="text-[11px] text-slate-500 mb-2">
+              Select one option. This choice is displayed under Game Information on the player website.
+            </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
                 {
-                  id: 'NONE_HUMAN_ONLY',
-                  title: 'Human-Developed',
-                  desc: 'Zero AI tools used for assets, sound, or code.',
+                  id: 'Human Developed',
+                  aiId: 'NONE_HUMAN_ONLY',
+                  title: 'Human Developed',
+                  desc: 'Zero AI tools used for assets, sound, or code. 100% human-crafted.',
                   icon: User,
                   color: 'text-emerald-700',
+                  badgeBg: 'bg-emerald-50 text-emerald-700 border-emerald-200',
                 },
                 {
-                  id: 'AI_ASSISTED',
-                  title: 'AI-Assisted',
-                  desc: 'AI assisted with drafting or concept art with human polishing.',
+                  id: 'AI + Human Developed',
+                  aiId: 'AI_ASSISTED',
+                  title: 'AI + Human Developed',
+                  desc: 'AI assisted with drafting or concept art with human polishing & coding.',
                   icon: Sparkles,
                   color: 'text-indigo-700',
+                  badgeBg: 'bg-indigo-50 text-indigo-700 border-indigo-200',
                 },
                 {
-                  id: 'AI_GENERATED',
-                  title: 'AI-Generated',
-                  desc: 'Visuals, sound, or code predominantly synthesized by AI.',
+                  id: 'AI Developed',
+                  aiId: 'AI_GENERATED',
+                  title: 'AI Developed',
+                  desc: 'Visuals, sound, or code predominantly synthesized by AI generators.',
                   icon: Bot,
                   color: 'text-cyan-700',
+                  badgeBg: 'bg-cyan-50 text-cyan-700 border-cyan-200',
                 },
               ].map((tier) => {
                 const Icon = tier.icon;
-                const isSelected = aiDisclosure === tier.id;
+                const isSelected = developedBy === tier.id || aiDisclosure === tier.aiId;
                 return (
                   <button
                     key={tier.id}
                     type="button"
-                    onClick={() => setAiDisclosure(tier.id as any)}
+                    onClick={() => {
+                      setDevelopedBy(tier.id as any);
+                      setAiDisclosure(tier.aiId as any);
+                    }}
                     className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
                       isSelected
-                        ? 'bg-indigo-50 border-indigo-300 shadow-xs'
+                        ? 'bg-indigo-50 border-indigo-400 shadow-xs ring-1 ring-indigo-500'
                         : 'bg-white border-slate-200 hover:border-slate-300'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-2">
                       <Icon className={`w-5 h-5 ${tier.color}`} />
-                      {isSelected && <Check className="w-4 h-4 text-indigo-600" />}
+                      {isSelected ? (
+                        <Check className="w-4 h-4 text-indigo-600 font-bold" />
+                      ) : (
+                        <span className="w-3.5 h-3.5 rounded-full border border-slate-300" />
+                      )}
                     </div>
                     <p className="text-xs font-bold text-slate-900">{tier.title}</p>
                     <p className="text-[11px] text-slate-500 mt-1 leading-snug">{tier.desc}</p>
+                    <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between">
+                      <span className="text-[10px] text-slate-400">Player Badge:</span>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${tier.badgeBg}`}>
+                        {tier.title}
+                      </span>
+                    </div>
                   </button>
                 );
               })}

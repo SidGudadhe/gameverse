@@ -229,7 +229,9 @@ export default function MyGamesPage() {
                     <div>
                       <div className="flex items-center justify-between text-xs text-slate-400 font-mono mb-1">
                         <span>Engine: <strong className="text-slate-700 font-semibold">{game.engine}</strong></span>
-                        <span>Version: <strong className="text-slate-700 font-semibold">{game.currentVersionId || 'v1.0.0'}</strong></span>
+                        <span className="text-[11px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-full">
+                          {game.developedBy || 'Human Developed'}
+                        </span>
                       </div>
                       <h2 className="font-heading font-black text-xl text-slate-900 group-hover:text-indigo-600 transition-colors">
                         {game.title}

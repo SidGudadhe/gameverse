@@ -25,7 +25,11 @@ export async function GET(req: NextRequest) {
   }
 
   // Count real titles in catalog by this creator
-  const titles = gvDb.state.games ? gvDb.state.games.filter((g) => g.creatorId === user!.userId) : [];
+  const titles = gvDb.state.games
+    ? gvDb.state.games.filter(
+        (g) => g.developerId === user!.userId || (g as any).creatorId === user!.userId
+      )
+    : [];
 
   const profilePayload = {
     studioName: profile?.studioName || dbUser?.name || '',

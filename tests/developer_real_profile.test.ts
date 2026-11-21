@@ -134,4 +134,59 @@ describe('Developer Real Studio Profile Verification (No Fake Data)', () => {
     const conflictData = await conflictRes.json();
     expect(conflictData.error).toContain('already taken');
   });
+
+  it('4. Real signup creates developer profile with zero fake dummy data and real title counts', async () => {
+    const freshDevEmail = `creator_${Date.now()}@realgames.com`;
+    const freshDevName = 'Apex Game Labs';
+    const passHash = await hashPassword('Password123!');
+
+    const freshUser = gvDb.createUser({
+      name: freshDevName,
+      email: freshDevEmail,
+      passwordHash: passHash,
+      role: 'DEVELOPER',
+      emailVerified: true,
+    });
+
+    const token = generateToken({
+      userId: freshUser.id,
+      email: freshUser.email,
+      role: freshUser.role,
+      name: freshUser.name,
+    });
+
+    // Fresh profile should have 0 titles initially and only real registration data
+    const req1 = new NextRequest('http://localhost:3000/api/developer/profile', {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    const res1 = await getDeveloperProfile(req1);
+    expect(res1.status).toBe(200);
+    const data1 = await res1.json();
+
+    expect(data1.profile.studioName).toBe(freshDevName);
+    expect(data1.profile.displayName).toBe(freshDevName);
+    expect(data1.profile.email).toBe(freshDevEmail);
+    expect(data1.profile.website).toBe('');
+    expect(data1.profile.portfolioUrl).toBe('');
+    expect(data1.profile.bio).toBe('');
+    expect(data1.totalTitles).toBe(0);
+
+    // Publish a real game under this developer
+    gvDb.createGame({
+      developerId: freshUser.id,
+      developerName: freshDevName,
+      title: 'Apex Galaxy Quest',
+      slug: `apex-galaxy-${Date.now()}`,
+      status: 'PUBLISHED',
+      developedBy: 'Human Developed',
+    });
+
+    // Check that totalTitles updates accurately
+    const req2 = new NextRequest('http://localhost:3000/api/developer/profile', {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    const res2 = await getDeveloperProfile(req2);
+    const data2 = await res2.json();
+    expect(data2.totalTitles).toBe(1);
+  });
 });

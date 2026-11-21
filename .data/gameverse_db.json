@@ -2118,6 +2118,126 @@
       "emailVerified": true,
       "twoFactorEnabled": false,
       "createdAt": "2026-11-21T06:49:57.257Z"
+    },
+    {
+      "id": "usr-dev-test-1795244112500-qnf1",
+      "email": "quantum@arcadestudio.io",
+      "name": "Quantum Arcade Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$Egtni7QMxftDDldSFpk1GeIjd3Oq9TQi0oYtLOhsUQL8YXXTJ.0R.",
+      "emailVerified": true,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-21T06:55:12.633Z"
+    },
+    {
+      "id": "usr-dev-test-1795244112667-zsdx",
+      "email": "quantum@arcadestudio.io",
+      "name": "Quantum Arcade Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$LWkXqaWr0yGjsCUPjsmV5.NQT4k/y42MNY.TfeRu/.hDnlBRhYfB6",
+      "emailVerified": true,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-21T06:55:12.768Z"
+    },
+    {
+      "id": "usr-dev-test-1795244112778-q29b",
+      "email": "quantum@arcadestudio.io",
+      "name": "Quantum Arcade Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$/7MeGLnaNIxk0T1WdoUa4.yhwc.Aipza9VJOhiNxmwukW1XNNaGoy",
+      "emailVerified": true,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-21T06:55:12.868Z"
+    },
+    {
+      "id": "usr-dev-test-1795244112877-pt54",
+      "email": "quantum@arcadestudio.io",
+      "name": "Quantum Arcade Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$.v2jKF0jarrPi/R1KSSBuewsfLErDjmQokqFYCXfUa7fJpTX1u.se",
+      "emailVerified": true,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-21T06:55:12.960Z"
+    },
+    {
+      "id": "usr-dev-real-1795244415890-n8t4",
+      "email": "founder@hypernova-games.io",
+      "name": "HyperNova Interactive",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$biZYZzeDY/ZakYx9aWy8se7rao46C2/AvvCy7Tq7BmbSEyN/QOhrO",
+      "emailVerified": true,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-21T07:00:15.986Z"
+    },
+    {
+      "id": "usr-dev-real-1795244416002-fw0c",
+      "email": "founder@hypernova-games.io",
+      "name": "HyperNova Studios Pvt Ltd",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$60MeLoW0V82HBKQb20CwNOwRkBrHRGmCIMXSx4BCGTMOq2AqM21ZO",
+      "emailVerified": true,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-21T07:00:16.079Z"
+    },
+    {
+      "id": "usr-dev-real-1795244416088-bikt",
+      "email": "founder@hypernova-games.io",
+      "name": "HyperNova Interactive",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$9mY/t//B2dFCqgCmLOzpkuVuM.qDLz8RQvaZu0jxCL3ccG/9k8You",
+      "emailVerified": true,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-21T07:00:16.165Z"
+    },
+    {
+      "id": "usr-other-1795244416166",
+      "email": "other@studio.com",
+      "name": "Other Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$vx4uyeqwe/AVE.SXael2ZeN.DIJWmHvpJ0Y85tcGkpdIF.5o92yE2",
+      "emailVerified": false,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-21T07:00:16.239Z"
+    },
+    {
+      "id": "usr-dev-test-1795244447925-aj68",
+      "email": "quantum@arcadestudio.io",
+      "name": "Quantum Arcade Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$HxyWQwncnimHXRHwoHLVleFRTfP7PhfN377vaaamWyhwTAS0z1DWu",
+      "emailVerified": true,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-21T07:00:48.042Z"
+    },
+    {
+      "id": "usr-dev-test-1795244448073-pkeh",
+      "email": "quantum@arcadestudio.io",
+      "name": "Quantum Arcade Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$woDxxsS104BbNpDCci.OuOwIbzhxHOIJ0jP1GMYGoMgh8z.cKgk.C",
+      "emailVerified": true,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-21T07:00:48.187Z"
+    },
+    {
+      "id": "usr-dev-test-1795244448195-07i2",
+      "email": "quantum@arcadestudio.io",
+      "name": "Quantum Arcade Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$L7B1hq9J4qXvakVF89fi2uVeZj5O3vJncqTEzwKr8QjGfHFjReD1q",
+      "emailVerified": true,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-21T07:00:48.317Z"
+    },
+    {
+      "id": "usr-dev-test-1795244448325-lhz1",
+      "email": "quantum@arcadestudio.io",
+      "name": "Quantum Arcade Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$L7PlP/OGU3JfcpQ6ztXQj.VE5WNbSOCHaeBPD4JxE.TnmSBZYHFia",
+      "emailVerified": true,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-21T07:00:48.426Z"
     }
   ],
   "profiles": [
@@ -3519,6 +3639,95 @@
       "website": "https://hypernova.in",
       "portfolioUrl": "https://github.com/hypernovaindia",
       "bio": "Building next-generation HTML5 multiplayer arcade experiences in India."
+    },
+    {
+      "id": "prof-1795244112635",
+      "userId": "usr-dev-test-1795244112500-qnf1",
+      "username": "quantum",
+      "displayName": "Quantum Arcade Studio",
+      "studioName": "Quantum Arcade Studio"
+    },
+    {
+      "id": "prof-1795244112768",
+      "userId": "usr-dev-test-1795244112667-zsdx",
+      "username": "quantum",
+      "displayName": "Quantum Arcade Studio",
+      "studioName": "Quantum Arcade Studio"
+    },
+    {
+      "id": "prof-1795244112868",
+      "userId": "usr-dev-test-1795244112778-q29b",
+      "username": "quantum",
+      "displayName": "Quantum Arcade Studio",
+      "studioName": "Quantum Arcade Studio"
+    },
+    {
+      "id": "prof-1795244112960",
+      "userId": "usr-dev-test-1795244112877-pt54",
+      "username": "quantum",
+      "displayName": "Quantum Arcade Studio",
+      "studioName": "Quantum Arcade Studio"
+    },
+    {
+      "id": "prof-1795244415987",
+      "userId": "usr-dev-real-1795244415890-n8t4",
+      "username": "founder",
+      "displayName": "HyperNova Interactive",
+      "studioName": "HyperNova Interactive"
+    },
+    {
+      "id": "prof-1795244416079",
+      "userId": "usr-dev-real-1795244416002-fw0c",
+      "username": "hypernova_mwq268uo",
+      "displayName": "Dev Lead Sarah",
+      "studioName": "HyperNova Studios Pvt Ltd",
+      "updatedAt": "2026-11-21T07:00:16.082Z",
+      "website": "https://hypernova.in",
+      "portfolioUrl": "https://github.com/hypernovaindia",
+      "bio": "Building next-generation HTML5 multiplayer arcade experiences in India."
+    },
+    {
+      "id": "prof-1795244416165",
+      "userId": "usr-dev-real-1795244416088-bikt",
+      "username": "founder",
+      "displayName": "HyperNova Interactive",
+      "studioName": "HyperNova Interactive"
+    },
+    {
+      "id": "prof-1795244416239",
+      "userId": "usr-other-1795244416166",
+      "username": "taken_handle",
+      "displayName": "Other Studio",
+      "studioName": "Other Studio",
+      "updatedAt": "2026-11-21T07:00:16.240Z"
+    },
+    {
+      "id": "prof-1795244448044",
+      "userId": "usr-dev-test-1795244447925-aj68",
+      "username": "quantum",
+      "displayName": "Quantum Arcade Studio",
+      "studioName": "Quantum Arcade Studio"
+    },
+    {
+      "id": "prof-1795244448187",
+      "userId": "usr-dev-test-1795244448073-pkeh",
+      "username": "quantum",
+      "displayName": "Quantum Arcade Studio",
+      "studioName": "Quantum Arcade Studio"
+    },
+    {
+      "id": "prof-1795244448317",
+      "userId": "usr-dev-test-1795244448195-07i2",
+      "username": "quantum",
+      "displayName": "Quantum Arcade Studio",
+      "studioName": "Quantum Arcade Studio"
+    },
+    {
+      "id": "prof-1795244448426",
+      "userId": "usr-dev-test-1795244448325-lhz1",
+      "username": "quantum",
+      "displayName": "Quantum Arcade Studio",
+      "studioName": "Quantum Arcade Studio"
     }
   ],
   "categories": [
@@ -7592,6 +7801,162 @@
       "updatedAt": "2026-11-21T06:49:56.543Z",
       "developedBy": "Human Developed",
       "developmentType": "Human Developed"
+    },
+    {
+      "id": "game-human-crafted-mwq1zqpt",
+      "developerId": "usr-dev-test-1795244112500-qnf1",
+      "developerName": "Quantum Arcade Studio",
+      "categoryId": "cat-action",
+      "categoryName": "Action",
+      "slug": "human-crafted-mwq1zqpt",
+      "title": "Cyber Blade Odyssey",
+      "shortDescription": "Hand-crafted pixel art adventure.",
+      "fullDescription": "Hand-crafted pixel art adventure with custom orchestral music.",
+      "controlsGuide": "Arrow keys: Move\nZ: Attack",
+      "engine": "Custom Canvas Engine",
+      "orientation": "LANDSCAPE",
+      "status": "SUBMITTED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "currentVersionId": "ver-human-crafted-mwq1zqpt-1_0_0",
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-21T06:55:12.661Z",
+      "updatedAt": "2026-11-21T06:55:12.661Z",
+      "developedBy": "Human Developed",
+      "developmentType": "Human Developed"
+    },
+    {
+      "id": "game-ai-synthesized-mwq1zqtd",
+      "developerId": "usr-dev-test-1795244112667-zsdx",
+      "developerName": "Quantum Arcade Studio",
+      "categoryId": "cat-puzzle",
+      "categoryName": "Puzzle",
+      "slug": "ai-synthesized-mwq1zqtd",
+      "title": "Neural Maze Escape",
+      "shortDescription": "AI-generated puzzles and audio.",
+      "fullDescription": "AI-generated labyrinths synthesized by deep neural networks.",
+      "controlsGuide": "WASD to navigate",
+      "engine": "Three.js",
+      "orientation": "LANDSCAPE",
+      "status": "SUBMITTED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "currentVersionId": "ver-ai-synthesized-mwq1zqtd-1_0_0",
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-21T06:55:12.775Z",
+      "updatedAt": "2026-11-21T06:55:12.775Z",
+      "developedBy": "AI Developed",
+      "developmentType": "AI Developed"
+    },
+    {
+      "id": "game-hybrid-galaxy-mwq1zqw6",
+      "developerId": "usr-dev-test-1795244112778-q29b",
+      "developerName": "Quantum Arcade Studio",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "hybrid-galaxy-mwq1zqw6",
+      "title": "Hybrid Star Fighter",
+      "shortDescription": "AI concept art refined with human mechanics.",
+      "fullDescription": "Fast-paced space arcade fighter with human-coded gameplay and AI concepts.",
+      "controlsGuide": "Mouse to aim and shoot",
+      "engine": "Phaser 3",
+      "orientation": "LANDSCAPE",
+      "status": "SUBMITTED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "currentVersionId": "ver-hybrid-galaxy-mwq1zqw6-1_0_0",
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-21T06:55:12.875Z",
+      "updatedAt": "2026-11-21T06:55:12.875Z",
+      "developedBy": "AI + Human Developed",
+      "developmentType": "AI + Human Developed"
+    },
+    {
+      "id": "game-human-crafted-mwq26xio",
+      "developerId": "usr-dev-test-1795244447925-aj68",
+      "developerName": "Quantum Arcade Studio",
+      "categoryId": "cat-action",
+      "categoryName": "Action",
+      "slug": "human-crafted-mwq26xio",
+      "title": "Cyber Blade Odyssey",
+      "shortDescription": "Hand-crafted pixel art adventure.",
+      "fullDescription": "Hand-crafted pixel art adventure with custom orchestral music.",
+      "controlsGuide": "Arrow keys: Move\nZ: Attack",
+      "engine": "Custom Canvas Engine",
+      "orientation": "LANDSCAPE",
+      "status": "SUBMITTED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "currentVersionId": "ver-human-crafted-mwq26xio-1_0_0",
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-21T07:00:48.068Z",
+      "updatedAt": "2026-11-21T07:00:48.068Z",
+      "developedBy": "Human Developed",
+      "developmentType": "Human Developed"
+    },
+    {
+      "id": "game-ai-synthesized-mwq26xml",
+      "developerId": "usr-dev-test-1795244448073-pkeh",
+      "developerName": "Quantum Arcade Studio",
+      "categoryId": "cat-puzzle",
+      "categoryName": "Puzzle",
+      "slug": "ai-synthesized-mwq26xml",
+      "title": "Neural Maze Escape",
+      "shortDescription": "AI-generated puzzles and audio.",
+      "fullDescription": "AI-generated labyrinths synthesized by deep neural networks.",
+      "controlsGuide": "WASD to navigate",
+      "engine": "Three.js",
+      "orientation": "LANDSCAPE",
+      "status": "SUBMITTED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "currentVersionId": "ver-ai-synthesized-mwq26xml-1_0_0",
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-21T07:00:48.193Z",
+      "updatedAt": "2026-11-21T07:00:48.193Z",
+      "developedBy": "AI Developed",
+      "developmentType": "AI Developed"
+    },
+    {
+      "id": "game-hybrid-galaxy-mwq26xq6",
+      "developerId": "usr-dev-test-1795244448195-07i2",
+      "developerName": "Quantum Arcade Studio",
+      "categoryId": "cat-arcade",
+      "categoryName": "Arcade",
+      "slug": "hybrid-galaxy-mwq26xq6",
+      "title": "Hybrid Star Fighter",
+      "shortDescription": "AI concept art refined with human mechanics.",
+      "fullDescription": "Fast-paced space arcade fighter with human-coded gameplay and AI concepts.",
+      "controlsGuide": "Mouse to aim and shoot",
+      "engine": "Phaser 3",
+      "orientation": "LANDSCAPE",
+      "status": "SUBMITTED",
+      "isFeatured": false,
+      "thumbnailUrl": "/images/placeholders/thumb.png",
+      "bannerUrl": "/images/placeholders/banner.png",
+      "screenshots": [],
+      "currentVersionId": "ver-hybrid-galaxy-mwq26xq6-1_0_0",
+      "totalPlays": 0,
+      "rating": 0,
+      "createdAt": "2026-11-21T07:00:48.323Z",
+      "updatedAt": "2026-11-21T07:00:48.323Z",
+      "developedBy": "AI + Human Developed",
+      "developmentType": "AI + Human Developed"
     }
   ],
   "versions": [
@@ -7803,9 +8168,225 @@
         "scanErrors": []
       },
       "createdAt": "2026-11-21T06:49:56.544Z"
+    },
+    {
+      "id": "ver-human-crafted-mwq1zqpt-1_0_0",
+      "gameId": "game-human-crafted-mwq1zqpt",
+      "versionNumber": "1.0.0",
+      "changelog": "Initial release",
+      "entryFile": "index.html",
+      "archiveChecksum": "99653e247da420c8155b62363109c1c7e5a42bc4e41500e80faa9a8882d4045a",
+      "archiveSizeBytes": 162,
+      "status": "SUBMITTED",
+      "scanResults": {
+        "passed": true,
+        "extractedFilesCount": 1,
+        "uncompressedSizeBytes": 54,
+        "hasEntryFile": true,
+        "suspiciousFilesDetected": [],
+        "scanErrors": []
+      },
+      "createdAt": "2026-11-21T06:55:12.661Z"
+    },
+    {
+      "id": "ver-ai-synthesized-mwq1zqtd-1_0_0",
+      "gameId": "game-ai-synthesized-mwq1zqtd",
+      "versionNumber": "1.0.0",
+      "changelog": "Initial release",
+      "entryFile": "index.html",
+      "archiveChecksum": "99653e247da420c8155b62363109c1c7e5a42bc4e41500e80faa9a8882d4045a",
+      "archiveSizeBytes": 162,
+      "status": "SUBMITTED",
+      "scanResults": {
+        "passed": true,
+        "extractedFilesCount": 1,
+        "uncompressedSizeBytes": 54,
+        "hasEntryFile": true,
+        "suspiciousFilesDetected": [],
+        "scanErrors": []
+      },
+      "createdAt": "2026-11-21T06:55:12.775Z"
+    },
+    {
+      "id": "ver-hybrid-galaxy-mwq1zqw6-1_0_0",
+      "gameId": "game-hybrid-galaxy-mwq1zqw6",
+      "versionNumber": "1.0.0",
+      "changelog": "Initial release",
+      "entryFile": "index.html",
+      "archiveChecksum": "99653e247da420c8155b62363109c1c7e5a42bc4e41500e80faa9a8882d4045a",
+      "archiveSizeBytes": 162,
+      "status": "SUBMITTED",
+      "scanResults": {
+        "passed": true,
+        "extractedFilesCount": 1,
+        "uncompressedSizeBytes": 54,
+        "hasEntryFile": true,
+        "suspiciousFilesDetected": [],
+        "scanErrors": []
+      },
+      "createdAt": "2026-11-21T06:55:12.876Z"
+    },
+    {
+      "id": "ver-human-crafted-mwq26xio-1_0_0",
+      "gameId": "game-human-crafted-mwq26xio",
+      "versionNumber": "1.0.0",
+      "changelog": "Initial release",
+      "entryFile": "index.html",
+      "archiveChecksum": "73170d34cf3857a0bce73bbb2aa9546e6858d4891d8dcbe4f8152c67085d6614",
+      "archiveSizeBytes": 162,
+      "status": "SUBMITTED",
+      "scanResults": {
+        "passed": true,
+        "extractedFilesCount": 1,
+        "uncompressedSizeBytes": 54,
+        "hasEntryFile": true,
+        "suspiciousFilesDetected": [],
+        "scanErrors": []
+      },
+      "createdAt": "2026-11-21T07:00:48.068Z"
+    },
+    {
+      "id": "ver-ai-synthesized-mwq26xml-1_0_0",
+      "gameId": "game-ai-synthesized-mwq26xml",
+      "versionNumber": "1.0.0",
+      "changelog": "Initial release",
+      "entryFile": "index.html",
+      "archiveChecksum": "73170d34cf3857a0bce73bbb2aa9546e6858d4891d8dcbe4f8152c67085d6614",
+      "archiveSizeBytes": 162,
+      "status": "SUBMITTED",
+      "scanResults": {
+        "passed": true,
+        "extractedFilesCount": 1,
+        "uncompressedSizeBytes": 54,
+        "hasEntryFile": true,
+        "suspiciousFilesDetected": [],
+        "scanErrors": []
+      },
+      "createdAt": "2026-11-21T07:00:48.193Z"
+    },
+    {
+      "id": "ver-hybrid-galaxy-mwq26xq6-1_0_0",
+      "gameId": "game-hybrid-galaxy-mwq26xq6",
+      "versionNumber": "1.0.0",
+      "changelog": "Initial release",
+      "entryFile": "index.html",
+      "archiveChecksum": "73170d34cf3857a0bce73bbb2aa9546e6858d4891d8dcbe4f8152c67085d6614",
+      "archiveSizeBytes": 162,
+      "status": "SUBMITTED",
+      "scanResults": {
+        "passed": true,
+        "extractedFilesCount": 1,
+        "uncompressedSizeBytes": 54,
+        "hasEntryFile": true,
+        "suspiciousFilesDetected": [],
+        "scanErrors": []
+      },
+      "createdAt": "2026-11-21T07:00:48.323Z"
     }
   ],
   "submissions": [
+    {
+      "id": "sub-1795244448323-p3tb",
+      "versionId": "ver-hybrid-galaxy-mwq26xq6-1_0_0",
+      "gameId": "game-hybrid-galaxy-mwq26xq6",
+      "gameTitle": "Hybrid Star Fighter",
+      "developerName": "Quantum Arcade Studio",
+      "status": "SUBMITTED",
+      "automatedChecks": {
+        "entryPageLoads": true,
+        "consoleErrorsCount": 0,
+        "loadTimeMs": 120,
+        "responsiveViewportOk": true,
+        "cspViolationsCount": 0
+      },
+      "manualNotes": "Initial release",
+      "submittedAt": "2026-11-21T07:00:48.323Z"
+    },
+    {
+      "id": "sub-1795244448194-04mh",
+      "versionId": "ver-ai-synthesized-mwq26xml-1_0_0",
+      "gameId": "game-ai-synthesized-mwq26xml",
+      "gameTitle": "Neural Maze Escape",
+      "developerName": "Quantum Arcade Studio",
+      "status": "SUBMITTED",
+      "automatedChecks": {
+        "entryPageLoads": true,
+        "consoleErrorsCount": 0,
+        "loadTimeMs": 120,
+        "responsiveViewportOk": true,
+        "cspViolationsCount": 0
+      },
+      "manualNotes": "Initial release",
+      "submittedAt": "2026-11-21T07:00:48.194Z"
+    },
+    {
+      "id": "sub-1795244448069-pkjc",
+      "versionId": "ver-human-crafted-mwq26xio-1_0_0",
+      "gameId": "game-human-crafted-mwq26xio",
+      "gameTitle": "Cyber Blade Odyssey",
+      "developerName": "Quantum Arcade Studio",
+      "status": "SUBMITTED",
+      "automatedChecks": {
+        "entryPageLoads": true,
+        "consoleErrorsCount": 0,
+        "loadTimeMs": 120,
+        "responsiveViewportOk": true,
+        "cspViolationsCount": 0
+      },
+      "manualNotes": "Initial release",
+      "submittedAt": "2026-11-21T07:00:48.069Z"
+    },
+    {
+      "id": "sub-1795244112876-2ofi",
+      "versionId": "ver-hybrid-galaxy-mwq1zqw6-1_0_0",
+      "gameId": "game-hybrid-galaxy-mwq1zqw6",
+      "gameTitle": "Hybrid Star Fighter",
+      "developerName": "Quantum Arcade Studio",
+      "status": "SUBMITTED",
+      "automatedChecks": {
+        "entryPageLoads": true,
+        "consoleErrorsCount": 0,
+        "loadTimeMs": 120,
+        "responsiveViewportOk": true,
+        "cspViolationsCount": 0
+      },
+      "manualNotes": "Initial release",
+      "submittedAt": "2026-11-21T06:55:12.876Z"
+    },
+    {
+      "id": "sub-1795244112776-dabh",
+      "versionId": "ver-ai-synthesized-mwq1zqtd-1_0_0",
+      "gameId": "game-ai-synthesized-mwq1zqtd",
+      "gameTitle": "Neural Maze Escape",
+      "developerName": "Quantum Arcade Studio",
+      "status": "SUBMITTED",
+      "automatedChecks": {
+        "entryPageLoads": true,
+        "consoleErrorsCount": 0,
+        "loadTimeMs": 120,
+        "responsiveViewportOk": true,
+        "cspViolationsCount": 0
+      },
+      "manualNotes": "Initial release",
+      "submittedAt": "2026-11-21T06:55:12.776Z"
+    },
+    {
+      "id": "sub-1795244112661-uevi",
+      "versionId": "ver-human-crafted-mwq1zqpt-1_0_0",
+      "gameId": "game-human-crafted-mwq1zqpt",
+      "gameTitle": "Cyber Blade Odyssey",
+      "developerName": "Quantum Arcade Studio",
+      "status": "SUBMITTED",
+      "automatedChecks": {
+        "entryPageLoads": true,
+        "consoleErrorsCount": 0,
+        "loadTimeMs": 120,
+        "responsiveViewportOk": true,
+        "cspViolationsCount": 0
+      },
+      "manualNotes": "Initial release",
+      "submittedAt": "2026-11-21T06:55:12.661Z"
+    },
     {
       "id": "sub-1795243796545-7e4a",
       "versionId": "ver-human-crafted-mwq1syrm-1_0_0",
@@ -8114,6 +8695,70 @@
       "userId": "usr-dev-test-1795243796321-lcui",
       "agreementVersion": "v1.0-2026",
       "acceptedAt": "2026-11-21T06:49:56.477Z",
+      "ipAddress": "127.0.0.1",
+      "accountStatus": "ACTIVE"
+    },
+    {
+      "id": "agr-1795244112635",
+      "userId": "usr-dev-test-1795244112500-qnf1",
+      "agreementVersion": "v1.0-2026",
+      "acceptedAt": "2026-11-21T06:55:12.635Z",
+      "ipAddress": "127.0.0.1",
+      "accountStatus": "ACTIVE"
+    },
+    {
+      "id": "agr-1795244112768",
+      "userId": "usr-dev-test-1795244112667-zsdx",
+      "agreementVersion": "v1.0-2026",
+      "acceptedAt": "2026-11-21T06:55:12.768Z",
+      "ipAddress": "127.0.0.1",
+      "accountStatus": "ACTIVE"
+    },
+    {
+      "id": "agr-1795244112868",
+      "userId": "usr-dev-test-1795244112778-q29b",
+      "agreementVersion": "v1.0-2026",
+      "acceptedAt": "2026-11-21T06:55:12.868Z",
+      "ipAddress": "127.0.0.1",
+      "accountStatus": "ACTIVE"
+    },
+    {
+      "id": "agr-1795244112960",
+      "userId": "usr-dev-test-1795244112877-pt54",
+      "agreementVersion": "v1.0-2026",
+      "acceptedAt": "2026-11-21T06:55:12.960Z",
+      "ipAddress": "127.0.0.1",
+      "accountStatus": "ACTIVE"
+    },
+    {
+      "id": "agr-1795244448044",
+      "userId": "usr-dev-test-1795244447925-aj68",
+      "agreementVersion": "v1.0-2026",
+      "acceptedAt": "2026-11-21T07:00:48.044Z",
+      "ipAddress": "127.0.0.1",
+      "accountStatus": "ACTIVE"
+    },
+    {
+      "id": "agr-1795244448187",
+      "userId": "usr-dev-test-1795244448073-pkeh",
+      "agreementVersion": "v1.0-2026",
+      "acceptedAt": "2026-11-21T07:00:48.187Z",
+      "ipAddress": "127.0.0.1",
+      "accountStatus": "ACTIVE"
+    },
+    {
+      "id": "agr-1795244448317",
+      "userId": "usr-dev-test-1795244448195-07i2",
+      "agreementVersion": "v1.0-2026",
+      "acceptedAt": "2026-11-21T07:00:48.317Z",
+      "ipAddress": "127.0.0.1",
+      "accountStatus": "ACTIVE"
+    },
+    {
+      "id": "agr-1795244448426",
+      "userId": "usr-dev-test-1795244448325-lhz1",
+      "agreementVersion": "v1.0-2026",
+      "acceptedAt": "2026-11-21T07:00:48.426Z",
       "ipAddress": "127.0.0.1",
       "accountStatus": "ACTIVE"
     }
@@ -10577,6 +11222,142 @@
     }
   ],
   "auditLogs": [
+    {
+      "id": "log-1795244448324-ifc7",
+      "createdAt": "2026-11-21T07:00:48.324Z",
+      "previousHash": "296b99454c9d970021fb39d73b12d893c8435ea723c7065e8df5dc8a9fb62b31",
+      "tamperHash": "18235482045db8044d0440200d2fe01d55d71b655add60255c405c90fbae70f2",
+      "actorId": "usr-dev-test-1795244448195-07i2",
+      "actorName": "Quantum Arcade Studio",
+      "action": "SUBMIT_GAME",
+      "targetType": "GAME_SUBMISSION",
+      "targetId": "sub-1795244448323-p3tb",
+      "details": {
+        "gameId": "game-hybrid-galaxy-mwq26xq6",
+        "versionId": "ver-hybrid-galaxy-mwq26xq6-1_0_0",
+        "title": "Hybrid Star Fighter",
+        "versionNumber": "1.0.0",
+        "aiDisclosure": "AI_ASSISTED",
+        "archiveChecksum": "73170d34cf3857a0bce73bbb2aa9546e6858d4891d8dcbe4f8152c67085d6614"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795244448194-v8cj",
+      "createdAt": "2026-11-21T07:00:48.194Z",
+      "previousHash": "178c13c366134544158972dd465594150250afbe997cffb438756b4c89bfbc3c",
+      "tamperHash": "296b99454c9d970021fb39d73b12d893c8435ea723c7065e8df5dc8a9fb62b31",
+      "actorId": "usr-dev-test-1795244448073-pkeh",
+      "actorName": "Quantum Arcade Studio",
+      "action": "SUBMIT_GAME",
+      "targetType": "GAME_SUBMISSION",
+      "targetId": "sub-1795244448194-04mh",
+      "details": {
+        "gameId": "game-ai-synthesized-mwq26xml",
+        "versionId": "ver-ai-synthesized-mwq26xml-1_0_0",
+        "title": "Neural Maze Escape",
+        "versionNumber": "1.0.0",
+        "aiDisclosure": "AI_GENERATED",
+        "archiveChecksum": "73170d34cf3857a0bce73bbb2aa9546e6858d4891d8dcbe4f8152c67085d6614"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795244448069-g84q",
+      "createdAt": "2026-11-21T07:00:48.069Z",
+      "previousHash": "9b1d13e3e5b4181e0c18f13e8928574bd3b5c7cc0f1b95811850623f498d4b34",
+      "tamperHash": "178c13c366134544158972dd465594150250afbe997cffb438756b4c89bfbc3c",
+      "actorId": "usr-dev-test-1795244447925-aj68",
+      "actorName": "Quantum Arcade Studio",
+      "action": "SUBMIT_GAME",
+      "targetType": "GAME_SUBMISSION",
+      "targetId": "sub-1795244448069-pkjc",
+      "details": {
+        "gameId": "game-human-crafted-mwq26xio",
+        "versionId": "ver-human-crafted-mwq26xio-1_0_0",
+        "title": "Cyber Blade Odyssey",
+        "versionNumber": "1.0.0",
+        "aiDisclosure": "NONE_HUMAN_ONLY",
+        "archiveChecksum": "73170d34cf3857a0bce73bbb2aa9546e6858d4891d8dcbe4f8152c67085d6614"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795244416083-0nty",
+      "createdAt": "2026-11-21T07:00:16.083Z",
+      "previousHash": "14b62f1516c827ed06dc5da1e3cee47524d3a307e11da61f6b77f78615e72573",
+      "tamperHash": "9b1d13e3e5b4181e0c18f13e8928574bd3b5c7cc0f1b95811850623f498d4b34",
+      "actorId": "usr-dev-real-1795244416002-fw0c",
+      "actorName": "HyperNova Interactive",
+      "action": "UPDATE_STUDIO_PROFILE",
+      "targetType": "PROFILE",
+      "targetId": "prof-1795244416079",
+      "details": {
+        "studioName": "HyperNova Studios Pvt Ltd",
+        "displayName": "Dev Lead Sarah"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795244112876-4kmk",
+      "createdAt": "2026-11-21T06:55:12.876Z",
+      "previousHash": "e3f6c7e2caa7c84874490326176aa89ee8b0615e0bc73b5855c73a93f930e2cf",
+      "tamperHash": "14b62f1516c827ed06dc5da1e3cee47524d3a307e11da61f6b77f78615e72573",
+      "actorId": "usr-dev-test-1795244112778-q29b",
+      "actorName": "Quantum Arcade Studio",
+      "action": "SUBMIT_GAME",
+      "targetType": "GAME_SUBMISSION",
+      "targetId": "sub-1795244112876-2ofi",
+      "details": {
+        "gameId": "game-hybrid-galaxy-mwq1zqw6",
+        "versionId": "ver-hybrid-galaxy-mwq1zqw6-1_0_0",
+        "title": "Hybrid Star Fighter",
+        "versionNumber": "1.0.0",
+        "aiDisclosure": "AI_ASSISTED",
+        "archiveChecksum": "99653e247da420c8155b62363109c1c7e5a42bc4e41500e80faa9a8882d4045a"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795244112776-xmbi",
+      "createdAt": "2026-11-21T06:55:12.776Z",
+      "previousHash": "0ac255dbbb078c4911f87764b68a2cde19a05ba4a03e5045ab883b84d60fdf34",
+      "tamperHash": "e3f6c7e2caa7c84874490326176aa89ee8b0615e0bc73b5855c73a93f930e2cf",
+      "actorId": "usr-dev-test-1795244112667-zsdx",
+      "actorName": "Quantum Arcade Studio",
+      "action": "SUBMIT_GAME",
+      "targetType": "GAME_SUBMISSION",
+      "targetId": "sub-1795244112776-dabh",
+      "details": {
+        "gameId": "game-ai-synthesized-mwq1zqtd",
+        "versionId": "ver-ai-synthesized-mwq1zqtd-1_0_0",
+        "title": "Neural Maze Escape",
+        "versionNumber": "1.0.0",
+        "aiDisclosure": "AI_GENERATED",
+        "archiveChecksum": "99653e247da420c8155b62363109c1c7e5a42bc4e41500e80faa9a8882d4045a"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795244112662-qyzc",
+      "createdAt": "2026-11-21T06:55:12.662Z",
+      "previousHash": "413a4986e8b4ff3958fb5f71272c23b4c42c9ee761720b2e105ad2fb1509e6b5",
+      "tamperHash": "0ac255dbbb078c4911f87764b68a2cde19a05ba4a03e5045ab883b84d60fdf34",
+      "actorId": "usr-dev-test-1795244112500-qnf1",
+      "actorName": "Quantum Arcade Studio",
+      "action": "SUBMIT_GAME",
+      "targetType": "GAME_SUBMISSION",
+      "targetId": "sub-1795244112661-uevi",
+      "details": {
+        "gameId": "game-human-crafted-mwq1zqpt",
+        "versionId": "ver-human-crafted-mwq1zqpt-1_0_0",
+        "title": "Cyber Blade Odyssey",
+        "versionNumber": "1.0.0",
+        "aiDisclosure": "NONE_HUMAN_ONLY",
+        "archiveChecksum": "99653e247da420c8155b62363109c1c7e5a42bc4e41500e80faa9a8882d4045a"
+      },
+      "ipAddress": "127.0.0.1"
+    },
     {
       "id": "log-1795243797266-5gyp",
       "createdAt": "2026-11-21T06:49:57.266Z",
@@ -13743,6 +14524,42 @@
       "notifyOnPayout": true,
       "notifyOnPlayerReport": false,
       "updatedAt": "2026-11-21T06:49:57.259Z"
+    },
+    {
+      "id": "set-1795244415990",
+      "userId": "usr-dev-real-1795244415890-n8t4",
+      "payoutMethod": "BANK_AND_UPI",
+      "payoutDetails": {},
+      "studioVerified": true,
+      "currency": "INR",
+      "notifyOnQaUpdate": true,
+      "notifyOnPayout": true,
+      "notifyOnPlayerReport": false,
+      "updatedAt": "2026-11-21T07:00:15.990Z"
+    },
+    {
+      "id": "set-1795244416080",
+      "userId": "usr-dev-real-1795244416002-fw0c",
+      "payoutMethod": "BANK_AND_UPI",
+      "payoutDetails": {},
+      "studioVerified": true,
+      "currency": "INR",
+      "notifyOnQaUpdate": true,
+      "notifyOnPayout": true,
+      "notifyOnPlayerReport": false,
+      "updatedAt": "2026-11-21T07:00:16.080Z"
+    },
+    {
+      "id": "set-1795244416166",
+      "userId": "usr-dev-real-1795244416088-bikt",
+      "payoutMethod": "BANK_AND_UPI",
+      "payoutDetails": {},
+      "studioVerified": true,
+      "currency": "INR",
+      "notifyOnQaUpdate": true,
+      "notifyOnPayout": true,
+      "notifyOnPlayerReport": false,
+      "updatedAt": "2026-11-21T07:00:16.166Z"
     }
   ],
   "supportTickets": [
@@ -13875,6 +14692,66 @@
       "licensingNotes": "",
       "rightsConfirmed": true,
       "declaredAt": "2026-11-21T06:49:56.544Z"
+    },
+    {
+      "id": "rgt-1795244112661-z6aw",
+      "versionId": "ver-human-crafted-mwq1zqpt-1_0_0",
+      "aiDisclosure": "NONE_HUMAN_ONLY",
+      "developedBy": "Human Developed",
+      "thirdPartyAssetsDeclared": true,
+      "licensingNotes": "",
+      "rightsConfirmed": true,
+      "declaredAt": "2026-11-21T06:55:12.661Z"
+    },
+    {
+      "id": "rgt-1795244112776-6dmc",
+      "versionId": "ver-ai-synthesized-mwq1zqtd-1_0_0",
+      "aiDisclosure": "AI_GENERATED",
+      "developedBy": "AI Developed",
+      "thirdPartyAssetsDeclared": true,
+      "licensingNotes": "",
+      "rightsConfirmed": true,
+      "declaredAt": "2026-11-21T06:55:12.776Z"
+    },
+    {
+      "id": "rgt-1795244112876-2wy6",
+      "versionId": "ver-hybrid-galaxy-mwq1zqw6-1_0_0",
+      "aiDisclosure": "AI_ASSISTED",
+      "developedBy": "AI + Human Developed",
+      "thirdPartyAssetsDeclared": true,
+      "licensingNotes": "",
+      "rightsConfirmed": true,
+      "declaredAt": "2026-11-21T06:55:12.876Z"
+    },
+    {
+      "id": "rgt-1795244448068-a6ht",
+      "versionId": "ver-human-crafted-mwq26xio-1_0_0",
+      "aiDisclosure": "NONE_HUMAN_ONLY",
+      "developedBy": "Human Developed",
+      "thirdPartyAssetsDeclared": true,
+      "licensingNotes": "",
+      "rightsConfirmed": true,
+      "declaredAt": "2026-11-21T07:00:48.068Z"
+    },
+    {
+      "id": "rgt-1795244448193-kjiq",
+      "versionId": "ver-ai-synthesized-mwq26xml-1_0_0",
+      "aiDisclosure": "AI_GENERATED",
+      "developedBy": "AI Developed",
+      "thirdPartyAssetsDeclared": true,
+      "licensingNotes": "",
+      "rightsConfirmed": true,
+      "declaredAt": "2026-11-21T07:00:48.194Z"
+    },
+    {
+      "id": "rgt-1795244448323-jdo0",
+      "versionId": "ver-hybrid-galaxy-mwq26xq6-1_0_0",
+      "aiDisclosure": "AI_ASSISTED",
+      "developedBy": "AI + Human Developed",
+      "thirdPartyAssetsDeclared": true,
+      "licensingNotes": "",
+      "rightsConfirmed": true,
+      "declaredAt": "2026-11-21T07:00:48.323Z"
     }
   ],
   "playerWallets": []

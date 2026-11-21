@@ -15,6 +15,7 @@ export async function GET(req: NextRequest) {
     const activeSeconds = parseInt(searchParams.get('activeSeconds') || '0', 10);
     const isRestart = searchParams.get('isRestart') === 'true' || searchParams.get('trigger') === 'restart' || searchParams.get('trigger') === 'game_over';
     const isNextLevel = searchParams.get('isNextLevel') === 'true' || searchParams.get('trigger') === 'next_level';
+    const hasUsedRevive = searchParams.get('hasUsedRevive') === 'true';
     const trigger = searchParams.get('trigger') || undefined;
 
     if (!gameId || !sessionToken) {
@@ -51,6 +52,7 @@ export async function GET(req: NextRequest) {
       isIvt: isBot,
       isRestart,
       isNextLevel,
+      hasUsedRevive,
       trigger,
     });
 

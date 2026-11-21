@@ -21,6 +21,8 @@ import {
   Coins,
   X,
   CheckCircle2,
+  ShieldCheck,
+  ShieldAlert,
 } from 'lucide-react';
 import { Game, AdFormat } from '@/types';
 import AdOverlay from './AdOverlay';
@@ -49,11 +51,15 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
   const [showInGameBanner, setShowInGameBanner] = useState(true);
   const [rewardToast, setRewardToast] = useState<string | null>(null);
   const [gameOverModal, setGameOverModal] = useState<{ score: number } | null>(null);
+  const [hasRevivedInRun, setHasRevivedInRun] = useState(false);
+  const [reviveCountdown, setReviveCountdown] = useState<number | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const hudTimerRef = useRef<NodeJS.Timeout | null>(null);
   const pendingActionRef = useRef<'RESTART' | 'REVIVE' | null>(null);
+  const hasRevivedInRunRef = useRef(false);
+  const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Telemetry session tracking refs
   const sessionTokenRef = useRef<string | null>(null);
@@ -122,6 +128,9 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
     const newToken = `sess-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
     sessionTokenRef.current = newToken;
     activeSecondsRef.current = 0;
+    hasRevivedInRunRef.current = false;
+    setHasRevivedInRun(false);
+    setReviveCountdown(null);
     sendTelemetryPing('SESSION_START');
 
     setAdLoading(true);
@@ -150,13 +159,11 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
 
     if (rewardClaimed) {
       const msg =
-        rewardClaimed === 'COINS'
-          ? '🪙 Reward Unlocked: +100 Coins credited to player account!'
-          : rewardClaimed === 'DOUBLE_REWARD'
-          ? '✨ Reward Unlocked: 2x XP Multiplier & Bonus Reward Activated!'
-          : '💖 Reward Unlocked: Extra Life / Revive Activated!';
+        rewardClaimed === 'DOUBLE_REWARD'
+          ? '✨ Reward Unlocked: 2x Bonus Reward Activated!'
+          : '💖 Next Life Activated! (3-Second Safe Shield Active)';
       setRewardToast(msg);
-      setTimeout(() => setRewardToast(null), 5000);
+      setTimeout(() => setRewardToast(null), 4000);
     }
 
     if (currentSession) {
@@ -187,7 +194,7 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
     if (rewardClaimed) {
       sendToRunner('GV_REWARD_GRANTED', {
         reward: rewardClaimed,
-        amount: rewardClaimed === 'COINS' ? 100 : 1,
+        amount: 1,
       });
     }
 
@@ -195,20 +202,50 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
     if (pendingActionRef.current === 'RESTART') {
       pendingActionRef.current = null;
       setGameOverModal(null);
+      hasRevivedInRunRef.current = false;
+      setHasRevivedInRun(false);
+      setReviveCountdown(null);
       activeSecondsRef.current = 0;
       sendToRunner('GV_RESTART');
+      sendToRunner('GV_RESUME');
     } else if (pendingActionRef.current === 'REVIVE' || format === 'REWARDED') {
       pendingActionRef.current = null;
+      hasRevivedInRunRef.current = true;
+      setHasRevivedInRun(true);
       setGameOverModal(null);
-      sendToRunner('GV_REVIVE');
-    }
 
-    sendToRunner('GV_RESUME');
+      // Trigger 3-Second Resume Countdown & Safe Shield Rule
+      setRewardToast('💖 Next Life Activated! Resuming in 3 seconds...');
+      setTimeout(() => setRewardToast(null), 4000);
+
+      // Send revive signal to game runner with 3-second invulnerability
+      sendToRunner('GV_REVIVE', { invulnerableSeconds: 3 });
+
+      setReviveCountdown(3);
+      if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+      countdownIntervalRef.current = setInterval(() => {
+        setReviveCountdown((prev) => {
+          if (prev === null || prev <= 1) {
+            if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+            sendToRunner('GV_RESUME');
+            return null;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      sendToRunner('GV_RESUME');
+    }
   };
 
   // Automatic Restart handler (enforces 3-minute cooldown & skippable 10s vs unskippable ad rule)
   const handleAutomaticRestart = async () => {
     setGameOverModal(null);
+    hasRevivedInRunRef.current = false;
+    setHasRevivedInRun(false);
+    setReviveCountdown(null);
+    if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+
     const secs = activeSecondsRef.current;
     let sessionToken = sessionTokenRef.current;
     if (!sessionToken) {
@@ -237,8 +274,15 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
     sendToRunner('GV_RESUME');
   };
 
-  // Automatic Rewarded Ad trigger (for extra life / coins upon game over or player request)
+  // Automatic Rewarded Ad trigger (for Next Life with 1-per-game limit and 3-second shield)
   const handleAutomaticRewarded = async () => {
+    // 1 Next Life per game run limit
+    if (hasRevivedInRunRef.current) {
+      setRewardToast('⚠️ Next Life already used in this run (Limit: 1 per game)');
+      setTimeout(() => setRewardToast(null), 3000);
+      return;
+    }
+
     let sessionToken = sessionTokenRef.current;
     if (!sessionToken) {
       sessionToken = `sess-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
@@ -248,7 +292,7 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
     sendToRunner('GV_PAUSE');
     try {
       const res = await fetch(
-        `/api/ads/slot?gameId=${game.id}&sessionToken=${sessionToken}&format=REWARDED`
+        `/api/ads/slot?gameId=${game.id}&sessionToken=${sessionToken}&format=REWARDED&hasUsedRevive=false`
       );
       if (res.ok) {
         const data = await res.json();
@@ -260,12 +304,26 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
       }
     } catch (e) {}
 
-    // Fallback if ad unavailable: grant extra life directly
+    // Fallback if ad unavailable: grant next life directly with 3-second shield
     setGameOverModal(null);
-    setRewardToast('💖 Revive Activated!');
+    hasRevivedInRunRef.current = true;
+    setHasRevivedInRun(true);
+    setRewardToast('💖 Next Life Activated! (3-Second Safe Shield)');
     setTimeout(() => setRewardToast(null), 4000);
-    sendToRunner('GV_REVIVE');
-    sendToRunner('GV_RESUME');
+    sendToRunner('GV_REVIVE', { invulnerableSeconds: 3 });
+
+    setReviveCountdown(3);
+    if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+    countdownIntervalRef.current = setInterval(() => {
+      setReviveCountdown((prev) => {
+        if (prev === null || prev <= 1) {
+          if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+          sendToRunner('GV_RESUME');
+          return null;
+        }
+        return prev - 1;
+      });
+    }, 1000);
   };
 
   // ================= POSTMESSAGE COMMUNICATION TO RUNNER =================
@@ -686,6 +744,30 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
               </div>
             )}
 
+            {/* ================= 3-SECOND RESUME COUNTDOWN OVERLAY ================= */}
+            {reviveCountdown !== null && isPlaying && (
+              <div className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm animate-fade-in text-white select-none pointer-events-none">
+                <div className="text-center space-y-3">
+                  <div className="w-20 h-20 mx-auto rounded-full bg-rose-500/20 border-2 border-rose-400 flex items-center justify-center text-rose-400 shadow-xl shadow-rose-500/30">
+                    <Heart className="w-10 h-10 fill-rose-500 text-rose-400 animate-pulse" />
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-black text-white tracking-wider uppercase">
+                    Next Life Activated!
+                  </h3>
+                  <p className="text-slate-300 text-xs sm:text-sm font-medium">
+                    Game wahin se continue ho raha hai:
+                  </p>
+                  <div className="text-6xl sm:text-7xl font-black font-mono text-amber-400 animate-ping">
+                    {reviveCountdown}
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-cyan-950/90 border border-cyan-400/60 rounded-full text-xs font-mono text-cyan-300 shadow-md">
+                    <ShieldCheck className="w-4 h-4 text-cyan-400" />
+                    <span>3-Second Safe Shield Active</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* ================= IN-GAME GAME OVER & REWARDED AD OVERLAY ================= */}
             {gameOverModal && isPlaying && !activeAd && (
               <div className="absolute inset-0 z-35 flex flex-col items-center justify-center bg-black/85 backdrop-blur-md text-white p-6 animate-fade-in select-none">
@@ -704,19 +786,40 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
                   </div>
 
                   <div className="space-y-3 pt-2">
-                    {/* OPTION 1: REWARDED AD (EXTRA LIFE / REVIVE + 100 COINS) */}
-                    <button
-                      onClick={handleAutomaticRewarded}
-                      className="w-full group py-3.5 px-4 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-lg shadow-amber-500/25 transition-all transform hover:-translate-y-0.5 active:scale-95 cursor-pointer"
-                    >
-                      <Heart className="w-5 h-5 text-slate-950 fill-rose-600 group-hover:scale-110 transition-transform" />
-                      <span>Revive (+100 Coins) — Watch Short Ad</span>
-                    </button>
+                    {/* OPTION 1: REWARDED AD (NEXT LIFE - USER RULE: 1 TIME PER GAME LIMIT) */}
+                    {!hasRevivedInRun ? (
+                      <div className="space-y-1">
+                        <button
+                          onClick={handleAutomaticRewarded}
+                          className="w-full group py-3.5 px-4 rounded-2xl bg-gradient-to-r from-rose-500 via-amber-500 to-amber-600 hover:from-rose-400 hover:to-amber-500 text-slate-950 font-black text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-lg shadow-rose-500/25 transition-all transform hover:-translate-y-0.5 active:scale-95 cursor-pointer"
+                        >
+                          <Heart className="w-5 h-5 text-slate-950 fill-rose-700 group-hover:scale-110 transition-transform" />
+                          <span>Next Life (Continue Game) — Watch Short Ad</span>
+                        </button>
+                        <p className="text-[10px] text-amber-300 font-medium">
+                          ⚡ 1 Next Life per game run • 3-Second Safe Shield included
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="py-3 px-4 rounded-2xl bg-slate-800/90 border border-slate-700 text-center space-y-1">
+                        <div className="flex items-center justify-center gap-2 text-amber-400 font-bold text-xs">
+                          <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0" />
+                          <span>Next Life Limit Reached (1 Max Per Game)</span>
+                        </div>
+                        <p className="text-[11px] text-slate-400">
+                          Aap is game me 1 Next Life le chuke hain. Dobara khelne ke liye restart karein.
+                        </p>
+                      </div>
+                    )}
 
                     {/* OPTION 2: PLAY AGAIN / RESTART (TRIGGERS AUTOMATIC MIDGAME AD RULE) */}
                     <button
                       onClick={handleAutomaticRestart}
-                      className="w-full py-3 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-bold text-sm flex items-center justify-center gap-2 border border-slate-700 transition-all cursor-pointer"
+                      className={`w-full py-3.5 px-4 rounded-2xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 border transition-all cursor-pointer ${
+                        hasRevivedInRun
+                          ? 'bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white border-indigo-500/50 shadow-lg shadow-indigo-600/30'
+                          : 'bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border-slate-700'
+                      }`}
                     >
                       <RotateCcw className="w-4 h-4 text-slate-300" />
                       <span>Play Again / Restart Game</span>

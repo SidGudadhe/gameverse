@@ -96,13 +96,34 @@ describe('100x Deep Ads System & Placements Verification', () => {
   });
 
   describe('3. In-Game Rewarded Ads & Bonus Reward Ads (Coins / Life)', () => {
-    it('should configure unskippable rewarded ads with extra life and coin rewards', () => {
+    it('should configure unskippable rewarded ads for Next Life without fixed coins and with 3s shield', () => {
       const ad = getRandomAdCreative('REWARDED');
       expect(ad.isUnskippable).toBe(true);
       expect(ad.skipOffsetSeconds).toBe(0);
       expect(ad.rewardType).toBe('EXTRA_LIFE');
-      expect(ad.rewardLabel).toContain('Extra Life / Revive + 100 In-Game Coins');
-      expect(ad.placementText).toContain('IN-GAME REWARDED AD: Extra Life / Revive / Bonus Coins Claim');
+      expect(ad.rewardLabel).toContain('Extra Life / Revive (Next Life • 3s Safe Shield)');
+      expect(ad.placementText).toContain('IN-GAME REWARDED AD: Extra Life / Revive (1 Per Game Limit)');
+    });
+
+    it('should enforce 1 Next Life per game run limit', () => {
+      // First attempt in game run: eligible
+      const check1 = checkAdEligibility({
+        gameId: testGameId,
+        sessionToken: `sess-revive-${Date.now()}`,
+        format: 'REWARDED',
+        hasUsedRevive: false,
+      });
+      expect(check1.eligible).toBe(true);
+
+      // Second attempt in same run: rejected due to 1-per-game limit
+      const check2 = checkAdEligibility({
+        gameId: testGameId,
+        sessionToken: `sess-revive-${Date.now()}`,
+        format: 'REWARDED',
+        hasUsedRevive: true,
+      });
+      expect(check2.eligible).toBe(false);
+      expect(check2.reason).toContain('Next Life already used in current game run');
     });
 
     it('should configure level complete 2x bonus reward ads', () => {

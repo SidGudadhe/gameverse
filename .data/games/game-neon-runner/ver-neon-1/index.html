@@ -74,6 +74,7 @@
       // Game state
       let gameStarted = false;
       let isDead = false;
+      let invulnerableTimer = 0; // 3-second safe shield timer
       let score = 0;
       let highScore = 0;
       let frameCount = 0;
@@ -111,6 +112,7 @@
       function resetGame() {
         score = 0;
         isDead = false;
+        invulnerableTimer = 0;
         gameStarted = true;
         obstacles = [];
         player.y = groundY - player.h;
@@ -192,6 +194,7 @@
           player.vy = 0;
           player.y = groundY - player.h;
           obstacles = obstacles.filter(obs => obs.x > player.x + 350);
+          invulnerableTimer = 180; // 3-second safe shield rule
           playSynthSound(680, 'triangle', 0.35);
         }
       });
@@ -400,6 +403,7 @@
             const ph = player.isSliding ? 28 : player.h;
 
             if (
+              invulnerableTimer <= 0 &&
               px < obs.x + obs.w &&
               px + pw > obs.x &&
               py < obs.y + obs.h &&
@@ -437,6 +441,26 @@
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(player.x + 18, player.y + 8, 14, 10);
         ctx.restore();
+
+        // Draw 3-Second Safe Shield when invulnerable
+        if (invulnerableTimer > 0) {
+          invulnerableTimer--;
+          ctx.save();
+          ctx.strokeStyle = '#38bdf8';
+          ctx.lineWidth = 3;
+          ctx.shadowColor = '#38bdf8';
+          ctx.shadowBlur = 18;
+          ctx.beginPath();
+          ctx.arc(player.x + player.w / 2, player.y + currentH / 2, 42, 0, Math.PI * 2);
+          ctx.stroke();
+
+          // Safe Shield Label
+          ctx.fillStyle = '#38bdf8';
+          ctx.font = 'bold 12px monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText(`3s SHIELD: ${(invulnerableTimer / 60).toFixed(1)}s`, player.x + player.w / 2, player.y - 14);
+          ctx.restore();
+        }
 
         // 4. In-Game HUD
         ctx.fillStyle = '#ffffff';

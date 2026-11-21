@@ -134,8 +134,8 @@ export function getRandomAdCreative(format: AdFormat, activeSeconds = 0): MockAd
     creative.skipOffsetSeconds = 0; // Rewarded ads must be watched in full
     creative.durationSeconds = 15;
     creative.rewardType = 'EXTRA_LIFE';
-    creative.rewardLabel = 'Extra Life / Revive + 100 In-Game Coins';
-    creative.placementText = '[ IN-GAME REWARDED AD: Extra Life / Revive / Bonus Coins Claim ]';
+    creative.rewardLabel = 'Extra Life / Revive (Next Life • 3s Safe Shield)';
+    creative.placementText = '[ IN-GAME REWARDED AD: Extra Life / Revive (1 Per Game Limit) ]';
   } else if (format === 'BONUS_REWARD') {
     creative.isUnskippable = true;
     creative.skipOffsetSeconds = 0;
@@ -201,9 +201,10 @@ export function checkAdEligibility(params: {
   isIvt?: boolean;
   isRestart?: boolean;
   isNextLevel?: boolean;
+  hasUsedRevive?: boolean;
   trigger?: 'restart' | 'next_level' | 'game_over' | 'periodic' | 'manual' | string;
 }): { eligible: boolean; cooldownRemainingSeconds: number; reason?: string; isUnskippable?: boolean } {
-  const { sessionToken, format, activeSeconds = 0, isIvt = false, isRestart, isNextLevel, trigger } = params;
+  const { sessionToken, format, activeSeconds = 0, isIvt = false, isRestart, isNextLevel, hasUsedRevive, trigger } = params;
 
   if (isIvt) {
     return {
@@ -300,6 +301,15 @@ export function checkAdEligibility(params: {
 
   // REWARDED & BONUS_REWARD: Optional, user-initiated
   if (format === 'REWARDED' || format === 'BONUS_REWARD') {
+    // 1 Next Life per game run limit
+    if (format === 'REWARDED' && hasUsedRevive) {
+      return {
+        eligible: false,
+        cooldownRemainingSeconds: 0,
+        reason: 'Next Life already used in current game run. Only 1 revive permitted per game.',
+      };
+    }
+
     const existingRewarded = gvDb.getRecentAdImpression(sessionToken, format);
     if (existingRewarded) {
       const lastImpressionTime = new Date(existingRewarded.createdAt).getTime();

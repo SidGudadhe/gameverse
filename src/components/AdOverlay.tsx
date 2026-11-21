@@ -219,52 +219,29 @@ export default function AdOverlay({
         </div>
       )}
 
-      {/* ================= REWARDED AD CHOICE SELECTOR (User Requirement: Extra Life or Coins) ================= */}
-      {(format === 'REWARDED' || format === 'BONUS_REWARD') && (
+      {/* ================= REWARDED AD BENEFIT BANNER (User Explicit Rule: Next Life / Continue Here with 3s Shield) ================= */}
+      {format === 'REWARDED' && (
         <div className="relative z-10 max-w-xl mx-auto w-full px-4 mb-2">
-          <div className="bg-slate-900/90 border border-amber-500/60 rounded-2xl p-3 text-center shadow-lg">
-            <span className="text-[10px] font-mono text-amber-300 font-bold uppercase tracking-wider block mb-1.5">
-              Select Player In-Game Reward:
+          <div className="bg-slate-900/90 border border-rose-500/60 rounded-2xl p-3 text-center shadow-lg">
+            <span className="text-[10px] font-mono text-rose-300 font-bold uppercase tracking-wider block mb-1">
+              Active Reward Benefit:
             </span>
-            <div className="flex items-center justify-center gap-2">
-              <button
-                type="button"
-                onClick={() => setSelectedReward('EXTRA_LIFE')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
-                  selectedReward === 'EXTRA_LIFE'
-                    ? 'bg-rose-600 text-white shadow-sm ring-2 ring-rose-400'
-                    : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                }`}
-              >
-                <Heart className="w-3.5 h-3.5 fill-rose-400 text-rose-400" />
-                <span>Extra Life / Revive</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setSelectedReward('COINS')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
-                  selectedReward === 'COINS'
-                    ? 'bg-amber-500 text-slate-950 shadow-sm ring-2 ring-amber-300'
-                    : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                }`}
-              >
-                <Coins className="w-3.5 h-3.5 text-amber-400" />
-                <span>+100 Coins</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setSelectedReward('DOUBLE_REWARD')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
-                  selectedReward === 'DOUBLE_REWARD'
-                    ? 'bg-indigo-600 text-white shadow-sm ring-2 ring-indigo-400'
-                    : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                }`}
-              >
-                <Sparkles className="w-3.5 h-3.5 text-indigo-300" />
-                <span>2x XP Multiplier</span>
-              </button>
+            <div className="inline-flex items-center gap-2 bg-rose-950/80 border border-rose-500/50 px-3.5 py-1.5 rounded-xl text-xs font-bold text-rose-200">
+              <Heart className="w-4 h-4 text-rose-400 fill-rose-500" />
+              <span>Next Life: Continue game from current position (Includes 3-Second Shield • 1 per game)</span>
+            </div>
+          </div>
+        </div>
+      )}
+      {format === 'BONUS_REWARD' && (
+        <div className="relative z-10 max-w-xl mx-auto w-full px-4 mb-2">
+          <div className="bg-slate-900/90 border border-indigo-500/60 rounded-2xl p-3 text-center shadow-lg">
+            <span className="text-[10px] font-mono text-indigo-300 font-bold uppercase tracking-wider block mb-1">
+              Active Reward Benefit:
+            </span>
+            <div className="inline-flex items-center gap-2 bg-indigo-950/80 border border-indigo-500/50 px-3.5 py-1.5 rounded-xl text-xs font-bold text-indigo-200">
+              <Sparkles className="w-4 h-4 text-indigo-400" />
+              <span>2x Bonus Multiplier Claimed</span>
             </div>
           </div>
         </div>

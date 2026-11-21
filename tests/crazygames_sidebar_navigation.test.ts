@@ -45,13 +45,16 @@ describe('CrazyGames-Style Sidebar Navigation (100x Deep Analysis)', () => {
     expect(sidebarContent).toContain("href: '/player/payouts'");
   });
 
-  it('3. GamerSidebar should support both Expanded (w-56) and Collapsed (w-18) CrazyGames rail modes', () => {
+  it('3. GamerSidebar should support both Expanded (w-48) and Collapsed (w-16) CrazyGames rail modes with Pages text removed', () => {
     const sidebarContent = fs.readFileSync(sidebarPath, 'utf-8');
 
-    expect(sidebarContent).toContain("isCollapsed ? 'w-18' : 'w-56'");
+    expect(sidebarContent).toContain("isCollapsed ? 'w-16' : 'w-48'");
     expect(sidebarContent).toContain('toggleCollapse');
     expect(sidebarContent).toContain('ChevronLeft');
     expect(sidebarContent).toContain('ChevronRight');
+
+    // Pages header text is removed
+    expect(sidebarContent).not.toContain('font-mono">\n                Pages\n              </div>');
   });
 
   it('4. GamerSidebar should include CrazyGames quick genre shortcuts', () => {
@@ -66,10 +69,10 @@ describe('CrazyGames-Style Sidebar Navigation (100x Deep Analysis)', () => {
     expect(sidebarContent).toContain('/category/rpg');
   });
 
-  it('5. PlayerContentWrapper should dynamically pad desktop content for the side navigation', () => {
+  it('5. PlayerContentWrapper should dynamically pad desktop content for the slim side navigation', () => {
     const wrapperContent = fs.readFileSync(wrapperPath, 'utf-8');
 
-    expect(wrapperContent).toContain("isCollapsed ? 'md:pl-18' : 'md:pl-56'");
+    expect(wrapperContent).toContain("isCollapsed ? 'md:pl-16' : 'md:pl-48'");
     expect(wrapperContent).toContain('isPlayerPortal');
   });
 

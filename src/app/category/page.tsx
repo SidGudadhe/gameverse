@@ -49,49 +49,35 @@ export default function AllCategoriesPage() {
   }, [sortBy]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
-      {/* Breadcrumb Navigation */}
-      <div className="flex items-center gap-2 text-xs text-slate-500">
-        <Link href="/" className="hover:text-slate-900 transition-colors flex items-center gap-1">
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Home</span>
-        </Link>
-        <span>/</span>
-        <span className="text-slate-800 font-medium">Categories</span>
-      </div>
-
-      {/* Compact Category Directory Header Banner */}
-      <div className="relative rounded-2xl p-4 sm:p-5 border border-slate-200 overflow-hidden bg-gradient-to-r from-indigo-50/80 via-slate-50 to-blue-50/80 shadow-xs">
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <Badge variant="cyan" size="sm">GAME CATALOG</Badge>
-              <span className="text-[11px] text-indigo-700 font-mono font-medium">
-                {categories.length} Genres &bull; {allGames.length} Playable Titles
-              </span>
-            </div>
-            <h1 className="font-heading font-black text-xl sm:text-2xl text-slate-900 tracking-tight">
+    <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 pt-2 pb-6 space-y-2.5 animate-fade-in">
+      {/* Compact Category Directory Header Bar */}
+      <div className="relative rounded-xl px-3.5 py-2 border border-slate-200 overflow-hidden bg-gradient-to-r from-indigo-50/80 via-slate-50 to-blue-50/80 shadow-2xs">
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+          <div className="flex items-center gap-2 truncate">
+            <h1 className="font-heading font-black text-base sm:text-lg text-slate-900 tracking-tight shrink-0">
               All Game Categories
             </h1>
-            <p className="text-slate-600 text-xs max-w-2xl leading-normal">
+            <span className="text-slate-300 hidden md:inline">&bull;</span>
+            <p className="text-slate-500 text-xs truncate max-w-xl hidden md:inline">
               Find instant browser games by your favorite genre. Pick any category below to filter games, or explore popular picks.
             </p>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <Badge variant="cyan" size="sm">GAME CATALOG</Badge>
+            <span className="text-[10px] text-indigo-700 font-mono font-medium">
+              {categories.length} Genres &bull; {allGames.length} Titles
+            </span>
           </div>
         </div>
       </div>
 
       {/* Category Navigation (Browse by Category) */}
-      <div className="space-y-2.5">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="font-heading font-bold text-base sm:text-lg text-slate-900">
-              Browse by Category
-            </h2>
-            <p className="text-xs text-slate-500">
-              Select a genre to filter and explore games
-            </p>
-          </div>
-          <span className="text-xs text-indigo-700 font-mono font-medium px-2.5 py-0.5 rounded-full bg-indigo-50 border border-indigo-200">
+      <div className="space-y-1">
+        <div className="flex items-center justify-between px-1">
+          <h2 className="font-heading font-bold text-xs text-slate-800">
+            Browse by Category
+          </h2>
+          <span className="text-[10px] text-indigo-700 font-mono font-medium">
             {categories.length} Categories
           </span>
         </div>
@@ -104,13 +90,13 @@ export default function AllCategoriesPage() {
       </div>
 
       {/* All Playable Games Directory */}
-      <section className="space-y-4 pt-2">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-3">
+      <section className="space-y-3 pt-1">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-2">
           <div>
-            <h2 className="font-heading font-black text-2xl text-slate-900">
+            <h2 className="font-heading font-black text-lg sm:text-xl text-slate-900 leading-tight">
               All Available Games
             </h2>
-            <p className="text-slate-500 text-xs">
+            <p className="text-slate-500 text-[11px]">
               Every verified game across all categories on GameVerse
             </p>
           </div>

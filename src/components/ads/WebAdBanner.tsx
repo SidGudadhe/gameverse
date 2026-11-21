@@ -327,32 +327,34 @@ export default function WebAdBanner({ placement, className = '' }: WebAdBannerPr
     );
   }
 
+  const isCompactBanner = placement === 'CATEGORY_BANNER';
+
   // 4. HORIZONTAL BANNERS (HOMEPAGE_TOP, GAME_DETAIL_BANNER, FOOTER_DISPLAY - Google Leaderboard Style)
   return (
     <div
-      className={`w-full rounded-2xl bg-slate-900/90 text-white border border-slate-800 shadow-md relative overflow-hidden transition-all hover:border-slate-700 ${className}`}
+      className={`w-full ${isCompactBanner ? 'rounded-xl' : 'rounded-2xl'} bg-slate-900/90 text-white border border-slate-800 shadow-md relative overflow-hidden transition-all hover:border-slate-700 ${className}`}
     >
       {renderAdChoicesHeader()}
 
-      <div className="p-3.5 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-3 relative z-10">
+      <div className={`${isCompactBanner ? 'p-2 sm:p-2.5 gap-2' : 'p-3.5 sm:p-4 gap-3'} flex flex-col sm:flex-row items-center justify-between relative z-10`}>
         {/* Left: Product Artwork & Copy */}
-        <div className="flex items-center gap-3.5 truncate">
-          <div className="hidden sm:block w-12 h-12 rounded-xl overflow-hidden bg-slate-800 shrink-0 border border-slate-700">
+        <div className={`flex items-center ${isCompactBanner ? 'gap-2.5' : 'gap-3.5'} truncate`}>
+          <div className={`hidden sm:block ${isCompactBanner ? 'w-8 h-8 rounded-lg' : 'w-12 h-12 rounded-xl'} overflow-hidden bg-slate-800 shrink-0 border border-slate-700`}>
             <img src={config.imageUrl} alt="" className="w-full h-full object-cover" />
           </div>
 
           <div className="truncate text-left">
             <div className="flex items-center gap-2">
-              <span className="font-heading font-bold text-sm sm:text-base text-white truncate">
+              <span className={`font-heading font-bold ${isCompactBanner ? 'text-xs sm:text-sm' : 'text-sm sm:text-base'} text-white truncate`}>
                 {config.headline}
               </span>
               {config.badge && (
-                <span className="hidden md:inline-flex text-[10px] font-medium text-cyan-300 bg-cyan-950/80 border border-cyan-500/30 px-2 py-0.5 rounded-full shrink-0">
+                <span className="hidden md:inline-flex text-[9px] font-medium text-cyan-300 bg-cyan-950/80 border border-cyan-500/30 px-1.5 py-0.2 rounded-full shrink-0">
                   {config.badge}
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-400 mt-0.5 truncate">
+            <p className="text-[11px] text-slate-400 mt-0.5 truncate">
               {config.subtext}
             </p>
           </div>
@@ -364,7 +366,7 @@ export default function WebAdBanner({ placement, className = '' }: WebAdBannerPr
             href={config.ctaUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-indigo-600/30 transition-all active:scale-95 cursor-pointer"
+            className={`${isCompactBanner ? 'px-3 py-1.5 text-xs rounded-lg' : 'px-4 py-2.5 text-xs rounded-xl'} bg-indigo-600 hover:bg-indigo-500 text-white font-bold flex items-center gap-1.5 shadow-md shadow-indigo-600/30 transition-all active:scale-95 cursor-pointer`}
           >
             <span>{config.cta}</span>
             <ExternalLink className="w-3.5 h-3.5" />

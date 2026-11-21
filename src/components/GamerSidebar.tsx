@@ -112,19 +112,13 @@ export default function GamerSidebar() {
       <aside
         aria-label="Player Side Navigation"
         className={`hidden md:flex fixed left-0 top-16 bottom-0 z-40 bg-white border-r border-slate-200 flex-col transition-all duration-300 select-none shadow-xs ${
-          isCollapsed ? 'w-18' : 'w-56'
+          isCollapsed ? 'w-16' : 'w-48'
         }`}
       >
         {/* Navigation Content (Scrollable) */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden p-2.5 space-y-4 scrollbar-thin">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-2 space-y-3 scrollbar-thin">
           {/* Main Pages Navigation Group ("sirf pages vala") */}
           <div className="space-y-1">
-            {!isCollapsed && (
-              <div className="px-3 pb-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 font-mono">
-                Pages
-              </div>
-            )}
-
             {NAV_PAGES.map((item) => {
               const Icon = item.icon;
               const isActive = item.activeCheck;
@@ -138,7 +132,7 @@ export default function GamerSidebar() {
                   className={`group relative flex items-center rounded-xl transition-all ${
                     isCollapsed
                       ? 'flex-col justify-center py-2 px-1 text-center'
-                      : 'gap-3 px-3 py-2.5'
+                      : 'gap-2.5 px-2.5 py-2'
                   } ${
                     isActive
                       ? 'bg-indigo-600 text-white font-bold shadow-sm shadow-indigo-600/25'
@@ -256,10 +250,6 @@ export default function GamerSidebar() {
             {/* Mobile Navigation List */}
             <div className="flex-1 overflow-y-auto p-3 space-y-4">
               <div className="space-y-1">
-                <div className="px-3 pb-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 font-mono">
-                  Pages
-                </div>
-
                 {NAV_PAGES.map((item) => {
                   const Icon = item.icon;
                   const isActive = item.activeCheck;

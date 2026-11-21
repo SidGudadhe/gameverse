@@ -16,8 +16,13 @@ describe('Category Page Layout & Gamer Role Display', () => {
     expect(navbarContent).not.toContain('<div className="text-slate-500 text-[10px] font-mono">{role}</div>');
   });
 
-  it('2. should configure compact hero category header in src/app/category/page.tsx', () => {
+  it('2. should configure ultra-compact category header in src/app/category/page.tsx and remove breadcrumbs', () => {
     const catPageContent = fs.readFileSync(categoryPagePath, 'utf-8');
+    const slugPageContent = fs.readFileSync(categorySlugPagePath, 'utf-8');
+
+    // Breadcrumbs removed
+    expect(catPageContent).not.toContain('<span>Home</span>');
+    expect(slugPageContent).not.toContain('<span>Catalog Home</span>');
 
     // Header has All Game Categories and required text
     expect(catPageContent).toContain('All Game Categories');
@@ -25,9 +30,8 @@ describe('Category Page Layout & Gamer Role Display', () => {
       'Find instant browser games by your favorite genre. Pick any category below to filter games, or explore popular picks.'
     );
 
-    // Uses compact sizing
-    expect(catPageContent).toContain('rounded-2xl p-4 sm:p-5');
-    expect(catPageContent).toContain('text-xl sm:text-2xl text-slate-900 tracking-tight');
+    // Uses ultra-compact sizing
+    expect(catPageContent).toContain('rounded-xl px-3.5 py-2');
   });
 
   it('3. should enforce strict screen order: Compact Header -> Browse by Category -> Banner Ad -> Games', () => {

@@ -107,50 +107,34 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
   const filteredGames = games;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-      {/* Breadcrumb Navigation */}
-      <div className="flex items-center gap-2 text-xs text-slate-500">
-        <Link href="/" className="hover:text-slate-900 transition-colors flex items-center gap-1">
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Catalog Home</span>
-        </Link>
-        <span>/</span>
-        <Link href="/category" className="hover:text-slate-900 transition-colors">
-          <span>Categories</span>
-        </Link>
-        <span>/</span>
-        <span className="text-slate-800 font-medium">{meta.name}</span>
-      </div>
-
-      {/* Hero Category Banner (Compact) */}
-      <div className={`relative rounded-2xl p-4 sm:p-5 border border-slate-200 overflow-hidden bg-gradient-to-r ${meta.gradient} shadow-xs`}>
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-start sm:items-center gap-3.5">
-            <div className="w-11 h-11 rounded-xl bg-white border border-slate-200 text-indigo-600 flex items-center justify-center shadow-xs shrink-0">
-              <Icon className="w-5 h-5" />
+    <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 pt-2 pb-6 space-y-2.5">
+      {/* Hero Category Banner (Compact Bar) */}
+      <div className={`relative rounded-xl px-3.5 py-2 border border-slate-200 overflow-hidden bg-gradient-to-r ${meta.gradient} shadow-2xs`}>
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-2.5 truncate">
+            <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 text-indigo-600 flex items-center justify-center shadow-2xs shrink-0">
+              <Icon className="w-4 h-4" />
             </div>
-            <div>
+            <div className="truncate">
               <div className="flex items-center gap-2">
+                <h1 className="font-heading font-black text-base sm:text-lg text-slate-900 truncate">
+                  {meta.name} Games
+                </h1>
                 <Badge variant="cyan" size="sm">CATEGORY</Badge>
-                <span className="text-[11px] text-slate-600 font-mono font-medium">
-                  {filteredGames.length} Instant Playable Games
-                </span>
               </div>
-              <h1 className="font-heading font-black text-xl sm:text-2xl text-slate-900 mt-0.5">
-                {meta.name} Games
-              </h1>
-              <p className="text-slate-600 text-xs mt-0.5 max-w-xl">
+              <p className="text-slate-500 text-xs truncate max-w-lg hidden sm:block">
                 {meta.description}
               </p>
             </div>
           </div>
+          <span className="text-[10px] text-slate-600 font-mono font-medium shrink-0">
+            {filteredGames.length} Instant Playable Titles
+          </span>
         </div>
       </div>
 
       {/* Category Navigation Quick Chips (Browse by Category) */}
-      <div className="space-y-1.5">
-        <CategoryNavChips activeSlug={params.slug} />
-      </div>
+      <CategoryNavChips activeSlug={params.slug} />
 
       {/* Banner Ad directly below Category selection */}
       <div className="w-full">

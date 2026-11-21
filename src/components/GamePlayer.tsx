@@ -70,8 +70,11 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
   isPlayingRef.current = isPlaying;
   isPausedRef.current = isPaused;
 
-  // Resolved sandbox runner route with optional isolated origin support
-  const sandboxOrigin = process.env.NEXT_PUBLIC_SANDBOX_ORIGIN || '';
+  // Resolved sandbox runner route with optional isolated origin support (fallback to relative origin on local dev)
+  const sandboxOrigin =
+    typeof window !== 'undefined' && window.location.hostname === 'localhost' && window.location.port === '3000'
+      ? ''
+      : process.env.NEXT_PUBLIC_SANDBOX_ORIGIN || '';
   const resolvedUrl =
     sandboxUrl || `${sandboxOrigin}/api/sandbox/files/${game.id}/${game.currentVersionId || 'v1'}/index.html`;
 

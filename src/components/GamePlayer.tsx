@@ -48,10 +48,12 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
   const [adLoading, setAdLoading] = useState(false);
   const [showInGameBanner, setShowInGameBanner] = useState(true);
   const [rewardToast, setRewardToast] = useState<string | null>(null);
+  const [gameOverModal, setGameOverModal] = useState<{ score: number } | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const hudTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const pendingActionRef = useRef<'RESTART' | 'REVIVE' | null>(null);
 
   // Telemetry session tracking refs
   const sessionTokenRef = useRef<string | null>(null);
@@ -188,30 +190,81 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
         amount: rewardClaimed === 'COINS' ? 100 : 1,
       });
     }
+
+    // Execute pending automated action (e.g. restart or revive)
+    if (pendingActionRef.current === 'RESTART') {
+      pendingActionRef.current = null;
+      setGameOverModal(null);
+      activeSecondsRef.current = 0;
+      sendToRunner('GV_RESTART');
+    } else if (pendingActionRef.current === 'REVIVE' || format === 'REWARDED') {
+      pendingActionRef.current = null;
+      setGameOverModal(null);
+      sendToRunner('GV_REVIVE');
+    }
+
     sendToRunner('GV_RESUME');
   };
 
-  // Helper for developers / QA / testing to simulate any in-game ad format immediately
-  const triggerManualAd = async (format: AdFormat, simActiveSeconds?: number) => {
+  // Automatic Restart handler (enforces 3-minute cooldown & skippable 10s vs unskippable ad rule)
+  const handleAutomaticRestart = async () => {
+    setGameOverModal(null);
+    const secs = activeSecondsRef.current;
     let sessionToken = sessionTokenRef.current;
     if (!sessionToken) {
       sessionToken = `sess-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
       sessionTokenRef.current = sessionToken;
     }
-    const secs = simActiveSeconds !== undefined ? simActiveSeconds : activeSecondsRef.current;
+
     sendToRunner('GV_PAUSE');
     try {
       const res = await fetch(
-        `/api/ads/slot?gameId=${game.id}&sessionToken=${sessionToken}&format=${format}&activeSeconds=${secs}`
+        `/api/ads/slot?gameId=${game.id}&sessionToken=${sessionToken}&format=INTERSTITIAL&activeSeconds=${secs}&isRestart=true`
       );
       if (res.ok) {
         const data = await res.json();
         if (data.eligible && data.ad) {
-          setActiveAd({ ad: data.ad, format });
+          pendingActionRef.current = 'RESTART';
+          setActiveAd({ ad: data.ad, format: 'INTERSTITIAL' });
           return;
         }
       }
-    } catch {}
+    } catch (e) {}
+
+    // Fallback: If no ad eligible, restart game directly
+    activeSecondsRef.current = 0;
+    sendToRunner('GV_RESTART');
+    sendToRunner('GV_RESUME');
+  };
+
+  // Automatic Rewarded Ad trigger (for extra life / coins upon game over or player request)
+  const handleAutomaticRewarded = async () => {
+    let sessionToken = sessionTokenRef.current;
+    if (!sessionToken) {
+      sessionToken = `sess-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+      sessionTokenRef.current = sessionToken;
+    }
+
+    sendToRunner('GV_PAUSE');
+    try {
+      const res = await fetch(
+        `/api/ads/slot?gameId=${game.id}&sessionToken=${sessionToken}&format=REWARDED`
+      );
+      if (res.ok) {
+        const data = await res.json();
+        if (data.eligible && data.ad) {
+          pendingActionRef.current = 'REVIVE';
+          setActiveAd({ ad: data.ad, format: 'REWARDED' });
+          return;
+        }
+      }
+    } catch (e) {}
+
+    // Fallback if ad unavailable: grant extra life directly
+    setGameOverModal(null);
+    setRewardToast('💖 Revive Activated!');
+    setTimeout(() => setRewardToast(null), 4000);
+    sendToRunner('GV_REVIVE');
     sendToRunner('GV_RESUME');
   };
 
@@ -261,7 +314,7 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
 
   // Handle Restart
   const handleRestart = () => {
-    sendToRunner('GV_RESTART');
+    handleAutomaticRestart();
   };
 
   // Auto-hide HUD in fullscreen after 3 seconds of inactivity
@@ -365,10 +418,38 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isPlaying, isFullscreen, isMuted]);
 
-  // In-Game Ad Requests via postMessage from sandbox runner
+  // In-Game Events & Ad Automation via postMessage from sandbox runner
   useEffect(() => {
     const handleMessage = async (e: MessageEvent) => {
       if (!e.data || typeof e.data !== 'object') return;
+
+      // In-game game over event from sandbox game engine
+      if (e.data.type === 'GV_GAME_OVER' || e.data.type === 'GV_PLAYER_DIED') {
+        const score = typeof e.data.score === 'number' ? e.data.score : 0;
+        setGameOverModal({ score });
+        sendToRunner('GV_PAUSE');
+        return;
+      }
+
+      // Player requested restart from game canvas
+      if (e.data.type === 'GV_REQUEST_RESTART') {
+        handleAutomaticRestart();
+        return;
+      }
+
+      // In-game rewarded ad request (extra life / coins)
+      if (e.data.type === 'GV_REQUEST_REWARD') {
+        handleAutomaticRewarded();
+        return;
+      }
+
+      // Level complete / Next level event
+      if (e.data.type === 'GV_LEVEL_COMPLETE' || e.data.type === 'GV_NEXT_LEVEL') {
+        handleAutomaticRestart();
+        return;
+      }
+
+      // Ad slot request from game SDK
       if (e.data.type === 'GV_REQUEST_AD') {
         const format = (e.data.format as AdFormat) || 'INTERSTITIAL';
         const sessionToken = sessionTokenRef.current;
@@ -377,7 +458,7 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
         sendToRunner('GV_PAUSE');
         try {
           const res = await fetch(
-            `/api/ads/slot?gameId=${game.id}&sessionToken=${sessionToken}&format=${format}&activeSeconds=${activeSecondsRef.current}`
+            `/api/ads/slot?gameId=${game.id}&sessionToken=${sessionToken}&format=${format}&activeSeconds=${activeSecondsRef.current}&isRestart=true`
           );
           if (res.ok) {
             const data = await res.json();
@@ -395,7 +476,7 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
-  }, [game.id, sendToRunner]);
+  }, [game.id, sendToRunner, handleAutomaticRestart, handleAutomaticRewarded]);
 
   return (
     <div
@@ -604,6 +685,50 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
                 </div>
               </div>
             )}
+
+            {/* ================= IN-GAME GAME OVER & REWARDED AD OVERLAY ================= */}
+            {gameOverModal && isPlaying && !activeAd && (
+              <div className="absolute inset-0 z-35 flex flex-col items-center justify-center bg-black/85 backdrop-blur-md text-white p-6 animate-fade-in select-none">
+                <div className="max-w-md w-full bg-slate-900/95 border border-slate-700/80 rounded-3xl p-6 sm:p-8 shadow-2xl text-center space-y-5">
+                  <div className="w-16 h-16 mx-auto rounded-2xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400">
+                    <Sparkles className="w-8 h-8 text-rose-400 animate-pulse" />
+                  </div>
+
+                  <div>
+                    <h3 className="text-2xl font-black text-white tracking-wide uppercase">
+                      Game Over
+                    </h3>
+                    <p className="text-slate-400 text-sm mt-1">
+                      Final Score: <span className="text-amber-400 font-mono font-bold text-lg">{gameOverModal.score}</span>
+                    </p>
+                  </div>
+
+                  <div className="space-y-3 pt-2">
+                    {/* OPTION 1: REWARDED AD (EXTRA LIFE / REVIVE + 100 COINS) */}
+                    <button
+                      onClick={handleAutomaticRewarded}
+                      className="w-full group py-3.5 px-4 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-lg shadow-amber-500/25 transition-all transform hover:-translate-y-0.5 active:scale-95 cursor-pointer"
+                    >
+                      <Heart className="w-5 h-5 text-slate-950 fill-rose-600 group-hover:scale-110 transition-transform" />
+                      <span>Revive (+100 Coins) — Watch Short Ad</span>
+                    </button>
+
+                    {/* OPTION 2: PLAY AGAIN / RESTART (TRIGGERS AUTOMATIC MIDGAME AD RULE) */}
+                    <button
+                      onClick={handleAutomaticRestart}
+                      className="w-full py-3 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-bold text-sm flex items-center justify-center gap-2 border border-slate-700 transition-all cursor-pointer"
+                    >
+                      <RotateCcw className="w-4 h-4 text-slate-300" />
+                      <span>Play Again / Restart Game</span>
+                    </button>
+                  </div>
+
+                  <p className="text-[11px] text-slate-400 font-mono">
+                    💡 Next level / Second game: Ads automatically play based on playtime cooldown.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -614,53 +739,6 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
             <span>{rewardToast}</span>
           </div>
         )}
-      </div>
-
-      {/* ================= IN-GAME ADS INTERACTIVE TEST BAR ================= */}
-      <div className="bg-slate-950 border-t border-slate-800 px-4 py-3 text-xs text-slate-300 flex flex-col md:flex-row items-center justify-between gap-3 shadow-sm font-mono">
-        <div className="flex items-center gap-2 text-amber-400 font-bold text-[11px] uppercase tracking-wide">
-          <Tag className="w-4 h-4 text-amber-400 shrink-0" />
-          <span>In-Game Ad Testing Triggers (100x Deep Placements):</span>
-        </div>
-
-        <div className="flex items-center gap-2 flex-wrap justify-center">
-          <button
-            onClick={() => triggerManualAd('PREROLL')}
-            className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-semibold transition-colors cursor-pointer"
-          >
-            1. Pre-roll Ad (4-Step)
-          </button>
-          <button
-            onClick={() => triggerManualAd('INTERSTITIAL', 60)}
-            className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-semibold transition-colors cursor-pointer"
-          >
-            2. Midgame Skippable (10s)
-          </button>
-          <button
-            onClick={() => triggerManualAd('INTERSTITIAL', 200)}
-            className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-semibold transition-colors cursor-pointer"
-          >
-            3. Midgame Unskippable (3+ Min)
-          </button>
-          <button
-            onClick={() => triggerManualAd('REWARDED')}
-            className="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-semibold transition-colors cursor-pointer"
-          >
-            4. Rewarded Ad (Life/Coins)
-          </button>
-          <button
-            onClick={() => triggerManualAd('BONUS_REWARD')}
-            className="px-2.5 py-1 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 text-[11px] font-semibold transition-colors cursor-pointer"
-          >
-            5. Bonus Reward Ad (2x)
-          </button>
-          <button
-            onClick={() => setShowInGameBanner(!showInGameBanner)}
-            className="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-[11px] font-semibold transition-colors cursor-pointer"
-          >
-            {showInGameBanner ? 'Hide In-Game Banner' : 'Show In-Game Banner'}
-          </button>
-        </div>
       </div>
     </div>
   );

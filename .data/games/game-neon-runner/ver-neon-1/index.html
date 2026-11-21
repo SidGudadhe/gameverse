@@ -186,6 +186,14 @@
         if (msg.type === 'GV_PAUSE') isPaused = true;
         if (msg.type === 'GV_RESUME') isPaused = false;
         if (msg.type === 'GV_RESTART') resetGame();
+        if (msg.type === 'GV_REVIVE' || msg.type === 'GV_REWARD_GRANTED') {
+          isDead = false;
+          isPaused = false;
+          player.vy = 0;
+          player.y = groundY - player.h;
+          obstacles = obstacles.filter(obs => obs.x > player.x + 350);
+          playSynthSound(680, 'triangle', 0.35);
+        }
       });
 
       // Notify parent host that engine is ready

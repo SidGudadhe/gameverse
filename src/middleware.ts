@@ -47,6 +47,11 @@ export function middleware(request: NextRequest) {
     return new NextResponse('Access Denied: Suspicious URL activity detected.', { status: 403 });
   }
 
+  // 1b. Early bypass for static public files (images, audio, videos, favicons)
+  if (pathname.includes('.') && !pathname.endsWith('.html')) {
+    return NextResponse.next();
+  }
+
   // 2. Subdomain Routing: Support dedicated domains (e.g. admin.gameverse.com, studio.gameverse.com)
   if (host.startsWith('admin.') && !pathname.startsWith('/admin') && !pathname.startsWith('/api') && !pathname.startsWith('/_next')) {
     const url = request.nextUrl.clone();
@@ -77,7 +82,7 @@ export function middleware(request: NextRequest) {
 
   // 4. Strict Role Gate for Admin Operations Suite (/admin and /api/admin)
   const isAdminAuthRoute = pathname.startsWith('/admin/auth');
-  const isAdminPath = pathname.startsWith('/admin') && !isAdminAuthRoute;
+  const isAdminPath = (pathname === '/admin' || pathname.startsWith('/admin/')) && !isAdminAuthRoute;
   const isAdminApi = pathname.startsWith('/api/admin');
 
   if (isAdminPath || isAdminApi) {
@@ -108,7 +113,7 @@ export function middleware(request: NextRequest) {
   // 5. Strict Role Gate for Developer Studio Portal (/developer and /api/developer)
   const isDevAuthRoute = pathname.startsWith('/developer/auth');
   const isDevPublicRoute = pathname === '/developer' || pathname === '/developer/docs';
-  const isDevPath = pathname.startsWith('/developer') && !isDevAuthRoute && !isDevPublicRoute;
+  const isDevPath = (pathname === '/developer' || pathname.startsWith('/developer/')) && !isDevAuthRoute && !isDevPublicRoute;
   const isDevApi = pathname.startsWith('/api/developer');
   const isOnboardRoute = pathname === '/developer/onboard' || pathname === '/api/developer/onboard';
 
@@ -212,6 +217,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico).*)',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|mp4|webm|wasm)$).*)',
   ],
 };

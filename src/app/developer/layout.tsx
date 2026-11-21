@@ -21,6 +21,7 @@ import {
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/context/AuthContext';
 import { PortalShellSkeleton } from '@/components/ui/Skeleton';
+import DeveloperLogo from '@/components/ui/DeveloperLogo';
 
 export default function DeveloperLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -64,9 +65,7 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
     return (
       <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-white border border-slate-200 rounded-3xl p-8 text-center shadow-xl">
-          <div className="w-16 h-16 rounded-2xl bg-indigo-50 border border-indigo-200 flex items-center justify-center mx-auto mb-5 text-indigo-600">
-            <Lock className="w-8 h-8" />
-          </div>
+          <DeveloperLogo size="xl" className="mx-auto mb-4 shadow-xl shadow-purple-600/30" />
           <h1 className="text-2xl font-black text-slate-900 tracking-tight mb-2">
             Developer Studio Sign-In Required
           </h1>
@@ -92,9 +91,7 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
     return (
       <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-white border border-slate-200 rounded-3xl p-8 text-center shadow-xl">
-          <div className="w-16 h-16 rounded-2xl bg-indigo-50 border border-indigo-200 flex items-center justify-center mx-auto mb-5 text-indigo-600">
-            <Sparkles className="w-8 h-8" />
-          </div>
+          <DeveloperLogo size="xl" className="mx-auto mb-4 shadow-xl shadow-purple-600/30" />
           <h1 className="text-2xl font-black text-slate-900 tracking-tight mb-2">
             Creator Onboarding Required
           </h1>

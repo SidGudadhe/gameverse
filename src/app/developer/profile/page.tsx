@@ -25,6 +25,7 @@ import {
   FileText,
 } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
+import DeveloperLogo from '@/components/ui/DeveloperLogo';
 
 interface AgreementData {
   agreementVersion: string;
@@ -259,26 +260,29 @@ export default function StudioProfilePage() {
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in font-sans text-slate-900">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
-        <div>
-          <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
-            <Link
-              href="/developer"
-              className="hover:text-slate-900 transition-colors font-medium"
-            >
-              Studio Dashboard
-            </Link>
-            <span>/</span>
-            <span className="text-slate-800 font-semibold">Studio Profile</span>
+        <div className="flex items-center gap-4">
+          <DeveloperLogo size="lg" />
+          <div>
+            <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
+              <Link
+                href="/developer"
+                className="hover:text-slate-900 transition-colors font-medium"
+              >
+                Studio Dashboard
+              </Link>
+              <span>/</span>
+              <span className="text-slate-800 font-semibold">Studio Profile</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+              <span>Studio Profile & Identity</span>
+              <span className="text-xs font-mono font-bold uppercase px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
+                Verified Developer
+              </span>
+            </h1>
+            <p className="text-sm text-slate-500 mt-1">
+              Public studio metadata, developer contact credentials, and publishing agreement status.
+            </p>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-            <span>Studio Profile & Identity</span>
-            <span className="text-xs font-mono font-bold uppercase px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
-              Verified Developer
-            </span>
-          </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Public studio metadata, developer contact credentials, and publishing agreement status.
-          </p>
         </div>
 
         <button

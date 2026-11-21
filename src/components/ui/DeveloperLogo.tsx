@@ -47,6 +47,12 @@ export default function DeveloperLogo({
         alt="GameVerse Developer Studio Logo"
         className="w-full h-full object-cover"
         loading="eager"
+        onError={(e) => {
+          const target = e.currentTarget;
+          if (!target.src.endsWith('/developer-logo.jpg')) {
+            target.src = '/developer-logo.jpg';
+          }
+        }}
       />
     </div>
   );

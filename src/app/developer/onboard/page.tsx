@@ -6,6 +6,7 @@ import { CheckCircle2, ShieldCheck, FileText, ArrowRight, Building, Globe, Check
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useAuth } from '@/context/AuthContext';
+import DeveloperLogo from '@/components/ui/DeveloperLogo';
 
 export default function DeveloperOnboardPage() {
   const router = useRouter();
@@ -64,13 +65,16 @@ export default function DeveloperOnboardPage() {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 space-y-8">
       {/* Wizard Progress Bar */}
       <div className="flex items-center justify-between border-b border-slate-200 pb-6">
-        <div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 border border-indigo-200 px-2.5 py-0.5 rounded-full">
-            Studio Onboarding
-          </span>
-          <h1 className="font-heading font-black text-2xl sm:text-3xl text-slate-900 mt-1">
-            Creator Activation
-          </h1>
+        <div className="flex items-center gap-4">
+          <DeveloperLogo size="lg" />
+          <div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-purple-700 bg-purple-50 border border-purple-200 px-2.5 py-0.5 rounded-full">
+              Studio Onboarding
+            </span>
+            <h1 className="font-heading font-black text-2xl sm:text-3xl text-slate-900 mt-1">
+              Creator Activation
+            </h1>
+          </div>
         </div>
 
         <div className="flex items-center gap-2 text-xs font-semibold">
@@ -250,6 +254,7 @@ export default function DeveloperOnboardPage() {
       {/* STEP 3: ACTIVATION COMPLETE */}
       {step === 3 && (
         <div className="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200 shadow-xs text-center space-y-6">
+          <DeveloperLogo size="xl" className="mx-auto shadow-xl shadow-purple-600/30" />
           <div className="w-16 h-16 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 mx-auto flex items-center justify-center shadow-xs">
             <CheckCircle2 className="w-8 h-8" />
           </div>

@@ -1,22 +1,26 @@
 import React from 'react';
 import Link from 'next/link';
 import { Sparkles, IndianRupee, ShieldAlert, CheckCircle2, ArrowRight } from 'lucide-react';
+import DeveloperLogo from '@/components/ui/DeveloperLogo';
 
 export default function CreatorAgreementPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
       {/* Header */}
-      <div className="space-y-3 border-b border-slate-200 pb-6">
-        <div className="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-semibold px-3 py-1 rounded-full font-mono">
-          <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-          <span>GameVerse Creator Agreement • Version 2026.1</span>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-5 border-b border-slate-200 pb-6">
+        <DeveloperLogo size="xl" className="shadow-lg shadow-purple-600/30" />
+        <div className="space-y-2">
+          <div className="inline-flex items-center gap-2 bg-purple-50 border border-purple-200 text-purple-700 text-xs font-semibold px-3 py-1 rounded-full font-mono">
+            <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+            <span>GameVerse Creator Agreement • Version 2026.1</span>
+          </div>
+          <h1 className="font-heading font-black text-3xl sm:text-4xl text-slate-900 tracking-tight">
+            Independent Creator Publishing Agreement
+          </h1>
+          <p className="text-slate-600 text-sm">
+            Clear, transparent terms governing game distribution, creator net revenue sharing, double-entry financial accounting, and sandbox compliance.
+          </p>
         </div>
-        <h1 className="font-heading font-black text-3xl sm:text-4xl text-slate-900 tracking-tight">
-          Independent Creator Publishing Agreement
-        </h1>
-        <p className="text-slate-600 text-sm">
-          Clear, transparent terms governing game distribution, creator net revenue sharing, double-entry financial accounting, and sandbox compliance.
-        </p>
       </div>
 
       <div className="space-y-8 text-sm text-slate-700 leading-relaxed">

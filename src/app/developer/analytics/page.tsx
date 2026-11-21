@@ -14,6 +14,7 @@ import {
   TrendingUp,
   Activity,
 } from 'lucide-react';
+import DeveloperLogo from '@/components/ui/DeveloperLogo';
 
 export default function StudioAnalyticsPage() {
   const [timeframe, setTimeframe] = useState<'7d' | '30d' | 'all'>('30d');
@@ -84,18 +85,21 @@ export default function StudioAnalyticsPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Studio Header & Controls */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-200 pb-6">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="bg-indigo-50 text-indigo-700 border border-indigo-200 text-[11px] font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-              Studio Telemetry & Insights
-            </span>
+        <div className="flex items-center gap-4">
+          <DeveloperLogo size="lg" />
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="bg-purple-50 text-purple-700 border border-purple-200 text-[11px] font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                Studio Telemetry & Insights
+              </span>
+            </div>
+            <h1 className="font-heading font-black text-2xl sm:text-3xl text-slate-900 mt-1.5">
+              Developer Analytics Hub
+            </h1>
+            <p className="text-slate-600 text-xs sm:text-sm mt-0.5">
+              Monitor real-time player telemetry, active playtime, IVT protection metrics, and retention funnels.
+            </p>
           </div>
-          <h1 className="font-heading font-black text-2xl sm:text-3xl text-slate-900 mt-1.5">
-            Developer Analytics Hub
-          </h1>
-          <p className="text-slate-600 text-xs sm:text-sm mt-0.5">
-            Monitor real-time player telemetry, active playtime, IVT protection metrics, and retention funnels.
-          </p>
         </div>
 
         {/* Global Filter & Export Actions */}

@@ -28,6 +28,7 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { FinancialLedgerRecord, PayoutSummary } from '@/types';
+import DeveloperLogo from '@/components/ui/DeveloperLogo';
 
 interface BankAccountInfo {
   accountNumber: string;
@@ -344,27 +345,30 @@ export default function PayoutsPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in font-sans text-slate-900">
       {/* Top Header & Breadcrumb */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-5">
-        <div>
-          <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
-            <Link
-              href="/developer"
-              className="hover:text-slate-900 transition-colors flex items-center gap-1 font-medium"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Studio Dashboard</span>
-            </Link>
-            <span>/</span>
-            <span className="text-slate-800 font-semibold">Revenue Ledger</span>
+        <div className="flex items-center gap-4">
+          <DeveloperLogo size="lg" />
+          <div>
+            <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
+              <Link
+                href="/developer"
+                className="hover:text-slate-900 transition-colors flex items-center gap-1 font-medium"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Studio Dashboard</span>
+              </Link>
+              <span>/</span>
+              <span className="text-slate-800 font-semibold">Revenue Ledger</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+              <span>Developer Revenue Ledger</span>
+              <span className="text-xs font-mono font-bold uppercase px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                INR (₹) Standard
+              </span>
+            </h1>
+            <p className="text-sm text-slate-500 mt-1">
+              Real-time studio balance, verified Indian settlement channels (Bank Wire + UPI), and settlement history.
+            </p>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-            <span>Developer Revenue Ledger</span>
-            <span className="text-xs font-mono font-bold uppercase px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-              INR (₹) Standard
-            </span>
-          </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Real-time studio balance, verified Indian settlement channels (Bank Wire + UPI), and settlement history.
-          </p>
         </div>
 
         <div className="flex items-center gap-2">

@@ -25,6 +25,7 @@ import {
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { EmptyState } from '@/components/ui/EmptyState';
+import DeveloperLogo from '@/components/ui/DeveloperLogo';
 
 export default function MyGamesPage() {
   const [games, setGames] = useState<any[]>([]);
@@ -75,19 +76,22 @@ export default function MyGamesPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="flex h-2 w-2 rounded-full bg-cyan-600" />
-            <span className="text-[11px] font-bold text-cyan-600 uppercase tracking-wider">
-              Studio Games Catalog
-            </span>
+        <div className="flex items-center gap-4">
+          <DeveloperLogo size="lg" />
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="flex h-2 w-2 rounded-full bg-cyan-600" />
+              <span className="text-[11px] font-bold text-cyan-600 uppercase tracking-wider">
+                Studio Games Catalog
+              </span>
+            </div>
+            <h1 className="font-heading font-black text-2xl sm:text-3xl text-slate-900 mt-1">
+              My Studio Games & Performance
+            </h1>
+            <p className="text-slate-600 text-xs sm:text-sm mt-0.5">
+              Individual telemetry, playtime hours, revenue generated, and direct player links for every title.
+            </p>
           </div>
-          <h1 className="font-heading font-black text-2xl sm:text-3xl text-slate-900 mt-1">
-            My Studio Games & Performance
-          </h1>
-          <p className="text-slate-600 text-xs sm:text-sm mt-0.5">
-            Individual telemetry, playtime hours, revenue generated, and direct player links for every title.
-          </p>
         </div>
 
         <Link

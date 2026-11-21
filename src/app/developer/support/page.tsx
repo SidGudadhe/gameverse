@@ -5,6 +5,7 @@ import { HelpCircle, Send, CheckCircle2, MessageSquare, BookOpen, Clock, AlertCi
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
+import DeveloperLogo from '@/components/ui/DeveloperLogo';
 
 export default function DeveloperSupportPage() {
   const [subject, setSubject] = useState('');
@@ -70,13 +71,16 @@ export default function DeveloperSupportPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-8">
       {/* Header */}
-      <div className="border-b border-slate-200 pb-6">
-        <h1 className="font-heading font-black text-2xl sm:text-3xl text-slate-900">
-          Developer Support & Publishing Guides
-        </h1>
-        <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
-          Submit technical inquiries directly to the platform engineering and QA review team.
-        </p>
+      <div className="flex items-center gap-4 border-b border-slate-200 pb-6">
+        <DeveloperLogo size="lg" />
+        <div>
+          <h1 className="font-heading font-black text-2xl sm:text-3xl text-slate-900">
+            Developer Support & Publishing Guides
+          </h1>
+          <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
+            Submit technical inquiries directly to the platform engineering and QA review team.
+          </p>
+        </div>
       </div>
 
       {submitted && (

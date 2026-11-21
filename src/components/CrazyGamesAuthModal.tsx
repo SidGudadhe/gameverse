@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import {
   Gamepad2,
   Mail,
@@ -18,9 +18,12 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import GoogleSignIn from './GoogleSignIn';
 import GameVerseLogo from './ui/GameVerseLogo';
+import DeveloperLogo from './ui/DeveloperLogo';
 
 export default function CrazyGamesAuthModal() {
   const router = useRouter();
+  const pathname = usePathname();
+  const isDevPortal = pathname?.startsWith('/developer') || pathname === '/creator-agreement';
   const {
     authModalOpen,
     authModalMode,
@@ -261,20 +264,37 @@ export default function CrazyGamesAuthModal() {
         </button>
 
         {/* Brand Header */}
-        <div className="text-center mb-6">
-          <GameVerseLogo size="lg" className="mx-auto mb-3 shadow-md shadow-indigo-500/25" />
-          <h2
-            id="crazygames-auth-title"
-            className="text-2xl font-black font-heading text-slate-900 tracking-tight"
-          >
-            {mode === 'LOGIN' ? 'Log in to GameVerse' : 'Create Your Account'}
-          </h2>
-          <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
-            {mode === 'LOGIN'
-              ? 'Save your game progress, unlock payouts, and track favorites.'
-              : 'Create your free gamer profile to save progress and join leaderboards.'}
-          </p>
-        </div>
+        {isDevPortal ? (
+          <div className="text-center mb-6">
+            <DeveloperLogo size="lg" className="mx-auto mb-3 shadow-md shadow-purple-600/25" />
+            <h2
+              id="crazygames-auth-title"
+              className="text-2xl font-black font-heading text-slate-900 tracking-tight"
+            >
+              {mode === 'LOGIN' ? 'Sign In to GameVerse Studio' : 'Create Creator Account'}
+            </h2>
+            <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
+              {mode === 'LOGIN'
+                ? 'Access your developer command center, game analytics, and revenue ledger.'
+                : 'Register your game studio and publish HTML5/WebGL titles.'}
+            </p>
+          </div>
+        ) : (
+          <div className="text-center mb-6">
+            <GameVerseLogo size="lg" className="mx-auto mb-3 shadow-md shadow-indigo-500/25" />
+            <h2
+              id="crazygames-auth-title"
+              className="text-2xl font-black font-heading text-slate-900 tracking-tight"
+            >
+              {mode === 'LOGIN' ? 'Log in to GameVerse' : 'Create Your Account'}
+            </h2>
+            <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
+              {mode === 'LOGIN'
+                ? 'Save your game progress, unlock payouts, and track favorites.'
+                : 'Create your free gamer profile to save progress and join leaderboards.'}
+            </p>
+          </div>
+        )}
 
         {/* Status Alerts */}
         {error && (

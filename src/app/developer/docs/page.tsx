@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import DeveloperLogo from '@/components/ui/DeveloperLogo';
 
 export default function DeveloperDocsPage() {
   const [activeTab, setActiveTab] = useState<'unity' | 'godot' | 'phaser' | 'construct' | 'html5'>('unity');
@@ -103,19 +104,22 @@ GV_SDK.ready();`;
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="flex h-2 w-2 rounded-full bg-cyan-600" />
-            <span className="text-[11px] font-bold text-cyan-600 uppercase tracking-wider">
-              Developer Studio Documentation
-            </span>
+        <div className="flex items-center gap-4">
+          <DeveloperLogo size="lg" />
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="flex h-2 w-2 rounded-full bg-cyan-600" />
+              <span className="text-[11px] font-bold text-cyan-600 uppercase tracking-wider">
+                Developer Studio Documentation
+              </span>
+            </div>
+            <h1 className="font-heading font-black text-2xl sm:text-3xl text-slate-900 mt-1">
+              GameVerse SDK & Publishing Guide
+            </h1>
+            <p className="text-slate-600 text-xs sm:text-sm mt-0.5 max-w-2xl">
+              Integrate the postMessage SDK, package your HTML5 or WebGL builds correctly, and monetize with automated ad impressions.
+            </p>
           </div>
-          <h1 className="font-heading font-black text-2xl sm:text-3xl text-slate-900 mt-1">
-            GameVerse SDK & Publishing Guide
-          </h1>
-          <p className="text-slate-600 text-xs sm:text-sm mt-0.5 max-w-2xl">
-            Integrate the postMessage SDK, package your HTML5 or WebGL builds correctly, and monetize with automated ad impressions.
-          </p>
         </div>
 
         <Link

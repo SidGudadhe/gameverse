@@ -22,6 +22,7 @@ import {
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Input } from '@/components/ui/Input';
+import DeveloperLogo from '@/components/ui/DeveloperLogo';
 
 export default function GameSubmitPage() {
   // Build & File state
@@ -305,6 +306,7 @@ export default function GameSubmitPage() {
   if (submittedData) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-16 text-center space-y-6">
+        <DeveloperLogo size="xl" className="mx-auto mb-2 shadow-xl shadow-purple-600/30" />
         <div className="w-16 h-16 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 mx-auto flex items-center justify-center shadow-sm">
           <CheckCircle className="w-8 h-8" />
         </div>
@@ -382,13 +384,16 @@ export default function GameSubmitPage() {
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
-        <div>
-          <h1 className="font-heading font-black text-3xl text-slate-900">
-            Game Upload & Review Pipeline
-          </h1>
-          <p className="text-slate-600 text-xs sm:text-sm mt-1">
-            Upload HTML5/WebGL ZIP archives, monitor review stages, and resume pending drafts.
-          </p>
+        <div className="flex items-center gap-4">
+          <DeveloperLogo size="lg" />
+          <div>
+            <h1 className="font-heading font-black text-3xl text-slate-900">
+              Game Upload & Review Pipeline
+            </h1>
+            <p className="text-slate-600 text-xs sm:text-sm mt-1">
+              Upload HTML5/WebGL ZIP archives, monitor review stages, and resume pending drafts.
+            </p>
+          </div>
         </div>
 
         {/* Tab Switcher (Upload vs Status Pipeline) */}

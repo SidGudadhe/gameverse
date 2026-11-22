@@ -673,7 +673,7 @@ class GameVerseDatabase {
   createUser(userData: {
     id?: string;
     email: string;
-    passwordHash: string;
+    passwordHash?: string;
     name: string;
     role: UserRole;
     emailVerified?: boolean;
@@ -685,7 +685,7 @@ class GameVerseDatabase {
       email: userData.email,
       name: userData.name,
       role: userData.role,
-      passwordHash: userData.passwordHash,
+      passwordHash: userData.passwordHash || '',
       emailVerified: userData.emailVerified || false,
       twoFactorEnabled: userData.twoFactorEnabled || false,
       createdAt: userData.createdAt || new Date().toISOString(),
@@ -1006,7 +1006,9 @@ class GameVerseDatabase {
     versionId: string;
     gameId: string;
     gameTitle: string;
-    developerName: string;
+    developerName?: string;
+    developerId?: string;
+    status?: GameStatus;
     automatedChecks?: Partial<QaSubmission['automatedChecks']>;
     manualNotes?: string;
   }): QaSubmission {
@@ -1018,8 +1020,8 @@ class GameVerseDatabase {
       versionId: subData.versionId,
       gameId: subData.gameId,
       gameTitle: subData.gameTitle,
-      developerName: subData.developerName,
-      status: 'SUBMITTED',
+      developerName: subData.developerName || 'Developer',
+      status: subData.status || 'SUBMITTED',
       automatedChecks: {
         entryPageLoads: true,
         consoleErrorsCount: 0,
@@ -2188,8 +2190,8 @@ class GameVerseDatabase {
   }
 
   // ================= ROLLBACK HISTORY =================
-  recordRollback(rollbackData: Omit<GameRollbackRecord, 'id' | 'createdAt'>): GameRollbackRecord {
-    const id = `rb-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
+  recordRollback(rollbackData: Omit<GameRollbackRecord, 'id' | 'createdAt'> & { id?: string; createdAt?: string }): GameRollbackRecord {
+    const id = rollbackData.id || `rb-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
     const record: GameRollbackRecord = {
       ...rollbackData,
       id,
@@ -2201,7 +2203,7 @@ class GameVerseDatabase {
     return record;
   }
 
-  createRollbackRecord(rollbackData: Omit<GameRollbackRecord, 'id' | 'createdAt'>): GameRollbackRecord {
+  createRollbackRecord(rollbackData: Omit<GameRollbackRecord, 'id' | 'createdAt'> & { id?: string; createdAt?: string }): GameRollbackRecord {
     return this.recordRollback(rollbackData);
   }
 

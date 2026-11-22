@@ -5,6 +5,7 @@ import {
   evaluateLaunchReadiness,
   executeProductionSignOff,
   getLastLaunchCertificate,
+  evaluateProductionDeploymentChecklist,
 } from '@/lib/launch';
 
 export const dynamic = 'force-dynamic';
@@ -16,11 +17,13 @@ export async function GET(req: NextRequest) {
 
     const evaluation = evaluateLaunchReadiness();
     const certificate = getLastLaunchCertificate();
+    const deploymentChecklist = await evaluateProductionDeploymentChecklist();
 
     return NextResponse.json({
       success: true,
       evaluation,
       certificate,
+      deploymentChecklist,
     });
   } catch (err: any) {
     return NextResponse.json(

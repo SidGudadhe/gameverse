@@ -77,7 +77,7 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
       ? ''
       : process.env.NEXT_PUBLIC_SANDBOX_ORIGIN || '';
 
-  const cdnBase = process.env.NEXT_PUBLIC_CDN_ORIGIN || '';
+  const cdnBase = process.env.NEXT_PUBLIC_CDN_ORIGIN || 'https://cdn.gameverse.com';
   const resolvedUrl =
     sandboxUrl ||
     (game as any).cdnUrl ||

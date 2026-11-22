@@ -75,12 +75,12 @@ describe('Phase 3: Developer Portal, Onboarding & Studio Management Tests', () =
     });
 
     expect(settings.payoutMethod).toBe('UPI');
-    expect(settings.payoutDetails.upiId).toBe('pixelforge@okhdfcbank');
+    expect(settings.payoutDetails?.upiId).toBe('pixelforge@okhdfcbank');
     expect(settings.notifyOnPlayerReport).toBe(true);
 
     const fetched = gvDb.getDeveloperSettings(devAId);
     expect(fetched.payoutMethod).toBe('UPI');
-    expect(fetched.payoutDetails.upiId).toBe('pixelforge@okhdfcbank');
+    expect(fetched.payoutDetails?.upiId).toBe('pixelforge@okhdfcbank');
   });
 
   it('should submit and retrieve developer support tickets', () => {

@@ -41,3 +41,4 @@ next-env.d.ts
 /.data/staging/
 /.data/cloud_storage_bucket/
 /.data/games/
+/.data/backups/

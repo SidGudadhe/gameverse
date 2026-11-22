@@ -73,7 +73,7 @@ export async function GET(
           headers.set('X-Content-Type-Options', 'nosniff');
           headers.set('Cache-Control', 'public, max-age=3600');
           if (cloudObj.etag) headers.set('ETag', cloudObj.etag);
-          return new NextResponse(cloudObj.body, { status: 200, headers });
+          return new NextResponse(cloudObj.body as unknown as BodyInit, { status: 200, headers });
         }
       } catch {
         // Fall back to placeholder if entry point, or 404

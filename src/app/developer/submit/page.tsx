@@ -7,6 +7,7 @@ import {
   CheckCircle,
   AlertTriangle,
   ArrowLeft,
+  ArrowRight,
   Shield,
   FileArchive,
   Sparkles,

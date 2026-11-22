@@ -64,8 +64,12 @@ export interface GameVersion {
   versionNumber: string;
   changelog: string;
   entryFile: string;
+  entryPoint?: string;
+  storagePrefix?: string;
   archiveChecksum: string;
   archiveSizeBytes: number;
+  totalSizeBytes?: number;
+  fileCount?: number;
   status: GameStatus;
   scanResults: {
     passed: boolean;
@@ -96,10 +100,12 @@ export interface Game {
   developerName: string;
   categoryId: string;
   categoryName: string;
+  category?: string;
   slug: string;
   title: string;
   shortDescription: string;
   fullDescription: string;
+  description?: string;
   controlsGuide: string;
   engine: string;
   orientation: Orientation;
@@ -126,6 +132,7 @@ export interface QaSubmission {
   gameId: string;
   gameTitle: string;
   developerName: string;
+  developerId?: string;
   status: GameStatus;
   automatedChecks: {
     entryPageLoads: boolean;
@@ -278,7 +285,7 @@ export interface PayoutSummary {
   currency?: string;
   studioVerified?: boolean;
   payoutMethod?: {
-    method: 'BANK_WIRE' | 'UPI' | 'BANK_AND_UPI' | 'PAYPAL';
+    method: 'BANK_WIRE' | 'UPI' | 'BANK_AND_UPI' | 'PAYPAL' | 'STRIPE';
     details: Record<string, string>;
     bankAccount?: {
       accountNumber: string;
@@ -433,6 +440,7 @@ export interface StorageConfig {
 
 export type UploadSessionStatus =
   | 'INITIALIZED'
+  | 'PENDING_UPLOAD'
   | 'UPLOADING'
   | 'UPLOADED'
   | 'PROCESSING'
@@ -446,10 +454,13 @@ export interface GameUploadSession {
   developerId: string;
   fileName: string;
   fileSizeBytes: number;
+  contentType?: string;
   status: UploadSessionStatus;
   uploadUrl: string;
   storageKey: string;
   expiresAt: string;
+  metadata?: Record<string, any>;
+  completedAt?: string;
   createdAt: string;
   errorMessage?: string;
 }
@@ -480,9 +491,13 @@ export interface GameRollbackRecord {
   gameId: string;
   fromVersionId: string;
   toVersionId: string;
-  triggeredBy: string;
-  triggeredByName: string;
-  triggeredByRole: UserRole;
+  fromVersionNumber?: string;
+  toVersionNumber?: string;
+  triggeredBy?: string;
+  triggeredByName?: string;
+  triggeredByRole?: UserRole;
+  performedBy?: string;
+  performedByName?: string;
   reason: string;
   createdAt: string;
 }

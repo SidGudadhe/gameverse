@@ -20,9 +20,9 @@ export async function GET(req: NextRequest) {
     const startOfYear = new Date(now.getFullYear(), 0, 1);
 
     // Filter revenue by timeframe
-    const dayRecords = records.filter((r) => new Date(r.periodEnd || (r as any).createdAt || now) >= oneDayAgo);
-    const monthRecords = records.filter((r) => new Date(r.periodEnd || (r as any).createdAt || now) >= thirtyDaysAgo);
-    const yearRecords = records.filter((r) => new Date(r.periodEnd || (r as any).createdAt || now) >= startOfYear);
+    const dayRecords = records.filter((r) => new Date((r as any).periodEnd || (r as any).period || (r as any).createdAt || now) >= oneDayAgo);
+    const monthRecords = records.filter((r) => new Date((r as any).periodEnd || (r as any).period || (r as any).createdAt || now) >= thirtyDaysAgo);
+    const yearRecords = records.filter((r) => new Date((r as any).periodEnd || (r as any).period || (r as any).createdAt || now) >= startOfYear);
 
     const dayRevenue = Math.round(dayRecords.reduce((acc, r) => acc + (r.creatorShare || 0), 0) * 100) / 100;
     const monthRevenue = Math.round(monthRecords.reduce((acc, r) => acc + (r.creatorShare || 0), 0) * 100) / 100;

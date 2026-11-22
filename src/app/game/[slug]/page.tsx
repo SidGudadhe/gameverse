@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { gvDb } from '@/lib/database';
+import { gameverseStorage } from '@/lib/storage';
 import GameCard from '@/components/GameCard';
 import GameActionBar from '@/components/GameActionBar';
 import AdaptiveRecommendations from '@/components/AdaptiveRecommendations';
@@ -45,6 +46,13 @@ export default function GamePage({ params }: GamePageProps) {
 
   const version = game.currentVersionId ? gvDb.getVersionById(game.currentVersionId) : null;
   const rights = version ? gvDb.getRightsDeclarationByVersionId(version.id) : null;
+
+  // Resolve direct public CDN asset URL for isolated runtime delivery
+  const cdnUrl = version
+    ? gameverseStorage.getPublicCdnUrl(
+        `games/${game.id}/versions/${version.versionNumber}/${version.entryFile || 'index.html'}`
+      )
+    : gameverseStorage.getPublicCdnUrl(`games/${game.id}/versions/v1/index.html`);
 
   // Resolve Developed By choice (AI Developed | Human Developed | AI + Human Developed)
   let rawDevelopedBy = game.developedBy || (game as any).developmentType || rights?.developedBy;
@@ -104,7 +112,7 @@ export default function GamePage({ params }: GamePageProps) {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-8 space-y-4">
       {/* Embedded Responsive Game Player Viewport */}
       <div className="relative">
-        <GamePlayer game={game} />
+        <GamePlayer game={{ ...game, cdnUrl } as any} sandboxUrl={cdnUrl} />
       </div>
 
       {/* Game Title, Creator & Social Action Controls */}

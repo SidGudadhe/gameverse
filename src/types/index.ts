@@ -18,7 +18,8 @@ export type GameStatus =
   | 'PUBLISHED'
   | 'REJECTED'
   | 'SUSPENDED'
-  | 'UNPUBLISHED';
+  | 'UNPUBLISHED'
+  | 'QUARANTINED';
 
 export type AIDisclosure = 'NONE_HUMAN_ONLY' | 'AI_ASSISTED' | 'AI_GENERATED';
 export type DevelopmentType = 'AI Developed' | 'Human Developed' | 'AI + Human Developed';

@@ -16,6 +16,10 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     const game = gvDb.getGameById(submission.gameId);
     const version = gvDb.getVersionById(submission.versionId);
     const rights = gvDb.getRightsDeclarationByVersionId(submission.versionId);
+    const manifest = gvDb.getManifestByVersionId(submission.versionId);
+    const allVersions = gvDb.getVersionsByGameId(submission.gameId);
+    const rollbacks = gvDb.getRollbackHistory(submission.gameId);
+    const storageMetrics = gvDb.getStorageMetrics(submission.gameId);
 
     return NextResponse.json({
       success: true,
@@ -23,6 +27,10 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       game,
       version,
       rights,
+      manifest,
+      allVersions,
+      rollbacks,
+      storageMetrics,
     });
   } catch (err: any) {
     return NextResponse.json(

@@ -15,11 +15,11 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     }
 
     const body = await req.json();
-    const { decision, notes, rejectionReason } = body;
+    const { decision, notes, rejectionReason, quarantineReason, targetVersionId } = body;
 
-    if (!['APPROVE', 'REQUEST_CHANGES', 'REJECT'].includes(decision)) {
+    if (!['APPROVE', 'REQUEST_CHANGES', 'REJECT', 'QUARANTINE', 'ADMIN_ROLLBACK'].includes(decision)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid review decision. Must be APPROVE, REQUEST_CHANGES, or REJECT.' },
+        { success: false, error: 'Invalid review decision. Must be APPROVE, REQUEST_CHANGES, REJECT, QUARANTINE, or ADMIN_ROLLBACK.' },
         { status: 400 }
       );
     }
@@ -138,6 +138,132 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         },
         ipAddress: '127.0.0.1',
       });
+    } else if (decision === 'QUARANTINE') {
+      const reason = quarantineReason || rejectionReason || notes;
+      if (!reason || typeof reason !== 'string' || reason.trim().length < 5) {
+        return NextResponse.json(
+          { success: false, error: 'A specific reason (minimum 5 chars) is required to quarantine this build.' },
+          { status: 400 }
+        );
+      }
+
+      // 1. Mark version as QUARANTINED
+      updatedVersion = gvDb.updateVersion(submission.versionId, {
+        status: 'QUARANTINED',
+      });
+
+      // 2. Mark submission as REJECTED with quarantine notes
+      updatedSubmission = gvDb.updateSubmissionStatus(params.id, 'REJECTED', {
+        reviewedBy: user.name || 'Security Moderator',
+        rejectionReason: `[QUARANTINED]: ${reason}`,
+        manualNotes: notes,
+      });
+
+      // 3. Check if quarantined version is the currently active live version
+      const game = gvDb.getGameById(submission.gameId);
+      if (game && game.currentVersionId === submission.versionId) {
+        // Find latest safe approved or published version
+        const versions = gvDb.getVersionsByGameId(submission.gameId);
+        const safeVersion = versions
+          .filter((v) => v.id !== submission.versionId && (v.status === 'PUBLISHED' || v.status === 'APPROVED'))
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+
+        if (safeVersion) {
+          // Emergency rollback to previous safe version
+          updatedGame = gvDb.updateGame(submission.gameId, {
+            currentVersionId: safeVersion.id,
+            status: 'PUBLISHED',
+          });
+
+          gvDb.recordRollback({
+            gameId: submission.gameId,
+            fromVersionId: submission.versionId,
+            toVersionId: safeVersion.id,
+            fromVersionNumber: updatedVersion?.versionNumber || 'quarantined',
+            toVersionNumber: safeVersion.versionNumber,
+            reason: `[AUTOMATIC EMERGENCY ROLLBACK] Quarantined build: ${reason}`,
+            performedBy: user.userId,
+            performedByName: user.name || 'Security Admin',
+          });
+        } else {
+          // No prior safe build exists, suspend the entire game
+          updatedGame = gvDb.updateGame(submission.gameId, {
+            status: 'SUSPENDED',
+          });
+        }
+      } else {
+        updatedGame = game;
+      }
+
+      // 4. Audit Log
+      gvDb.logAudit({
+        actorId: user.userId,
+        actorName: user.name,
+        action: 'QUARANTINE_GAME_BUILD',
+        targetType: 'GAME_BUILD',
+        targetId: submission.versionId,
+        details: {
+          gameId: submission.gameId,
+          versionId: submission.versionId,
+          reason,
+          revertedToVersionId: updatedGame?.currentVersionId,
+        },
+        ipAddress: '127.0.0.1',
+      });
+    } else if (decision === 'ADMIN_ROLLBACK') {
+      if (!targetVersionId) {
+        return NextResponse.json(
+          { success: false, error: 'targetVersionId is required for admin rollback.' },
+          { status: 400 }
+        );
+      }
+
+      const targetVer = gvDb.getVersionById(targetVersionId);
+      if (!targetVer || targetVer.gameId !== submission.gameId) {
+        return NextResponse.json(
+          { success: false, error: 'Target rollback version not found for this game.' },
+          { status: 404 }
+        );
+      }
+
+      const reason = notes || rejectionReason || 'Operational admin override rollback.';
+      const currentGame = gvDb.getGameById(submission.gameId);
+      const fromVerId = currentGame?.currentVersionId || submission.versionId;
+      const fromVer = gvDb.getVersionById(fromVerId);
+
+      updatedGame = gvDb.updateGame(submission.gameId, {
+        currentVersionId: targetVer.id,
+        status: 'PUBLISHED',
+      });
+
+      gvDb.recordRollback({
+        gameId: submission.gameId,
+        fromVersionId: fromVerId,
+        toVersionId: targetVer.id,
+        fromVersionNumber: fromVer?.versionNumber || 'unknown',
+        toVersionNumber: targetVer.versionNumber,
+        reason: `[ADMIN OVERRIDE] ${reason}`,
+        performedBy: user.userId,
+        performedByName: user.name || 'System Admin',
+      });
+
+      gvDb.logAudit({
+        actorId: user.userId,
+        actorName: user.name,
+        action: 'ADMIN_ROLLBACK_VERSION',
+        targetType: 'GAME_VERSION',
+        targetId: targetVer.id,
+        details: {
+          gameId: submission.gameId,
+          fromVersionId: fromVerId,
+          toVersionId: targetVer.id,
+          reason,
+        },
+        ipAddress: '127.0.0.1',
+      });
+
+      updatedVersion = targetVer;
+      updatedSubmission = submission;
     }
 
     return NextResponse.json({

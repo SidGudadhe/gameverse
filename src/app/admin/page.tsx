@@ -73,6 +73,8 @@ export default function AdminDashboard() {
         return <Badge variant="default" className="text-amber-300 border-amber-500/30">CHANGES REQUESTED</Badge>;
       case 'REJECTED':
         return <Badge variant="danger">REJECTED</Badge>;
+      case 'QUARANTINED':
+        return <Badge variant="danger" className="bg-rose-950/60 text-rose-300 border-rose-500/50">QUARANTINED</Badge>;
       default:
         return <Badge variant="default">{status}</Badge>;
     }

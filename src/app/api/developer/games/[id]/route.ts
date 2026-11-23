@@ -79,6 +79,8 @@ export async function PATCH(
     if (bannerUrl) updates.bannerUrl = bannerUrl;
     if (categoryId) updates.categoryId = categoryId;
     if (categoryName) updates.categoryName = categoryName;
+    if (body.mainCategory) updates.mainCategory = body.mainCategory;
+    if (body.subCategory) updates.subCategory = body.subCategory;
 
     const updated = gvDb.updateGame(game.id, updates);
 

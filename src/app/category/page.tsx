@@ -19,14 +19,16 @@ export default function AllCategoriesPage() {
   const [allGames, setAllGames] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<'popular' | 'top_rated' | 'newest'>('popular');
+  const [selectedMainCategory, setSelectedMainCategory] = useState<'ALL' | 'VEG' | 'NON_VEG'>('ALL');
 
   useEffect(() => {
     async function loadData() {
       try {
         setLoading(true);
+        const mainParam = selectedMainCategory !== 'ALL' ? `&mainCategory=${selectedMainCategory}` : '';
         const [catRes, gamesRes] = await Promise.all([
           fetch('/api/categories'),
-          fetch(`/api/games?sort=${sortBy}&limit=60`),
+          fetch(`/api/games?sort=${sortBy}&limit=60${mainParam}`),
         ]);
 
         if (catRes.ok) {
@@ -46,7 +48,7 @@ export default function AllCategoriesPage() {
     }
 
     loadData();
-  }, [sortBy]);
+  }, [sortBy, selectedMainCategory]);
 
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 pt-2 pb-6 space-y-2.5 animate-fade-in">
@@ -72,15 +74,115 @@ export default function AllCategoriesPage() {
       </div>
 
       {/* Category Navigation (Browse by Category) */}
-      <div className="space-y-1">
+      <div className="space-y-2">
         <div className="flex items-center justify-between px-1">
           <h2 className="font-heading font-bold text-xs text-slate-800">
             Browse by Category
           </h2>
           <span className="text-[10px] text-indigo-700 font-mono font-medium">
-            {categories.length} Categories
+            2 Main Categories &bull; {categories.length} Sub-Categories
           </span>
         </div>
+
+        {/* 2 Main Categories: 1 = Veg Category, 2 = Non-Veg Category */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          <button
+            type="button"
+            onClick={() => setSelectedMainCategory('ALL')}
+            className={`text-left p-3 rounded-2xl border transition-all cursor-pointer ${
+              selectedMainCategory === 'ALL'
+                ? 'bg-indigo-50/90 border-indigo-400 shadow-sm ring-2 ring-indigo-500/20'
+                : 'bg-white hover:bg-slate-50 border-slate-200 shadow-2xs'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="w-7 h-7 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs">
+                  🎮
+                </span>
+                <div>
+                  <div className="font-heading font-black text-xs text-slate-900">
+                    All Categories
+                  </div>
+                  <div className="text-[10px] text-slate-500">
+                    Complete catalog
+                  </div>
+                </div>
+              </div>
+              <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg ${
+                selectedMainCategory === 'ALL' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600'
+              }`}>
+                {categories.reduce((s, c) => s + (c.count || 0), 0)} Titles
+              </span>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setSelectedMainCategory(selectedMainCategory === 'VEG' ? 'ALL' : 'VEG')}
+            className={`text-left p-3 rounded-2xl border transition-all cursor-pointer ${
+              selectedMainCategory === 'VEG'
+                ? 'bg-emerald-50/90 border-emerald-400 shadow-sm ring-2 ring-emerald-500/20'
+                : 'bg-white hover:bg-emerald-50/30 border-slate-200 shadow-2xs'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="w-7 h-7 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs">
+                  🟢
+                </span>
+                <div>
+                  <div className="font-heading font-black text-xs text-slate-900 flex items-center gap-1">
+                    <span>1. Veg Category</span>
+                    <span className="text-[9px] font-mono bg-emerald-100 text-emerald-800 px-1 py-0.2 rounded font-bold">ALL AGES</span>
+                  </div>
+                  <div className="text-[10px] text-slate-500">
+                    Family & casual games
+                  </div>
+                </div>
+              </div>
+              <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg ${
+                selectedMainCategory === 'VEG' ? 'bg-emerald-600 text-white' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+              }`}>
+                {categories.reduce((s, c) => s + (c.vegCount || 0), 0)} Games
+              </span>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setSelectedMainCategory(selectedMainCategory === 'NON_VEG' ? 'ALL' : 'NON_VEG')}
+            className={`text-left p-3 rounded-2xl border transition-all cursor-pointer ${
+              selectedMainCategory === 'NON_VEG'
+                ? 'bg-rose-50/90 border-rose-400 shadow-sm ring-2 ring-rose-500/20'
+                : 'bg-white hover:bg-rose-50/30 border-slate-200 shadow-2xs'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="w-7 h-7 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-xs">
+                  🔴
+                </span>
+                <div>
+                  <div className="font-heading font-black text-xs text-slate-900 flex items-center gap-1">
+                    <span>2. Non-Veg Category</span>
+                    <span className="text-[9px] font-mono bg-rose-100 text-rose-800 px-1 py-0.2 rounded font-bold">16+</span>
+                  </div>
+                  <div className="text-[10px] text-slate-500">
+                    Intense action & combat
+                  </div>
+                </div>
+              </div>
+              <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg ${
+                selectedMainCategory === 'NON_VEG' ? 'bg-rose-600 text-white' : 'bg-rose-50 text-rose-700 border border-rose-200'
+              }`}>
+                {categories.reduce((s, c) => s + (c.nonVegCount || 0), 0)} Games
+              </span>
+            </div>
+          </button>
+        </div>
+
+        {/* Sub-Category Navigation */}
         <CategoryNavChips activeSlug="all" />
       </div>
 

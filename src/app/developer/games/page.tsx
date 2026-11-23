@@ -73,6 +73,7 @@ export default function MyGamesPage() {
   const [settingsDesc, setSettingsDesc] = useState('');
   const [settingsControls, setSettingsControls] = useState('');
   const [settingsOrientation, setSettingsOrientation] = useState('LANDSCAPE');
+  const [settingsMainCategory, setSettingsMainCategory] = useState<'VEG' | 'NON_VEG'>('VEG');
   const [settingsSaving, setSettingsSaving] = useState(false);
   const [settingsFeedback, setSettingsFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -297,6 +298,7 @@ export default function MyGamesPage() {
     setSettingsDesc(game.shortDescription || '');
     setSettingsControls(game.controlsGuide || 'Keyboard & Mouse');
     setSettingsOrientation(game.orientation || 'LANDSCAPE');
+    setSettingsMainCategory(game.mainCategory || 'VEG');
     setSettingsFeedback(null);
   };
 
@@ -314,6 +316,7 @@ export default function MyGamesPage() {
           shortDescription: settingsDesc.trim(),
           controlsGuide: settingsControls.trim(),
           orientation: settingsOrientation,
+          mainCategory: settingsMainCategory,
         }),
       });
 
@@ -1053,6 +1056,18 @@ export default function MyGamesPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
+                  <label className="block font-bold text-slate-700 mb-1">Main Category:</label>
+                  <select
+                    value={settingsMainCategory}
+                    onChange={(e) => setSettingsMainCategory(e.target.value as 'VEG' | 'NON_VEG')}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-semibold focus:outline-none focus:border-indigo-500"
+                  >
+                    <option value="VEG">🟢 Veg (All Ages / Family)</option>
+                    <option value="NON_VEG">🔴 Non-Veg (Intense / 16+)</option>
+                  </select>
+                </div>
+
+                <div>
                   <label className="block font-bold text-slate-700 mb-1">Orientation:</label>
                   <select
                     value={settingsOrientation}
@@ -1064,16 +1079,16 @@ export default function MyGamesPage() {
                     <option value="ANY">Any / Responsive</option>
                   </select>
                 </div>
+              </div>
 
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Controls Guide:</label>
-                  <input
-                    type="text"
-                    value={settingsControls}
-                    onChange={(e) => setSettingsControls(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
-                  />
-                </div>
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Controls Guide:</label>
+                <input
+                  type="text"
+                  value={settingsControls}
+                  onChange={(e) => setSettingsControls(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
+                />
               </div>
 
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">

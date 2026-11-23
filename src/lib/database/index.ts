@@ -221,6 +221,8 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
       developerName: 'PixelForge Studios',
       categoryId: 'cat-arcade',
       categoryName: 'Arcade',
+      mainCategory: 'NON_VEG',
+      subCategory: 'arcade',
       slug: 'neon-runner',
       title: 'Neon Cyber Runner 2088',
       shortDescription: 'Dash, jump, and dodge laser barriers in this synthwave endless runner.',
@@ -251,6 +253,8 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
       developerName: 'Voxel Games LLC',
       categoryId: 'cat-rpg',
       categoryName: 'RPG',
+      mainCategory: 'VEG',
+      subCategory: 'rpg',
       slug: 'voxel-quest',
       title: 'Voxel Dungeons',
       shortDescription: 'Procedural voxel dungeon crawler with loot and monsters.',
@@ -271,6 +275,64 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
       updatedAt: '2026-11-05T10:00:00.000Z',
       developedBy: 'AI + Human Developed',
       developmentType: 'AI + Human Developed',
+    },
+    {
+      id: 'game-cosmic-matcher',
+      developerId: 'usr-dev-1',
+      developerName: 'PixelForge Studios',
+      categoryId: 'cat-puzzle',
+      categoryName: 'Puzzle',
+      mainCategory: 'VEG',
+      subCategory: 'puzzle',
+      slug: 'cosmic-matcher',
+      title: 'Cosmic Gem Matcher',
+      shortDescription: 'Relaxing jewel matching puzzle with soothing ambient soundtrack and 100+ stages.',
+      fullDescription: 'Swap constellations and match crystal prisms in this calming, family-friendly brain puzzle.',
+      controlsGuide: 'Mouse / Touch: Drag and swap gems',
+      engine: 'Phaser 3 / Canvas',
+      orientation: 'ANY',
+      status: 'PUBLISHED',
+      isFeatured: false,
+      thumbnailUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
+      bannerUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1600&q=80',
+      screenshots: [],
+      currentVersionId: 'ver-cosmic-1',
+      totalPlays: 8900,
+      rating: 4.9,
+      publishedAt: '2026-11-06T12:00:00.000Z',
+      createdAt: '2026-11-06T10:00:00.000Z',
+      updatedAt: '2026-11-06T12:00:00.000Z',
+      developedBy: 'Human Developed',
+      developmentType: 'Human Developed',
+    },
+    {
+      id: 'game-shadow-strike',
+      developerId: 'usr-dev-2',
+      developerName: 'Voxel Games LLC',
+      categoryId: 'cat-action',
+      categoryName: 'Action',
+      mainCategory: 'NON_VEG',
+      subCategory: 'action',
+      slug: 'shadow-strike',
+      title: 'Shadow Strike: Spec Ops',
+      shortDescription: 'High-octane tactical combat shooter and reflex-heavy infiltration.',
+      fullDescription: 'Take down rogue cyber mercenaries with sniper rifles, explosive breach charges, and close-quarters combat.',
+      controlsGuide: 'WASD: Move\nMouse Left Click: Shoot\nR: Reload',
+      engine: 'WebGL / Three.js',
+      orientation: 'LANDSCAPE',
+      status: 'PUBLISHED',
+      isFeatured: false,
+      thumbnailUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80',
+      bannerUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80',
+      screenshots: [],
+      currentVersionId: 'ver-shadow-1',
+      totalPlays: 12400,
+      rating: 4.7,
+      publishedAt: '2026-11-07T12:00:00.000Z',
+      createdAt: '2026-11-07T10:00:00.000Z',
+      updatedAt: '2026-11-07T12:00:00.000Z',
+      developedBy: 'Human Developed',
+      developmentType: 'Human Developed',
     },
   ],
   versions: [
@@ -809,7 +871,7 @@ class GameVerseDatabase {
   }
 
   // ================= GAMES & TENANT ISOLATION =================
-  getGames(filter?: { status?: string; categoryId?: string; developerId?: string; search?: string }) {
+  getGames(filter?: { status?: string; categoryId?: string; developerId?: string; search?: string; mainCategory?: 'VEG' | 'NON_VEG' }) {
     let result = [...this.state.games];
     if (filter?.status) {
       result = result.filter((g) => g.status === filter.status);
@@ -819,6 +881,9 @@ class GameVerseDatabase {
     }
     if (filter?.developerId) {
       result = result.filter((g) => g.developerId === filter.developerId);
+    }
+    if (filter?.mainCategory) {
+      result = result.filter((g) => (g.mainCategory || 'VEG') === filter.mainCategory);
     }
     if (filter?.search) {
       const q = filter.search.toLowerCase();
@@ -847,15 +912,20 @@ class GameVerseDatabase {
     );
   }
 
-  getCategories(): (Category & { count: number })[] {
+  getCategories(mainCategory?: 'VEG' | 'NON_VEG'): (Category & { count: number; vegCount: number; nonVegCount: number })[] {
     const publishedGames = this.state.games.filter((g) => g.status === 'PUBLISHED');
     return this.state.categories.map((cat) => {
-      const count = publishedGames.filter(
+      const catGames = publishedGames.filter(
         (g) => g.categoryId === cat.id || g.categoryName?.toLowerCase() === cat.name.toLowerCase()
-      ).length;
+      );
+      const vegCount = catGames.filter((g) => (g.mainCategory || 'VEG') === 'VEG').length;
+      const nonVegCount = catGames.filter((g) => g.mainCategory === 'NON_VEG').length;
+      const count = mainCategory ? (mainCategory === 'VEG' ? vegCount : nonVegCount) : catGames.length;
       return {
         ...cat,
         count,
+        vegCount,
+        nonVegCount,
       };
     });
   }
@@ -875,6 +945,8 @@ class GameVerseDatabase {
       developerName: gameData.developerName || 'Independent Studio',
       categoryId: gameData.categoryId || 'cat-arcade',
       categoryName: gameData.categoryName || 'Arcade',
+      mainCategory: gameData.mainCategory || 'VEG',
+      subCategory: gameData.subCategory || gameData.categoryName?.toLowerCase() || 'arcade',
       slug,
       title: gameData.title,
       shortDescription: gameData.shortDescription || '',

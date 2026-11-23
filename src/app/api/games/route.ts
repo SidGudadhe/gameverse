@@ -27,6 +27,12 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    // Main Category filter: VEG or NON_VEG
+    const mainCategoryQuery = (searchParams.get('mainCategory') || searchParams.get('type') || '').toUpperCase();
+    if (mainCategoryQuery === 'VEG' || mainCategoryQuery === 'NON_VEG') {
+      games = games.filter((g) => (g.mainCategory || 'VEG') === mainCategoryQuery);
+    }
+
     // Search query filter (matches title, description, or studio)
     if (searchQuery) {
       games = games.filter(

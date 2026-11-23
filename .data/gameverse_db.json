@@ -152,9 +152,10 @@
       "rating": 4.8,
       "publishedAt": "2026-11-04T12:00:00.000Z",
       "createdAt": "2026-11-03T10:00:00.000Z",
-      "updatedAt": "2026-11-04T12:00:00.000Z",
+      "updatedAt": "2026-11-23T17:16:05.961Z",
       "developedBy": "Human Developed",
-      "developmentType": "Human Developed"
+      "developmentType": "Human Developed",
+      "mainCategory": "VEG"
     },
     {
       "id": "game-voxel-quest",
@@ -335,24 +336,193 @@
   ],
   "auditLogs": [
     {
-      "id": "log-1795331698823-k8pt4",
-      "actorId": "system-backup",
-      "actorName": "Platform Backup Service",
-      "actorRole": "SYSTEM",
-      "action": "PLATFORM_SNAPSHOT_CREATED",
-      "targetType": "PLATFORM_BACKUP",
-      "targetId": "SNAP-1795331698822-A4D34838",
+      "id": "log-1795454165961-x6xh",
+      "createdAt": "2026-11-23T17:16:05.961Z",
+      "previousHash": "eb7d7654e087f00cd9e5f12c16a778e56b94301a50b83df388a9f626709a571a",
+      "tamperHash": "6305708c4a614e679efd6d08b509d5f16e3395a9461f295bc73b5f8bebdbffaf",
+      "actorId": "usr-dev-1",
+      "actorName": "PixelForge Studios",
+      "action": "UPDATE_GAME_SETTINGS",
+      "targetType": "GAME",
+      "targetId": "game-neon-runner",
       "details": {
-        "snapshotId": "SNAP-1795331698822-A4D34838",
-        "label": "api_test_snapshot",
-        "recordCount": 31,
-        "sha256": "959cb7d27d2de936056b9e60900dac29d972dff608cb326c8873c630513417bf",
-        "sizeBytes": 14526
+        "updates": {
+          "title": "Neon Cyber Runner 2088",
+          "shortDescription": "Dash, jump, and dodge laser barriers in this synthwave endless runner.",
+          "controlsGuide": "Space / Up Arrow: Jump (Double tap for double jump)\nDown Arrow: Slide\nP: Pause Game",
+          "orientation": "LANDSCAPE",
+          "mainCategory": "VEG"
+        }
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795454083642-v74x",
+      "createdAt": "2026-11-23T17:14:43.642Z",
+      "previousHash": "0bf1461b3f5ae800299d645a363d60b8c6e21b0afb5d2a738bd5840eafe0fab8",
+      "tamperHash": "eb7d7654e087f00cd9e5f12c16a778e56b94301a50b83df388a9f626709a571a",
+      "actorId": "usr-dev-1",
+      "actorName": "PixelForge Studios",
+      "action": "UPDATE_GAME_SETTINGS",
+      "targetType": "GAME",
+      "targetId": "game-neon-runner",
+      "details": {
+        "updates": {
+          "title": "Neon Cyber Runner 2088",
+          "shortDescription": "Dash, jump, and dodge laser barriers in this synthwave endless runner.",
+          "controlsGuide": "Space / Up Arrow: Jump (Double tap for double jump)\nDown Arrow: Slide\nP: Pause Game",
+          "orientation": "LANDSCAPE",
+          "mainCategory": "NON_VEG"
+        }
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795453898565-95d3",
+      "createdAt": "2026-11-23T17:11:38.565Z",
+      "previousHash": "63cb7f589c94556cc42143b8f4dbc30927377d0d5d2d18c3194c995fbab19b77",
+      "tamperHash": "0bf1461b3f5ae800299d645a363d60b8c6e21b0afb5d2a738bd5840eafe0fab8",
+      "actorId": "usr-dev-1",
+      "actorName": "PixelForge Studios",
+      "action": "USER_LOGIN",
+      "targetType": "USER",
+      "targetId": "usr-dev-1",
+      "details": {
+        "role": "DEVELOPER"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "log-1795453857459-o65j",
+      "createdAt": "2026-11-23T17:10:57.459Z",
+      "previousHash": "46e25de8c2f304c9534885eac7a82da4d8efdac974a4a92bd7c697449b199456",
+      "tamperHash": "63cb7f589c94556cc42143b8f4dbc30927377d0d5d2d18c3194c995fbab19b77",
+      "actorId": "usr-admin-1",
+      "actorName": "System Admin",
+      "action": "USER_LOGOUT",
+      "targetType": "USER",
+      "targetId": "usr-admin-1",
+      "details": {},
+      "ipAddress": "::1"
+    },
+    {
+      "id": "log-1795452006507-e4kk",
+      "createdAt": "2026-11-23T16:40:06.507Z",
+      "previousHash": "f35808ad727a2e226b3d07e9b1d236689ebe953130016a7b4eb3f9812874e6ea",
+      "tamperHash": "46e25de8c2f304c9534885eac7a82da4d8efdac974a4a92bd7c697449b199456",
+      "actorId": "usr-admin-1",
+      "actorName": "System Admin",
+      "action": "ADMIN_2FA_SUCCESS",
+      "targetType": "USER",
+      "targetId": "usr-admin-1",
+      "details": {
+        "role": "ADMIN"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "log-1795337850877-39ae",
+      "createdAt": "2026-11-22T08:57:30.877Z",
+      "previousHash": "95c647e997a35dcc15b0b3575155b2fa76fa1886a1e4dc1fee323e4f5578f11b",
+      "tamperHash": "f35808ad727a2e226b3d07e9b1d236689ebe953130016a7b4eb3f9812874e6ea",
+      "actorId": "usr-admin-1",
+      "actorName": "System Admin",
+      "action": "ADMIN_2FA_SUCCESS",
+      "targetType": "USER",
+      "targetId": "usr-admin-1",
+      "details": {
+        "role": "ADMIN"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "log-1795337751953-zau6",
+      "createdAt": "2026-11-22T08:55:51.953Z",
+      "previousHash": "98738ff9f89d96f2c93ed0a57636c0c715a51ad4a8e35f8c2665ec0d7ebbf5a1",
+      "tamperHash": "95c647e997a35dcc15b0b3575155b2fa76fa1886a1e4dc1fee323e4f5578f11b",
+      "actorId": "usr-admin-1",
+      "actorName": "System Admin",
+      "action": "USER_LOGOUT",
+      "targetType": "USER",
+      "targetId": "usr-admin-1",
+      "details": {},
+      "ipAddress": "::1"
+    },
+    {
+      "id": "log-1795335772456-fh15",
+      "createdAt": "2026-11-22T08:22:52.456Z",
+      "previousHash": "bbf635c370a36a72ba9ac9b97a4f7cda872a7126329ced525fc42c0e5793d8c1",
+      "tamperHash": "98738ff9f89d96f2c93ed0a57636c0c715a51ad4a8e35f8c2665ec0d7ebbf5a1",
+      "actorId": "usr-admin-1",
+      "actorName": "System Admin",
+      "action": "ADMIN_2FA_SUCCESS",
+      "targetType": "USER",
+      "targetId": "usr-admin-1",
+      "details": {
+        "role": "ADMIN"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "log-1795333073100-noaaw",
+      "actorId": "usr-admin-1",
+      "actorName": "System Admin",
+      "actorRole": "ADMIN",
+      "actorEmail": "admin@gameverse.com",
+      "action": "PRIVACY_DATA_EXPORT_DSAR",
+      "targetType": "USER",
+      "targetId": "usr-admin-1",
+      "details": {
+        "exportId": "dsar-1795333073100-45671e27",
+        "standards": [
+          "General Data Protection Regulation (GDPR) Regulation (EU) 2016/679",
+          "Digital Personal Data Protection Act 2023 (India DPDP)",
+          "California Consumer Privacy Act (CCPA) / CPRA"
+        ],
+        "checksum": "5425efa5f37cad0c4d90318963d9da90b26e219a10f7963ab79f550ba586a22b"
       },
       "ipAddress": "127.0.0.1",
+      "previousHash": "151e52db52c9700a5de2f916a238c40eef0c53e4cc0cf3fe9346f08db467e8e1",
+      "tamperHash": "bbf635c370a36a72ba9ac9b97a4f7cda872a7126329ced525fc42c0e5793d8c1",
+      "createdAt": "2026-11-22T07:37:53.100Z"
+    },
+    {
+      "id": "log-1795333072848-rery4",
+      "actorId": "usr-admin-1",
+      "actorName": "System Admin",
+      "actorRole": "ADMIN",
+      "actorEmail": "admin@gameverse.com",
+      "action": "PRIVACY_DATA_EXPORT_DSAR",
+      "targetType": "USER",
+      "targetId": "usr-admin-1",
+      "details": {
+        "exportId": "dsar-1795333072848-56307006",
+        "standards": [
+          "General Data Protection Regulation (GDPR) Regulation (EU) 2016/679",
+          "Digital Personal Data Protection Act 2023 (India DPDP)",
+          "California Consumer Privacy Act (CCPA) / CPRA"
+        ],
+        "checksum": "9baa1efb17a21a7218ff9210c6a87ce84cb792dd7651cd5b490d0403991def1c"
+      },
+      "ipAddress": "127.0.0.1",
+      "previousHash": "555c5981857461aa0afe97d29728e64258812cd8462d4192924a0236ae032e1d",
+      "tamperHash": "151e52db52c9700a5de2f916a238c40eef0c53e4cc0cf3fe9346f08db467e8e1",
+      "createdAt": "2026-11-22T07:37:52.848Z"
+    },
+    {
+      "id": "log-1795333032809-jyxa",
+      "createdAt": "2026-11-22T07:37:12.809Z",
       "previousHash": "0000000000000000000000000000000000000000000000000000000000000000",
-      "tamperHash": "5102b10cf1880e959c53dc10ccea7d5644383c3d7039d4d9385fbd983a9ba053",
-      "createdAt": "2026-11-22T07:14:58.823Z"
+      "tamperHash": "555c5981857461aa0afe97d29728e64258812cd8462d4192924a0236ae032e1d",
+      "actorId": "usr-admin-1",
+      "actorName": "System Admin",
+      "action": "ADMIN_2FA_SUCCESS",
+      "targetType": "USER",
+      "targetId": "usr-admin-1",
+      "details": {
+        "role": "ADMIN"
+      },
+      "ipAddress": "::1"
     },
     {
       "id": "log-001",
@@ -399,6 +569,30 @@
       "notifyOnPayout": true,
       "notifyOnPlayerReport": false,
       "updatedAt": "2026-11-02T10:00:00.000Z"
+    },
+    {
+      "id": "set-1795332814058",
+      "userId": "usr-google-1795181637718-036zp",
+      "payoutMethod": "BANK_AND_UPI",
+      "payoutDetails": {},
+      "studioVerified": true,
+      "currency": "INR",
+      "notifyOnQaUpdate": true,
+      "notifyOnPayout": true,
+      "notifyOnPlayerReport": false,
+      "updatedAt": "2026-11-22T07:33:34.058Z"
+    },
+    {
+      "id": "set-1795333072847",
+      "userId": "usr-admin-1",
+      "payoutMethod": "BANK_AND_UPI",
+      "payoutDetails": {},
+      "studioVerified": true,
+      "currency": "INR",
+      "notifyOnQaUpdate": true,
+      "notifyOnPayout": true,
+      "notifyOnPlayerReport": false,
+      "updatedAt": "2026-11-22T07:37:52.847Z"
     }
   ],
   "supportTickets": [
@@ -434,5 +628,9 @@
       "declaredAt": "2026-11-04T12:30:00.000Z"
     }
   ],
-  "playerWallets": []
+  "playerWallets": [],
+  "uploadSessions": [],
+  "manifests": [],
+  "rollbackHistory": [],
+  "storageMetrics": []
 }

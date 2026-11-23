@@ -39,6 +39,7 @@ export default function GameSubmitPage() {
   // Metadata state
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
+  const [mainCategory, setMainCategory] = useState<'VEG' | 'NON_VEG'>('VEG');
   const [category, setCategory] = useState('cat-arcade');
   const [categoryName, setCategoryName] = useState('Arcade');
   const [engine, setEngine] = useState('HTML5 Canvas / Custom JS');
@@ -345,6 +346,7 @@ export default function GameSubmitPage() {
         slug,
         shortDescription,
         fullDescription,
+        mainCategory,
         categoryId: category,
         categoryName,
         engine,
@@ -837,10 +839,24 @@ export default function GameSubmitPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Category <span className="text-rose-600">*</span>
+                Main Category (Classification) <span className="text-rose-600">*</span>
+              </label>
+              <select
+                value={mainCategory}
+                onChange={(e) => setMainCategory(e.target.value as 'VEG' | 'NON_VEG')}
+                className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-xs text-slate-800 font-semibold focus:outline-none focus:border-indigo-500 shadow-xs"
+              >
+                <option value="VEG">🟢 Veg Category (All Ages / Family Friendly)</option>
+                <option value="NON_VEG">🔴 Non-Veg Category (Intense / Action / 16+)</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                Sub-Category (Genre) <span className="text-rose-600">*</span>
               </label>
               <select
                 value={category}

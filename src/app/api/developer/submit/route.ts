@@ -206,6 +206,8 @@ export async function POST(req: NextRequest) {
         developerName: user.name || 'Studio Developer',
         categoryId: categoryId || 'cat-arcade',
         categoryName: categoryName || 'Arcade',
+        mainCategory: body.mainCategory === 'NON_VEG' ? 'NON_VEG' : 'VEG',
+        subCategory: (categoryName || 'Arcade').toLowerCase(),
         slug: cleanSlug,
         title,
         shortDescription: shortDescription || `${title} - Web game by ${user.name}`,

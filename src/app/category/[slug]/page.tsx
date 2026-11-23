@@ -85,6 +85,7 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
   const [games, setGames] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<'popular' | 'top_rated' | 'newest'>('popular');
+  const [mainCategoryFilter, setMainCategoryFilter] = useState<'ALL' | 'VEG' | 'NON_VEG'>('ALL');
 
   React.useEffect(() => {
     async function loadGames() {
@@ -104,7 +105,10 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
     loadGames();
   }, [params.slug, sortBy]);
 
-  const filteredGames = games;
+  const filteredGames = useMemo(() => {
+    if (mainCategoryFilter === 'ALL') return games;
+    return games.filter((g) => (g.mainCategory || 'VEG') === mainCategoryFilter);
+  }, [games, mainCategoryFilter]);
 
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 pt-2 pb-6 space-y-2.5">
@@ -142,7 +146,43 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
       </div>
 
       {/* Filter and Sorting Controls Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
+        {/* Main Category (Veg vs Non-Veg in this sub-category) Switcher */}
+        <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs shrink-0">
+          <button
+            onClick={() => setMainCategoryFilter('ALL')}
+            className={`px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
+              mainCategoryFilter === 'ALL'
+                ? 'bg-white text-slate-900 shadow-xs font-bold'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            All ({games.length})
+          </button>
+          <button
+            onClick={() => setMainCategoryFilter('VEG')}
+            className={`px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+              mainCategoryFilter === 'VEG'
+                ? 'bg-emerald-600 text-white shadow-xs font-bold'
+                : 'text-emerald-800 hover:bg-emerald-50'
+            }`}
+          >
+            <span>🟢</span>
+            <span>Veg {meta.name} ({games.filter((g) => (g.mainCategory || 'VEG') === 'VEG').length})</span>
+          </button>
+          <button
+            onClick={() => setMainCategoryFilter('NON_VEG')}
+            className={`px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+              mainCategoryFilter === 'NON_VEG'
+                ? 'bg-rose-600 text-white shadow-xs font-bold'
+                : 'text-rose-800 hover:bg-rose-50'
+            }`}
+          >
+            <span>🔴</span>
+            <span>Non-Veg {meta.name} ({games.filter((g) => g.mainCategory === 'NON_VEG').length})</span>
+          </button>
+        </div>
+
         {/* Sort Options */}
         <div className="flex items-center gap-2">
           <span className="text-xs text-slate-500 mr-1 flex items-center gap-1">

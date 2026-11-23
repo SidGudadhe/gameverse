@@ -35,6 +35,18 @@ export default function GameCard({ game, aspect = '16/9' }: GameCardProps) {
               {game.categoryName}
             </span>
           )}
+
+          {game.mainCategory === 'NON_VEG' ? (
+            <span className="bg-rose-950/85 backdrop-blur-sm text-rose-200 border border-rose-500/50 text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-md shadow-xs flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+              <span>NON-VEG</span>
+            </span>
+          ) : (
+            <span className="bg-emerald-950/85 backdrop-blur-sm text-emerald-200 border border-emerald-500/50 text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-md shadow-xs flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              <span>VEG</span>
+            </span>
+          )}
         </div>
 
         {/* Hover Game Controller Overlay */}

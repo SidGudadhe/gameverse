@@ -49,6 +49,8 @@ export interface CreatorAgreement {
   accountStatus: 'ACTIVE' | 'SUSPENDED' | 'PENDING';
 }
 
+export type MainCategory = 'VEG' | 'NON_VEG';
+
 export interface Category {
   id: string;
   name: string;
@@ -56,6 +58,7 @@ export interface Category {
   description: string;
   icon: string;
   count?: number;
+  mainCategory?: MainCategory;
 }
 
 export interface GameVersion {
@@ -101,6 +104,8 @@ export interface Game {
   categoryId: string;
   categoryName: string;
   category?: string;
+  mainCategory?: MainCategory;
+  subCategory?: string;
   slug: string;
   title: string;
   shortDescription: string;

@@ -170,12 +170,30 @@ export default function GamerSidebar() {
           {!isCollapsed && (
             <div className="pt-2 border-t border-slate-100 space-y-1">
               <div className="px-3 pb-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 font-mono flex items-center justify-between">
-                <span>Top Genres</span>
+                <span>Genres</span>
                 <Link
                   href="/category"
                   className="text-[9px] text-indigo-600 hover:underline normal-case font-medium"
                 >
                   View All
+                </Link>
+              </div>
+
+              {/* 2 Main Categories Quick Filter */}
+              <div className="grid grid-cols-2 gap-1 px-1 pb-1">
+                <Link
+                  href="/category?type=veg"
+                  className="flex items-center justify-center gap-1 px-1.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[10px] font-bold border border-emerald-200 transition-colors"
+                >
+                  <span>🟢</span>
+                  <span>Veg</span>
+                </Link>
+                <Link
+                  href="/category?type=non-veg"
+                  className="flex items-center justify-center gap-1 px-1.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-800 text-[10px] font-bold border border-rose-200 transition-colors"
+                >
+                  <span>🔴</span>
+                  <span>Non-Veg</span>
                 </Link>
               </div>
 
@@ -276,6 +294,26 @@ export default function GamerSidebar() {
               <div className="pt-2 border-t border-slate-100 space-y-1">
                 <div className="px-3 pb-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 font-mono">
                   Top Genres
+                </div>
+
+                {/* 2 Main Categories Quick Filter */}
+                <div className="grid grid-cols-2 gap-1 px-3 pb-2">
+                  <Link
+                    href="/category?type=veg"
+                    onClick={closeMobile}
+                    className="flex items-center justify-center gap-1.5 px-2 py-2 rounded-xl bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200"
+                  >
+                    <span>🟢</span>
+                    <span>Veg</span>
+                  </Link>
+                  <Link
+                    href="/category?type=non-veg"
+                    onClick={closeMobile}
+                    className="flex items-center justify-center gap-1.5 px-2 py-2 rounded-xl bg-rose-50 text-rose-800 text-xs font-bold border border-rose-200"
+                  >
+                    <span>🔴</span>
+                    <span>Non-Veg</span>
+                  </Link>
                 </div>
 
                 {GENRE_TAGS.map((genre) => {

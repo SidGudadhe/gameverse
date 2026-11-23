@@ -14,31 +14,27 @@ import {
   Loader2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { useAuth } from '@/context/AuthContext';
 import { PortalShellSkeleton } from '@/components/ui/Skeleton';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, isAuthenticated, role, loading } = useAuth();
 
+  // Strict role check: only ADMIN, SUPER_ADMIN, or MODERATOR allowed
+  const isAuthorized =
+    isAuthenticated && (role === 'ADMIN' || role === 'SUPER_ADMIN' || role === 'MODERATOR');
+
+  // Bina login ke koi bhi admin page open nahi hona chahiye - immediately redirect to admin login
+  // NOTE: Defined at top level unconditionally before any return statements
   useEffect(() => {
-    async function checkAuth() {
-      try {
-        const res = await fetch('/api/auth/me');
-        if (res.ok) {
-          const data = await res.json();
-          setUser(data.user);
-        } else {
-          setUser(null);
-        }
-      } catch {
-        setUser(null);
-      } finally {
-        setLoading(false);
+    if (!loading && !isAuthorized && !pathname.startsWith('/admin/auth')) {
+      const redirectUrl = `/admin/auth/login?redirect=${encodeURIComponent(pathname)}`;
+      if (typeof window !== 'undefined') {
+        window.location.replace(redirectUrl);
       }
     }
-    checkAuth();
-  }, []);
+  }, [loading, isAuthorized, pathname]);
 
   const navLinks = [
     { href: '/admin', label: 'QA Submissions Queue', icon: ClipboardList, exact: true },
@@ -51,47 +47,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return <div className="min-h-screen bg-[#F8FAFC]">{children}</div>;
   }
 
-  if (loading) {
+  if (loading || !isAuthorized) {
     return <PortalShellSkeleton portal="ADMIN" />;
-  }
-
-  // Strict role check: only ADMIN, SUPER_ADMIN, or MODERATOR allowed
-  const isAuthorized =
-    user && (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN' || user.role === 'MODERATOR');
-
-  if (!isAuthorized) {
-    return (
-      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white border border-slate-200 rounded-3xl p-8 text-center shadow-xl">
-          <div className="w-16 h-16 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center mx-auto mb-5 text-rose-600">
-            <Lock className="w-8 h-8" />
-          </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight mb-2">
-            Access Denied (403 Forbidden)
-          </h1>
-          <p className="text-sm text-slate-600 leading-relaxed mb-6">
-            The GameVerse Admin Suite is strictly restricted to platform administrators and security auditors.
-            {user ? (
-              <span className="block mt-2 font-mono text-xs text-rose-600 font-semibold">
-                Your current account role is <span className="font-bold underline">{user.role}</span>.
-              </span>
-            ) : (
-              <span className="block mt-2 font-mono text-xs text-slate-500">
-                You are currently not logged in.
-              </span>
-            )}
-          </p>
-
-          <div className="flex flex-col gap-3 justify-center">
-            <Link href="/admin/auth/login">
-              <Button variant="primary" className="w-full">
-                Log In as Admin
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
   }
 
   return (
@@ -105,7 +62,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               Operations Control
             </span>
             <span className="text-[10px] font-mono bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full font-semibold">
-              {user.role}
+              {user?.role || role}
             </span>
           </div>
 

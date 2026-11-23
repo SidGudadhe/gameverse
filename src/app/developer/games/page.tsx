@@ -35,6 +35,7 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { EmptyState } from '@/components/ui/EmptyState';
 import DeveloperLogo from '@/components/ui/DeveloperLogo';
+import WebAdBanner from '@/components/ads/WebAdBanner';
 
 export default function MyGamesPage() {
   const [games, setGames] = useState<any[]>([]);
@@ -416,6 +417,11 @@ export default function MyGamesPage() {
           </div>
           <span className="text-[10px] text-slate-400">Net creator ad share</span>
         </div>
+      </div>
+
+      {/* Developer Portal Sponsored Hardware & Tools Display Banner */}
+      <div className="w-full">
+        <WebAdBanner placement="CATEGORY_BANNER" />
       </div>
 
       {/* Filter & Search Toolbar */}

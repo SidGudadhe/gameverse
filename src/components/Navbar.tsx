@@ -112,18 +112,15 @@ export default function Navbar() {
   // PORTAL B: ADMIN & QA OPERATIONS WEBSITE NAVBAR
   // =========================================================================
   if (isAdminPortal) {
-    const adminLinks = [
-      { href: '/admin', label: 'QA Submissions', icon: ClipboardList, exact: true },
-      { href: '/admin/audit-logs', label: 'Security Audit Logs', icon: FileText },
-      { href: '/admin/launch-checklist', label: 'Launch Checklist', icon: CheckCircle2 },
-    ];
+    const isAuthAdmin =
+      isAuthenticated && (role === 'ADMIN' || role === 'SUPER_ADMIN' || role === 'MODERATOR') && !pathname.startsWith('/admin/auth');
 
     return (
       <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           {/* Admin Brand */}
           <div className="flex items-center gap-3">
-            <Link href="/admin" className="flex items-center gap-2 group">
+            <Link href={isAuthAdmin ? '/admin' : '/admin/auth/login'} className="flex items-center gap-2 group">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 flex items-center justify-center shadow-md shadow-rose-600/20 group-hover:scale-105 transition-transform">
                 <ShieldCheck className="w-5 h-5 text-white" />
               </div>
@@ -138,51 +135,31 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Desktop Admin Links */}
-          <nav className="hidden md:flex items-center gap-1 bg-slate-100 px-2 py-1 rounded-xl border border-slate-200 text-xs font-semibold">
-            {adminLinks.map((item) => {
-              const Icon = item.icon;
-              const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors ${
-                    isActive
-                      ? 'bg-white text-rose-700 shadow-xs border border-slate-200/80 font-bold'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-                  }`}
-                >
-                  <Icon className="w-3.5 h-3.5" />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-
           {/* Admin Right Actions */}
           <div className="flex items-center gap-3">
-            <span className="hidden sm:inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-mono font-bold px-2.5 py-1 rounded-lg">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>2FA VERIFIED</span>
-            </span>
+            {isAuthAdmin ? (
+              <>
+                <span className="hidden sm:inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-mono font-bold px-2.5 py-1 rounded-lg">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>2FA VERIFIED</span>
+                </span>
 
-            {isAuthenticated ? (
-              <button
-                onClick={logout}
-                title="Log Out of Admin"
-                className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-200 flex items-center justify-center transition-colors cursor-pointer"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
-            ) : (
+                <button
+                  onClick={logout}
+                  title="Log Out of Admin"
+                  className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-200 flex items-center justify-center transition-colors cursor-pointer"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </>
+            ) : pathname !== '/admin/auth/login' ? (
               <Link
                 href="/admin/auth/login"
                 className="bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-md transition-all active:scale-95"
               >
                 Staff Sign In
               </Link>
-            )}
+            ) : null}
           </div>
         </div>
       </header>

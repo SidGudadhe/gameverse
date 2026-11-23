@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { ExternalLink, X, Shield, Info } from 'lucide-react';
 
 export type WebAdPlacement =
@@ -132,9 +133,15 @@ const PLACEMENT_CONFIG: Record<
 };
 
 export default function WebAdBanner({ placement, className = '' }: WebAdBannerProps) {
+  const pathname = usePathname();
   const config = PLACEMENT_CONFIG[placement];
   const [dismissed, setDismissed] = useState(false);
   const [showAdChoicesInfo, setShowAdChoicesInfo] = useState(false);
+
+  // Admin portal par koi bhi ad render nahi hona chahiye
+  if (pathname && pathname.startsWith('/admin')) {
+    return null;
+  }
 
   if (dismissed || !config) return null;
 

@@ -19,6 +19,7 @@ export default function FooterLegal() {
   }
 
   const isDevPortal = pathname.startsWith('/developer') || pathname === '/creator-agreement';
+  const isAdminPortal = pathname.startsWith('/admin');
 
   const openCookiePreferences = () => {
     window.dispatchEvent(new CustomEvent('gv-open-cookie-settings'));
@@ -26,8 +27,8 @@ export default function FooterLegal() {
 
   return (
     <div className="w-full mt-20">
-      {/* 7. FOOTER DISPLAY AD (Placement: Page ke bottom mein footer ke upar) */}
-      {!isDevPortal && (
+      {/* 7. FOOTER DISPLAY AD (Shown on Player and Developer portals, NEVER on Admin) */}
+      {!isAdminPortal && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
           <WebAdBanner placement="FOOTER_DISPLAY" />
         </div>

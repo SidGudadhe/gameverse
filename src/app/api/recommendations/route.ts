@@ -20,17 +20,27 @@ export async function GET(req: NextRequest) {
     const limit = Math.min(20, Math.max(1, parseInt(url.searchParams.get('limit') || '8', 10)));
     const excludeGameId = url.searchParams.get('exclude') || undefined;
 
+    // Optional mainCategory parameter for strict category isolation (VEG or NON_VEG)
+    const mainCategoryParam = url.searchParams.get('mainCategory')?.toUpperCase();
+    const mainCategory =
+      mainCategoryParam === 'NON_VEG'
+        ? 'NON_VEG'
+        : mainCategoryParam === 'VEG'
+        ? 'VEG'
+        : undefined;
+
     // Check optional authenticated user session
     const auth = extractAuth(req);
     const userId = auth?.userId;
 
     // 1. Search Fallback Mode (When query yields zero results)
     if (queryParam) {
-      const fallback = getSearchFallbackRecommendations(queryParam, limit);
+      const fallback = getSearchFallbackRecommendations(queryParam, limit, mainCategory);
       return NextResponse.json({
         success: true,
         type: 'SEARCH_FALLBACK',
         query: queryParam,
+        mainCategory: mainCategory || null,
         explanation: fallback.explanation,
         recommendations: fallback.recommendations,
       });
@@ -45,6 +55,7 @@ export async function GET(req: NextRequest) {
       mood: safeMood,
       excludeGameId,
       limit,
+      mainCategory,
     });
 
     const activeMoodDef = MOOD_DEFINITIONS[result.dominantMood] || MOOD_DEFINITIONS.ALL;
@@ -61,6 +72,7 @@ export async function GET(req: NextRequest) {
       type: 'PERSONALIZED',
       userId: userId || null,
       mood: result.dominantMood,
+      mainCategory: mainCategory || null,
       moodMetadata: activeMoodDef,
       recommendations: result.games,
       total: result.games.length,

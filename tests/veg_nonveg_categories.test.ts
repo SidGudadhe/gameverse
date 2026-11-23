@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { gvDb } from '../src/lib/database';
+import { getPersonalizedRecommendations } from '../src/lib/recommendations';
 
 describe('Veg & Non-Veg 2 Main Categories Architecture', () => {
   it('1. should classify games into 2 Main Categories: VEG and NON_VEG', () => {
@@ -146,5 +147,56 @@ describe('Veg & Non-Veg 2 Main Categories Architecture', () => {
     // Must NOT have inline category switch buttons (user cannot change category here)
     expect(slugContent).not.toContain("setMainCategoryFilter('VEG')");
     expect(slugContent).not.toContain("setMainCategoryFilter('NON_VEG')");
+  });
+
+  it('8. category page guidance banners must NOT contain sub-category back note or Reset to All button', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const catPagePath = path.resolve(__dirname, '../src/app/category/page.tsx');
+    const catContent = fs.readFileSync(catPagePath, 'utf-8');
+
+    // Must NOT contain the note
+    expect(catContent).not.toContain('(Note: Once inside a sub-category');
+    expect(catContent).not.toContain('← Back to Change Category&quot;.)');
+
+    // Must NOT contain the Reset to All button
+    expect(catContent).not.toContain('Reset to All');
+  });
+
+  it('9. recommendations engine must strictly isolate games by mainCategory when requested', () => {
+    const vegRecs = getPersonalizedRecommendations({
+      mainCategory: 'VEG',
+      limit: 10,
+    });
+    expect(vegRecs.games.length).toBeGreaterThan(0);
+    for (const g of vegRecs.games) {
+      expect(g.mainCategory || 'VEG').toBe('VEG');
+    }
+
+    const nonVegRecs = getPersonalizedRecommendations({
+      mainCategory: 'NON_VEG',
+      limit: 10,
+    });
+    expect(nonVegRecs.games.length).toBeGreaterThan(0);
+    for (const g of nonVegRecs.games) {
+      expect(g.mainCategory).toBe('NON_VEG');
+    }
+
+    // Zero cross-leakage: No veg game in non-veg recommendations and vice-versa
+    const vegIds = new Set(vegRecs.games.map((g: any) => g.id));
+    for (const g of nonVegRecs.games) {
+      expect(vegIds.has(g.id)).toBe(false);
+    }
+  });
+
+  it('10. game detail page must enforce strictly isolated recommendations below the game player', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const gamePagePath = path.resolve(__dirname, '../src/app/game/[slug]/page.tsx');
+    const gameContent = fs.readFileSync(gamePagePath, 'utf-8');
+
+    // Must pass mainCategory to AdaptiveRecommendations
+    expect(gameContent).toContain("mainCategory={isNonVeg ? 'NON_VEG' : 'VEG'}");
+    expect(gameContent).toContain("title={isNonVeg ? `More Non-Veg Games Like ${game.title}` : `More Veg Games Like ${game.title}`}");
   });
 });

@@ -144,6 +144,34 @@ describe('Adaptive Recommendation Engine & Smart Search Fallback', () => {
     expect(data.recommendations.length).toBeLessThanOrEqual(4);
   });
 
+  it('8b. should strictly isolate recommendations by mainCategory=VEG via API', async () => {
+    const req = new NextRequest('http://localhost:3000/api/recommendations?mainCategory=VEG&limit=8');
+    const res = await getRecommendationsRoute(req);
+    const data = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(data.success).toBe(true);
+    expect(data.mainCategory).toBe('VEG');
+    expect(data.recommendations.length).toBeGreaterThan(0);
+    for (const game of data.recommendations) {
+      expect(game.mainCategory || 'VEG').toBe('VEG');
+    }
+  });
+
+  it('8c. should strictly isolate recommendations by mainCategory=NON_VEG via API', async () => {
+    const req = new NextRequest('http://localhost:3000/api/recommendations?mainCategory=NON_VEG&limit=8');
+    const res = await getRecommendationsRoute(req);
+    const data = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(data.success).toBe(true);
+    expect(data.mainCategory).toBe('NON_VEG');
+    expect(data.recommendations.length).toBeGreaterThan(0);
+    for (const game of data.recommendations) {
+      expect(game.mainCategory).toBe('NON_VEG');
+    }
+  });
+
   // 9. API Endpoint GET /api/recommendations with query parameter (Search Fallback)
   it('9. should return HTTP 200 with fallback recommendations when query is passed', async () => {
     const req = new NextRequest('http://localhost:3000/api/recommendations?query=Need+For+Speed');

@@ -119,9 +119,16 @@ export function getPersonalizedRecommendations(options: {
   mood?: GameMood;
   excludeGameId?: string;
   limit?: number;
+  mainCategory?: 'VEG' | 'NON_VEG';
 }): { games: (Game & { matchReason: string; matchScore: number })[]; dominantMood: GameMood } {
-  const { userId, mood = 'ALL', excludeGameId, limit = 8 } = options;
-  const allPublished = gvDb.getGames({ status: 'PUBLISHED' });
+  const { userId, mood = 'ALL', excludeGameId, limit = 8, mainCategory } = options;
+  let allPublished = gvDb.getGames({ status: 'PUBLISHED' });
+
+  // Strict Category Isolation: If a specific mainCategory is requested (Veg or Non-Veg),
+  // strictly filter candidate games so zero cross-category recommendations occur.
+  if (mainCategory) {
+    allPublished = allPublished.filter((g) => (g.mainCategory || 'VEG') === mainCategory);
+  }
 
   // Get player affinity profile if logged in
   const profile = userId ? computePlayerAffinity(userId) : null;
@@ -264,9 +271,13 @@ export function getSortedCategoriesByAffinity(
  */
 export function getSearchFallbackRecommendations(
   query: string,
-  limit = 4
+  limit = 4,
+  mainCategory?: 'VEG' | 'NON_VEG'
 ): { recommendations: Game[]; explanation: string } {
-  const allPublished = gvDb.getGames({ status: 'PUBLISHED' });
+  let allPublished = gvDb.getGames({ status: 'PUBLISHED' });
+  if (mainCategory) {
+    allPublished = allPublished.filter((g) => (g.mainCategory || 'VEG') === mainCategory);
+  }
   const cleanTokens = query.toLowerCase().split(/\s+/).filter((t) => t.length > 2);
 
   // Score candidate games by partial token overlap

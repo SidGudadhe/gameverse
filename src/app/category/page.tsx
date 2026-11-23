@@ -222,60 +222,36 @@ function AllCategoriesContent() {
 
         {/* Selected Main Category Prominent Guidance Banner (In English, Warm & Informative) */}
         {selectedMainCategory === 'VEG' && (
-          <div className="p-3.5 rounded-2xl bg-emerald-50/80 border border-emerald-300 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl shrink-0">🟢</span>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono font-black uppercase tracking-wider text-emerald-900 bg-emerald-100 px-2 py-0.5 rounded-full">
-                    SELECTED MENU: 1. VEG CATEGORY
-                  </span>
-                  <span className="text-[10px] font-bold text-emerald-700">100% Family Safe & Friendly</span>
-                </div>
-                <p className="text-xs text-slate-800 font-medium mt-1">
-                  These games are 100% pure veg and family-friendly. They contain zero abusive language, profanity, or inappropriate words. Enjoy a wholesome gaming experience safe for the whole family!
-                </p>
-                <p className="text-[11px] text-slate-500 mt-0.5">
-                  (Note: Once inside a sub-category, to change your category selection, simply click &quot;← Back to Change Category&quot;.)
-                </p>
+          <div className="p-3.5 rounded-2xl bg-emerald-50/80 border border-emerald-300 flex items-center gap-3 shadow-2xs">
+            <span className="text-2xl shrink-0">🟢</span>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono font-black uppercase tracking-wider text-emerald-900 bg-emerald-100 px-2 py-0.5 rounded-full">
+                  SELECTED MENU: 1. VEG CATEGORY
+                </span>
+                <span className="text-[10px] font-bold text-emerald-700">100% Family Safe & Friendly</span>
               </div>
+              <p className="text-xs text-slate-800 font-medium mt-1">
+                These games are 100% pure veg and family-friendly. They contain zero abusive language, profanity, or inappropriate words. Enjoy a wholesome gaming experience safe for the whole family!
+              </p>
             </div>
-            <button
-              type="button"
-              onClick={() => setSelectedMainCategory('ALL')}
-              className="px-3.5 py-1.5 rounded-xl bg-white border border-emerald-300 text-emerald-800 text-xs font-bold hover:bg-emerald-50 cursor-pointer shrink-0 shadow-2xs"
-            >
-              Reset to All
-            </button>
           </div>
         )}
 
         {selectedMainCategory === 'NON_VEG' && (
-          <div className="p-3.5 rounded-2xl bg-rose-50/60 border border-rose-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl shrink-0">🔴</span>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono font-black uppercase tracking-wider text-rose-800 bg-rose-100 px-2 py-0.5 rounded-full">
-                    SELECTED MENU: 2. NON-VEG CATEGORY
-                  </span>
-                  <span className="text-[10px] font-bold text-rose-600">16+ / Mature Content</span>
-                </div>
-                <p className="text-xs text-slate-800 font-medium mt-1">
-                  These are non-veg games and may contain uncensored expressions, strong language, or mature humor at the developer&apos;s discretion. Please play at your own discretion.
-                </p>
-                <p className="text-[11px] text-slate-500 mt-0.5">
-                  (Note: Once inside a sub-category, to change your category selection, simply click &quot;← Back to Change Category&quot;.)
-                </p>
+          <div className="p-3.5 rounded-2xl bg-rose-50/60 border border-rose-200 flex items-center gap-3 shadow-2xs">
+            <span className="text-2xl shrink-0">🔴</span>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono font-black uppercase tracking-wider text-rose-800 bg-rose-100 px-2 py-0.5 rounded-full">
+                  SELECTED MENU: 2. NON-VEG CATEGORY
+                </span>
+                <span className="text-[10px] font-bold text-rose-600">16+ / Mature Content</span>
               </div>
+              <p className="text-xs text-slate-800 font-medium mt-1">
+                These are non-veg games and may contain uncensored expressions, strong language, or mature humor at the developer&apos;s discretion. Please play at your own discretion.
+              </p>
             </div>
-            <button
-              type="button"
-              onClick={() => setSelectedMainCategory('ALL')}
-              className="px-3.5 py-1.5 rounded-xl bg-white border border-rose-200 text-rose-700 text-xs font-bold hover:bg-rose-50 cursor-pointer shrink-0 shadow-2xs"
-            >
-              Reset to All
-            </button>
           </div>
         )}
 

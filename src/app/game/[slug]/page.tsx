@@ -107,6 +107,7 @@ export default function GamePage({ params }: GamePageProps) {
 
   // Generate opaque creator referral token
   const referralToken = `cr_${game.developerId.replace(/[^a-zA-Z0-9]/g, '').substring(0, 8)}`;
+  const isNonVeg = game.mainCategory === 'NON_VEG';
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-8 space-y-4">
@@ -124,6 +125,15 @@ export default function GamePage({ params }: GamePageProps) {
             </h1>
             <span className="bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-semibold px-2.5 py-0.5 rounded-lg">
               {game.categoryName}
+            </span>
+            {/* Main Category Badge: Veg or Non-Veg */}
+            <span className={`text-xs font-bold px-2.5 py-0.5 rounded-lg flex items-center gap-1.5 ${
+              isNonVeg
+                ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+            }`}>
+              <span>{isNonVeg ? '🔴' : '🟢'}</span>
+              <span>{isNonVeg ? 'Non-Veg (16+)' : 'Veg (Family Safe)'}</span>
             </span>
           </div>
           <div className="flex items-center gap-3 mt-1.5 text-xs text-slate-500">
@@ -157,9 +167,14 @@ export default function GamePage({ params }: GamePageProps) {
       <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
         <AdaptiveRecommendations
           initialMood={defaultMood}
-          title={`More Games Like ${game.title}`}
-          subtitle={`Popular ${game.categoryName} games you can play right now.`}
+          title={isNonVeg ? `More Non-Veg Games Like ${game.title}` : `More Veg Games Like ${game.title}`}
+          subtitle={
+            isNonVeg
+              ? `Strictly 16+ Non-Veg games only — uncensored action and mature titles for players.`
+              : `Strictly 100% Pure Veg games only — wholesome, safe fun for the entire family.`
+          }
           excludeGameId={game.id}
+          mainCategory={isNonVeg ? 'NON_VEG' : 'VEG'}
           limit={4}
         />
       </div>

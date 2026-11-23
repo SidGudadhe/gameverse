@@ -22,6 +22,7 @@ import CategoryNavChips from '@/components/CategoryNavChips';
 import WebAdBanner from '@/components/ads/WebAdBanner';
 import { Badge } from '@/components/ui/Badge';
 import { EmptyState } from '@/components/ui/EmptyState';
+import AdaptiveRecommendations from '@/components/AdaptiveRecommendations';
 
 // Pre-defined category definitions matching database
 const CATEGORIES_METADATA: Record<
@@ -259,6 +260,24 @@ function CategorySlugContent({ params }: { params: { slug: string } }) {
           ))}
         </div>
       )}
+
+      {/* Recommended Games within the Locked Main Category */}
+      <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
+        <AdaptiveRecommendations
+          mainCategory={lockedMainCategory}
+          title={
+            lockedMainCategory === 'NON_VEG'
+              ? `Recommended Non-Veg Games`
+              : `Recommended Pure Veg Games`
+          }
+          subtitle={
+            lockedMainCategory === 'NON_VEG'
+              ? `Strictly curated 16+ mature titles from top indie game creators.`
+              : `Strictly curated 100% wholesome, family-safe titles safe for everyone.`
+          }
+          limit={4}
+        />
+      </div>
     </div>
   );
 }

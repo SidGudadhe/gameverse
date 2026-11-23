@@ -11,6 +11,7 @@ interface AdaptiveRecommendationsProps {
   subtitle?: string;
   excludeGameId?: string;
   limit?: number;
+  mainCategory?: 'VEG' | 'NON_VEG';
 }
 
 // All possible mood button definitions (label + icon, ordered by affinity dynamically)
@@ -22,7 +23,7 @@ const MOOD_META: Record<GameMood, { label: string; icon: string }> = {
   RETRO_NOSTALGIA:  { label: 'Arcade Classic',  icon: '🕹️' },
 };
 
-// Cache: keyed by mood+excludeGameId+limit → { games, topMoods }
+// Cache: keyed by mood+excludeGameId+limit+mainCategory → { games, topMoods }
 const recCache = new Map<string, { games: any[]; topMoods: { mood: GameMood; affinityScore: number }[] }>();
 
 export default function AdaptiveRecommendations({
@@ -31,6 +32,7 @@ export default function AdaptiveRecommendations({
   subtitle = 'Games picked based on your playtime and favorites.',
   excludeGameId,
   limit = 8,
+  mainCategory,
 }: AdaptiveRecommendationsProps) {
   const [activeMood, setActiveMood] = useState<GameMood>(initialMood);
 
@@ -38,12 +40,11 @@ export default function AdaptiveRecommendations({
   const defaultMoodOrder: GameMood[] = ['ALL', 'ADRENALINE', 'RELAX_PUZZLE', 'EXPLORATION', 'RETRO_NOSTALGIA'];
   const [moodOrder, setMoodOrder] = useState<GameMood[]>(defaultMoodOrder);
 
-  const cacheKey = `${activeMood}_${excludeGameId || ''}_${limit}`;
   const [recommendations, setRecommendations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchRecommendations = useCallback(async (mood: GameMood) => {
-    const key = `${mood}_${excludeGameId || ''}_${limit}`;
+    const key = `${mood}_${excludeGameId || ''}_${limit}_${mainCategory || 'ALL'}`;
     const cached = recCache.get(key);
 
     if (cached) {
@@ -62,6 +63,7 @@ export default function AdaptiveRecommendations({
       params.set('mood', mood);
       params.set('limit', limit.toString());
       if (excludeGameId) params.set('exclude', excludeGameId);
+      if (mainCategory) params.set('mainCategory', mainCategory);
 
       const res = await fetch(`/api/recommendations?${params.toString()}`);
       if (res.ok) {
@@ -83,7 +85,7 @@ export default function AdaptiveRecommendations({
     } finally {
       setLoading(false);
     }
-  }, [excludeGameId, limit]);
+  }, [excludeGameId, limit, mainCategory]);
 
   useEffect(() => {
     fetchRecommendations(activeMood);

@@ -29,8 +29,9 @@ export default function GamerSidebar() {
   const { isCollapsed, toggleCollapse, isMobileOpen, closeMobile, isPlayerPortal } = useSidebar();
   const { isAuthenticated, openAuthModal } = useAuth();
 
-  // Strictly render on Player website
-  if (!isPlayerPortal) {
+  // Strictly render on Player website AND strictly only when authenticated!
+  // Log-in ke pehle / log-out hone ke baad: koi bhi category, favorite, home, payout ya sidebar options nahi dikhenge.
+  if (!isPlayerPortal || !isAuthenticated) {
     return null;
   }
 

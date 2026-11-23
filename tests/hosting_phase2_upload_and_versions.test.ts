@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeAll, afterEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { generateToken } from '../src/lib/auth';
 import {
@@ -23,7 +23,14 @@ describe('Phase 2: Game Upload, Deep Security Scanning & Version Lifecycle', () 
   const testGameId = 'test-game-p2';
   const testDevId = 'dev-test-123';
 
-  beforeEach(() => {
+  beforeAll(() => {
+    // Clean up version 3.0.0 for testGameId so end-to-end version creation is idempotent
+    if (gvDb.state.versions) {
+      gvDb.state.versions = gvDb.state.versions.filter(
+        (v) => !(v.gameId === testGameId && v.versionNumber === '3.0.0')
+      );
+    }
+
     // Register test developer and game in gvDb
     const existingGame = gvDb.getGameById(testGameId);
     if (!existingGame) {

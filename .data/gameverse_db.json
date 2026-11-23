@@ -227,6 +227,17 @@
       "emailVerified": true,
       "twoFactorEnabled": false,
       "createdAt": "2026-11-23T17:28:32.017Z"
+    },
+    {
+      "id": "usr-google-1795456354721-mr8t5",
+      "email": "sudarshangudadhe402@gmail.com",
+      "name": "Sudarshan Gudadhe",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$xwgNcEA.gPkAUr9ig8Tmb.LBWkWxnfHB479NuHg8MgeMwzAbwlxum",
+      "emailVerified": true,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-23T17:52:34.721Z",
+      "avatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocI3ugDNvLhkczU89o1MGZxj12Q4_28dr5cUQxZXX5OKphuxMA=s96-c"
     }
   ],
   "profiles": [
@@ -387,6 +398,12 @@
       "userId": "usr-1795454912017-ey886",
       "username": "player_instant_test",
       "displayName": "InstantGamer"
+    },
+    {
+      "id": "prof-1795456354721",
+      "userId": "usr-google-1795456354721-mr8t5",
+      "username": "sudarshangudadhe402",
+      "displayName": "Sudarshan Gudadhe"
     }
   ],
   "categories": [
@@ -671,13 +688,14 @@
       "thumbnailUrl": "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=800&q=80",
       "bannerUrl": "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=1600&q=80",
       "screenshots": [],
-      "totalPlays": 11200,
+      "totalPlays": 11201,
       "rating": 4.9,
       "publishedAt": "2026-11-08T12:00:00.000Z",
       "createdAt": "2026-11-08T10:00:00.000Z",
-      "updatedAt": "2026-11-08T12:00:00.000Z",
+      "updatedAt": "2026-11-23T17:53:46.351Z",
       "developedBy": "Human Developed",
-      "developmentType": "Human Developed"
+      "developmentType": "Human Developed",
+      "totalPlayMinutes": 0.4
     },
     {
       "id": "game-human-crafted-mwtjhsry",
@@ -1045,12 +1063,104 @@
       "accountStatus": "ACTIVE"
     }
   ],
-  "sessions": [],
-  "events": [],
+  "sessions": [
+    {
+      "id": "sess-1795456426351-yy25c",
+      "gameId": "game-demon-soul",
+      "sessionToken": "sess-1795456425599-408fbm",
+      "playerId": "usr-google-1795456354721-mr8t5",
+      "ipHash": "21a1d7fc582fbd4fab3cbaccce587f445e8078f959353e15bda3af8555a89202",
+      "deviceType": "DESKTOP",
+      "isIvt": false,
+      "startTime": "2026-11-23T17:53:46.351Z",
+      "lastHeartbeat": "2026-11-23T17:54:21.064Z",
+      "activeSeconds": 25,
+      "endTime": "2026-11-23T17:54:21.064Z"
+    }
+  ],
+  "events": [
+    {
+      "id": "evt-1795456426351-fmn2b",
+      "sessionId": "sess-1795456426351-yy25c",
+      "gameId": "game-demon-soul",
+      "eventType": "SESSION_START",
+      "activeSeconds": 0,
+      "metadata": {
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0",
+        "deviceType": "DESKTOP"
+      },
+      "timestamp": "2026-11-23T17:53:46.351Z"
+    },
+    {
+      "id": "evt-1795456450171-wghnd",
+      "sessionId": "sess-1795456426351-yy25c",
+      "gameId": "game-demon-soul",
+      "eventType": "HEARTBEAT",
+      "activeSeconds": 15,
+      "metadata": {
+        "timestamp": "2026-11-23T17:54:10.171Z"
+      },
+      "timestamp": "2026-11-23T17:54:10.171Z"
+    },
+    {
+      "id": "evt-1795456461064-ypitt",
+      "sessionId": "sess-1795456426351-yy25c",
+      "gameId": "game-demon-soul",
+      "eventType": "SESSION_END",
+      "activeSeconds": 25,
+      "metadata": {
+        "finalDuration": 25
+      },
+      "timestamp": "2026-11-23T17:54:21.064Z"
+    }
+  ],
   "referralLinks": [],
-  "adImpressions": [],
+  "adImpressions": [
+    {
+      "id": "imp-1795456435686-m9do2",
+      "gameId": "game-demon-soul",
+      "creatorId": "usr-dev-2",
+      "sessionToken": "sess-1795456425599-408fbm",
+      "format": "PREROLL",
+      "durationSeconds": 8,
+      "completed": true,
+      "clicked": false,
+      "isIvt": false,
+      "grossRevenue": 0.0045,
+      "networkDeduction": 0.00045,
+      "netRevenue": 0.00405,
+      "creatorShareRate": 0.5,
+      "creatorShareAmount": 0.00203,
+      "createdAt": "2026-11-23T17:53:55.686Z"
+    },
+    {
+      "id": "imp-1795456435689-kuwp3",
+      "gameId": "game-demon-soul",
+      "creatorId": "usr-dev-2",
+      "sessionToken": "sess-1795456425599-408fbm",
+      "format": "PREROLL",
+      "durationSeconds": 8,
+      "completed": true,
+      "clicked": false,
+      "isIvt": false,
+      "grossRevenue": 0.0045,
+      "networkDeduction": 0.00045,
+      "netRevenue": 0.00405,
+      "creatorShareRate": 0.5,
+      "creatorShareAmount": 0.00203,
+      "createdAt": "2026-11-23T17:53:55.689Z"
+    }
+  ],
   "favorites": [],
-  "playHistory": [],
+  "playHistory": [
+    {
+      "id": "hist-1795456450171-s198",
+      "userId": "usr-google-1795456354721-mr8t5",
+      "gameId": "game-demon-soul",
+      "lastPlayedAt": "2026-11-23T17:54:21.064Z",
+      "totalPlayMinutes": 0.7
+    }
+  ],
   "reviews": [],
   "playerPayoutMethods": [],
   "playerPayoutRequests": [],
@@ -1135,6 +1245,107 @@
     }
   ],
   "auditLogs": [
+    {
+      "id": "log-1795459790223-cmal",
+      "createdAt": "2026-11-23T18:49:50.223Z",
+      "previousHash": "175092e3322d83e0c9bcbaf6dab6f92c2e66480135ffa73f24292359b1a8e111",
+      "tamperHash": "299d719bf726321b7e5679ee7a2bede61d8f735f838fdb4203d1b440141d5f3b",
+      "actorId": "usr-player-1",
+      "actorName": "NeoGamer99",
+      "action": "USER_LOGOUT",
+      "targetType": "USER",
+      "targetId": "usr-player-1",
+      "details": {},
+      "ipAddress": "::1"
+    },
+    {
+      "id": "log-1795459772648-uwr9",
+      "createdAt": "2026-11-23T18:49:32.648Z",
+      "previousHash": "40707a4e66dac30f3f1d3d7701d5b7d125f40128fcc568a15804ac416872c442",
+      "tamperHash": "175092e3322d83e0c9bcbaf6dab6f92c2e66480135ffa73f24292359b1a8e111",
+      "actorId": "usr-player-1",
+      "actorName": "NeoGamer99",
+      "action": "USER_LOGIN",
+      "targetType": "USER",
+      "targetId": "usr-player-1",
+      "details": {
+        "role": "PLAYER"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "log-1795459753060-m7ey",
+      "createdAt": "2026-11-23T18:49:13.060Z",
+      "previousHash": "f5b44dea54e3fe691a0ac3f1fe630a76b203b5b30804d92a7bc7d248ea180839",
+      "tamperHash": "40707a4e66dac30f3f1d3d7701d5b7d125f40128fcc568a15804ac416872c442",
+      "actorId": "usr-dev-1",
+      "actorName": "PixelForge Studios",
+      "action": "USER_LOGOUT",
+      "targetType": "USER",
+      "targetId": "usr-dev-1",
+      "details": {},
+      "ipAddress": "::1"
+    },
+    {
+      "id": "log-1795457609862-vw1y",
+      "createdAt": "2026-11-23T18:13:29.862Z",
+      "previousHash": "a58ac5b435a4489af2c96987cdd101009da0454457a79f3f8e5eb47d9ac4dc8a",
+      "tamperHash": "f5b44dea54e3fe691a0ac3f1fe630a76b203b5b30804d92a7bc7d248ea180839",
+      "actorId": "usr-google-1795456354721-mr8t5",
+      "actorName": "Sudarshan Gudadhe",
+      "action": "USER_LOGIN",
+      "targetType": "USER",
+      "targetId": "usr-google-1795456354721-mr8t5",
+      "details": {
+        "role": "DEVELOPER",
+        "provider": "GOOGLE_AUTH_SYNC",
+        "portal": "DEVELOPER"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "log-1795457577625-sldk",
+      "createdAt": "2026-11-23T18:12:57.625Z",
+      "previousHash": "05f535d1d95143b11032c30cf5bef290b157bb6381a1476cddc276bef4d24554",
+      "tamperHash": "a58ac5b435a4489af2c96987cdd101009da0454457a79f3f8e5eb47d9ac4dc8a",
+      "actorId": "usr-google-1795456354721-mr8t5",
+      "actorName": "Sudarshan Gudadhe",
+      "action": "USER_LOGOUT",
+      "targetType": "USER",
+      "targetId": "usr-google-1795456354721-mr8t5",
+      "details": {},
+      "ipAddress": "::1"
+    },
+    {
+      "id": "log-1795456354722-api3",
+      "createdAt": "2026-11-23T17:52:34.722Z",
+      "previousHash": "e656b921df70f0f111908c283e3f2471014ff44e80d04c08d4cdd96565d3ded5",
+      "tamperHash": "05f535d1d95143b11032c30cf5bef290b157bb6381a1476cddc276bef4d24554",
+      "actorId": "usr-google-1795456354721-mr8t5",
+      "actorName": "Sudarshan Gudadhe",
+      "action": "USER_REGISTERED_GOOGLE_SSO",
+      "targetType": "USER",
+      "targetId": "usr-google-1795456354721-mr8t5",
+      "details": {
+        "provider": "GOOGLE_AUTH",
+        "email": "sudarshangudadhe402@gmail.com",
+        "role": "PLAYER"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "log-1795456330296-81wb",
+      "createdAt": "2026-11-23T17:52:10.296Z",
+      "previousHash": "695717b46f81d77f33f0ffc2ba1ab1ce298c0e25d4d9bca48afb31f63e221884",
+      "tamperHash": "e656b921df70f0f111908c283e3f2471014ff44e80d04c08d4cdd96565d3ded5",
+      "actorId": "usr-admin-1",
+      "actorName": "System Admin",
+      "action": "USER_LOGOUT",
+      "targetType": "USER",
+      "targetId": "usr-admin-1",
+      "details": {},
+      "ipAddress": "::1"
+    },
     {
       "id": "log-1795454913288-29wf",
       "createdAt": "2026-11-23T17:28:33.288Z",
@@ -1638,6 +1849,18 @@
       "notifyOnPayout": true,
       "notifyOnPlayerReport": false,
       "updatedAt": "2026-11-23T17:28:29.996Z"
+    },
+    {
+      "id": "set-1795457614442",
+      "userId": "usr-google-1795456354721-mr8t5",
+      "payoutMethod": "BANK_AND_UPI",
+      "payoutDetails": {},
+      "studioVerified": true,
+      "currency": "INR",
+      "notifyOnQaUpdate": true,
+      "notifyOnPayout": true,
+      "notifyOnPlayerReport": false,
+      "updatedAt": "2026-11-23T18:13:34.442Z"
     }
   ],
   "supportTickets": [
@@ -1703,7 +1926,17 @@
       "declaredAt": "2026-11-23T17:28:27.519Z"
     }
   ],
-  "playerWallets": [],
+  "playerWallets": [
+    {
+      "userId": "usr-google-1795456354721-mr8t5",
+      "availableBalance": 1554,
+      "inProcessing": 0,
+      "lifetimeWithdrawn": 0,
+      "totalEarned": 1554,
+      "currency": "INR",
+      "updatedAt": "2026-11-23T18:22:19.845Z"
+    }
+  ],
   "uploadSessions": [],
   "manifests": [],
   "rollbackHistory": [],

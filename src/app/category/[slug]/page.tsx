@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import {
   ArrowLeft,
   Gamepad2,
@@ -72,7 +72,12 @@ const CATEGORIES_METADATA: Record<
   },
 };
 
-export default function CategoryPage({ params }: { params: { slug: string } }) {
+function CategorySlugContent({ params }: { params: { slug: string } }) {
+  const searchParams = useSearchParams();
+  const mainParam = searchParams.get('mainCategory');
+  const lockedMainCategory: 'VEG' | 'NON_VEG' =
+    mainParam === 'NON_VEG' ? 'NON_VEG' : 'VEG';
+
   const meta = CATEGORIES_METADATA[params.slug.toLowerCase()] || {
     name: params.slug.toUpperCase(),
     description: 'Explore instant playable browser games.',
@@ -85,13 +90,12 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
   const [games, setGames] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<'popular' | 'top_rated' | 'newest'>('popular');
-  const [mainCategoryFilter, setMainCategoryFilter] = useState<'ALL' | 'VEG' | 'NON_VEG'>('ALL');
 
-  React.useEffect(() => {
+  useEffect(() => {
     async function loadGames() {
       try {
         setLoading(true);
-        const res = await fetch(`/api/games?category=${params.slug}&sort=${sortBy}&limit=60`);
+        const res = await fetch(`/api/games?category=${params.slug}&sort=${sortBy}&limit=60&mainCategory=${lockedMainCategory}`);
         if (res.ok) {
           const data = await res.json();
           setGames(data.games || []);
@@ -103,12 +107,15 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
       }
     }
     loadGames();
-  }, [params.slug, sortBy]);
+  }, [params.slug, sortBy, lockedMainCategory]);
 
+  // Strict isolation: only games belonging to the locked category are returned
   const filteredGames = useMemo(() => {
-    if (mainCategoryFilter === 'ALL') return games;
-    return games.filter((g) => (g.mainCategory || 'VEG') === mainCategoryFilter);
-  }, [games, mainCategoryFilter]);
+    return games.filter((g) => {
+      const gMain = g.mainCategory || 'VEG';
+      return gMain === lockedMainCategory;
+    });
+  }, [games, lockedMainCategory]);
 
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 pt-2 pb-6 space-y-2.5">
@@ -124,7 +131,7 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
                 <h1 className="font-heading font-black text-base sm:text-lg text-slate-900 truncate">
                   {meta.name} Games
                 </h1>
-                <Badge variant="cyan" size="sm">CATEGORY</Badge>
+                <Badge variant="cyan" size="sm">SUB-CATEGORY</Badge>
               </div>
               <p className="text-slate-500 text-xs truncate max-w-lg hidden sm:block">
                 {meta.description}
@@ -132,13 +139,57 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
             </div>
           </div>
           <span className="text-[10px] text-slate-600 font-mono font-medium shrink-0">
-            {filteredGames.length} Instant Playable Titles
+            {filteredGames.length} {lockedMainCategory === 'NON_VEG' ? 'Non-Veg' : 'Veg'} Titles Available
           </span>
         </div>
       </div>
 
-      {/* Category Navigation Quick Chips (Browse by Category) */}
-      <CategoryNavChips activeSlug={params.slug} />
+      {/* Locked Category Indicator & Back to Change Category Button */}
+      <div className={`p-3 sm:p-4 rounded-2xl border flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-2xs ${
+        lockedMainCategory === 'NON_VEG'
+          ? 'bg-rose-50/60 border-rose-200'
+          : 'bg-emerald-50/80 border-emerald-300'
+      }`}>
+        <div className="flex items-center gap-3">
+          <span className="text-2xl shrink-0">
+            {lockedMainCategory === 'NON_VEG' ? '🔴' : '🟢'}
+          </span>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500">
+                Active Category (Locked):
+              </span>
+              <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full ${
+                lockedMainCategory === 'NON_VEG'
+                  ? 'bg-rose-500 text-white shadow-xs'
+                  : 'bg-emerald-600 text-white shadow-xs'
+              }`}>
+                {lockedMainCategory === 'NON_VEG' ? '2 = Non-Veg Category (16+)' : '1 = Veg Category (All Ages)'}
+              </span>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-900 text-white font-mono">
+                🔒 LOCKED
+              </span>
+            </div>
+            <p className="text-xs text-slate-800 mt-1">
+              {lockedMainCategory === 'NON_VEG'
+                ? `Viewing Non-Veg ${meta.name} games. May contain uncensored expressions or mature developer language (play at your own discretion). To switch category, click Back.`
+                : `Viewing Pure Veg ${meta.name} games. 100% family-friendly with zero abusive language or profanity. To switch category, click Back.`}
+            </p>
+          </div>
+        </div>
+
+        {/* User cannot change category here; must click Back to return to /category */}
+        <Link
+          href={`/category?mainCategory=${lockedMainCategory}`}
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-sm shrink-0 cursor-pointer"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>← Back to Change Category</span>
+        </Link>
+      </div>
+
+      {/* Category Navigation Quick Chips (Browse Sub-Categories within the same locked category) */}
+      <CategoryNavChips activeSlug={params.slug} mainCategory={lockedMainCategory} />
 
       {/* Banner Ad directly below Category selection */}
       <div className="w-full">
@@ -147,43 +198,6 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
 
       {/* Filter and Sorting Controls Toolbar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
-        {/* Main Category (Veg vs Non-Veg in this sub-category) Switcher */}
-        <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs shrink-0">
-          <button
-            onClick={() => setMainCategoryFilter('ALL')}
-            className={`px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
-              mainCategoryFilter === 'ALL'
-                ? 'bg-white text-slate-900 shadow-xs font-bold'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            All ({games.length})
-          </button>
-          <button
-            onClick={() => setMainCategoryFilter('VEG')}
-            className={`px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-              mainCategoryFilter === 'VEG'
-                ? 'bg-emerald-600 text-white shadow-xs font-bold'
-                : 'text-emerald-800 hover:bg-emerald-50'
-            }`}
-          >
-            <span>🟢</span>
-            <span>Veg {meta.name} ({games.filter((g) => (g.mainCategory || 'VEG') === 'VEG').length})</span>
-          </button>
-          <button
-            onClick={() => setMainCategoryFilter('NON_VEG')}
-            className={`px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-              mainCategoryFilter === 'NON_VEG'
-                ? 'bg-rose-600 text-white shadow-xs font-bold'
-                : 'text-rose-800 hover:bg-rose-50'
-            }`}
-          >
-            <span>🔴</span>
-            <span>Non-Veg {meta.name} ({games.filter((g) => g.mainCategory === 'NON_VEG').length})</span>
-          </button>
-        </div>
-
-        {/* Sort Options */}
         <div className="flex items-center gap-2">
           <span className="text-xs text-slate-500 mr-1 flex items-center gap-1">
             <SlidersHorizontal className="w-3.5 h-3.5" />
@@ -214,7 +228,7 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
         </div>
 
         <div className="text-xs text-slate-500 font-mono">
-          Showing {filteredGames.length} titles
+          Showing {filteredGames.length} titles in {lockedMainCategory === 'NON_VEG' ? 'Non-Veg' : 'Veg'} {meta.name}
         </div>
       </div>
 
@@ -223,11 +237,11 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
         <div className="p-16">
           <EmptyState
             icon={Gamepad2}
-            title="No Games Found in this Category"
-            description="No published games currently available in this category. Check back soon or explore other popular categories!"
-            actionLabel="Reset to Most Popular"
+            title={`No ${lockedMainCategory === 'NON_VEG' ? 'Non-Veg' : 'Veg'} Games in ${meta.name}`}
+            description={`Developers have not submitted any ${lockedMainCategory === 'NON_VEG' ? 'Non-Veg' : 'Veg'} games under ${meta.name} yet.`}
+            actionLabel="← Back to Change Category"
             onAction={() => {
-              setSortBy('popular');
+              window.location.href = `/category?mainCategory=${lockedMainCategory}`;
             }}
           />
         </div>
@@ -237,7 +251,7 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
             <GameCard key={game.id} game={game} />
           ))}
 
-          {/* 4. CATEGORY PAGE NATIVE AD (Placement: Category listing ke beech sponsored content) */}
+          {/* CATEGORY PAGE NATIVE AD */}
           <WebAdBanner placement="CATEGORY_NATIVE" />
 
           {filteredGames.slice(2).map((game) => (
@@ -246,5 +260,13 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
         </div>
       )}
     </div>
+  );
+}
+
+export default function CategoryPage({ params }: { params: { slug: string } }) {
+  return (
+    <Suspense fallback={<div className="max-w-7xl mx-auto px-4 py-8 text-center text-xs text-slate-400">Loading category...</div>}>
+      <CategorySlugContent params={params} />
+    </Suspense>
   );
 }

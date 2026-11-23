@@ -182,14 +182,14 @@ export default function GamerSidebar() {
               {/* 2 Main Categories Quick Filter */}
               <div className="grid grid-cols-2 gap-1 px-1 pb-1">
                 <Link
-                  href="/category?type=veg"
+                  href="/category?mainCategory=VEG"
                   className="flex items-center justify-center gap-1 px-1.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[10px] font-bold border border-emerald-200 transition-colors"
                 >
                   <span>🟢</span>
                   <span>Veg</span>
                 </Link>
                 <Link
-                  href="/category?type=non-veg"
+                  href="/category?mainCategory=NON_VEG"
                   className="flex items-center justify-center gap-1 px-1.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-800 text-[10px] font-bold border border-rose-200 transition-colors"
                 >
                   <span>🔴</span>
@@ -299,7 +299,7 @@ export default function GamerSidebar() {
                 {/* 2 Main Categories Quick Filter */}
                 <div className="grid grid-cols-2 gap-1 px-3 pb-2">
                   <Link
-                    href="/category?type=veg"
+                    href="/category?mainCategory=VEG"
                     onClick={closeMobile}
                     className="flex items-center justify-center gap-1.5 px-2 py-2 rounded-xl bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200"
                   >
@@ -307,7 +307,7 @@ export default function GamerSidebar() {
                     <span>Veg</span>
                   </Link>
                   <Link
-                    href="/category?type=non-veg"
+                    href="/category?mainCategory=NON_VEG"
                     onClick={closeMobile}
                     className="flex items-center justify-center gap-1.5 px-2 py-2 rounded-xl bg-rose-50 text-rose-800 text-xs font-bold border border-rose-200"
                   >

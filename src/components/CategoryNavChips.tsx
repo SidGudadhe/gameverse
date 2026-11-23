@@ -27,6 +27,8 @@ export interface CategoryNavItem {
   name: string;
   slug: string;
   count: number;
+  vegCount?: number;
+  nonVegCount?: number;
   affinityScore?: number;
 }
 
@@ -34,12 +36,14 @@ interface CategoryNavChipsProps {
   activeSlug?: string;
   className?: string;
   initialCategories?: CategoryNavItem[];
+  mainCategory?: 'VEG' | 'NON_VEG' | 'ALL';
 }
 
 export default function CategoryNavChips({
   activeSlug,
   className = '',
   initialCategories,
+  mainCategory,
 }: CategoryNavChipsProps) {
   const [categories, setCategories] = useState<CategoryNavItem[]>(initialCategories || []);
   const [totalGames, setTotalGames] = useState(
@@ -49,13 +53,18 @@ export default function CategoryNavChips({
   useEffect(() => {
     async function loadCategories() {
       try {
-        const res = await fetch('/api/categories');
+        const queryParam = mainCategory && mainCategory !== 'ALL' ? `?mainCategory=${mainCategory}` : '';
+        const res = await fetch(`/api/categories${queryParam}`);
         if (res.ok) {
           const data = await res.json();
           // Categories already affinity-sorted by the server for logged-in users
           const cats: CategoryNavItem[] = data.categories || [];
           setCategories(cats);
-          const total = cats.reduce((sum, c) => sum + (c.count || 0), 0);
+          const total = cats.reduce((sum, c) => {
+            if (mainCategory === 'VEG') return sum + (c.vegCount ?? c.count ?? 0);
+            if (mainCategory === 'NON_VEG') return sum + (c.nonVegCount ?? c.count ?? 0);
+            return sum + (c.count || 0);
+          }, 0);
           setTotalGames(total);
         }
       } catch (err) {
@@ -63,10 +72,8 @@ export default function CategoryNavChips({
       }
     }
 
-    if (!initialCategories || initialCategories.length === 0) {
-      loadCategories();
-    }
-  }, [initialCategories]);
+    loadCategories();
+  }, [initialCategories, mainCategory]);
 
   const normalizedActive = (activeSlug || '').toLowerCase();
   const isAllActive = !normalizedActive || normalizedActive === 'all';
@@ -74,10 +81,14 @@ export default function CategoryNavChips({
   // The first category returned with a non-zero affinityScore is the user's #1 favourite
   const topAffinityIdx = categories.findIndex((c) => (c.affinityScore || 0) > 0);
 
+  const allGamesHref = mainCategory && mainCategory !== 'ALL'
+    ? `/category?mainCategory=${mainCategory}`
+    : '/category';
+
   return (
     <div className={`flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none ${className}`}>
       <Link
-        href="/category"
+        href={allGamesHref}
         className={`flex-shrink-0 flex items-center gap-2 font-semibold text-xs px-4 py-2 rounded-xl transition-all ${
           isAllActive
             ? 'bg-indigo-600 text-white shadow-sm'
@@ -85,7 +96,9 @@ export default function CategoryNavChips({
         }`}
       >
         <span>🎮</span>
-        <span>All Games</span>
+        <span>
+          {mainCategory === 'VEG' ? 'All Veg Games' : mainCategory === 'NON_VEG' ? 'All Non-Veg Games' : 'All Games'}
+        </span>
         <span
           className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${
             isAllActive ? 'bg-white/20 text-white' : 'text-slate-500 bg-slate-200/80'
@@ -104,10 +117,20 @@ export default function CategoryNavChips({
         // Mark the first category with positive affinity as the user's favourite
         const isTopAffinity = idx === topAffinityIdx && (cat.affinityScore || 0) > 0;
 
+        const catHref = mainCategory && mainCategory !== 'ALL'
+          ? `/category/${cat.slug}?mainCategory=${mainCategory}`
+          : `/category/${cat.slug}`;
+
+        const displayCount = mainCategory === 'VEG'
+          ? (cat.vegCount ?? cat.count ?? 0)
+          : mainCategory === 'NON_VEG'
+          ? (cat.nonVegCount ?? cat.count ?? 0)
+          : cat.count;
+
         return (
           <Link
             key={cat.id}
-            href={`/category/${cat.slug}`}
+            href={catHref}
             title={isTopAffinity ? 'Your most-played category' : cat.name}
             className={`relative flex-shrink-0 flex items-center gap-2 font-medium text-xs px-4 py-2 rounded-xl transition-all border ${
               isCatActive
@@ -124,7 +147,7 @@ export default function CategoryNavChips({
                 isCatActive ? 'text-white/80' : 'text-slate-500'
               }`}
             >
-              ({cat.count})
+              ({displayCount})
             </span>
             {/* Dot indicator for user's most-played category */}
             {isTopAffinity && !isCatActive && (

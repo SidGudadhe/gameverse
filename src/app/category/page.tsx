@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import {
   ArrowLeft,
   SlidersHorizontal,
@@ -14,12 +15,34 @@ import GameCard from '@/components/GameCard';
 import WebAdBanner from '@/components/ads/WebAdBanner';
 import { Badge } from '@/components/ui/Badge';
 
-export default function AllCategoriesPage() {
+function AllCategoriesContent() {
+  const searchParams = useSearchParams();
+  const initialMainParam = searchParams.get('mainCategory') || searchParams.get('type');
+  const initialMainCategory: 'ALL' | 'VEG' | 'NON_VEG' =
+    initialMainParam?.toUpperCase() === 'VEG'
+      ? 'VEG'
+      : initialMainParam?.toUpperCase() === 'NON_VEG' || initialMainParam?.toLowerCase() === 'non-veg'
+      ? 'NON_VEG'
+      : 'ALL';
+
   const [categories, setCategories] = useState<any[]>([]);
   const [allGames, setAllGames] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<'popular' | 'top_rated' | 'newest'>('popular');
-  const [selectedMainCategory, setSelectedMainCategory] = useState<'ALL' | 'VEG' | 'NON_VEG'>('ALL');
+  const [selectedMainCategory, setSelectedMainCategory] = useState<'ALL' | 'VEG' | 'NON_VEG'>(initialMainCategory);
+
+  useEffect(() => {
+    if (initialMainParam) {
+      if (initialMainParam.toUpperCase() === 'VEG') {
+        setSelectedMainCategory('VEG');
+      } else if (
+        initialMainParam.toUpperCase() === 'NON_VEG' ||
+        initialMainParam.toLowerCase() === 'non-veg'
+      ) {
+        setSelectedMainCategory('NON_VEG');
+      }
+    }
+  }, [initialMainParam]);
 
   useEffect(() => {
     async function loadData() {
@@ -101,8 +124,13 @@ export default function AllCategoriesPage() {
                   🎮
                 </span>
                 <div>
-                  <div className="font-heading font-black text-xs text-slate-900">
-                    All Categories
+                  <div className="font-heading font-black text-xs text-slate-900 flex items-center gap-1.5">
+                    <span>All Categories</span>
+                    {selectedMainCategory === 'ALL' && (
+                      <span className="text-[9px] font-mono bg-indigo-600 text-white px-1.5 py-0.2 rounded font-bold">
+                        ACTIVE
+                      </span>
+                    )}
                   </div>
                   <div className="text-[10px] text-slate-500">
                     Complete catalog
@@ -122,7 +150,7 @@ export default function AllCategoriesPage() {
             onClick={() => setSelectedMainCategory(selectedMainCategory === 'VEG' ? 'ALL' : 'VEG')}
             className={`text-left p-3 rounded-2xl border transition-all cursor-pointer ${
               selectedMainCategory === 'VEG'
-                ? 'bg-emerald-50/90 border-emerald-400 shadow-sm ring-2 ring-emerald-500/20'
+                ? 'bg-emerald-50 border-emerald-400 shadow-sm ring-2 ring-emerald-500/20'
                 : 'bg-white hover:bg-emerald-50/30 border-slate-200 shadow-2xs'
             }`}
           >
@@ -132,9 +160,14 @@ export default function AllCategoriesPage() {
                   🟢
                 </span>
                 <div>
-                  <div className="font-heading font-black text-xs text-slate-900 flex items-center gap-1">
+                  <div className="font-heading font-black text-xs text-slate-900 flex items-center gap-1.5">
                     <span>1. Veg Category</span>
                     <span className="text-[9px] font-mono bg-emerald-100 text-emerald-800 px-1 py-0.2 rounded font-bold">ALL AGES</span>
+                    {selectedMainCategory === 'VEG' && (
+                      <span className="text-[9px] font-mono bg-emerald-600 text-white px-1.5 py-0.2 rounded font-bold">
+                        ✓ SELECTED
+                      </span>
+                    )}
                   </div>
                   <div className="text-[10px] text-slate-500">
                     Family & casual games
@@ -154,7 +187,7 @@ export default function AllCategoriesPage() {
             onClick={() => setSelectedMainCategory(selectedMainCategory === 'NON_VEG' ? 'ALL' : 'NON_VEG')}
             className={`text-left p-3 rounded-2xl border transition-all cursor-pointer ${
               selectedMainCategory === 'NON_VEG'
-                ? 'bg-rose-50/90 border-rose-400 shadow-sm ring-2 ring-rose-500/20'
+                ? 'bg-rose-50/80 border-rose-300 shadow-sm ring-2 ring-rose-300/40'
                 : 'bg-white hover:bg-rose-50/30 border-slate-200 shadow-2xs'
             }`}
           >
@@ -164,9 +197,14 @@ export default function AllCategoriesPage() {
                   🔴
                 </span>
                 <div>
-                  <div className="font-heading font-black text-xs text-slate-900 flex items-center gap-1">
+                  <div className="font-heading font-black text-xs text-slate-900 flex items-center gap-1.5">
                     <span>2. Non-Veg Category</span>
-                    <span className="text-[9px] font-mono bg-rose-100 text-rose-800 px-1 py-0.2 rounded font-bold">16+</span>
+                    <span className="text-[9px] font-mono bg-rose-100 text-rose-700 px-1 py-0.2 rounded font-bold">16+</span>
+                    {selectedMainCategory === 'NON_VEG' && (
+                      <span className="text-[9px] font-mono bg-rose-500 text-white px-1.5 py-0.2 rounded font-bold">
+                        ✓ SELECTED
+                      </span>
+                    )}
                   </div>
                   <div className="text-[10px] text-slate-500">
                     Intense action & combat
@@ -174,7 +212,7 @@ export default function AllCategoriesPage() {
                 </div>
               </div>
               <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg ${
-                selectedMainCategory === 'NON_VEG' ? 'bg-rose-600 text-white' : 'bg-rose-50 text-rose-700 border border-rose-200'
+                selectedMainCategory === 'NON_VEG' ? 'bg-rose-500 text-white' : 'bg-rose-50 text-rose-700 border border-rose-200'
               }`}>
                 {categories.reduce((s, c) => s + (c.nonVegCount || 0), 0)} Games
               </span>
@@ -182,8 +220,67 @@ export default function AllCategoriesPage() {
           </button>
         </div>
 
+        {/* Selected Main Category Prominent Guidance Banner (In English, Warm & Informative) */}
+        {selectedMainCategory === 'VEG' && (
+          <div className="p-3.5 rounded-2xl bg-emerald-50/80 border border-emerald-300 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl shrink-0">🟢</span>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono font-black uppercase tracking-wider text-emerald-900 bg-emerald-100 px-2 py-0.5 rounded-full">
+                    SELECTED MENU: 1. VEG CATEGORY
+                  </span>
+                  <span className="text-[10px] font-bold text-emerald-700">100% Family Safe & Friendly</span>
+                </div>
+                <p className="text-xs text-slate-800 font-medium mt-1">
+                  These games are 100% pure veg and family-friendly. They contain zero abusive language, profanity, or inappropriate words. Enjoy a wholesome gaming experience safe for the whole family!
+                </p>
+                <p className="text-[11px] text-slate-500 mt-0.5">
+                  (Note: Once inside a sub-category, to change your category selection, simply click &quot;← Back to Change Category&quot;.)
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSelectedMainCategory('ALL')}
+              className="px-3.5 py-1.5 rounded-xl bg-white border border-emerald-300 text-emerald-800 text-xs font-bold hover:bg-emerald-50 cursor-pointer shrink-0 shadow-2xs"
+            >
+              Reset to All
+            </button>
+          </div>
+        )}
+
+        {selectedMainCategory === 'NON_VEG' && (
+          <div className="p-3.5 rounded-2xl bg-rose-50/60 border border-rose-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl shrink-0">🔴</span>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono font-black uppercase tracking-wider text-rose-800 bg-rose-100 px-2 py-0.5 rounded-full">
+                    SELECTED MENU: 2. NON-VEG CATEGORY
+                  </span>
+                  <span className="text-[10px] font-bold text-rose-600">16+ / Mature Content</span>
+                </div>
+                <p className="text-xs text-slate-800 font-medium mt-1">
+                  These are non-veg games and may contain uncensored expressions, strong language, or mature humor at the developer&apos;s discretion. Please play at your own discretion.
+                </p>
+                <p className="text-[11px] text-slate-500 mt-0.5">
+                  (Note: Once inside a sub-category, to change your category selection, simply click &quot;← Back to Change Category&quot;.)
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSelectedMainCategory('ALL')}
+              className="px-3.5 py-1.5 rounded-xl bg-white border border-rose-200 text-rose-700 text-xs font-bold hover:bg-rose-50 cursor-pointer shrink-0 shadow-2xs"
+            >
+              Reset to All
+            </button>
+          </div>
+        )}
+
         {/* Sub-Category Navigation */}
-        <CategoryNavChips activeSlug="all" />
+        <CategoryNavChips activeSlug="all" mainCategory={selectedMainCategory} />
       </div>
 
       {/* Banner Ad directly below Category selection */}
@@ -251,5 +348,13 @@ export default function AllCategoriesPage() {
         )}
       </section>
     </div>
+  );
+}
+
+export default function AllCategoriesPage() {
+  return (
+    <Suspense fallback={<div className="max-w-7xl mx-auto px-4 py-8 text-center text-xs text-slate-400">Loading catalog...</div>}>
+      <AllCategoriesContent />
+    </Suspense>
   );
 }

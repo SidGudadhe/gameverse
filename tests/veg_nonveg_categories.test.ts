@@ -60,12 +60,10 @@ describe('Veg & Non-Veg 2 Main Categories Architecture', () => {
       developerId: 'usr-dev-1',
       orientation: 'LANDSCAPE',
       engine: 'Phaser 3',
-      thumbnail: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80',
-      banner: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80',
-      gameUrl: '/games/voxel-quest/index.html',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80',
+      bannerUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80',
       rating: 4.8,
       totalPlays: 10,
-      tags: ['puzzle', 'family', 'veg'],
       status: 'PUBLISHED',
       controlsGuide: 'Mouse to match',
     });
@@ -81,12 +79,10 @@ describe('Veg & Non-Veg 2 Main Categories Architecture', () => {
       developerId: 'usr-dev-1',
       orientation: 'LANDSCAPE',
       engine: 'Custom HTML5',
-      thumbnail: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&auto=format&fit=crop&q=80',
-      banner: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&auto=format&fit=crop&q=80',
-      gameUrl: '/games/shadow-strike/index.html',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&auto=format&fit=crop&q=80',
+      bannerUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&auto=format&fit=crop&q=80',
       rating: 4.9,
       totalPlays: 20,
-      tags: ['action', 'intense', 'non-veg'],
       status: 'PUBLISHED',
       controlsGuide: 'WASD to attack',
     });
@@ -112,5 +108,43 @@ describe('Veg & Non-Veg 2 Main Categories Architecture', () => {
       mainCategory: 'VEG',
     });
     expect(gvDb.getGameById('game-voxel-quest')?.mainCategory).toBe('VEG');
+  });
+
+  it('6. should enforce restaurant menu analogy: identical sub-category names display completely different games', () => {
+    // Both Veg and Non-Veg have 'Arcade', 'Action', 'Puzzle', 'RPG'
+    const vegArcade = gvDb.getGames({ categoryId: 'cat-arcade', mainCategory: 'VEG' });
+    const nonVegArcade = gvDb.getGames({ categoryId: 'cat-arcade', mainCategory: 'NON_VEG' });
+
+    expect(vegArcade.length).toBeGreaterThan(0);
+    expect(nonVegArcade.length).toBeGreaterThan(0);
+
+    // No game in vegArcade is in nonVegArcade
+    const vegIds = new Set(vegArcade.map((g) => g.id));
+    for (const g of nonVegArcade) {
+      expect(vegIds.has(g.id)).toBe(false);
+      expect(g.mainCategory).toBe('NON_VEG');
+    }
+    for (const g of vegArcade) {
+      expect(g.mainCategory).toBe('VEG');
+    }
+  });
+
+  it('7. sub-category page UI strictly locks mainCategory and requires Back navigation to change', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const slugPagePath = path.resolve(__dirname, '../src/app/category/[slug]/page.tsx');
+    const slugContent = fs.readFileSync(slugPagePath, 'utf-8');
+
+    // Must have Locked Category indicator
+    expect(slugContent).toContain('Active Category (Locked):');
+    expect(slugContent).toContain('LOCKED');
+
+    // Must have Back to Change Category button linking to /category
+    expect(slugContent).toContain('← Back to Change Category');
+    expect(slugContent).toContain('href={`/category?mainCategory=');
+
+    // Must NOT have inline category switch buttons (user cannot change category here)
+    expect(slugContent).not.toContain("setMainCategoryFilter('VEG')");
+    expect(slugContent).not.toContain("setMainCategoryFilter('NON_VEG')");
   });
 });

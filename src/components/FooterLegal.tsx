@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ShieldCheck, Cookie } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import GameVerseLogo from '@/components/ui/GameVerseLogo';
 import DeveloperLogo from '@/components/ui/DeveloperLogo';
@@ -20,10 +20,6 @@ export default function FooterLegal() {
 
   const isDevPortal = pathname.startsWith('/developer');
   const isAdminPortal = pathname.startsWith('/admin');
-
-  const openCookiePreferences = () => {
-    window.dispatchEvent(new CustomEvent('gv-open-cookie-settings'));
-  };
 
   return (
     <div className="w-full mt-20">
@@ -85,13 +81,6 @@ export default function FooterLegal() {
               </Link>
             </>
           )}
-          <button
-            onClick={openCookiePreferences}
-            className="hover:text-indigo-600 transition-colors flex items-center gap-1 cursor-pointer"
-          >
-            <Cookie className="w-3.5 h-3.5" />
-            <span>Cookie Settings</span>
-          </button>
         </div>
       </div>
     </footer>

@@ -7,7 +7,6 @@ import {
   Download,
   Trash2,
   Lock,
-  Cookie,
   FileText,
   AlertTriangle,
   CheckCircle2,
@@ -24,10 +23,6 @@ export default function PrivacyPolicyPage() {
   const [erasureConfirmText, setErasureConfirmText] = useState('');
   const [erasureLoading, setErasureLoading] = useState(false);
   const [erasureStatus, setErasureStatus] = useState<{ success: boolean; message: string } | null>(null);
-
-  const openCookiePreferences = () => {
-    window.dispatchEvent(new CustomEvent('gv-open-cookie-settings'));
-  };
 
   const handleExportData = async () => {
     setDownloading(true);
@@ -129,13 +124,6 @@ export default function PrivacyPolicyPage() {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <button
-              onClick={openCookiePreferences}
-              className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-4 py-2.5 rounded-xl border border-slate-200 transition-colors flex items-center gap-2"
-            >
-              <Cookie className="w-4 h-4 text-indigo-600" />
-              <span>Cookie Preferences</span>
-            </button>
             <Button
               variant="outline"
               size="sm"

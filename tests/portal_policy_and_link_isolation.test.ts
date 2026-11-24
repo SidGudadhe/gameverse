@@ -131,5 +131,19 @@ describe('Developer vs Gamer Policy & Zero Cross-Portal Connection Verification 
     expect(content).toContain('/developer/docs');
     expect(content).toContain('/privacy');
     expect(content).toContain('/terms');
+    expect(content).not.toContain('Cookie Settings');
+  });
+
+  // 11. Cookie Setting removed from all 3 roles
+  it('11. should verify Cookie Settings button and banners are removed across all portals', () => {
+    const footerContent = fs.readFileSync(path.join(rootDir, 'src/components/FooterLegal.tsx'), 'utf8');
+    expect(footerContent).not.toContain('Cookie Settings');
+    expect(footerContent).not.toContain('openCookiePreferences');
+
+    const layoutContent = fs.readFileSync(path.join(rootDir, 'src/app/layout.tsx'), 'utf8');
+    expect(layoutContent).not.toContain('<CookieConsent');
+
+    const privacyContent = fs.readFileSync(path.join(rootDir, 'src/app/privacy/page.tsx'), 'utf8');
+    expect(privacyContent).not.toContain('Cookie Preferences');
   });
 });

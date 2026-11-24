@@ -5,7 +5,6 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import GamerSidebar from '@/components/GamerSidebar';
 import PlayerContentWrapper from '@/components/PlayerContentWrapper';
-import CookieConsent from '@/components/CookieConsent';
 import FooterLegal from '@/components/FooterLegal';
 import NavigationProgressBar from '@/components/NavigationProgressBar';
 import NavigationGuard from '@/components/NavigationGuard';
@@ -92,7 +91,6 @@ export default function RootLayout({
             <GamerSidebar />
             <PlayerContentWrapper>
               <main className="flex-1 w-full">{children}</main>
-              <CookieConsent />
               <FooterLegal />
             </PlayerContentWrapper>
           </SidebarProvider>

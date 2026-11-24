@@ -146,9 +146,9 @@ describe('Anonymous Guest Player Experience & Ads Delivery (100x Deep Verificati
   });
 
   // =========================================================================
-  // 4. UI COMPONENTS VERIFICATION FOR GUEST NAVIGATION & NOTICES
+  // 4. UI COMPONENTS VERIFICATION FOR POKI & CRAZYGAMES CLEAN GAMING APPROACH
   // =========================================================================
-  it('8. GamerSidebar should render on player website for guests, showing "Playing as Guest"', () => {
+  it('8. GamerSidebar should render on player website for guests with zero "Playing as Guest" popups or banners', () => {
     const sidebarPath = path.resolve(__dirname, '../src/components/GamerSidebar.tsx');
     const content = fs.readFileSync(sidebarPath, 'utf-8');
 
@@ -156,16 +156,15 @@ describe('Anonymous Guest Player Experience & Ads Delivery (100x Deep Verificati
     expect(content).not.toContain('if (!isPlayerPortal || !isAuthenticated)');
     expect(content).toContain('if (!isPlayerPortal)');
 
-    // Contains Guest callout
-    expect(content).toContain('Playing as Guest');
-    expect(content).toContain('Play freely! Sign in anytime to track payout winnings & save favorites.');
+    // Strictly does NOT contain "Playing as Guest" popup or callout
+    expect(content).not.toContain('Playing as Guest');
 
     // Public categories and genres accessible
     expect(content).toContain('/category/action');
     expect(content).toContain('/category/arcade');
   });
 
-  it('9. GamePlayer should show guest notice on Victory screen and avoid dispatching win requests when not logged in', () => {
+  it('9. GamePlayer should provide clean Poki/CrazyGames gameplay with zero guest popups and avoid dispatching win requests when not logged in', () => {
     const playerPath = path.resolve(__dirname, '../src/components/GamePlayer.tsx');
     const content = fs.readFileSync(playerPath, 'utf-8');
 
@@ -173,8 +172,8 @@ describe('Anonymous Guest Player Experience & Ads Delivery (100x Deep Verificati
     expect(content).toContain('if (user) {');
     expect(content).toContain("fetch('/api/player/win'");
 
-    // Displays clear guest notice on Victory overlay
-    expect(content).toContain('Playing as Guest (Unknown Player)');
-    expect(content).toContain('Winnings and victories are not credited to any account while playing without login.');
+    // Strictly does NOT display any "Playing as Guest" popup or disclaimer on Victory overlay
+    expect(content).not.toContain('Playing as Guest (Unknown Player)');
+    expect(content).not.toContain('Winnings and victories are not credited to any account while playing without login.');
   });
 });

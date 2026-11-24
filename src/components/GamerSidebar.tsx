@@ -19,7 +19,6 @@ import {
   Shield,
   X,
   ExternalLink,
-  Lock,
 } from 'lucide-react';
 import { useSidebar } from '@/context/SidebarContext';
 import { useAuth } from '@/context/AuthContext';
@@ -95,14 +94,8 @@ export default function GamerSidebar() {
     { name: 'RPG', href: '/category/rpg', icon: Shield, color: 'text-purple-500' },
   ];
 
-  const handleNavClick = (e: React.MouseEvent, item: typeof NAV_PAGES[0]) => {
-    if (item.requiresAuth && !isAuthenticated) {
-      e.preventDefault();
-      openAuthModal('LOGIN');
-      closeMobile();
-    } else {
-      closeMobile();
-    }
+  const handleNavClick = (_e: React.MouseEvent, _item: typeof NAV_PAGES[0]) => {
+    closeMobile();
   };
 
   return (
@@ -148,22 +141,14 @@ export default function GamerSidebar() {
 
                   {isCollapsed ? (
                     <span
-                      className={`text-[9px] font-semibold tracking-tight mt-1 truncate max-w-full leading-none flex items-center justify-center gap-0.5 ${
+                      className={`text-[9px] font-semibold tracking-tight mt-1 truncate max-w-full leading-none ${
                         isActive ? 'text-white' : 'text-slate-500 group-hover:text-slate-800'
                       }`}
                     >
-                      <span>{item.shortLabel}</span>
-                      {item.requiresAuth && !isAuthenticated && (
-                        <Lock className="w-2 h-2 text-slate-400 shrink-0" />
-                      )}
+                      {item.shortLabel}
                     </span>
                   ) : (
-                    <>
-                      <span className="text-xs truncate flex-1">{item.label}</span>
-                      {item.requiresAuth && !isAuthenticated && (
-                        <Lock className="w-3 h-3 text-slate-400 shrink-0" />
-                      )}
-                    </>
+                    <span className="text-xs truncate flex-1">{item.label}</span>
                   )}
 
                   {/* Active Indicator Bar on Expanded */}
@@ -228,25 +213,6 @@ export default function GamerSidebar() {
             </div>
           )}
         </div>
-
-        {/* Guest Status Prompt (When unauthenticated) */}
-        {!isAuthenticated && !isCollapsed && (
-          <div className="mx-2 mb-2 p-2.5 rounded-xl bg-gradient-to-br from-indigo-50/90 to-purple-50/90 border border-indigo-100 text-center space-y-1.5 shadow-2xs">
-            <div className="flex items-center justify-center gap-1.5 text-indigo-700 font-bold text-[11px]">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Playing as Guest</span>
-            </div>
-            <p className="text-[10px] text-slate-500 leading-tight">
-              Play freely! Sign in anytime to track payout winnings & save favorites.
-            </p>
-            <button
-              onClick={() => openAuthModal('LOGIN')}
-              className="w-full py-1.5 px-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[10px] rounded-lg shadow-xs transition-colors cursor-pointer"
-            >
-              Log In / Join Free
-            </button>
-          </div>
-        )}
 
         {/* Sidebar Footer: Toggle Collapse / Expand */}
         <div className="p-2 border-t border-slate-100 bg-slate-50/50">
@@ -313,9 +279,6 @@ export default function GamerSidebar() {
                     >
                       <Icon className={`w-4 h-4 ${isActive ? 'text-white' : item.color}`} />
                       <span className="flex-1">{item.label}</span>
-                      {item.requiresAuth && !isAuthenticated && (
-                        <Lock className="w-3 h-3 text-slate-400 shrink-0" />
-                      )}
                     </Link>
                   );
                 })}
@@ -363,28 +326,6 @@ export default function GamerSidebar() {
                 })}
               </div>
             </div>
-
-            {/* Mobile Drawer Guest Prompt (When unauthenticated) */}
-            {!isAuthenticated && (
-              <div className="p-3 border-t border-slate-100 bg-slate-50/80 space-y-2">
-                <div className="flex items-center gap-2 text-xs font-bold text-indigo-700">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>Playing as Guest</span>
-                </div>
-                <p className="text-[11px] text-slate-500 leading-snug">
-                  Play any game freely! Sign in to record verified victories and cash out payouts.
-                </p>
-                <button
-                  onClick={() => {
-                    closeMobile();
-                    openAuthModal('LOGIN');
-                  }}
-                  className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors cursor-pointer"
-                >
-                  Log In / Join Free
-                </button>
-              </div>
-            )}
           </div>
         </div>
       )}

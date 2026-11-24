@@ -959,25 +959,6 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
                     </p>
                   </div>
 
-                  {/* Anonymous Guest Player Notice: Winnings are not attributed to any account */}
-                  {gameOverModal.isVictory && !user && (
-                    <div className="p-3.5 rounded-2xl bg-indigo-950/70 border border-indigo-500/40 text-center space-y-1.5">
-                      <div className="flex items-center justify-center gap-1.5 text-indigo-300 font-bold text-xs">
-                        <Info className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
-                        <span>Playing as Guest (Unknown Player)</span>
-                      </div>
-                      <p className="text-[11px] text-slate-300 leading-snug">
-                        Winnings and victories are not credited to any account while playing without login.
-                      </p>
-                      <button
-                        onClick={() => openAuthModal && openAuthModal('LOGIN')}
-                        className="inline-flex items-center gap-1 text-[11px] font-bold text-cyan-400 hover:text-cyan-300 transition-colors cursor-pointer"
-                      >
-                        <span>Log in to save winnings & cash out payouts &rarr;</span>
-                      </button>
-                    </div>
-                  )}
-
                   <div className="space-y-3 pt-1">
                     {/* OPTION 1: REWARDED AD (NEXT LIFE - USER RULE: 1 TIME PER GAME LIMIT) */}
                     {!hasRevivedInRun ? (

@@ -91,14 +91,15 @@ describe('CrazyGames-Style Sidebar Navigation (100x Deep Analysis)', () => {
     expect(contextContent).toContain('setIsMobileOpen(false)');
   });
 
-  it('8. allows unauthenticated guest players to view games and categories in GamerSidebar while keeping account features auth-protected', () => {
+  it('8. allows unauthenticated guest players to view games and categories in GamerSidebar with pure Poki/CrazyGames clean experience without guest popups', () => {
     const sidebarContent = fs.readFileSync(sidebarPath, 'utf-8');
     const navbarContent = fs.readFileSync(navbarPath, 'utf-8');
     const wrapperContent = fs.readFileSync(wrapperPath, 'utf-8');
 
     // Sidebar renders on player portal for all visitors so guest players can browse games
     expect(sidebarContent).toContain('if (!isPlayerPortal)');
-    expect(sidebarContent).toContain('Playing as Guest');
+    // No intrusive guest popups or banners
+    expect(sidebarContent).not.toContain('Playing as Guest');
 
     // 3-bar hamburger menu buttons in Navbar render for navigation
     expect(navbarContent).toContain('onClick={toggleCollapse}');
@@ -106,8 +107,5 @@ describe('CrazyGames-Style Sidebar Navigation (100x Deep Analysis)', () => {
 
     // Content wrapper applies consistent side rail padding
     expect(wrapperContent).toContain("isCollapsed ? 'md:pl-16' : 'md:pl-48'");
-
-    // Account specific items require authentication
-    expect(sidebarContent).toContain('item.requiresAuth && !isAuthenticated');
   });
 });

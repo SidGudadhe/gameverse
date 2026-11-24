@@ -21,10 +21,12 @@ import {
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import WebAdBanner from '@/components/ads/WebAdBanner';
+import { useAuth } from '@/context/AuthContext';
 
 const POPULAR_TAGS = ['Retro', 'Runner', 'Cyberpunk', 'Dungeon', 'Physics', 'Pixel', 'WebGL'];
 
 function SearchContent() {
+  const { isAuthenticated, openAuthModal } = useAuth();
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get('q') || searchParams.get('search') || '';
   const initialSort = (searchParams.get('sort') as any) || 'trending';
@@ -89,12 +91,30 @@ function SearchContent() {
     return () => clearTimeout(handler);
   }, [query, selectedCategory, sortBy]);
 
-  const handleRequestGame = () => {
-    setRequestSent(true);
-    setTimeout(() => {
-      // Auto-reset button state after 4 seconds
-      setRequestSent(false);
-    }, 4000);
+  const handleRequestGame = async () => {
+    // Strictly require gamer authentication: unauthenticated users cannot request titles without an account
+    if (!isAuthenticated) {
+      openAuthModal('LOGIN');
+      return;
+    }
+
+    const titleToRequest = query.trim() || 'Requested Game';
+    try {
+      const res = await fetch('/api/player/request-game', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: titleToRequest }),
+      });
+      if (res.ok) {
+        setRequestSent(true);
+        setTimeout(() => {
+          // Auto-reset button state after 4 seconds
+          setRequestSent(false);
+        }, 4000);
+      }
+    } catch {
+      // Non-blocking
+    }
   };
 
   return (
@@ -165,6 +185,7 @@ function SearchContent() {
                 type="button"
                 onClick={handleRequestGame}
                 disabled={requestSent}
+                title={!isAuthenticated ? 'Sign in or register to request game titles' : 'Submit request for this title'}
                 className="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:bg-emerald-600 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
               >
                 {requestSent ? (

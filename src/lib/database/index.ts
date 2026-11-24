@@ -88,6 +88,16 @@ export interface SupportTicket {
   createdAt: string;
 }
 
+export interface GameRequest {
+  id: string;
+  userId: string;
+  userName?: string;
+  userEmail?: string;
+  title: string;
+  requestedAt: string;
+  status: 'PENDING' | 'REVIEWED' | 'FULFILLED';
+}
+
 export interface DatabaseState {
   users: (User & { passwordHash: string; twoFactorSecret?: string })[];
   profiles: {
@@ -131,6 +141,7 @@ export interface DatabaseState {
   manifests?: GameFileManifest[];
   rollbackHistory?: GameRollbackRecord[];
   storageMetrics?: GameStorageMetrics[];
+  gameRequests?: GameRequest[];
 }
 
 const DATA_DIR = path.join(process.cwd(), '.data');
@@ -2874,6 +2885,31 @@ class GameVerseDatabase {
     Object.assign(metrics, updates, { lastCalculatedAt: new Date().toISOString() });
     this.persistState();
     return metrics;
+  }
+
+  // ================= GAME TITLE REQUESTS =================
+  recordGameRequest(data: { userId: string; title: string; userName?: string; userEmail?: string }): GameRequest {
+    if (!this.state.gameRequests) this.state.gameRequests = [];
+    const request: GameRequest = {
+      id: `greq-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      userId: data.userId,
+      title: data.title.trim(),
+      userName: data.userName,
+      userEmail: data.userEmail,
+      requestedAt: new Date().toISOString(),
+      status: 'PENDING',
+    };
+    this.state.gameRequests.unshift(request);
+    this.persistState();
+    return request;
+  }
+
+  getGameRequests(userId?: string): GameRequest[] {
+    if (!this.state.gameRequests) return [];
+    if (userId) {
+      return this.state.gameRequests.filter((r) => r.userId === userId);
+    }
+    return this.state.gameRequests;
   }
 }
 

@@ -4,28 +4,28 @@
 
 ---
 
-## 1. Competitor Benchmark & UX Analysis
+## 1. Web Gaming Standards & Platform Architecture
 
-### 1.1 CrazyGames
+### 1.1 High-Performance Player Immersion Architecture
 - **Visual Design & Colors:** Deep dark background (`#0d0c1d`), electric purple/blue branding, high-contrast white text.
-- **Card Design:** 16:9 ratio cards with animated video/GIF hover previews, category pill badges, and title overlays.
+- **Card Design:** 16:9 ratio cards with smooth video hover previews, category pill badges, and title overlays.
 - **Layout & Discovery:** Hero banner carousel at top, categorized horizontal carousels ("Trending Now", "Featured Games", "New Games"), sticky side navigation.
 - **Key Takeaways for GameVerse:** Micro-animations on hover increase click-through rate (CTR). Dark mode is critical for player immersion during long sessions.
 
-### 1.2 Poki
-- **Visual Design & Colors:** Playful, rounded, clean, high-saturation accents with pastel tones.
-- **Card Design:** Variable grid sizes (hero cards 2x2, standard cards 1x1) creating a dynamic masonry feel.
+### 1.2 Instant Gameplay & Frictionless Access
+- **Visual Design & Colors:** Playful, rounded, clean, high-saturation accents with slate tones.
+- **Card Design:** Responsive grid layout with square and widescreen game cards.
 - **Layout & Discovery:** Minimalist top bar, instant game launch, zero distraction around the player canvas.
 - **Key Takeaways for GameVerse:** Frictionless instant play is paramount. Never force unnecessary signups to test a game.
 
-### 1.3 itch.io
-- **Visual Design & Colors:** Indie-focused, utilitarian dark slate (`#222`), signature red accent (`#fa5c5c`).
-- **Creator Experience:** Developer-first presentation, detailed markdown devlogs, donation prompts, transparent build versions.
+### 1.3 Studio Distribution & Developer Sandbox Security
+- **Visual Design & Colors:** Developer-first presentation, utilitarian dark slate, signature accent styling.
+- **Creator Experience:** Studio command center, telemetry dashboards, transparent build versions, and revenue ledger.
 - **Key Takeaways for GameVerse:** Developers appreciate prominence for their studio profile, changelogs, and direct referral attribution.
 
-### 1.4 Y8
-- **Visual Design & Colors:** High-density catalog, retro arcade feel, comprehensive category taxonomy.
-- **Key Takeaways for GameVerse:** Robust search and multi-tag filtering (e.g. 2 Player, WebGL, Touch Controls) are essential for deep discovery.
+### 1.4 High-Density Catalog & Discovery Taxonomy
+- **Visual Design & Colors:** High-density catalog, clean arcade layout, comprehensive category taxonomy.
+- **Key Takeaways for GameVerse:** Robust search and multi-tag filtering (e.g. Singleplayer, Multiplayer, Veg/Non-Veg, WebGL) are essential for deep discovery.
 
 ---
 

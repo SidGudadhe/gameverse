@@ -146,7 +146,7 @@ describe('Anonymous Guest Player Experience & Ads Delivery (100x Deep Verificati
   });
 
   // =========================================================================
-  // 4. UI COMPONENTS VERIFICATION FOR POKI & CRAZYGAMES CLEAN GAMING APPROACH
+  // 4. UI COMPONENTS VERIFICATION FOR CLEAN GAMING APPROACH
   // =========================================================================
   it('8. GamerSidebar should render on player website for guests with zero "Playing as Guest" popups or banners', () => {
     const sidebarPath = path.resolve(__dirname, '../src/components/GamerSidebar.tsx');
@@ -164,7 +164,7 @@ describe('Anonymous Guest Player Experience & Ads Delivery (100x Deep Verificati
     expect(content).toContain('/category/arcade');
   });
 
-  it('9. GamePlayer should provide clean Poki/CrazyGames gameplay with zero guest popups and avoid dispatching win requests when not logged in', () => {
+  it('9. GamePlayer should provide clean gameplay with zero guest popups and avoid dispatching win requests when not logged in', () => {
     const playerPath = path.resolve(__dirname, '../src/components/GamePlayer.tsx');
     const content = fs.readFileSync(playerPath, 'utf-8');
 

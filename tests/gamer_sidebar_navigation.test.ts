@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import fs from 'fs';
 import path from 'path';
 
-describe('CrazyGames-Style Sidebar Navigation (100x Deep Analysis)', () => {
+describe('Gamer Sidebar Navigation (100x Deep Analysis)', () => {
   const navbarPath = path.resolve(__dirname, '../src/components/Navbar.tsx');
   const sidebarPath = path.resolve(__dirname, '../src/components/GamerSidebar.tsx');
   const layoutPath = path.resolve(__dirname, '../src/app/layout.tsx');
@@ -20,7 +20,7 @@ describe('CrazyGames-Style Sidebar Navigation (100x Deep Analysis)', () => {
     expect(navbarContent).not.toContain('<span>History</span>');
     expect(navbarContent).not.toContain('<span>Payouts</span>');
 
-    // Top navbar must have CrazyGames sidebar toggle button
+    // Top navbar must have sidebar toggle button
     expect(navbarContent).toContain('toggleCollapse');
     expect(navbarContent).toContain('toggleMobile');
   });
@@ -45,7 +45,7 @@ describe('CrazyGames-Style Sidebar Navigation (100x Deep Analysis)', () => {
     expect(sidebarContent).toContain("href: '/player/payouts'");
   });
 
-  it('3. GamerSidebar should support both Expanded (w-48) and Collapsed (w-16) CrazyGames rail modes with Pages text removed', () => {
+  it('3. GamerSidebar should support both Expanded (w-48) and Collapsed (w-16) rail modes with Pages text removed', () => {
     const sidebarContent = fs.readFileSync(sidebarPath, 'utf-8');
 
     expect(sidebarContent).toContain("isCollapsed ? 'w-16' : 'w-48'");
@@ -57,7 +57,7 @@ describe('CrazyGames-Style Sidebar Navigation (100x Deep Analysis)', () => {
     expect(sidebarContent).not.toContain('font-mono">\n                Pages\n              </div>');
   });
 
-  it('4. GamerSidebar should include CrazyGames quick genre shortcuts', () => {
+  it('4. GamerSidebar should include quick genre shortcuts', () => {
     const sidebarContent = fs.readFileSync(sidebarPath, 'utf-8');
 
     expect(sidebarContent).toContain('/category/action');
@@ -91,7 +91,7 @@ describe('CrazyGames-Style Sidebar Navigation (100x Deep Analysis)', () => {
     expect(contextContent).toContain('setIsMobileOpen(false)');
   });
 
-  it('8. allows unauthenticated guest players to view games and categories in GamerSidebar with pure Poki/CrazyGames clean experience without guest popups', () => {
+  it('8. allows unauthenticated guest players to view games and categories in GamerSidebar with clean experience without guest popups', () => {
     const sidebarContent = fs.readFileSync(sidebarPath, 'utf-8');
     const navbarContent = fs.readFileSync(navbarPath, 'utf-8');
     const wrapperContent = fs.readFileSync(wrapperPath, 'utf-8');

@@ -525,7 +525,7 @@ export default function StudioProfilePage() {
                   leftIcon={<ExternalLink className="w-4 h-4 text-slate-400" />}
                 />
                 <span className="text-[11px] text-slate-400 mt-1 block">
-                  Public repository or itch.io / portfolio showcase link.
+                  Public repository or game portfolio showcase link.
                 </span>
               </div>
             </div>

@@ -11,16 +11,16 @@ import { GET as meRoute } from '../src/app/api/auth/me/route';
 import { gvDb } from '../src/lib/database';
 import { hashPassword } from '../src/lib/auth';
 
-describe('CrazyGames Auth & Login System Verification (100x Deep Rebuild)', () => {
+describe('Player Auth & Login System Verification (100x Deep Rebuild)', () => {
   const testPassword = 'Password123!';
-  const playerEmail = 'crazygamer_test@gamer.com';
+  const playerEmail = 'player_test@gamer.com';
   const googleEmail = 'alex.chen.gamer@gmail.com';
 
   beforeAll(async () => {
     const passwordHash = await hashPassword(testPassword);
     gvDb.createUser({
       email: playerEmail,
-      name: 'CrazySpeedRunner',
+      name: 'EliteSpeedRunner',
       passwordHash,
       role: 'PLAYER',
       emailVerified: true,
@@ -234,7 +234,7 @@ describe('CrazyGames Auth & Login System Verification (100x Deep Rebuild)', () =
     });
   });
 
-  describe('2. CrazyGames Email & Password Authentication (/api/auth/login)', () => {
+  describe('2. Player Email & Password Authentication (/api/auth/login)', () => {
     it('should authenticate gamer credentials and return session', async () => {
       const req = new NextRequest('http://localhost:3000/api/auth/login', {
         method: 'POST',
@@ -276,14 +276,14 @@ describe('CrazyGames Auth & Login System Verification (100x Deep Rebuild)', () =
     });
   });
 
-  describe('3. CrazyGames Join Registration (/api/auth/signup)', () => {
+  describe('3. Player Join Registration (/api/auth/signup)', () => {
     it('should register a new gamer profile with 18+ compliance', async () => {
       const newEmail = `join_gamer_${Date.now()}@gamer.com`;
       const req = new NextRequest('http://localhost:3000/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: 'CrazyPlayerX',
+          name: 'ElitePlayerX',
           email: newEmail,
           password: 'StrongPassword123!',
           portal: 'PLAYER',

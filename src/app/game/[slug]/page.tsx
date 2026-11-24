@@ -111,7 +111,7 @@ export default function GamePage({ params }: GamePageProps) {
   const isNonVeg = game.mainCategory === 'NON_VEG';
 
   // Fetch right-side suggested games strictly aligned with the current game's mainCategory
-  // Limit to 12 games for a continuous 2-column Poki/CrazyGames sidebar extending all the way down
+  // Limit to 12 games for a continuous 2-column suggestions sidebar extending all the way down
   const sideRecommendations = getPersonalizedRecommendations({
     mainCategory: isNonVeg ? 'NON_VEG' : 'VEG',
     excludeGameId: game.id,
@@ -120,7 +120,7 @@ export default function GamePage({ params }: GamePageProps) {
 
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-2 pb-8">
-      {/* Poki & CrazyGames Outer Architecture: Main Content on Left + Continuous 2-Column Sidebar on Right */}
+      {/* GameVerse Player Architecture: Main Content on Left + Continuous 2-Column Sidebar on Right */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         {/* Left / Main Section (Game Player, Title, Ads, Bottom Recommendations, About, Reviews) */}
         <div className="lg:col-span-8 xl:col-span-9 space-y-5">
@@ -202,7 +202,7 @@ export default function GamePage({ params }: GamePageProps) {
           {/* 3. GAME DETAIL PAGE BANNER AD (Placement: Below game title bar) */}
           <WebAdBanner placement="GAME_DETAIL_BANNER" />
 
-          {/* 4. SIMILAR GAMES SUGGESTIONS (Directly below game player - Poki / CrazyGames Pattern) */}
+          {/* 4. SIMILAR GAMES SUGGESTIONS (Directly below game player) */}
           <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-xs">
             <AdaptiveRecommendations
               initialMood={defaultMood}
@@ -307,7 +307,7 @@ export default function GamePage({ params }: GamePageProps) {
           </div>
         </div>
 
-        {/* Right-Side Suggested Games Sidebar (Poki / CrazyGames 2-Column Square Tile Grid) */}
+        {/* Right-Side Suggested Games Sidebar (2-Column Square Tile Grid) */}
         <aside className="lg:col-span-4 xl:col-span-3 space-y-3">
           <div className="bg-white rounded-2xl p-3.5 sm:p-4 border border-slate-200 shadow-xs">
             {/* Sidebar Header */}
@@ -330,7 +330,7 @@ export default function GamePage({ params }: GamePageProps) {
               </span>
             </div>
 
-            {/* Poki & CrazyGames Signature 2-Column Square Visual Tile Grid */}
+            {/* GameVerse Signature 2-Column Square Visual Tile Grid */}
             <div className="grid grid-cols-2 gap-2.5">
               {sideRecommendations.map((sg) => (
                 <Link
@@ -360,7 +360,7 @@ export default function GamePage({ params }: GamePageProps) {
                     </div>
                   </div>
 
-                  {/* Center Hover Play Button (Poki & CrazyGames Signature Interaction) */}
+                  {/* Center Hover Play Button (Catalog Signature Interaction) */}
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10">
                     <div className="w-9 h-9 rounded-full bg-indigo-600/95 text-white flex items-center justify-center shadow-lg transform scale-75 group-hover:scale-100 transition-transform duration-300">
                       <Play className="w-4 h-4 fill-white text-white ml-0.5" />

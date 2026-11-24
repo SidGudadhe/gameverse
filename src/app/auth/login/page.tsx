@@ -336,7 +336,7 @@ function PlayerLoginContent() {
   );
 }
 
-export default function CrazyGamesLoginPage() {
+export default function GamerLoginPage() {
   return (
     <Suspense
       fallback={

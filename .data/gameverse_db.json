@@ -237,6 +237,71 @@
       "emailVerified": true,
       "twoFactorEnabled": false,
       "createdAt": "2026-11-24T17:34:49.473Z"
+    },
+    {
+      "id": "usr-1795544318875-muw7s",
+      "email": "player_test@gamer.com",
+      "name": "EliteSpeedRunner",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$bI/LLYyW4Vkni8EGXAeMduro2xwvgn.exJGs87puyN0y.oQmARXdq",
+      "emailVerified": true,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-24T18:18:38.875Z"
+    },
+    {
+      "id": "usr-google-1795544318895-ehwa0",
+      "email": "alex.chen.gamer@gmail.com",
+      "name": "AlexChenGamer",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$xwgNcEA.gPkAUr9ig8Tmb.LBWkWxnfHB479NuHg8MgeMwzAbwlxum",
+      "emailVerified": true,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-24T18:18:38.895Z",
+      "avatarUrl": "https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=150&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "usr-google-1795544318916-a18qg",
+      "email": "sidprojects96@gmail.com",
+      "name": "Sid Gudadhe",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$xwgNcEA.gPkAUr9ig8Tmb.LBWkWxnfHB479NuHg8MgeMwzAbwlxum",
+      "emailVerified": true,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-24T18:18:38.916Z",
+      "avatarUrl": "https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=150&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "usr-google-1795544318923-1z4hi",
+      "email": "mauli.player.1795544318920@gmail.com",
+      "name": "Mauli Real Gamer",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$xwgNcEA.gPkAUr9ig8Tmb.LBWkWxnfHB479NuHg8MgeMwzAbwlxum",
+      "emailVerified": true,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-24T18:18:38.923Z",
+      "avatarUrl": "https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=150&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "usr-google-1795544318930-zrdb2",
+      "email": "real.gis.user@gmail.com",
+      "name": "GIS Real Gamer",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$xwgNcEA.gPkAUr9ig8Tmb.LBWkWxnfHB479NuHg8MgeMwzAbwlxum",
+      "emailVerified": true,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-24T18:18:38.930Z",
+      "avatarUrl": "https://lh3.googleusercontent.com/a/test"
+    },
+    {
+      "id": "usr-google-1795544318936-rhhz7",
+      "email": "google.gamer@gameverse.com",
+      "name": "Gamer_Google",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$xwgNcEA.gPkAUr9ig8Tmb.LBWkWxnfHB479NuHg8MgeMwzAbwlxum",
+      "emailVerified": true,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-24T18:18:38.936Z",
+      "avatarUrl": "https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=150&auto=format&fit=crop&q=80"
     }
   ],
   "profiles": [
@@ -405,6 +470,42 @@
       "userId": "usr-1795541689473-i33m8",
       "username": "player_instant_test",
       "displayName": "InstantGamer"
+    },
+    {
+      "id": "prof-1795544318877",
+      "userId": "usr-1795544318875-muw7s",
+      "username": "player_test",
+      "displayName": "EliteSpeedRunner"
+    },
+    {
+      "id": "prof-1795544318895",
+      "userId": "usr-google-1795544318895-ehwa0",
+      "username": "alex.chen.gamer",
+      "displayName": "AlexChenGamer"
+    },
+    {
+      "id": "prof-1795544318916",
+      "userId": "usr-google-1795544318916-a18qg",
+      "username": "sidprojects96",
+      "displayName": "Sid Gudadhe"
+    },
+    {
+      "id": "prof-1795544318923",
+      "userId": "usr-google-1795544318923-1z4hi",
+      "username": "mauli.player.1795544318920",
+      "displayName": "Mauli Real Gamer"
+    },
+    {
+      "id": "prof-1795544318930",
+      "userId": "usr-google-1795544318930-zrdb2",
+      "username": "real.gis.user",
+      "displayName": "GIS Real Gamer"
+    },
+    {
+      "id": "prof-1795544318936",
+      "userId": "usr-google-1795544318936-rhhz7",
+      "username": "google.gamer",
+      "displayName": "Gamer_Google"
     }
   ],
   "categories": [
@@ -2438,6 +2539,123 @@
     }
   ],
   "auditLogs": [
+    {
+      "id": "log-1795544319669-13go",
+      "createdAt": "2026-11-24T18:18:39.669Z",
+      "previousHash": "7a759b029f40485688209db4a0f96bf4d63972daab6f8be25083994112047196",
+      "tamperHash": "6850f75f05a6c9d8836269e76914394cdb3a76e5342fc903f21eb187ccc0291a",
+      "actorId": "usr-1795544318875-muw7s",
+      "actorName": "EliteSpeedRunner",
+      "action": "USER_LOGIN",
+      "targetType": "USER",
+      "targetId": "usr-1795544318875-muw7s",
+      "details": {
+        "role": "PLAYER"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795544318936-ujc8",
+      "createdAt": "2026-11-24T18:18:38.936Z",
+      "previousHash": "a8a3f21e2b8773fc2be24a312dc31269c769d8f574ed4c41bb77dd320f269afc",
+      "tamperHash": "7a759b029f40485688209db4a0f96bf4d63972daab6f8be25083994112047196",
+      "actorId": "usr-google-1795544318936-rhhz7",
+      "actorName": "Gamer_Google",
+      "action": "USER_REGISTERED_GOOGLE_SSO",
+      "targetType": "USER",
+      "targetId": "usr-google-1795544318936-rhhz7",
+      "details": {
+        "provider": "GOOGLE_AUTH",
+        "email": "google.gamer@gameverse.com",
+        "role": "PLAYER"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795544318930-4v7g",
+      "createdAt": "2026-11-24T18:18:38.930Z",
+      "previousHash": "1797f54fa4438b472f804eda9ffd04097fe14e2ee9abb996f4e54499b15b7813",
+      "tamperHash": "a8a3f21e2b8773fc2be24a312dc31269c769d8f574ed4c41bb77dd320f269afc",
+      "actorId": "usr-google-1795544318930-zrdb2",
+      "actorName": "GIS Real Gamer",
+      "action": "USER_REGISTERED_GOOGLE_SSO",
+      "targetType": "USER",
+      "targetId": "usr-google-1795544318930-zrdb2",
+      "details": {
+        "provider": "GOOGLE_AUTH",
+        "email": "real.gis.user@gmail.com",
+        "role": "PLAYER"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795544318923-l3ae",
+      "createdAt": "2026-11-24T18:18:38.923Z",
+      "previousHash": "bdd2f440f67c3d576664b5afb1b931494b4cdbe5a62af574256b7cb08ed43df9",
+      "tamperHash": "1797f54fa4438b472f804eda9ffd04097fe14e2ee9abb996f4e54499b15b7813",
+      "actorId": "usr-google-1795544318923-1z4hi",
+      "actorName": "Mauli Real Gamer",
+      "action": "USER_REGISTERED_GOOGLE_SSO",
+      "targetType": "USER",
+      "targetId": "usr-google-1795544318923-1z4hi",
+      "details": {
+        "provider": "GOOGLE_AUTH",
+        "email": "mauli.player.1795544318920@gmail.com",
+        "role": "PLAYER"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795544318917-is14",
+      "createdAt": "2026-11-24T18:18:38.917Z",
+      "previousHash": "7cddf47070a972685781e4e881d35f819e615003d8eead8b2dea2beab7134d61",
+      "tamperHash": "bdd2f440f67c3d576664b5afb1b931494b4cdbe5a62af574256b7cb08ed43df9",
+      "actorId": "usr-google-1795544318916-a18qg",
+      "actorName": "Sid Gudadhe",
+      "action": "USER_REGISTERED_GOOGLE_SSO",
+      "targetType": "USER",
+      "targetId": "usr-google-1795544318916-a18qg",
+      "details": {
+        "provider": "GOOGLE_AUTH",
+        "email": "sidprojects96@gmail.com",
+        "role": "PLAYER"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795544318910-5kqs",
+      "createdAt": "2026-11-24T18:18:38.910Z",
+      "previousHash": "bbea22278b5270b708bff9f50bebda58128dcf4e6de886ed576761310ff92573",
+      "tamperHash": "7cddf47070a972685781e4e881d35f819e615003d8eead8b2dea2beab7134d61",
+      "actorId": "usr-google-1795544318895-ehwa0",
+      "actorName": "AlexChenGamer",
+      "action": "USER_LOGIN",
+      "targetType": "USER",
+      "targetId": "usr-google-1795544318895-ehwa0",
+      "details": {
+        "role": "PLAYER",
+        "provider": "GOOGLE_AUTH_SYNC",
+        "portal": "PLAYER"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795544318895-fwj3",
+      "createdAt": "2026-11-24T18:18:38.895Z",
+      "previousHash": "576f10e69ca94990bbc147c3146cda059a4abfd6b16b0c9f495b1707998607a4",
+      "tamperHash": "bbea22278b5270b708bff9f50bebda58128dcf4e6de886ed576761310ff92573",
+      "actorId": "usr-google-1795544318895-ehwa0",
+      "actorName": "AlexChenGamer",
+      "action": "USER_REGISTERED_GOOGLE_SSO",
+      "targetType": "USER",
+      "targetId": "usr-google-1795544318895-ehwa0",
+      "details": {
+        "provider": "GOOGLE_AUTH",
+        "email": "alex.chen.gamer@gmail.com",
+        "role": "PLAYER"
+      },
+      "ipAddress": "127.0.0.1"
+    },
     {
       "id": "log-1795541691422-nqmz",
       "createdAt": "2026-11-24T17:34:51.422Z",

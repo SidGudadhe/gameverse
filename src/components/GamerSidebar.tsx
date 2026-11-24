@@ -34,7 +34,7 @@ export default function GamerSidebar() {
     return null;
   }
 
-  // Primary Page Navigation Links (CrazyGames Signature Pages Navigation)
+  // Primary Page Navigation Links (GameVerse Pages Navigation)
   const NAV_PAGES = [
     {
       href: '/',
@@ -83,7 +83,7 @@ export default function GamerSidebar() {
     },
   ];
 
-  // Quick Genre / Tag Shortcuts (CrazyGames Sidebar Genre Navigation)
+  // Quick Genre / Tag Shortcuts (Genre Navigation)
   const GENRE_TAGS = [
     { name: 'Action', href: '/category/action', icon: Swords, color: 'text-rose-500' },
     { name: 'Arcade', href: '/category/arcade', icon: Gamepad2, color: 'text-indigo-500' },
@@ -160,7 +160,7 @@ export default function GamerSidebar() {
             })}
           </div>
 
-          {/* Quick Categories & Genres (CrazyGames Sidebar Tags) */}
+          {/* Quick Categories & Genres (GameVerse Sidebar Tags) */}
           {!isCollapsed && (
             <div className="pt-2 border-t border-slate-100 space-y-1">
               <div className="px-3 pb-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 font-mono flex items-center justify-between">

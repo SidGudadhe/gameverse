@@ -8,7 +8,7 @@ import PlayerContentWrapper from '@/components/PlayerContentWrapper';
 import FooterLegal from '@/components/FooterLegal';
 import NavigationProgressBar from '@/components/NavigationProgressBar';
 import NavigationGuard from '@/components/NavigationGuard';
-import CrazyGamesAuthModal from '@/components/CrazyGamesAuthModal';
+import PlayerAuthModal from '@/components/PlayerAuthModal';
 import { AuthProvider, AuthUser } from '@/context/AuthContext';
 import { SidebarProvider } from '@/context/SidebarContext';
 import { verifyToken } from '@/lib/auth';
@@ -83,7 +83,7 @@ export default function RootLayout({
         <AuthProvider initialUser={initialUser}>
           <SidebarProvider>
             <NavigationGuard />
-            <CrazyGamesAuthModal />
+            <PlayerAuthModal />
             <Suspense fallback={null}>
               <NavigationProgressBar />
             </Suspense>

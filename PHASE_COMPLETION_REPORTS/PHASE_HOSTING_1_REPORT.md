@@ -15,7 +15,7 @@
 1. **Frontend**:
    - **Framework**: Next.js 14.2 (App Router, Server Components + React 18 Client Components).
    - **Styling & UI**: Tailwind CSS, Lucide React icons, responsive desktop/mobile layouts.
-   - **Gamer Portal**: Instant player catalog, CrazyGames-style collapsible sidebar, search & filter with instant zero-breadcrumb layouts, ad-integrated game canvas.
+   - **Gamer Portal**: Instant player catalog, collapsible rail sidebar, search & filter with instant zero-breadcrumb layouts, ad-integrated game canvas.
    - **Developer Portal**: Multi-step game wizard (`/developer/submit`), analytics, earnings ledger, profile, creator agreement onboarding.
    - **Admin Portal**: Submissions QA review, financial settlements, tamper-evident audit logs, platform launch sign-off.
    - **Game Player**: `src/components/GamePlayer.tsx` hosting HTML5 games inside an iframe with built-in ad triggers (preroll, rewarded revive, in-game banners), session telemetry, fullscreen, and theater mode.

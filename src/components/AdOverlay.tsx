@@ -125,7 +125,7 @@ export default function AdOverlay({
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-black/80" />
       </div>
 
-      {/* ================= GOOGLE IMA / POKI STANDARD TOP BAR ================= */}
+      {/* ================= GOOGLE IMA / COMPLIANT STANDARD TOP BAR ================= */}
       <div className="relative z-20 flex items-center justify-between p-3.5 sm:p-4">
         {/* Left: Google IMA Ad Tag & Countdown */}
         <div className="flex items-center gap-2">

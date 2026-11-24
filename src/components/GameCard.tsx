@@ -25,7 +25,7 @@ export default function GameCard({ game, aspect = '16/9' }: GameCardProps) {
     setIsHovered(true);
 
     if (videoSrc && !videoError) {
-      // 180ms hover debounce: Poki & CrazyGames pattern to avoid thrashing on fast mouse traversal
+      // 180ms hover debounce: optimal delay to avoid thrashing on fast mouse traversal
       hoverTimerRef.current = setTimeout(() => {
         setIsVideoPlaying(true);
       }, 180);
@@ -78,7 +78,7 @@ export default function GameCard({ game, aspect = '16/9' }: GameCardProps) {
       data-testid={`game-card-${game.slug}`}
       className="group relative flex flex-col bg-white hover:bg-slate-50/80 rounded-2xl overflow-hidden border border-slate-200 hover:border-indigo-400 hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1 transition-all duration-200 shadow-xs select-none"
     >
-      {/* 16:9 Thumbnail Container with Poki/CrazyGames Video Hover Player */}
+      {/* 16:9 Thumbnail Container with Video Hover Player */}
       <div className="relative aspect-video w-full overflow-hidden bg-slate-900">
         {/* Base Poster Thumbnail Image */}
         <img
@@ -90,7 +90,7 @@ export default function GameCard({ game, aspect = '16/9' }: GameCardProps) {
           loading="lazy"
         />
 
-        {/* 30-50s Gameplay Video Preview (Poki & CrazyGames Signature Feature) */}
+        {/* 30-50s Gameplay Video Preview (GameVerse Catalog Feature) */}
         {videoSrc && !videoError && (
           <video
             ref={videoRef}

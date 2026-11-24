@@ -1144,7 +1144,7 @@ export default function GameSubmitPage() {
             </div>
           </div>
 
-          {/* 30-50s Gameplay Video Preview (Poki & CrazyGames Style Hover Action) */}
+          {/* 30-50s Gameplay Video Preview (GameVerse Catalog Hover Action) */}
           <div className="pt-6 border-t border-slate-200 space-y-3">
             <div className="flex items-center justify-between">
               <div>
@@ -1152,11 +1152,11 @@ export default function GameSubmitPage() {
                   30–50 Second Gameplay Preview Video
                 </label>
                 <p className="text-[11px] text-slate-500">
-                  Provide an authentic 30–50 second gameplay video (MP4/WebM). When players hover over your game card in the catalog, this video autoplays silently like Poki and CrazyGames so players can see your game in action before playing.
+                  Provide an authentic 30–50 second gameplay video (MP4/WebM). When players hover over your game card in the catalog, this video autoplays silently so players can see your game in action before playing.
                 </p>
               </div>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
-                Poki & CrazyGames Feature
+                GameVerse Studio Feature
               </span>
             </div>
 

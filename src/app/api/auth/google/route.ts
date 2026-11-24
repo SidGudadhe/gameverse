@@ -107,7 +107,7 @@ export async function POST(req: NextRequest) {
   // 3. Fallback for testing suites if empty payload is submitted
   if (!resolvedEmail) {
     resolvedEmail = 'google.gamer@gameverse.com';
-    resolvedName = 'CrazyGamer_Google';
+    resolvedName = 'Gamer_Google';
   }
 
   const normalizedEmail = resolvedEmail.trim().toLowerCase();
@@ -174,7 +174,7 @@ export async function POST(req: NextRequest) {
       if (resolvedAvatar && (!user.avatarUrl || user.avatarUrl.includes('unsplash'))) {
         updates.avatarUrl = resolvedAvatar;
       }
-      if (gamerName && (!user.name || user.name === 'CrazyGamer_Google')) {
+      if (gamerName && (!user.name || user.name === 'Gamer_Google')) {
         updates.name = gamerName;
       }
       const updatedUser = gvDb.updateUser(user.id, updates);

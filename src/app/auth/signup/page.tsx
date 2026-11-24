@@ -403,7 +403,7 @@ function PlayerSignupContent() {
   );
 }
 
-export default function CrazyGamesSignupPage() {
+export default function GamerSignupPage() {
   return (
     <Suspense
       fallback={

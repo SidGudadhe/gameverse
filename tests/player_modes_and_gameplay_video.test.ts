@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { gvDb, INITIAL_DATABASE_STATE } from '../src/lib/database';
 
-describe('Player Modes (Single / Multiplayer / Both) & Poki/CrazyGames Hover Video Preview', () => {
+describe('Player Modes (Single / Multiplayer / Both) & Hover Video Preview', () => {
   const gameCardPath = path.resolve(__dirname, '../src/components/GameCard.tsx');
   const gameSlugPagePath = path.resolve(__dirname, '../src/app/game/[slug]/page.tsx');
   const submitPagePath = path.resolve(__dirname, '../src/app/developer/submit/page.tsx');
@@ -108,11 +108,11 @@ describe('Player Modes (Single / Multiplayer / Both) & Poki/CrazyGames Hover Vid
       expect(submitPageCode).toContain('Option B: Upload 30–50s Video File (MP4, WebM)');
       expect(submitPageCode).toContain('handleVideoFileUpload');
       expect(submitPageCode).toContain('Card Hover Preview Player');
-      expect(submitPageCode).toContain('Poki & CrazyGames Feature');
+      expect(submitPageCode).toContain('GameVerse Studio Feature');
     });
   });
 
-  describe('4. GameCard: Veg/Non-Veg & Player Mode Badges + Poki/CrazyGames Hover Video Preview', () => {
+  describe('4. GameCard: Veg/Non-Veg & Player Mode Badges + Catalog Hover Video Preview', () => {
     it('4.1 should render Player Mode badge alongside Veg/Non-Veg badge on every GameCard', () => {
       const cardCode = fs.readFileSync(gameCardPath, 'utf-8');
 
@@ -130,7 +130,7 @@ describe('Player Modes (Single / Multiplayer / Both) & Poki/CrazyGames Hover Vid
       expect(cardCode).toContain('SINGLEPLAYER');
     });
 
-    it('4.2 should implement smooth Poki & CrazyGames debounced video hover player', () => {
+    it('4.2 should implement smooth debounced video hover player', () => {
       const cardCode = fs.readFileSync(gameCardPath, 'utf-8');
 
       // Video element with muted, loop, playsInline

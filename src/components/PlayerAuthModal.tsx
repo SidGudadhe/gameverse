@@ -20,7 +20,7 @@ import GoogleSignIn from './GoogleSignIn';
 import GameVerseLogo from './ui/GameVerseLogo';
 import DeveloperLogo from './ui/DeveloperLogo';
 
-export default function CrazyGamesAuthModal() {
+export default function PlayerAuthModal() {
   const router = useRouter();
   const pathname = usePathname();
   const isDevPortal = pathname?.startsWith('/developer');
@@ -243,7 +243,7 @@ export default function CrazyGamesAuthModal() {
     <div
       role="dialog"
       aria-modal="true"
-      aria-labelledby="crazygames-auth-title"
+      aria-labelledby="player-auth-title"
       className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-200"
       onClick={(e) => {
         if (e.target === e.currentTarget) closeAuthModal();
@@ -268,7 +268,7 @@ export default function CrazyGamesAuthModal() {
           <div className="text-center mb-6">
             <DeveloperLogo size="lg" className="mx-auto mb-3 shadow-md shadow-purple-600/25" />
             <h2
-              id="crazygames-auth-title"
+              id="player-auth-title"
               className="text-2xl font-black font-heading text-slate-900 tracking-tight"
             >
               {mode === 'LOGIN' ? 'Sign In to GameVerse Studio' : 'Create Creator Account'}
@@ -283,7 +283,7 @@ export default function CrazyGamesAuthModal() {
           <div className="text-center mb-6">
             <GameVerseLogo size="lg" className="mx-auto mb-3 shadow-md shadow-indigo-500/25" />
             <h2
-              id="crazygames-auth-title"
+              id="player-auth-title"
               className="text-2xl font-black font-heading text-slate-900 tracking-tight"
             >
               {mode === 'LOGIN' ? 'Log in to GameVerse' : 'Create Your Account'}

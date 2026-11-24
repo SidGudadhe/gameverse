@@ -23,6 +23,7 @@ import {
   AdImpression,
   PlayerFavorite,
   PlayerHistoryItem,
+  PlayerGameWin,
   PlayerPayoutMethod,
   PlayerPayoutRequest,
   PlayerWallet,
@@ -120,6 +121,7 @@ export interface DatabaseState {
   adImpressions: AdImpression[];
   favorites: PlayerFavorite[];
   playHistory: PlayerHistoryItem[];
+  gameWins?: PlayerGameWin[];
   reviews: GameReview[];
   playerPayoutMethods: PlayerPayoutMethod[];
   playerPayoutRequests: PlayerPayoutRequest[];
@@ -513,6 +515,7 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
   adImpressions: [],
   favorites: [],
   playHistory: [],
+  gameWins: [],
   reviews: [],
   playerPayoutMethods: [],
   playerPayoutRequests: [],
@@ -705,6 +708,7 @@ class GameVerseDatabase {
           adImpressions: parsed.adImpressions || INITIAL_DATABASE_STATE.adImpressions || [],
           favorites: parsed.favorites || INITIAL_DATABASE_STATE.favorites || [],
           playHistory: parsed.playHistory || INITIAL_DATABASE_STATE.playHistory || [],
+          gameWins: parsed.gameWins || [],
           reviews: parsed.reviews || INITIAL_DATABASE_STATE.reviews || [],
           playerPayoutMethods: parsed.playerPayoutMethods || INITIAL_DATABASE_STATE.playerPayoutMethods || [],
           playerPayoutRequests: parsed.playerPayoutRequests || INITIAL_DATABASE_STATE.playerPayoutRequests || [],
@@ -1885,8 +1889,14 @@ class GameVerseDatabase {
     return this.state.games.filter((g) => gameIds.has(g.id) && g.status === 'PUBLISHED');
   }
 
-  // ================= COMMUNITY: PLAY HISTORY =================
-  recordPlayHistory(userId: string, gameId: string, playSeconds = 0): PlayerHistoryItem {
+  // ================= COMMUNITY: PLAY HISTORY & GAME WINNINGS =================
+  recordPlayHistory(
+    userId: string,
+    gameId: string,
+    playSeconds = 0,
+    hasWon = false,
+    score?: number
+  ): PlayerHistoryItem {
     if (!this.state.playHistory) this.state.playHistory = [];
     let item = this.state.playHistory.find((h) => h.userId === userId && h.gameId === gameId);
 
@@ -1896,6 +1906,14 @@ class GameVerseDatabase {
     if (item) {
       item.lastPlayedAt = now;
       item.totalPlayMinutes = Math.round((item.totalPlayMinutes + additionalMinutes) * 10) / 10;
+      if (hasWon) {
+        item.hasWon = true;
+        item.winCount = (item.winCount || 0) + 1;
+        item.lastWonAt = now;
+      }
+      if (typeof score === 'number' && score > (item.bestScore || 0)) {
+        item.bestScore = score;
+      }
     } else {
       item = {
         id: `hist-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
@@ -1903,12 +1921,79 @@ class GameVerseDatabase {
         gameId,
         lastPlayedAt: now,
         totalPlayMinutes: additionalMinutes,
+        hasWon: !!hasWon,
+        winCount: hasWon ? 1 : 0,
+        lastWonAt: hasWon ? now : undefined,
+        bestScore: typeof score === 'number' ? score : undefined,
       };
       this.state.playHistory.push(item);
     }
 
     this.persistState();
     return item;
+  }
+
+  recordGameWin(
+    userId: string,
+    gameId: string,
+    playSeconds = 0,
+    score?: number
+  ): { win: PlayerGameWin; historyItem: PlayerHistoryItem; isQualified: boolean } {
+    if (!this.state.gameWins) this.state.gameWins = [];
+
+    const now = new Date().toISOString();
+    const playMinutes = Math.round((playSeconds / 60) * 10) / 10;
+    // Payout rule: user wins game with more than 5 minutes (>= 5 minutes / 300 seconds)
+    const isQualified = playSeconds >= 300 || playMinutes >= 5;
+
+    const win: PlayerGameWin = {
+      id: `win-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      userId,
+      gameId,
+      playSeconds,
+      playMinutes,
+      wonAt: now,
+      score: typeof score === 'number' ? score : undefined,
+      isQualified,
+    };
+    this.state.gameWins.push(win);
+
+    const historyItem = this.recordPlayHistory(userId, gameId, playSeconds, true, score);
+
+    this.persistState();
+    return { win, historyItem, isQualified };
+  }
+
+  getPlayerTotalWins(userId: string, minPlayMinutes = 5): number {
+    let count = 0;
+    // 1. Count from individual gameWins records
+    if (this.state.gameWins && this.state.gameWins.length > 0) {
+      const qualifiedWins = this.state.gameWins.filter(
+        (w) =>
+          w.userId === userId &&
+          (w.isQualified || w.playSeconds >= minPlayMinutes * 60 || w.playMinutes >= minPlayMinutes)
+      );
+      count += qualifiedWins.length;
+    }
+
+    // 2. Count from playHistory if any items have won with totalPlayMinutes >= minPlayMinutes
+    // when gameWins does not already have entries for this user
+    if ((!this.state.gameWins || this.state.gameWins.filter((w) => w.userId === userId).length === 0) && this.state.playHistory) {
+      const historyWins = this.state.playHistory.filter((h) => {
+        if (h.userId !== userId) return false;
+        const isWon = h.hasWon === true || (h.winCount && h.winCount > 0);
+        const qualifiedDuration = (h.totalPlayMinutes || 0) >= minPlayMinutes;
+        return isWon && qualifiedDuration;
+      });
+      count += historyWins.length;
+    }
+
+    return count;
+  }
+
+  getPlayerGameWins(userId: string): PlayerGameWin[] {
+    if (!this.state.gameWins) return [];
+    return this.state.gameWins.filter((w) => w.userId === userId);
   }
 
   recordHistory(userId: string, gameId: string, playMinutesOrSeconds = 0): PlayerHistoryItem {

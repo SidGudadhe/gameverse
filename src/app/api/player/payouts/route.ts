@@ -16,6 +16,7 @@ export async function GET(req: NextRequest) {
 
     const history = gvDb.getPlayHistory(authUser.userId, 100);
     const totalMinutes = history.reduce((acc, h) => acc + (h.totalPlayMinutes || 0), 0);
+    const totalWins = gvDb.getPlayerTotalWins(authUser.userId, 5);
     const requests = gvDb.getPlayerPayoutRequests(authUser.userId);
     const savedMethods = gvDb.getPlayerPayoutMethods(authUser.userId);
     const savedMethod = gvDb.getPlayerPayoutMethod(authUser.userId) || null;
@@ -34,6 +35,8 @@ export async function GET(req: NextRequest) {
       stats: {
         gamesPlayed: history.length,
         totalPlayMinutes: totalMinutes,
+        totalWins,
+        totalWinnings: totalWins,
         eligible: true,
         calculationStatus: 'CONFIGURING_SOON',
         notice:

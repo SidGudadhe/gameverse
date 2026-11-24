@@ -9,6 +9,7 @@ import {
   Clock,
   Gamepad2,
   Coins,
+  Trophy,
   Shield,
   ArrowRight,
   AlertCircle,
@@ -73,6 +74,8 @@ export interface PayoutRequestItem {
 interface PlayerStats {
   gamesPlayed: number;
   totalPlayMinutes: number;
+  totalWins?: number;
+  totalWinnings?: number;
   eligible: boolean;
   calculationStatus: string;
   notice: string;
@@ -622,17 +625,19 @@ export default function PlayerPayoutsPage() {
         <div className="bg-white rounded-2xl p-5 border border-slate-200 flex items-center justify-between shadow-xs">
           <div>
             <span className="text-xs font-medium text-slate-500 block uppercase tracking-wider">
-              Tracked Playtime
+              Total Winnings
             </span>
-            <div className="text-2xl font-bold text-slate-900 mt-1 font-mono">
-              {formatPlaytime(stats?.totalPlayMinutes ?? 0)}
+            <div className="text-2xl font-bold text-slate-900 mt-1 font-mono flex items-baseline gap-1.5">
+              <span>{stats?.totalWins ?? stats?.totalWinnings ?? 0}</span>
+              <span className="text-xs font-sans font-normal text-slate-500">wins</span>
             </div>
-            <span className="text-[11px] text-slate-500 mt-1 block">
-              Active session duration
+            <span className="text-[11px] text-amber-700 flex items-center gap-1 mt-1 font-medium">
+              <Trophy className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+              <span>5+ mins game wins counted</span>
             </span>
           </div>
-          <div className="w-11 h-11 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-700">
-            <Clock className="w-5 h-5 text-amber-500" />
+          <div className="w-11 h-11 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 shadow-xs">
+            <Trophy className="w-5 h-5 text-amber-500" />
           </div>
         </div>
       </div>

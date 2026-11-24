@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     if (errorResponse) return errorResponse;
 
     const body = await req.json();
-    const { gameId, playSeconds = 0 } = body;
+    const { gameId, playSeconds = 0, hasWon = false, score } = body;
 
     if (!gameId) {
       return NextResponse.json({ error: 'gameId is required.' }, { status: 400 });
@@ -39,7 +39,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Game not found.' }, { status: 404 });
     }
 
-    const item = gvDb.recordPlayHistory(user!.userId, game.id, Number(playSeconds) || 0);
+    const numericSeconds = Number(playSeconds) || 0;
+    let item;
+    if (hasWon) {
+      const result = gvDb.recordGameWin(user!.userId, game.id, numericSeconds, typeof score === 'number' ? score : undefined);
+      item = result.historyItem;
+    } else {
+      item = gvDb.recordPlayHistory(user!.userId, game.id, numericSeconds, false, typeof score === 'number' ? score : undefined);
+    }
 
     return NextResponse.json({
       success: true,

@@ -346,6 +346,21 @@ export interface PlayerHistoryItem {
   gameId: string;
   lastPlayedAt: string;
   totalPlayMinutes: number;
+  hasWon?: boolean;
+  winCount?: number;
+  bestScore?: number;
+  lastWonAt?: string;
+}
+
+export interface PlayerGameWin {
+  id: string;
+  userId: string;
+  gameId: string;
+  playSeconds: number;
+  playMinutes: number;
+  wonAt: string;
+  score?: number;
+  isQualified: boolean; // Qualified for payout winnings if play duration is >= 5 minutes (300s)
 }
 
 export interface PlayerPayoutMethod {

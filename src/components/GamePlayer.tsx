@@ -17,6 +17,7 @@ import {
   Loader2,
   Tag,
   Award,
+  Trophy,
   Heart,
   Coins,
   X,
@@ -51,7 +52,11 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
   const [adLoading, setAdLoading] = useState(false);
   const [showInGameBanner, setShowInGameBanner] = useState(true);
   const [rewardToast, setRewardToast] = useState<string | null>(null);
-  const [gameOverModal, setGameOverModal] = useState<{ score: number } | null>(null);
+  const [gameOverModal, setGameOverModal] = useState<{
+    score: number;
+    isVictory?: boolean;
+    playSeconds?: number;
+  } | null>(null);
   const [hasRevivedInRun, setHasRevivedInRun] = useState(false);
   const [reviveCountdown, setReviveCountdown] = useState<number | null>(null);
 
@@ -490,6 +495,31 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
     const handleMessage = async (e: MessageEvent) => {
       if (!e.data || typeof e.data !== 'object') return;
 
+      // Victory / Game Win event from sandbox game engine
+      if (
+        e.data.type === 'GV_GAME_WIN' ||
+        e.data.type === 'GV_VICTORY' ||
+        e.data.type === 'GV_WIN' ||
+        e.data.type === 'GV_GAME_WON'
+      ) {
+        const score = typeof e.data.score === 'number' ? e.data.score : 0;
+        const playSeconds = activeSecondsRef.current || 0;
+        try {
+          fetch('/api/player/win', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              gameId: game.id,
+              playSeconds,
+              score,
+            }),
+          }).catch(() => {});
+        } catch {}
+        setGameOverModal({ score, isVictory: true, playSeconds });
+        sendToRunner('GV_PAUSE');
+        return;
+      }
+
       // In-game game over event from sandbox game engine
       if (e.data.type === 'GV_GAME_OVER' || e.data.type === 'GV_PLAYER_DIED') {
         const score = typeof e.data.score === 'number' ? e.data.score : 0;
@@ -790,17 +820,37 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
             {gameOverModal && isPlaying && !activeAd && (
               <div className="absolute inset-0 z-35 flex flex-col items-center justify-center bg-black/85 backdrop-blur-md text-white p-6 animate-fade-in select-none">
                 <div className="max-w-md w-full bg-slate-900/95 border border-slate-700/80 rounded-3xl p-6 sm:p-8 shadow-2xl text-center space-y-6">
-                  <div className="w-16 h-16 mx-auto rounded-2xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400 shadow-xl shadow-rose-500/20">
-                    <Sparkles className="w-8 h-8 text-rose-400 animate-pulse" />
-                  </div>
+                  {gameOverModal.isVictory ? (
+                    <div className="w-16 h-16 mx-auto rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shadow-xl shadow-amber-500/20">
+                      <Trophy className="w-8 h-8 text-amber-400 animate-bounce" />
+                    </div>
+                  ) : (
+                    <div className="w-16 h-16 mx-auto rounded-2xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400 shadow-xl shadow-rose-500/20">
+                      <Sparkles className="w-8 h-8 text-rose-400 animate-pulse" />
+                    </div>
+                  )}
 
                   <div>
                     <h3 className="text-3xl font-black text-white tracking-wide uppercase">
-                      Game Over
+                      {gameOverModal.isVictory ? 'Victory! You Won!' : 'Game Over'}
                     </h3>
                     <p className="text-slate-400 text-sm mt-1.5">
                       Final Score: <span className="text-[#FFCC00] font-mono font-bold text-xl">{gameOverModal.score}</span>
                     </p>
+                    {gameOverModal.isVictory && typeof gameOverModal.playSeconds === 'number' && (
+                      <div className="mt-3">
+                        {gameOverModal.playSeconds >= 300 ? (
+                          <div className="px-3 py-1.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-medium flex items-center justify-center gap-1.5">
+                            <Trophy className="w-4 h-4 text-amber-400 shrink-0" />
+                            <span>Qualified Win! Playtime &gt; 5 mins logged in Total Winnings</span>
+                          </div>
+                        ) : (
+                          <div className="px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-slate-300 text-xs font-normal">
+                            Playtime: {Math.floor(gameOverModal.playSeconds / 60)}m {gameOverModal.playSeconds % 60}s (Requires 5+ mins in a run to qualify for Total Winnings)
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-3 pt-1">

@@ -1468,6 +1468,39 @@ class GameVerseDatabase {
     return session;
   }
 
+  pauseSession(token: string): PlayerSession | null {
+    const session = this.state.sessions.find((s) => s.sessionToken === token);
+    if (!session) return null;
+
+    if (!session.isPaused) {
+      session.isPaused = true;
+      session.lastPausedAt = new Date().toISOString();
+    }
+    session.lastHeartbeat = new Date().toISOString();
+    this.persistState();
+    return session;
+  }
+
+  resumeSession(token: string): PlayerSession | null {
+    const session = this.state.sessions.find((s) => s.sessionToken === token);
+    if (!session) return null;
+
+    if (session.isPaused && session.lastPausedAt) {
+      const pauseDuration = Math.max(
+        0,
+        (Date.now() - new Date(session.lastPausedAt).getTime()) / 1000
+      );
+      session.totalPausedSeconds = Math.round(
+        ((session.totalPausedSeconds || 0) + pauseDuration) * 10
+      ) / 10;
+      session.isPaused = false;
+      session.lastPausedAt = undefined;
+    }
+    session.lastHeartbeat = new Date().toISOString();
+    this.persistState();
+    return session;
+  }
+
   endSession(token: string, activeSeconds?: number): PlayerSession | null {
     const session = this.state.sessions.find((s) => s.sessionToken === token);
     if (!session) return null;
@@ -2155,14 +2188,33 @@ class GameVerseDatabase {
       };
     }
 
-    // 6. Physical Server Wall-Clock Temporal Validation (Anti-Time-Warp)
+    // 5b. Paused State Check: Cannot claim victory while game is paused
+    if (session.isPaused) {
+      return {
+        success: false,
+        isQualified: false,
+        code: 'GAME_IS_PAUSED',
+        error: 'Anti-Cheat: Game is currently paused. Game must be active and unpaused to claim victory.',
+        totalWins: this.getPlayerTotalWins(params.userId, 5),
+      };
+    }
+
+    // 6. Physical Server Wall-Clock Temporal Validation (Anti-Time-Warp & Paused Time Exclusion)
     const sessionStartTimeMs = new Date(session.startTime).getTime();
     const wallClockElapsedSeconds = Math.max(0, (nowMs - sessionStartTimeMs) / 1000);
 
-    // If server recorded >= 300s, but wall clock time since session creation is < 290s:
-    if (session.activeSeconds >= 300 && wallClockElapsedSeconds < 290) {
+    // Calculate total paused duration (including ongoing pause if any)
+    const currentPauseDuration =
+      session.isPaused && session.lastPausedAt
+        ? Math.max(0, (nowMs - new Date(session.lastPausedAt).getTime()) / 1000)
+        : 0;
+    const totalPausedDuration = (session.totalPausedSeconds || 0) + currentPauseDuration;
+    const effectiveUnpausedWallClock = Math.max(0, wallClockElapsedSeconds - totalPausedDuration);
+
+    // If server recorded >= 300s, but effective unpaused wall clock time since session creation is < 290s:
+    if (session.activeSeconds >= 300 && effectiveUnpausedWallClock < 290) {
       session.isIvt = true;
-      session.ivtReason = `Wall-clock time violation: claimed ${session.activeSeconds}s active in ${Math.round(wallClockElapsedSeconds)}s real time`;
+      session.ivtReason = `Wall-clock time violation: claimed ${session.activeSeconds}s active in ${Math.round(effectiveUnpausedWallClock)}s unpaused real time`;
       this.persistState();
 
       this.logAudit({
@@ -2173,6 +2225,8 @@ class GameVerseDatabase {
         details: {
           activeSeconds: session.activeSeconds,
           wallClockElapsedSeconds: Math.round(wallClockElapsedSeconds),
+          totalPausedDuration: Math.round(totalPausedDuration),
+          effectiveUnpausedWallClock: Math.round(effectiveUnpausedWallClock),
         },
       });
 
@@ -2180,7 +2234,7 @@ class GameVerseDatabase {
         success: false,
         isQualified: false,
         code: 'TIME_WARP',
-        error: 'Anti-Cheat: Time-warp manipulation detected. Session duration exceeds real physical elapsed time.',
+        error: 'Anti-Cheat: Time-warp manipulation detected. Session active duration exceeds real physical unpaused elapsed time.',
         totalWins: this.getPlayerTotalWins(params.userId, 5),
       };
     }

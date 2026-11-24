@@ -71,6 +71,12 @@ export async function POST(req: NextRequest) {
     }
 
     if (eventType === 'HEARTBEAT' || eventType === 'SESSION_PAUSE' || eventType === 'SESSION_RESUME') {
+      if (eventType === 'SESSION_PAUSE') {
+        session = gvDb.pauseSession(sessionToken);
+      } else if (eventType === 'SESSION_RESUME') {
+        session = gvDb.resumeSession(sessionToken);
+      }
+
       session = gvDb.updateSessionHeartbeat(sessionToken, activeSeconds, isIvt, ivtReason);
 
       if (session) {

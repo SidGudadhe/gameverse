@@ -169,6 +169,9 @@ export interface PlayerSession {
   ivtReason?: string;
   winClaimed?: boolean;
   winClaimedAt?: string;
+  isPaused?: boolean;
+  totalPausedSeconds?: number;
+  lastPausedAt?: string;
 }
 
 export interface AnalyticsEvent {

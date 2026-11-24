@@ -5,6 +5,7 @@ import {
   Maximize2,
   Minimize2,
   Play,
+  Pause,
   ArrowLeft,
   Share2,
   Flag,
@@ -72,9 +73,14 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
   const activeSecondsRef = useRef<number>(0);
   const isPlayingRef = useRef<boolean>(false);
   const isPausedRef = useRef<boolean>(false);
+  const isWindowFocusedRef = useRef<boolean>(true);
+  const activeAdRef = useRef(activeAd);
+  const gameOverModalRef = useRef(gameOverModal);
 
   isPlayingRef.current = isPlaying;
   isPausedRef.current = isPaused;
+  activeAdRef.current = activeAd;
+  gameOverModalRef.current = gameOverModal;
 
   // Resolved sandbox runner route with Direct CDN Delivery support (offloading application server)
   const sandboxOrigin =
@@ -421,17 +427,35 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
     };
   }, [onFullscreenChange]);
 
-  // Window Focus & Tab Visibility Change (Pauses runner when tab backgrounded)
+  // Toggle Pause/Resume handler (Ensures paused time is never counted towards winnings)
+  const togglePause = useCallback(() => {
+    setIsPaused((prev) => {
+      const next = !prev;
+      isPausedRef.current = next;
+      if (next) {
+        sendToRunner('GV_PAUSE');
+        sendTelemetryPing('SESSION_PAUSE');
+      } else {
+        sendToRunner('GV_RESUME');
+        sendTelemetryPing('SESSION_RESUME');
+      }
+      return next;
+    });
+  }, [sendToRunner, sendTelemetryPing]);
+
+  // Window Focus & Tab Visibility Change (Pauses runner when tab backgrounded or window loses focus)
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden) {
         setIsPaused(true);
+        isPausedRef.current = true;
         sendToRunner('GV_PAUSE');
         if (isPlayingRef.current) {
           sendTelemetryPing('SESSION_PAUSE');
         }
       } else {
         setIsPaused(false);
+        isPausedRef.current = false;
         sendToRunner('GV_RESUME');
         if (isPlayingRef.current) {
           sendTelemetryPing('SESSION_RESUME');
@@ -439,9 +463,27 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
       }
     };
 
+    const handleWindowBlur = () => {
+      isWindowFocusedRef.current = false;
+      if (isPlayingRef.current && !isPausedRef.current) {
+        setIsPaused(true);
+        isPausedRef.current = true;
+        sendToRunner('GV_PAUSE');
+        sendTelemetryPing('SESSION_PAUSE');
+      }
+    };
+
+    const handleWindowFocus = () => {
+      isWindowFocusedRef.current = true;
+    };
+
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('blur', handleWindowBlur);
+    window.addEventListener('focus', handleWindowFocus);
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('blur', handleWindowBlur);
+      window.removeEventListener('focus', handleWindowFocus);
     };
   }, [sendToRunner, sendTelemetryPing]);
 
@@ -449,16 +491,23 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
   useEffect(() => {
     if (!isPlaying) return;
 
-    // 1-second active ticker (only counts if game is not paused and tab is visible)
+    // 1-second active ticker: STRICTLY verifies game is not paused, tab is visible,
+    // window is focused, and no ads or modals are active. Paused time is never accumulated!
     const tickInterval = setInterval(() => {
-      if (!isPausedRef.current && !document.hidden) {
+      if (
+        !isPausedRef.current &&
+        !document.hidden &&
+        isWindowFocusedRef.current &&
+        !activeAdRef.current &&
+        !gameOverModalRef.current
+      ) {
         activeSecondsRef.current += 1;
       }
     }, 1000);
 
-    // 15-second heartbeat ping to backend telemetry ingestion
+    // 15-second heartbeat ping to backend telemetry ingestion (only when active)
     const heartbeatInterval = setInterval(() => {
-      if (!document.hidden) {
+      if (!document.hidden && !isPausedRef.current) {
         sendTelemetryPing('HEARTBEAT');
       }
     }, 15000);
@@ -470,7 +519,7 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
     };
   }, [isPlaying, sendTelemetryPing]);
 
-  // Keyboard Shortcuts (F for fullscreen, M for mute)
+  // Keyboard Shortcuts (F for fullscreen, M for mute, P for pause/resume)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't trigger if user is typing in an input/textarea
@@ -483,17 +532,44 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
       } else if ((e.key === 'm' || e.key === 'M') && isPlaying) {
         e.preventDefault();
         toggleMute();
+      } else if ((e.key === 'p' || e.key === 'P') && isPlaying) {
+        e.preventDefault();
+        togglePause();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isPlaying, isFullscreen, isMuted]);
+  }, [isPlaying, isFullscreen, isMuted, togglePause]);
 
   // In-Game Events & Ad Automation via postMessage from sandbox runner
   useEffect(() => {
     const handleMessage = async (e: MessageEvent) => {
       if (!e.data || typeof e.data !== 'object') return;
+
+      // Strict Origin / Source Validation: Only accept postMessages originating from this game's iframe
+      if (iframeRef.current && e.source !== iframeRef.current.contentWindow) {
+        return;
+      }
+
+      // In-game pause & resume events from sandbox engine
+      if (e.data.type === 'GV_PAUSE') {
+        if (!isPausedRef.current) {
+          setIsPaused(true);
+          isPausedRef.current = true;
+          sendTelemetryPing('SESSION_PAUSE');
+        }
+        return;
+      }
+
+      if (e.data.type === 'GV_RESUME') {
+        if (isPausedRef.current) {
+          setIsPaused(false);
+          isPausedRef.current = false;
+          sendTelemetryPing('SESSION_RESUME');
+        }
+        return;
+      }
 
       // Victory / Game Win event from sandbox game engine
       if (
@@ -621,6 +697,19 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
 
           {/* Right HUD Controls */}
           <div className="flex items-center gap-2 pointer-events-auto">
+            {/* Pause / Resume Button */}
+            <button
+              onClick={togglePause}
+              title={isPaused ? 'Resume Game (P)' : 'Pause Game (P)'}
+              className={`w-9 h-9 rounded-xl backdrop-blur-md flex items-center justify-center border transition-all active:scale-95 ${
+                isPaused
+                  ? 'bg-amber-500/30 text-amber-300 border-amber-500/40'
+                  : 'bg-black/80 hover:bg-white/10 text-white border-white/20'
+              }`}
+            >
+              {isPaused ? <Play className="w-4 h-4 ml-0.5 fill-current" /> : <Pause className="w-4 h-4" />}
+            </button>
+
             {/* Audio Mute / Unmute */}
             <button
               onClick={toggleMute}
@@ -751,6 +840,32 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
               allow="fullscreen; autoplay; gamepad; focus-without-user-activation"
               loading="lazy"
             />
+
+            {/* Pause Overlay (Game Paused State - Paused time is not counted towards winnings) */}
+            {isPaused && isPlaying && !activeAd && !gameOverModal && (
+              <div className="absolute inset-0 z-35 flex flex-col items-center justify-center bg-black/75 backdrop-blur-sm text-white animate-fade-in select-none">
+                <div className="text-center space-y-3 p-6 max-w-sm">
+                  <div className="w-14 h-14 mx-auto rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shadow-xl shadow-amber-500/20">
+                    <Pause className="w-7 h-7 text-amber-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold tracking-tight text-white uppercase">
+                      Game Paused
+                    </h3>
+                    <p className="text-xs text-slate-400 mt-1">
+                      Gameplay ticker is paused. Paused duration is excluded from payout winnings.
+                    </p>
+                  </div>
+                  <button
+                    onClick={togglePause}
+                    className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <Play className="w-3.5 h-3.5 fill-current" />
+                    <span>Resume Game (P)</span>
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Placement C: In-game Banner Ad (Google Display Network / IAB 728x90 Leaderboard Style) */}
             {showInGameBanner && isPlaying && !activeAd && (

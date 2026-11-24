@@ -416,4 +416,91 @@ describe('Senior Security Audit: Anti-Cheat, Anti-Bot & Anti-Tampering for Total
     expect(logs.length).toBeGreaterThan(0);
     expect(logs[0].actorId).toBe(LEGIT_PLAYER.userId);
   });
+
+  // ================= 2. PAUSED TIME EXCLUSION & ANTI-AFK TESTS =================
+  it('9. should EXCLUDE paused time: 10 minutes paused + 2 minutes active does NOT count as a 5-minute win (isQualified: false)', async () => {
+    const sessionToken = `sess-pause-exclude-${Date.now()}`;
+    // Session started 12 minutes ago (720 seconds wall clock)
+    const twelveMinutesAgo = new Date(Date.now() - 720 * 1000).toISOString();
+
+    const session = gvDb.createSession({
+      gameId: GAME_ID,
+      sessionToken,
+      playerId: LEGIT_PLAYER.userId,
+    });
+    session.startTime = twelveMinutesAgo;
+    // Player was paused for 10 minutes (600 seconds) and only actually played unpaused for 2 minutes (120 seconds)
+    session.totalPausedSeconds = 600;
+    session.activeSeconds = 120; // 2 minutes active (< 300s)
+
+    const winReq = new NextRequest('http://localhost:3000/api/player/win', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${legitToken}`,
+        'Content-Type': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+      },
+      body: JSON.stringify({
+        gameId: GAME_ID,
+        sessionToken,
+        score: 1500,
+      }),
+    });
+
+    const res = await recordWin(winReq);
+    expect(res.status).toBe(200);
+    const data = await res.json();
+
+    // The win is saved in history, but isQualified MUST be false because paused time does not count!
+    expect(data.success).toBe(true);
+    expect(data.isQualified).toBe(false);
+    expect(data.totalWins).toBe(0); // NOT counted in Total Winnings!
+    expect(data.totalWinnings).toBe(0);
+
+    // Verify in payouts API
+    const payoutReq = new NextRequest('http://localhost:3000/api/player/payouts', {
+      headers: { Authorization: `Bearer ${legitToken}` },
+    });
+    const payoutRes = await getPayouts(payoutReq);
+    const payoutData = await payoutRes.json();
+    expect(payoutData.stats.totalWins).toBe(0);
+    expect(payoutData.stats.totalWinnings).toBe(0);
+  });
+
+  it('10. should REJECT win claims while the game is currently in a paused state (HTTP 400 GAME_IS_PAUSED)', async () => {
+    const sessionToken = `sess-active-pause-${Date.now()}`;
+    const sixMinutesAgo = new Date(Date.now() - 360 * 1000).toISOString();
+
+    const session = gvDb.createSession({
+      gameId: GAME_ID,
+      sessionToken,
+      playerId: LEGIT_PLAYER.userId,
+    });
+    session.startTime = sixMinutesAgo;
+    session.activeSeconds = 320;
+    // Game is currently paused
+    session.isPaused = true;
+    session.lastPausedAt = new Date().toISOString();
+
+    const winReq = new NextRequest('http://localhost:3000/api/player/win', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${legitToken}`,
+        'Content-Type': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+      },
+      body: JSON.stringify({
+        gameId: GAME_ID,
+        sessionToken,
+        score: 3000,
+      }),
+    });
+
+    const res = await recordWin(winReq);
+    expect(res.status).toBe(400);
+    const data = await res.json();
+    expect(data.code).toBe('GAME_IS_PAUSED');
+    expect(data.error).toContain('Game is currently paused');
+    expect(data.totalWins).toBe(0);
+  });
 });

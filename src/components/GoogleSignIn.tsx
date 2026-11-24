@@ -36,7 +36,7 @@ export default function GoogleSignIn({
   onSuccess,
   onError,
   className = '',
-  enableOneTap = true,
+  enableOneTap = false,
 }: GoogleSignInProps) {
   const { setSession } = useAuth();
   const buttonContainerRef = useRef<HTMLDivElement>(null);

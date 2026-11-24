@@ -260,6 +260,8 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
       updatedAt: '2026-11-04T12:00:00.000Z',
       developedBy: 'Human Developed',
       developmentType: 'Human Developed',
+      playerMode: 'SINGLEPLAYER',
+      gameplayVideoUrl: '/videos/preview-neon.mp4',
     },
     {
       id: 'game-cyber-carnage',
@@ -288,6 +290,8 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
       updatedAt: '2026-11-05T12:00:00.000Z',
       developedBy: 'Human Developed',
       developmentType: 'Human Developed',
+      playerMode: 'BOTH',
+      gameplayVideoUrl: '/videos/preview-cyber.mp4',
     },
     {
       id: 'game-sky-glider',
@@ -316,6 +320,8 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
       updatedAt: '2026-11-06T12:00:00.000Z',
       developedBy: 'Human Developed',
       developmentType: 'Human Developed',
+      playerMode: 'SINGLEPLAYER',
+      gameplayVideoUrl: '/videos/preview-action.mp4',
     },
     {
       id: 'game-shadow-strike',
@@ -345,6 +351,8 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
       updatedAt: '2026-11-07T12:00:00.000Z',
       developedBy: 'Human Developed',
       developmentType: 'Human Developed',
+      playerMode: 'MULTIPLAYER',
+      gameplayVideoUrl: '/videos/preview-cyber.mp4',
     },
     {
       id: 'game-cosmic-matcher',
@@ -374,6 +382,8 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
       updatedAt: '2026-11-06T12:00:00.000Z',
       developedBy: 'Human Developed',
       developmentType: 'Human Developed',
+      playerMode: 'SINGLEPLAYER',
+      gameplayVideoUrl: '/videos/preview-gameplay.mp4',
     },
     {
       id: 'game-dark-asylum',
@@ -402,6 +412,8 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
       updatedAt: '2026-11-07T12:00:00.000Z',
       developedBy: 'Human Developed',
       developmentType: 'Human Developed',
+      playerMode: 'SINGLEPLAYER',
+      gameplayVideoUrl: '/videos/preview-neon.mp4',
     },
     {
       id: 'game-voxel-quest',
@@ -431,6 +443,8 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
       updatedAt: '2026-11-05T10:00:00.000Z',
       developedBy: 'AI + Human Developed',
       developmentType: 'AI + Human Developed',
+      playerMode: 'BOTH',
+      gameplayVideoUrl: '/videos/preview-action.mp4',
     },
     {
       id: 'game-demon-soul',
@@ -459,6 +473,8 @@ export const INITIAL_DATABASE_STATE: DatabaseState = {
       updatedAt: '2026-11-08T12:00:00.000Z',
       developedBy: 'Human Developed',
       developmentType: 'Human Developed',
+      playerMode: 'MULTIPLAYER',
+      gameplayVideoUrl: '/videos/preview-cyber.mp4',
     },
   ],
   versions: [
@@ -807,6 +823,26 @@ class GameVerseDatabase {
           }
         }
 
+        // Migration: Ensure all games have playerMode and gameplayVideoUrl set
+        if (state.games && Array.isArray(state.games)) {
+          for (const g of state.games) {
+            const seed = INITIAL_DATABASE_STATE.games.find((sg: any) => sg.id === g.id);
+            if (seed?.playerMode && !g.playerMode) {
+              g.playerMode = seed.playerMode;
+            }
+            if (seed?.gameplayVideoUrl && !g.gameplayVideoUrl) {
+              g.gameplayVideoUrl = seed.gameplayVideoUrl;
+            }
+            if (!g.playerMode) {
+              g.playerMode = 'SINGLEPLAYER';
+            }
+            if (!g.gameplayVideoUrl || g.gameplayVideoUrl.includes('commondatastorage.googleapis.com')) {
+              g.gameplayVideoUrl = seed?.gameplayVideoUrl || '/videos/preview-neon.mp4';
+              g.previewVideoUrl = g.gameplayVideoUrl;
+            }
+          }
+        }
+
         return state;
       }
     } catch (e) {
@@ -1145,6 +1181,9 @@ class GameVerseDatabase {
       updatedAt: now,
       developedBy: gameData.developedBy || (gameData.developmentType as any) || 'Human Developed',
       developmentType: (gameData.developmentType as any) || gameData.developedBy || 'Human Developed',
+      playerMode: gameData.playerMode || 'SINGLEPLAYER',
+      gameplayVideoUrl: gameData.gameplayVideoUrl || gameData.previewVideoUrl || '',
+      previewVideoUrl: gameData.gameplayVideoUrl || gameData.previewVideoUrl || '',
     };
 
     this.state.games.push(newGame);

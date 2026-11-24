@@ -245,4 +245,58 @@ describe('Same-Email Multi-Role Separation & Zero Cross-Portal Redirects', () =>
     expect(location).toContain('/developer/auth/login');
     expect(location).not.toBe('http://localhost:3000/');
   });
+
+  it('8. should block developer registration if Creator Agreement & Policies are declined (termsAgreed=false)', async () => {
+    const declinedEmail = `declined_dev_${Date.now()}@studio.com`;
+    const req = new NextRequest('http://localhost:3000/api/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: declinedEmail,
+        name: 'Declined Dev',
+        password: commonPassword,
+        portal: 'DEVELOPER',
+        role: 'DEVELOPER',
+        termsAgreed: false,
+      }),
+    });
+    const res = await signupRoute(req);
+    const data = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(data.success).toBe(false);
+    expect(data.error).toContain('Creator Agreement and Platform Policy');
+  });
+
+  it('9. should automatically record Creator Agreement and active status when developer signs up agreeing to terms', async () => {
+    const agreedEmail = `agreed_dev_${Date.now()}@gamestudio.com`;
+    const req = new NextRequest('http://localhost:3000/api/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: agreedEmail,
+        name: 'Agreed Game Studio',
+        password: commonPassword,
+        portal: 'DEVELOPER',
+        role: 'DEVELOPER',
+        termsAgreed: true,
+        agreementVersion: 'v1.0-2026',
+      }),
+    });
+    const res = await signupRoute(req);
+    const data = await res.json();
+
+    expect(res.status).toBe(201);
+    expect(data.success).toBe(true);
+    expect(data.user.role).toBe('DEVELOPER');
+    expect(data.agreement).toBeDefined();
+    expect(data.agreement.accountStatus).toBe('ACTIVE');
+    expect(data.agreement.agreementVersion).toBe('v1.0-2026');
+
+    // Confirm database has recorded active agreement immediately
+    const dbAgreement = gvDb.getAgreementByUserId(data.user.id);
+    expect(dbAgreement).toBeDefined();
+    expect(dbAgreement?.accountStatus).toBe('ACTIVE');
+    expect(dbAgreement?.agreementVersion).toBe('v1.0-2026');
+  });
 });

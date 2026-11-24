@@ -133,6 +133,15 @@ export async function POST(req: NextRequest) {
         gvDb.updateUser(user.id, { avatarUrl: resolvedAvatar });
       }
 
+      if (portal === 'DEVELOPER') {
+        gvDb.saveAgreement({
+          userId: user.id,
+          agreementVersion: 'v1.0-2026',
+          ipAddress: ip,
+          accountStatus: 'ACTIVE',
+        });
+      }
+
       gvDb.logAudit({
         actorId: user.id,
         actorName: user.name,

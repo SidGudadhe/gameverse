@@ -49,6 +49,9 @@ export async function POST(req: NextRequest) {
       aiDisclosure: rawAiDisclosure,
       developedBy: rawDevelopedBy,
       developmentType: rawDevelopmentType,
+      playerMode: rawPlayerMode,
+      gameplayVideoUrl: rawGameplayVideoUrl,
+      previewVideoUrl: rawPreviewVideoUrl,
       licensingNotes,
       rightsConfirmed,
       prohibitedContentConfirmed,
@@ -97,6 +100,14 @@ export async function POST(req: NextRequest) {
       developedBy = 'Human Developed';
       aiDisclosure = 'NONE_HUMAN_ONLY';
     }
+
+    // Resolve Player Mode (SINGLEPLAYER | MULTIPLAYER | BOTH)
+    let playerMode: 'SINGLEPLAYER' | 'MULTIPLAYER' | 'BOTH' = 'SINGLEPLAYER';
+    if (rawPlayerMode === 'MULTIPLAYER') playerMode = 'MULTIPLAYER';
+    else if (rawPlayerMode === 'BOTH') playerMode = 'BOTH';
+    else playerMode = 'SINGLEPLAYER';
+
+    const gameplayVideoUrl = String(rawGameplayVideoUrl || rawPreviewVideoUrl || '').trim();
 
     // Normalize slug
     const cleanSlug = (rawSlug || title)
@@ -222,6 +233,9 @@ export async function POST(req: NextRequest) {
         status: 'SUBMITTED',
         developedBy,
         developmentType: developedBy,
+        playerMode,
+        gameplayVideoUrl,
+        previewVideoUrl: gameplayVideoUrl,
       });
     } else {
       game = gvDb.updateGame(game.id, {
@@ -232,6 +246,9 @@ export async function POST(req: NextRequest) {
         controlsGuide: controlsGuide || game.controlsGuide,
         developedBy,
         developmentType: developedBy,
+        playerMode: playerMode || game.playerMode,
+        gameplayVideoUrl: gameplayVideoUrl || game.gameplayVideoUrl,
+        previewVideoUrl: gameplayVideoUrl || game.previewVideoUrl,
       });
     }
 

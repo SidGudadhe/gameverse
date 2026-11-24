@@ -23,6 +23,7 @@ export type GameStatus =
 
 export type AIDisclosure = 'NONE_HUMAN_ONLY' | 'AI_ASSISTED' | 'AI_GENERATED';
 export type DevelopmentType = 'AI Developed' | 'Human Developed' | 'AI + Human Developed';
+export type PlayerMode = 'SINGLEPLAYER' | 'MULTIPLAYER' | 'BOTH';
 
 export type Orientation = 'LANDSCAPE' | 'PORTRAIT' | 'ANY';
 
@@ -129,6 +130,9 @@ export interface Game {
   updatedAt: string;
   developedBy?: DevelopmentType | string;
   developmentType?: DevelopmentType | string;
+  playerMode?: PlayerMode;
+  gameplayVideoUrl?: string;
+  previewVideoUrl?: string;
 }
 
 export interface QaSubmission {

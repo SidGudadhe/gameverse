@@ -148,6 +148,32 @@ export default function GamePage({ params }: GamePageProps) {
                   <span>{isNonVeg ? '🔴' : '🟢'}</span>
                   <span>{isNonVeg ? 'Non-Veg (16+)' : 'Veg (Family Safe)'}</span>
                 </span>
+
+                {/* Player Mode Badge: Singleplayer, Multiplayer, or Both */}
+                {game.playerMode === 'MULTIPLAYER' && (
+                  <span className="bg-purple-50 text-purple-700 border border-purple-200 text-xs font-bold px-2.5 py-0.5 rounded-lg flex items-center gap-1.5">
+                    <span>👥</span>
+                    <span>Multiplayer</span>
+                  </span>
+                )}
+                {game.playerMode === 'BOTH' && (
+                  <>
+                    <span className="bg-blue-50 text-blue-700 border border-blue-200 text-xs font-bold px-2.5 py-0.5 rounded-lg flex items-center gap-1.5">
+                      <span>👤</span>
+                      <span>Singleplayer</span>
+                    </span>
+                    <span className="bg-purple-50 text-purple-700 border border-purple-200 text-xs font-bold px-2.5 py-0.5 rounded-lg flex items-center gap-1.5">
+                      <span>👥</span>
+                      <span>Multiplayer</span>
+                    </span>
+                  </>
+                )}
+                {(!game.playerMode || game.playerMode === 'SINGLEPLAYER') && (
+                  <span className="bg-blue-50 text-blue-700 border border-blue-200 text-xs font-bold px-2.5 py-0.5 rounded-lg flex items-center gap-1.5">
+                    <span>👤</span>
+                    <span>Singleplayer</span>
+                  </span>
+                )}
               </div>
               <div className="flex items-center gap-3 mt-1.5 text-xs text-slate-500">
                 <span>
@@ -223,7 +249,7 @@ export default function GamePage({ params }: GamePageProps) {
               <Gamepad2 className="w-4 h-4 text-indigo-600" />
               <h3>Game Information</h3>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 text-xs">
               <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
                 <span className="text-slate-500 block text-[10px] uppercase font-semibold">Developer</span>
                 <span className="text-slate-800 font-bold mt-0.5 block truncate">{game.developerName}</span>
@@ -239,6 +265,16 @@ export default function GamePage({ params }: GamePageProps) {
                     <span>{developedByConfig.label}</span>
                   </span>
                 </div>
+              </div>
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                <span className="text-slate-500 block text-[10px] uppercase font-semibold">Mode</span>
+                <span className="text-purple-700 font-bold mt-0.5 block truncate">
+                  {game.playerMode === 'MULTIPLAYER'
+                    ? 'Multiplayer'
+                    : game.playerMode === 'BOTH'
+                    ? 'Single & Multi'
+                    : 'Singleplayer'}
+                </span>
               </div>
               <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
                 <span className="text-slate-500 block text-[10px] uppercase font-semibold">Genre</span>

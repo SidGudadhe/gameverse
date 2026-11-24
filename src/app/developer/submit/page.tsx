@@ -19,6 +19,11 @@ import {
   Check,
   Hash,
   Terminal,
+  Users,
+  Film,
+  Play,
+  Video,
+  Loader2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -57,10 +62,15 @@ export default function GameSubmitPage() {
   const [bannerUrl, setBannerUrl] = useState(
     'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80'
   );
+  const [gameplayVideoUrl, setGameplayVideoUrl] = useState('');
+  const [uploadingVideo, setUploadingVideo] = useState(false);
+  const [videoDurationSecs, setVideoDurationSecs] = useState<number | null>(null);
+  const [videoUploadError, setVideoUploadError] = useState<string | null>(null);
 
   // Legal & AI state
   const [aiDisclosure, setAiDisclosure] = useState<'NONE_HUMAN_ONLY' | 'AI_ASSISTED' | 'AI_GENERATED'>('NONE_HUMAN_ONLY');
   const [developedBy, setDevelopedBy] = useState<'AI Developed' | 'Human Developed' | 'AI + Human Developed'>('Human Developed');
+  const [playerMode, setPlayerMode] = useState<'SINGLEPLAYER' | 'MULTIPLAYER' | 'BOTH'>('SINGLEPLAYER');
   const [licensingNotes, setLicensingNotes] = useState('');
   const [rightsConfirmed, setRightsConfirmed] = useState(false);
   const [prohibitedConfirmed, setProhibitedConfirmed] = useState(false);
@@ -108,6 +118,8 @@ export default function GameSubmitPage() {
                 else if (target.developedBy === 'AI + Human Developed') setAiDisclosure('AI_ASSISTED');
                 else setAiDisclosure('NONE_HUMAN_ONLY');
               }
+              if (target.playerMode) setPlayerMode(target.playerMode);
+              if (target.gameplayVideoUrl || target.previewVideoUrl) setGameplayVideoUrl(target.gameplayVideoUrl || target.previewVideoUrl);
             }
           }
         }
@@ -142,6 +154,8 @@ export default function GameSubmitPage() {
         changelog,
         thumbnailUrl,
         bannerUrl,
+        gameplayVideoUrl,
+        playerMode,
         aiDisclosure,
         developedBy,
         licensingNotes,
@@ -163,6 +177,8 @@ export default function GameSubmitPage() {
     changelog,
     thumbnailUrl,
     bannerUrl,
+    gameplayVideoUrl,
+    playerMode,
     aiDisclosure,
     developedBy,
     licensingNotes,
@@ -186,6 +202,8 @@ export default function GameSubmitPage() {
         if (d.changelog) setChangelog(d.changelog);
         if (d.thumbnailUrl) setThumbnailUrl(d.thumbnailUrl);
         if (d.bannerUrl) setBannerUrl(d.bannerUrl);
+        if (d.gameplayVideoUrl) setGameplayVideoUrl(d.gameplayVideoUrl);
+        if (d.playerMode) setPlayerMode(d.playerMode);
         if (d.aiDisclosure) setAiDisclosure(d.aiDisclosure);
         if (d.developedBy) {
           setDevelopedBy(d.developedBy);
@@ -328,6 +346,47 @@ export default function GameSubmitPage() {
     }
   };
 
+  // Video file upload handler for 30-50s gameplay preview
+  const handleVideoFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (!selectedFile) return;
+
+    setUploadingVideo(true);
+    setVideoUploadError(null);
+
+    // Pre-read duration using temporary video object
+    try {
+      const tempUrl = URL.createObjectURL(selectedFile);
+      const tempVideo = document.createElement('video');
+      tempVideo.preload = 'metadata';
+      tempVideo.src = tempUrl;
+      tempVideo.onloadedmetadata = () => {
+        setVideoDurationSecs(Math.round(tempVideo.duration));
+        URL.revokeObjectURL(tempUrl);
+      };
+    } catch {}
+
+    const formData = new FormData();
+    formData.append('video', selectedFile);
+
+    try {
+      const res = await fetch('/api/developer/upload/video', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setVideoUploadError(data.error || 'Failed to upload gameplay video.');
+      } else {
+        setGameplayVideoUrl(data.videoUrl);
+      }
+    } catch (err: any) {
+      setVideoUploadError(err.message || 'Network error uploading gameplay video.');
+    } finally {
+      setUploadingVideo(false);
+    }
+  };
+
   // Submit complete metadata to /api/developer/submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -360,6 +419,9 @@ export default function GameSubmitPage() {
         aiDisclosure,
         developedBy,
         developmentType: developedBy,
+        playerMode,
+        gameplayVideoUrl,
+        previewVideoUrl: gameplayVideoUrl,
         licensingNotes,
         rightsConfirmed: true,
         prohibitedContentConfirmed: true,
@@ -422,6 +484,18 @@ export default function GameSubmitPage() {
             <span>Developed by</span>
             <span className="text-indigo-700 font-bold">
               {submittedData.game?.developedBy || submittedData.rights?.developedBy || developedBy}
+            </span>
+          </div>
+          <div className="flex justify-between items-center text-slate-500 border-b border-slate-200 pb-2">
+            <span>Player Mode</span>
+            <span className="text-purple-700 font-bold">
+              {submittedData.game?.playerMode || playerMode}
+            </span>
+          </div>
+          <div className="flex justify-between items-center text-slate-500 border-b border-slate-200 pb-2">
+            <span>Gameplay Video Preview</span>
+            <span className="text-emerald-700 font-bold">
+              {(submittedData.game?.gameplayVideoUrl || gameplayVideoUrl) ? 'Configured (30-50s)' : 'None'}
             </span>
           </div>
           <div className="flex justify-between items-center text-slate-500 border-b border-slate-200 pb-2">
@@ -1069,6 +1143,103 @@ export default function GameSubmitPage() {
               </div>
             </div>
           </div>
+
+          {/* 30-50s Gameplay Video Preview (Poki & CrazyGames Style Hover Action) */}
+          <div className="pt-6 border-t border-slate-200 space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <label className="block text-xs font-bold text-slate-800">
+                  30–50 Second Gameplay Preview Video
+                </label>
+                <p className="text-[11px] text-slate-500">
+                  Provide an authentic 30–50 second gameplay video (MP4/WebM). When players hover over your game card in the catalog, this video autoplays silently like Poki and CrazyGames so players can see your game in action before playing.
+                </p>
+              </div>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
+                Poki & CrazyGames Feature
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+              <div className="space-y-3">
+                {/* Direct Video URL input */}
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                    Option A: Gameplay Video URL (.mp4 / .webm)
+                  </label>
+                  <input
+                    type="url"
+                    value={gameplayVideoUrl}
+                    onChange={(e) => setGameplayVideoUrl(e.target.value)}
+                    placeholder="https://.../gameplay-preview.mp4"
+                    className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2 text-xs text-slate-900 focus:outline-none focus:border-indigo-500 shadow-xs"
+                  />
+                </div>
+
+                {/* Video File Upload */}
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                    Option B: Upload 30–50s Video File (MP4, WebM)
+                  </label>
+                  <label className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-dashed border-slate-300 hover:border-indigo-400 bg-slate-50/50 hover:bg-indigo-50/20 cursor-pointer transition-colors text-xs font-semibold text-slate-700">
+                    {uploadingVideo ? (
+                      <>
+                        <Loader2 className="w-4 h-4 text-indigo-600 animate-spin" />
+                        <span>Uploading Video...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Film className="w-4 h-4 text-indigo-600" />
+                        <span>Choose Video File (30-50s)</span>
+                      </>
+                    )}
+                    <input
+                      type="file"
+                      accept="video/mp4,video/webm,video/ogg"
+                      onChange={handleVideoFileUpload}
+                      disabled={uploadingVideo}
+                      className="hidden"
+                    />
+                  </label>
+                  {videoUploadError && (
+                    <p className="text-[11px] text-rose-600 mt-1 font-medium">{videoUploadError}</p>
+                  )}
+                  {videoDurationSecs !== null && (
+                    <p className={`text-[11px] mt-1 font-semibold ${
+                      videoDurationSecs >= 25 && videoDurationSecs <= 60 ? 'text-emerald-600' : 'text-amber-600'
+                    }`}>
+                      Video Duration: {videoDurationSecs}s {videoDurationSecs >= 30 && videoDurationSecs <= 50 ? '(Perfect 30-50s length)' : '(Recommended: 30-50s)'}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Live Preview Player */}
+              <div className="w-full">
+                <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                  Card Hover Preview Player
+                </label>
+                <div className="aspect-video w-full rounded-xl overflow-hidden border border-slate-200 bg-slate-950 flex items-center justify-center relative shadow-xs">
+                  {gameplayVideoUrl ? (
+                    <video
+                      src={gameplayVideoUrl}
+                      controls
+                      muted
+                      loop
+                      playsInline
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="text-center p-4">
+                      <Film className="w-8 h-8 text-slate-600 mx-auto mb-1.5" />
+                      <p className="text-xs text-slate-400 font-medium">No gameplay preview video set</p>
+                      <p className="text-[10px] text-slate-500 mt-0.5">Upload a clip or paste a video URL above</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* ================= SECTION 5: LEGAL & AI DISCLOSURES ================= */}
@@ -1151,6 +1322,76 @@ export default function GameSubmitPage() {
                       <span className="text-[10px] text-slate-400">Player Badge:</span>
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${tier.badgeBg}`}>
                         {tier.title}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Player Mode Selection: Singleplayer, Multiplayer, Single + Multiplayer (Directly below Human Developer / AI Developed options) */}
+          <div className="space-y-2 pt-4 border-t border-slate-200">
+            <label className="block text-xs font-semibold text-slate-700">
+              Player Mode (Single / Multiplayer) <span className="text-rose-600">*</span>
+            </label>
+            <p className="text-[11px] text-slate-500 mb-2">
+              Select game mode. A badge (Singleplayer, Multiplayer, or both) will appear next to the Veg/Non-Veg tag across all GameVerse game cards.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {[
+                {
+                  id: 'SINGLEPLAYER',
+                  title: 'Single Player',
+                  desc: 'Solo player gameplay, campaign puzzles, or endless runner.',
+                  icon: User,
+                  color: 'text-blue-600',
+                  badgeBg: 'bg-blue-50 text-blue-700 border-blue-200',
+                },
+                {
+                  id: 'MULTIPLAYER',
+                  title: 'Multiplayer',
+                  desc: 'Real-time or turn-based PvP, co-op lobbies, or online rooms.',
+                  icon: Users,
+                  color: 'text-purple-600',
+                  badgeBg: 'bg-purple-50 text-purple-700 border-purple-200',
+                },
+                {
+                  id: 'BOTH',
+                  title: 'Single + Multiplayer',
+                  desc: 'Supports both solo play and multiplayer battle/co-op matches.',
+                  icon: Gamepad2,
+                  color: 'text-indigo-600',
+                  badgeBg: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+                },
+              ].map((modeOption) => {
+                const Icon = modeOption.icon;
+                const isSelected = playerMode === modeOption.id;
+                return (
+                  <button
+                    key={modeOption.id}
+                    type="button"
+                    onClick={() => setPlayerMode(modeOption.id as any)}
+                    className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-indigo-50 border-indigo-400 shadow-xs ring-1 ring-indigo-500'
+                        : 'bg-white border-slate-200 hover:border-slate-300'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <Icon className={`w-5 h-5 ${modeOption.color}`} />
+                      {isSelected ? (
+                        <Check className="w-4 h-4 text-indigo-600 font-bold" />
+                      ) : (
+                        <span className="w-3.5 h-3.5 rounded-full border border-slate-300" />
+                      )}
+                    </div>
+                    <p className="text-xs font-bold text-slate-900">{modeOption.title}</p>
+                    <p className="text-[11px] text-slate-500 mt-1 leading-snug">{modeOption.desc}</p>
+                    <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between">
+                      <span className="text-[10px] text-slate-400">Card Badge:</span>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${modeOption.badgeBg}`}>
+                        {modeOption.title}
                       </span>
                     </div>
                   </button>

@@ -16,7 +16,17 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { email, password, name, role = 'PLAYER', portal, adminSecurityKey } = body;
+    const {
+      email,
+      password,
+      name,
+      role = 'PLAYER',
+      portal,
+      adminSecurityKey,
+      termsAgreed,
+      acceptedAgreement,
+      agreementVersion,
+    } = body;
 
     if (!email || !password || !name) {
       return NextResponse.json(
@@ -40,6 +50,17 @@ export async function POST(req: NextRequest) {
       assignedRole = 'PLAYER';
     } else if (portal === 'DEVELOPER' || (!portal && role === 'DEVELOPER')) {
       assignedRole = 'DEVELOPER';
+      // Developer must accept Creator Agreement and Platform Policies
+      const isDeclined = termsAgreed === false || acceptedAgreement === false;
+      if (isDeclined) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'You must read and accept the GameVerse Creator Agreement and Platform Policy before creating a developer account.',
+          },
+          { status: 400 }
+        );
+      }
     } else if (portal === 'ADMIN' || (!portal && role === 'ADMIN')) {
       const validAdminKey = process.env.ADMIN_INVITE_KEY || 'gv-admin-ops-2026';
       if (!adminSecurityKey || adminSecurityKey !== validAdminKey) {
@@ -83,6 +104,28 @@ export async function POST(req: NextRequest) {
       emailVerified: false,
     });
 
+    // Automatically record accepted Creator Agreement for developer accounts created upon signup
+    let agreement = null;
+    if (assignedRole === 'DEVELOPER') {
+      const version = agreementVersion || 'v1.0-2026';
+      agreement = gvDb.saveAgreement({
+        userId: newUser.id,
+        agreementVersion: version,
+        ipAddress: ip,
+        accountStatus: 'ACTIVE',
+      });
+
+      gvDb.logAudit({
+        actorId: newUser.id,
+        actorName: newUser.name,
+        action: 'CREATOR_AGREEMENT_ACCEPTED',
+        targetType: 'CREATOR_AGREEMENT',
+        targetId: agreement.id,
+        details: { agreementVersion: version, ipAddress: ip, registeredVia: 'DEVELOPER_SIGNUP' },
+        ipAddress: ip,
+      });
+    }
+
     // Create verification token
     const verToken = gvDb.createEmailVerificationToken(newUser.id);
 
@@ -115,6 +158,7 @@ export async function POST(req: NextRequest) {
           role: newUser.role,
           emailVerified: false,
         },
+        agreement,
         token,
         verificationToken: verToken.token,
       },

@@ -504,13 +504,14 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
       ) {
         const score = typeof e.data.score === 'number' ? e.data.score : 0;
         const playSeconds = activeSecondsRef.current || 0;
+        const sessionToken = sessionTokenRef.current;
         try {
           fetch('/api/player/win', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               gameId: game.id,
-              playSeconds,
+              sessionToken,
               score,
             }),
           }).catch(() => {});

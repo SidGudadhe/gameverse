@@ -167,6 +167,8 @@ export interface PlayerSession {
   ipHash?: string;
   isIvt?: boolean;
   ivtReason?: string;
+  winClaimed?: boolean;
+  winClaimedAt?: string;
 }
 
 export interface AnalyticsEvent {
@@ -356,11 +358,16 @@ export interface PlayerGameWin {
   id: string;
   userId: string;
   gameId: string;
+  sessionId?: string;
+  sessionToken?: string;
   playSeconds: number;
   playMinutes: number;
   wonAt: string;
   score?: number;
   isQualified: boolean; // Qualified for payout winnings if play duration is >= 5 minutes (300s)
+  verificationStatus?: 'VERIFIED' | 'REJECTED_IVT' | 'REJECTED_TIME' | 'REJECTED_DUPLICATE';
+  rejectionReason?: string;
+  ipHash?: string;
 }
 
 export interface PlayerPayoutMethod {

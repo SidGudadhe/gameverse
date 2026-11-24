@@ -837,20 +837,6 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
                     <p className="text-slate-400 text-sm mt-1.5">
                       Final Score: <span className="text-[#FFCC00] font-mono font-bold text-xl">{gameOverModal.score}</span>
                     </p>
-                    {gameOverModal.isVictory && typeof gameOverModal.playSeconds === 'number' && (
-                      <div className="mt-3">
-                        {gameOverModal.playSeconds >= 300 ? (
-                          <div className="px-3 py-1.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-medium flex items-center justify-center gap-1.5">
-                            <Trophy className="w-4 h-4 text-amber-400 shrink-0" />
-                            <span>Qualified Win! Playtime &gt; 5 mins logged in Total Winnings</span>
-                          </div>
-                        ) : (
-                          <div className="px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-slate-300 text-xs font-normal">
-                            Playtime: {Math.floor(gameOverModal.playSeconds / 60)}m {gameOverModal.playSeconds % 60}s (Requires 5+ mins in a run to qualify for Total Winnings)
-                          </div>
-                        )}
-                      </div>
-                    )}
                   </div>
 
                   <div className="space-y-3 pt-1">

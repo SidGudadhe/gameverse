@@ -207,4 +207,31 @@ describe('Player Total Winnings & Payouts (>5 Mins Win Requirement)', () => {
     expect(payoutData.stats.totalWins).toBe(1);
     expect(payoutData.stats.totalWinnings).toBe(1);
   });
+
+  it('6. should NEVER count playtime alone as a win: playing for 15 minutes without winning gives 0 wins', async () => {
+    // Player plays for 900 seconds (15 minutes) but does NOT win (e.g. game session telemetry or normal play history)
+    const historyReq = new NextRequest('http://localhost:3000/api/player/history', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        gameId: GAME_ID_1,
+        playSeconds: 900, // 15 minutes of play
+        hasWon: false, // NOT WON
+      }),
+    });
+
+    const historyRes = await recordHistory(historyReq);
+    expect(historyRes.status).toBe(200);
+
+    // Verify payouts API still has 0 total wins despite 15 minutes playtime
+    const payoutReq = new NextRequest('http://localhost:3000/api/player/payouts', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const payoutRes = await getPayouts(payoutReq);
+    const payoutData = await payoutRes.json();
+
+    expect(payoutData.stats.totalPlayMinutes).toBe(15);
+    expect(payoutData.stats.totalWins).toBe(0);
+    expect(payoutData.stats.totalWinnings).toBe(0);
+  });
 });

@@ -633,7 +633,7 @@ export default function PlayerPayoutsPage() {
             </div>
             <span className="text-[11px] text-amber-700 flex items-center gap-1 mt-1 font-medium">
               <Trophy className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-              <span>5+ mins game wins counted</span>
+              <span>Verified Game Victories</span>
             </span>
           </div>
           <div className="w-11 h-11 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 shadow-xs">

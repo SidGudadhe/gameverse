@@ -20,5 +20,7 @@ export async function POST(req: NextRequest) {
 
   const response = NextResponse.json({ success: true, message: 'Logged out successfully.' });
   response.cookies.delete('gameverse_session');
+  response.cookies.delete('gameverse_developer_session');
+  response.cookies.delete('gameverse_admin_session');
   return response;
 }

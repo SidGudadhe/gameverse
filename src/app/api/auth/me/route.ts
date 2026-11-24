@@ -8,7 +8,28 @@ export async function GET(req: NextRequest) {
   const { user, errorResponse } = requireAuth(req);
   if (errorResponse) return errorResponse;
 
-  const dbUser = gvDb.findUserById(user!.userId);
+  const portalParam = req.nextUrl.searchParams.get('portal');
+  const referer = req.headers.get('referer') || '';
+  const isDevPortal = portalParam === 'DEVELOPER' || referer.includes('/developer');
+  const isAdminPortal = portalParam === 'ADMIN' || referer.includes('/admin');
+  const isPlayerPortal = portalParam === 'PLAYER' || (!isDevPortal && !isAdminPortal);
+
+  let dbUser = gvDb.findUserById(user!.userId);
+
+  // If in Developer portal and current session user is PLAYER, check if a DEVELOPER account exists for that email
+  if (isDevPortal && dbUser && dbUser.role === 'PLAYER') {
+    const devUser = gvDb.findUserByEmail(dbUser.email, 'DEVELOPER');
+    if (devUser && (devUser.role === 'DEVELOPER' || devUser.role === 'ADMIN' || devUser.role === 'SUPER_ADMIN')) {
+      dbUser = devUser;
+    }
+  } else if (isPlayerPortal && dbUser && (dbUser.role === 'DEVELOPER' || dbUser.role === 'ADMIN')) {
+    // If on Player portal and user has a dedicated PLAYER account with the same email, use the PLAYER account
+    const playerUser = gvDb.findUserByEmail(dbUser.email, 'PLAYER');
+    if (playerUser) {
+      dbUser = playerUser;
+    }
+  }
+
   if (!dbUser) {
     const notFoundRes = NextResponse.json({ success: false, error: 'User not found.' }, { status: 404 });
     notFoundRes.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');

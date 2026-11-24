@@ -2,7 +2,19 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 function getSessionRole(request: NextRequest): string | null {
-  const cookie = request.cookies.get('gameverse_session')?.value;
+  const { pathname } = request.nextUrl;
+  const isDev = pathname.startsWith('/developer') || pathname.startsWith('/api/developer');
+  const isAdmin = pathname.startsWith('/admin') || pathname.startsWith('/api/admin');
+
+  let cookie = null;
+  if (isDev) {
+    cookie = request.cookies.get('gameverse_developer_session')?.value || request.cookies.get('gameverse_session')?.value;
+  } else if (isAdmin) {
+    cookie = request.cookies.get('gameverse_admin_session')?.value || request.cookies.get('gameverse_session')?.value;
+  } else {
+    cookie = request.cookies.get('gameverse_session')?.value;
+  }
+
   const authHeader = request.headers.get('authorization');
   const token = cookie || (authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : null);
 
@@ -141,7 +153,7 @@ export function middleware(request: NextRequest) {
           loginUrl.searchParams.set('redirect', pathname);
           return NextResponse.redirect(loginUrl);
         } else if (userRole === 'PLAYER') {
-          // Redirect standard players to the creator agreement onboarding page
+          // Direct players to creator agreement onboarding on the developer portal (never cross-redirect to player site)
           const onboardUrl = new URL('/developer/onboard', request.url);
           onboardUrl.searchParams.set('notice', 'agreement_required');
           return NextResponse.redirect(onboardUrl);

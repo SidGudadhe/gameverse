@@ -857,12 +857,49 @@ class GameVerseDatabase {
   }
 
   // ================= USERS & AUTH =================
-  findUserByEmail(email: string) {
+  findUserByEmail(email: string, portalOrRole?: string) {
     if (!email) return undefined;
     const cleanEmail = email.trim().toLowerCase();
+
+    if (portalOrRole) {
+      const roleUpper = portalOrRole.toUpperCase();
+      const exactIndexMatch = globalIndexEngine.getUserByEmail(cleanEmail, roleUpper);
+      if (exactIndexMatch) {
+        return exactIndexMatch;
+      }
+
+      const allMatches = this.state.users.filter((u) => u.email.trim().toLowerCase() === cleanEmail);
+      if (roleUpper === 'DEVELOPER') {
+        const devUser = allMatches.find(
+          (u) => u.role === 'DEVELOPER' || u.role === 'ADMIN' || u.role === 'SUPER_ADMIN'
+        );
+        if (devUser) return devUser;
+      } else if (roleUpper === 'PLAYER') {
+        const playerUser = allMatches.find((u) => u.role === 'PLAYER');
+        if (playerUser) return playerUser;
+      } else if (roleUpper === 'ADMIN') {
+        const adminUser = allMatches.find(
+          (u) => u.role === 'ADMIN' || u.role === 'SUPER_ADMIN' || u.role === 'MODERATOR'
+        );
+        if (adminUser) return adminUser;
+      }
+      return undefined;
+    }
+
     return (
       globalIndexEngine.getUserByEmail(cleanEmail) ||
       this.state.users.find((u) => u.email.trim().toLowerCase() === cleanEmail)
+    );
+  }
+
+  findUserByEmailAndRole(email: string, role: UserRole) {
+    if (!email) return undefined;
+    const cleanEmail = email.trim().toLowerCase();
+    return (
+      globalIndexEngine.getUserByEmail(cleanEmail, role) ||
+      this.state.users.find(
+        (u) => u.email.trim().toLowerCase() === cleanEmail && u.role === role
+      )
     );
   }
 

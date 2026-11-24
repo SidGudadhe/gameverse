@@ -100,6 +100,7 @@ export class DatabaseIndexEngine {
   private gamesByCategory = new Map<string, Game[]>();
   private usersById = new Map<string, DbUser>();
   private usersByEmail = new Map<string, DbUser>();
+  private usersByEmailAndRole = new Map<string, DbUser>();
   private referralsByToken = new Map<string, ReferralLink>();
 
   private isBuilt = false;
@@ -110,6 +111,7 @@ export class DatabaseIndexEngine {
     this.gamesByCategory.clear();
     this.usersById.clear();
     this.usersByEmail.clear();
+    this.usersByEmailAndRole.clear();
     this.referralsByToken.clear();
 
     // 1. Index Games
@@ -126,6 +128,7 @@ export class DatabaseIndexEngine {
     for (const user of state.users) {
       this.usersById.set(user.id, user);
       this.usersByEmail.set(user.email.toLowerCase(), user);
+      this.usersByEmailAndRole.set(`${user.email.toLowerCase()}:${user.role}`, user);
     }
 
     // 3. Index Referral Links
@@ -150,8 +153,12 @@ export class DatabaseIndexEngine {
     return this.gamesByCategory.get(categoryId) || [];
   }
 
-  public getUserByEmail(email: string): DbUser | undefined {
-    return this.usersByEmail.get(email.toLowerCase());
+  public getUserByEmail(email: string, role?: string): DbUser | undefined {
+    const cleanEmail = email.toLowerCase();
+    if (role) {
+      return this.usersByEmailAndRole.get(`${cleanEmail}:${role.toUpperCase()}`);
+    }
+    return this.usersByEmail.get(cleanEmail);
   }
 
   public getUserById(id: string): DbUser | undefined {

@@ -85,7 +85,8 @@ export async function POST(req: NextRequest) {
     }
 
     const cleanEmail = normalizedEmail || (typeof email === 'string' ? email.trim().toLowerCase() : '');
-    const user = gvDb.findUserByEmail(cleanEmail);
+    const user = gvDb.findUserByEmail(cleanEmail, portal);
+
     if (!user) {
       return NextResponse.json(
         { success: false, error: 'Invalid email or password.' },
@@ -190,6 +191,24 @@ export async function POST(req: NextRequest) {
       path: '/',
       maxAge: sessionMaxAge,
     });
+
+    if (portal === 'DEVELOPER' || user.role === 'DEVELOPER') {
+      response.cookies.set('gameverse_developer_session', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: sessionMaxAge,
+      });
+    } else if (portal === 'ADMIN' || user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') {
+      response.cookies.set('gameverse_admin_session', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: sessionMaxAge,
+      });
+    }
 
     return response;
   } catch (err: any) {

@@ -71,17 +71,24 @@ export default function DeveloperPage() {
             <Sparkles className="w-8 h-8" />
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tight mb-2">
-            Creator Onboarding Required
+            Creator Studio Activation Required
           </h1>
           <p className="text-sm text-slate-600 leading-relaxed mb-6">
-            Your current account is registered as a <span className="font-mono text-indigo-700 font-bold bg-indigo-50 px-1 py-0.5 rounded">PLAYER</span>.
-            To publish HTML5/WebGL games and earn revenue, complete creator onboarding.
+            Your current active session is registered as a <span className="font-mono text-indigo-700 font-bold bg-indigo-50 px-1 py-0.5 rounded">PLAYER</span>.
+            To publish HTML5/WebGL games and earn revenue, complete creator onboarding or sign into your developer studio account.
           </p>
-          <Link href="/developer/onboard">
-            <Button variant="primary" className="w-full bg-indigo-600 hover:bg-indigo-500">
-              Enroll as Creator
-            </Button>
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link href="/developer/auth/login" className="w-full">
+              <Button variant="outline" className="w-full">
+                Sign In to Studio
+              </Button>
+            </Link>
+            <Link href="/developer/onboard" className="w-full">
+              <Button variant="primary" className="w-full bg-indigo-600 hover:bg-indigo-500">
+                Enroll as Creator
+              </Button>
+            </Link>
+          </div>
         </div>
       );
     }

@@ -75,6 +75,26 @@ export function extractAuth(req: NextRequest): TokenPayload | null {
     return verifyToken(token);
   }
 
+  // Determine portal context from request URL or Referer
+  const pathname = req.nextUrl?.pathname || '';
+  const referer = req.headers.get('referer') || '';
+  const isDevContext = pathname.startsWith('/api/developer') || pathname.startsWith('/developer') || referer.includes('/developer');
+  const isAdminContext = pathname.startsWith('/api/admin') || pathname.startsWith('/admin') || referer.includes('/admin');
+
+  if (isDevContext) {
+    const devCookie = req.cookies.get('gameverse_developer_session')?.value;
+    if (devCookie) {
+      const payload = verifyToken(devCookie);
+      if (payload) return payload;
+    }
+  } else if (isAdminContext) {
+    const adminCookie = req.cookies.get('gameverse_admin_session')?.value;
+    if (adminCookie) {
+      const payload = verifyToken(adminCookie);
+      if (payload) return payload;
+    }
+  }
+
   // Check HttpOnly session cookie
   const cookieToken = req.cookies.get('gameverse_session')?.value;
   if (cookieToken) {

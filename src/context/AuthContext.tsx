@@ -106,7 +106,10 @@ export function AuthProvider({
 
   const refreshUser = useCallback(async (): Promise<AuthUser | null> => {
     try {
-      const res = await fetch('/api/auth/me', {
+      const isDev = typeof window !== 'undefined' && window.location.pathname.startsWith('/developer');
+      const isAdm = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
+      const portalQuery = isDev ? '?portal=DEVELOPER' : isAdm ? '?portal=ADMIN' : '?portal=PLAYER';
+      const res = await fetch(`/api/auth/me${portalQuery}`, {
         cache: 'no-store',
         headers: { 'Cache-Control': 'no-cache' },
       });
@@ -198,7 +201,14 @@ export function AuthProvider({
       await fetch('/api/auth/logout', { method: 'POST', cache: 'no-store' });
     } catch {}
     router.refresh();
-    router.push('/auth/login');
+    const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
+    if (currentPath.startsWith('/developer')) {
+      router.push('/developer/auth/login');
+    } else if (currentPath.startsWith('/admin')) {
+      router.push('/admin/auth/login');
+    } else {
+      router.push('/');
+    }
   }, [clearSession, router]);
 
   const role = user?.role || 'GUEST';

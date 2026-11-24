@@ -10,7 +10,7 @@ import DeveloperLogo from '@/components/ui/DeveloperLogo';
 
 export default function DeveloperOnboardPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, setSession } = useAuth();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [studioName, setStudioName] = useState(user?.name || '');
   const [website, setWebsite] = useState('');
@@ -52,6 +52,10 @@ export default function DeveloperOnboardPage() {
       if (!res.ok) {
         setError(data.error || 'Failed to complete onboarding.');
         return;
+      }
+
+      if (data.user && setSession) {
+        setSession(data.user);
       }
 
       setStep(3);

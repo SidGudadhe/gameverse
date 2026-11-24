@@ -56,11 +56,19 @@ export async function POST(req: NextRequest) {
       assignedRole = 'PLAYER';
     }
 
-    // Check if user already exists
-    const existing = gvDb.findUserByEmail(email);
-    if (existing) {
+    // Check if user already exists FOR THIS ROLE / PORTAL
+    const existingForRole = gvDb.findUserByEmail(email, assignedRole);
+    if (existingForRole && existingForRole.role === assignedRole) {
       return NextResponse.json(
-        { success: false, error: 'An account with this email address already exists.' },
+        {
+          success: false,
+          error:
+            assignedRole === 'DEVELOPER'
+              ? 'A developer account with this email address already exists.'
+              : assignedRole === 'ADMIN'
+              ? 'An admin account with this email address already exists.'
+              : 'An account with this email address already exists.',
+        },
         { status: 409 }
       );
     }
@@ -113,7 +121,7 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
 
-    // Set HttpOnly cookie
+    // Set HttpOnly session cookie
     response.cookies.set('gameverse_session', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -121,6 +129,24 @@ export async function POST(req: NextRequest) {
       path: '/',
       maxAge: 7 * 24 * 60 * 60, // 7 days
     });
+
+    if (newUser.role === 'DEVELOPER') {
+      response.cookies.set('gameverse_developer_session', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 7 * 24 * 60 * 60,
+      });
+    } else if (newUser.role === 'ADMIN' || newUser.role === 'SUPER_ADMIN') {
+      response.cookies.set('gameverse_admin_session', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 7 * 24 * 60 * 60,
+      });
+    }
 
     return response;
   } catch (err: any) {

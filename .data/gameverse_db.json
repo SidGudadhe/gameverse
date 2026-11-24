@@ -367,6 +367,66 @@
       "emailVerified": false,
       "twoFactorEnabled": false,
       "createdAt": "2026-11-23T19:01:07.497Z"
+    },
+    {
+      "id": "usr-1795495625965-iuq9u",
+      "email": "isolated_player_1795495625877@gamer.com",
+      "name": "Isolated Player",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$UqiP.hU07ofGHFdqsxQ8Q.LtXowmEFRiN.LHLj2T1ybP34dmLumHu",
+      "emailVerified": false,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-24T04:47:05.965Z"
+    },
+    {
+      "id": "usr-1795495625966-wixhc",
+      "email": "isolated_dev_1795495625877@studio.com",
+      "name": "Isolated Developer",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$UqiP.hU07ofGHFdqsxQ8Q.LtXowmEFRiN.LHLj2T1ybP34dmLumHu",
+      "emailVerified": false,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-24T04:47:05.966Z"
+    },
+    {
+      "id": "usr-1795495625966-zr4i5",
+      "email": "isolated_admin_1795495625877@gameverse.com",
+      "name": "Isolated Admin",
+      "role": "ADMIN",
+      "passwordHash": "$2a$10$UqiP.hU07ofGHFdqsxQ8Q.LtXowmEFRiN.LHLj2T1ybP34dmLumHu",
+      "emailVerified": false,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-24T04:47:05.966Z"
+    },
+    {
+      "id": "usr-1795495626047-axadg",
+      "email": "new_gamer_1795495625967@test.com",
+      "name": "GamerX",
+      "role": "PLAYER",
+      "passwordHash": "$2a$10$6Xz9dDf6XI8NwCCoqEC8AeH6E/PQ97glCgmsasgRsgXN2dtrljfye",
+      "emailVerified": false,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-24T04:47:06.047Z"
+    },
+    {
+      "id": "usr-1795495626372-dgk7a",
+      "email": "new_dev_1795495626283@studio.com",
+      "name": "Pixel Studio",
+      "role": "DEVELOPER",
+      "passwordHash": "$2a$10$wrEhOqeO1Wg7rxDAUta5qe1NyBrV.snhKqFtry0yIA1L83cjr/kVK",
+      "emailVerified": false,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-24T04:47:06.372Z"
+    },
+    {
+      "id": "usr-1795495626602-95nrk",
+      "email": "staff_admin_1795495626526@gameverse.com",
+      "name": "Staff Operator",
+      "role": "ADMIN",
+      "passwordHash": "$2a$10$zSVn3cLw5DTYvWFJSfWOO.xUXiqjMDDRs6kcWJqscAINckRPCV//K",
+      "emailVerified": false,
+      "twoFactorEnabled": false,
+      "createdAt": "2026-11-24T04:47:06.602Z"
     }
   ],
   "profiles": [
@@ -618,6 +678,44 @@
       "userId": "usr-1795460467497-ylrf2",
       "username": "test_player_1795460467497",
       "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1795495625966",
+      "userId": "usr-1795495625965-iuq9u",
+      "username": "isolated_player_1795495625877",
+      "displayName": "Isolated Player"
+    },
+    {
+      "id": "prof-1795495625966",
+      "userId": "usr-1795495625966-wixhc",
+      "username": "isolated_dev_1795495625877",
+      "displayName": "Isolated Developer",
+      "studioName": "Isolated Developer"
+    },
+    {
+      "id": "prof-1795495625966",
+      "userId": "usr-1795495625966-zr4i5",
+      "username": "isolated_admin_1795495625877",
+      "displayName": "Isolated Admin"
+    },
+    {
+      "id": "prof-1795495626047",
+      "userId": "usr-1795495626047-axadg",
+      "username": "new_gamer_1795495625967",
+      "displayName": "GamerX"
+    },
+    {
+      "id": "prof-1795495626372",
+      "userId": "usr-1795495626372-dgk7a",
+      "username": "new_dev_1795495626283",
+      "displayName": "Pixel Studio",
+      "studioName": "Pixel Studio"
+    },
+    {
+      "id": "prof-1795495626602",
+      "userId": "usr-1795495626602-95nrk",
+      "username": "staff_admin_1795495626526",
+      "displayName": "Staff Operator"
     }
   ],
   "categories": [
@@ -1367,6 +1465,162 @@
   ],
   "auditLogs": [
     {
+      "id": "log-1795495626603-qxud",
+      "createdAt": "2026-11-24T04:47:06.603Z",
+      "previousHash": "617670e271d7e42786f09afcd70651027710ac4c814921dd209530fe73186156",
+      "tamperHash": "31e6faebc30cfc271b6aa4e7c1a14e08fea2370658f044f55726b1120ae2167f",
+      "actorId": "usr-1795495626602-95nrk",
+      "actorName": "Staff Operator",
+      "action": "USER_REGISTERED",
+      "targetType": "USER",
+      "targetId": "usr-1795495626602-95nrk",
+      "details": {
+        "role": "ADMIN"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795495626524-cyzk",
+      "createdAt": "2026-11-24T04:47:06.524Z",
+      "previousHash": "2eaee6b2c8d26b67ff245a523b940ffd89caea84de1c061b91c765eaa2f22512",
+      "tamperHash": "617670e271d7e42786f09afcd70651027710ac4c814921dd209530fe73186156",
+      "actorId": "usr-1795495625965-iuq9u",
+      "actorName": "Isolated Player",
+      "action": "CROSS_PORTAL_LOGIN_BLOCKED",
+      "targetType": "USER",
+      "targetId": "usr-1795495625965-iuq9u",
+      "details": {
+        "attemptedPortal": "DEVELOPER",
+        "userRole": "PLAYER",
+        "email": "isolated_player_1795495625877@gamer.com"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795495626450-plnd",
+      "createdAt": "2026-11-24T04:47:06.451Z",
+      "previousHash": "589f7d6556e3abbeedafde5fd470aa4b23400e80be9840dea72fdaba3a32884a",
+      "tamperHash": "2eaee6b2c8d26b67ff245a523b940ffd89caea84de1c061b91c765eaa2f22512",
+      "actorId": "usr-1795495625966-wixhc",
+      "actorName": "Isolated Developer",
+      "action": "USER_LOGIN",
+      "targetType": "USER",
+      "targetId": "usr-1795495625966-wixhc",
+      "details": {
+        "role": "DEVELOPER"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795495626373-qx2b",
+      "createdAt": "2026-11-24T04:47:06.373Z",
+      "previousHash": "bdf7a39672d00e080fb5f40b3aabe1b04a40b54702f95b1d275c88240a4bb3d9",
+      "tamperHash": "589f7d6556e3abbeedafde5fd470aa4b23400e80be9840dea72fdaba3a32884a",
+      "actorId": "usr-1795495626372-dgk7a",
+      "actorName": "Pixel Studio",
+      "action": "USER_REGISTERED",
+      "targetType": "USER",
+      "targetId": "usr-1795495626372-dgk7a",
+      "details": {
+        "role": "DEVELOPER"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795495626281-9fgr",
+      "createdAt": "2026-11-24T04:47:06.281Z",
+      "previousHash": "8e75ac35342aedc6073e854f7f2b18df0c08f414034a5aaf84dde0779b4e2d41",
+      "tamperHash": "bdf7a39672d00e080fb5f40b3aabe1b04a40b54702f95b1d275c88240a4bb3d9",
+      "actorId": "usr-1795495625966-zr4i5",
+      "actorName": "Isolated Admin",
+      "action": "CROSS_PORTAL_LOGIN_BLOCKED",
+      "targetType": "USER",
+      "targetId": "usr-1795495625966-zr4i5",
+      "details": {
+        "attemptedPortal": "PLAYER",
+        "userRole": "ADMIN",
+        "email": "isolated_admin_1795495625877@gameverse.com"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795495626205-giwb",
+      "createdAt": "2026-11-24T04:47:06.205Z",
+      "previousHash": "a43c01b48000b3885746558f058d50d4cc96469533eae1d3ae537d8b815a095e",
+      "tamperHash": "8e75ac35342aedc6073e854f7f2b18df0c08f414034a5aaf84dde0779b4e2d41",
+      "actorId": "usr-1795495625966-wixhc",
+      "actorName": "Isolated Developer",
+      "action": "CROSS_PORTAL_LOGIN_BLOCKED",
+      "targetType": "USER",
+      "targetId": "usr-1795495625966-wixhc",
+      "details": {
+        "attemptedPortal": "PLAYER",
+        "userRole": "DEVELOPER",
+        "email": "isolated_dev_1795495625877@studio.com"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795495626130-z61k",
+      "createdAt": "2026-11-24T04:47:06.130Z",
+      "previousHash": "49f548f3e7951f6ba4b21559b4fdc2dbbbca9987b2956d6f7b29a60ce2b9b3d1",
+      "tamperHash": "a43c01b48000b3885746558f058d50d4cc96469533eae1d3ae537d8b815a095e",
+      "actorId": "usr-1795495625965-iuq9u",
+      "actorName": "Isolated Player",
+      "action": "USER_LOGIN",
+      "targetType": "USER",
+      "targetId": "usr-1795495625965-iuq9u",
+      "details": {
+        "role": "PLAYER"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795495626050-dy8i",
+      "createdAt": "2026-11-24T04:47:06.050Z",
+      "previousHash": "5bd3db8462cf60793d19fb861c65c26499ff67dbeab4d62ff03dfd4c1e8dfd28",
+      "tamperHash": "49f548f3e7951f6ba4b21559b4fdc2dbbbca9987b2956d6f7b29a60ce2b9b3d1",
+      "actorId": "usr-1795495626047-axadg",
+      "actorName": "GamerX",
+      "action": "USER_REGISTERED",
+      "targetType": "USER",
+      "targetId": "usr-1795495626047-axadg",
+      "details": {
+        "role": "PLAYER"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log-1795495389896-vpe3",
+      "createdAt": "2026-11-24T04:43:09.896Z",
+      "previousHash": "f563fc0d1ef7ec4eed719d35b52f991bbe17c612d6c9868dc13e7626b9963733",
+      "tamperHash": "5bd3db8462cf60793d19fb861c65c26499ff67dbeab4d62ff03dfd4c1e8dfd28",
+      "actorId": "usr-admin-1",
+      "actorName": "System Admin",
+      "action": "ADMIN_2FA_SUCCESS",
+      "targetType": "USER",
+      "targetId": "usr-admin-1",
+      "details": {
+        "role": "ADMIN"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "log-1795495298090-oeey",
+      "createdAt": "2026-11-24T04:41:38.090Z",
+      "previousHash": "b8b54b617e077cdd5407637de18060c498a2039e96cb339c1030a5d15715c10e",
+      "tamperHash": "f563fc0d1ef7ec4eed719d35b52f991bbe17c612d6c9868dc13e7626b9963733",
+      "actorId": "usr-dev-1",
+      "actorName": "PixelForge Studios",
+      "action": "USER_LOGIN",
+      "targetType": "USER",
+      "targetId": "usr-dev-1",
+      "details": {
+        "role": "DEVELOPER"
+      },
+      "ipAddress": "::1"
+    },
+    {
       "id": "log-1795460464170-bcfb",
       "createdAt": "2026-11-23T19:01:04.170Z",
       "previousHash": "c7e6b633142723df825366ad2c3c8a4e17a02b36b36693b92e47654f5e27c594",
@@ -1668,6 +1922,24 @@
       "userId": "usr-1795460467275-ll3m3",
       "token": "verify_1795460467275_qoeln4fd",
       "expiresAt": "2026-11-24T19:01:07.275Z"
+    },
+    {
+      "id": "evt-1795495626047",
+      "userId": "usr-1795495626047-axadg",
+      "token": "verify_1795495626047_bdp5zrfz",
+      "expiresAt": "2026-11-25T04:47:06.047Z"
+    },
+    {
+      "id": "evt-1795495626372",
+      "userId": "usr-1795495626372-dgk7a",
+      "token": "verify_1795495626372_vn3ly3oz",
+      "expiresAt": "2026-11-25T04:47:06.372Z"
+    },
+    {
+      "id": "evt-1795495626602",
+      "userId": "usr-1795495626602-95nrk",
+      "token": "verify_1795495626602_5r0uly47",
+      "expiresAt": "2026-11-25T04:47:06.602Z"
     }
   ],
   "developerSettings": [

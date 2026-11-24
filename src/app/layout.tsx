@@ -57,6 +57,29 @@ export default function RootLayout({
           rel="stylesheet"
         />
         <script src="https://accounts.google.com/gsi/client" async defer />
+        {/* Legacy Service Worker & Cross-SaaS Cache Purge for localhost:3000 */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                  for (var i = 0; i < registrations.length; i++) {
+                    registrations[i].unregister();
+                  }
+                });
+              }
+              if (typeof window !== 'undefined' && 'caches' in window) {
+                caches.keys().then(function(names) {
+                  for (var i = 0; i < names.length; i++) {
+                    if (names[i].indexOf('agency') !== -1 || names[i].indexOf('agencypilot') !== -1) {
+                      caches.delete(names[i]);
+                    }
+                  }
+                });
+              }
+            `,
+          }}
+        />
       </head>
       <body className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col selection:bg-indigo-500 selection:text-white">
         <AuthProvider initialUser={initialUser}>

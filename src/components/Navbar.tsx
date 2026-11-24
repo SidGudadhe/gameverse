@@ -172,33 +172,29 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-xs">
       <div className="w-full px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-        {/* Left: CrazyGames Sidebar Toggle (Only after login) + Brand Logo */}
+        {/* Left: CrazyGames Sidebar Toggle + Brand Logo */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Desktop Sidebar Toggle (Only for authenticated players) */}
-          {isAuthenticated && (
-            <button
-              type="button"
-              onClick={toggleCollapse}
-              aria-label="Toggle Navigation Sidebar"
-              title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-              className="hidden md:flex w-9 h-9 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent hover:border-slate-200 items-center justify-center transition-colors cursor-pointer"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-          )}
+          {/* Desktop Sidebar Toggle */}
+          <button
+            type="button"
+            onClick={toggleCollapse}
+            aria-label="Toggle Navigation Sidebar"
+            title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            className="hidden md:flex w-9 h-9 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent hover:border-slate-200 items-center justify-center transition-colors cursor-pointer"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
 
-          {/* Mobile Sidebar Drawer Toggle (Only for authenticated players) */}
-          {isAuthenticated && (
-            <button
-              type="button"
-              onClick={toggleMobile}
-              aria-label="Toggle Mobile Navigation"
-              title="Open navigation menu"
-              className="md:hidden w-9 h-9 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent hover:border-slate-200 flex items-center justify-center transition-colors cursor-pointer"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-          )}
+          {/* Mobile Sidebar Drawer Toggle */}
+          <button
+            type="button"
+            onClick={toggleMobile}
+            aria-label="Toggle Mobile Navigation"
+            title="Open navigation menu"
+            className="md:hidden w-9 h-9 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent hover:border-slate-200 flex items-center justify-center transition-colors cursor-pointer"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
 
           <GameVerseLogo
             href="/"

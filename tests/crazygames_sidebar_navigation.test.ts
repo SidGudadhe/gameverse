@@ -91,20 +91,23 @@ describe('CrazyGames-Style Sidebar Navigation (100x Deep Analysis)', () => {
     expect(contextContent).toContain('setIsMobileOpen(false)');
   });
 
-  it('8. strictly hides 3-bar menu toggle and all sidebar menu options (home, category, favorite, payout) before login', () => {
+  it('8. allows unauthenticated guest players to view games and categories in GamerSidebar while keeping account features auth-protected', () => {
     const sidebarContent = fs.readFileSync(sidebarPath, 'utf-8');
     const navbarContent = fs.readFileSync(navbarPath, 'utf-8');
     const wrapperContent = fs.readFileSync(wrapperPath, 'utf-8');
 
-    // Sidebar is strictly hidden for unauthenticated visitors
-    expect(sidebarContent).toContain('!isAuthenticated');
-    expect(sidebarContent).toContain('if (!isPlayerPortal || !isAuthenticated)');
+    // Sidebar renders on player portal for all visitors so guest players can browse games
+    expect(sidebarContent).toContain('if (!isPlayerPortal)');
+    expect(sidebarContent).toContain('Playing as Guest');
 
-    // 3-bar hamburger menu buttons in Navbar only render when authenticated
-    expect(navbarContent).toContain('{isAuthenticated && (\n            <button\n              type="button"\n              onClick={toggleCollapse}');
-    expect(navbarContent).toContain('{isAuthenticated && (\n            <button\n              type="button"\n              onClick={toggleMobile}');
+    // 3-bar hamburger menu buttons in Navbar render for navigation
+    expect(navbarContent).toContain('onClick={toggleCollapse}');
+    expect(navbarContent).toContain('onClick={toggleMobile}');
 
-    // Content wrapper does not apply left padding when unauthenticated
-    expect(wrapperContent).toContain('if (!isAuthenticated)');
+    // Content wrapper applies consistent side rail padding
+    expect(wrapperContent).toContain("isCollapsed ? 'md:pl-16' : 'md:pl-48'");
+
+    // Account specific items require authentication
+    expect(sidebarContent).toContain('item.requiresAuth && !isAuthenticated');
   });
 });

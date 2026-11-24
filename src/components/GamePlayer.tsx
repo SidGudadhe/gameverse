@@ -26,6 +26,7 @@ import {
   ShieldCheck,
   ShieldAlert,
   ExternalLink,
+  Info,
 } from 'lucide-react';
 import { Game, AdFormat } from '@/types';
 import AdOverlay from './AdOverlay';
@@ -39,7 +40,7 @@ interface GamePlayerProps {
 }
 
 export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: GamePlayerProps) {
-  const { user } = useAuth();
+  const { user, openAuthModal } = useAuth();
   const [isPlaying, setIsPlaying] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isTheater, setIsTheater] = useState(false);
@@ -581,17 +582,20 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
         const score = typeof e.data.score === 'number' ? e.data.score : 0;
         const playSeconds = activeSecondsRef.current || 0;
         const sessionToken = sessionTokenRef.current;
-        try {
-          fetch('/api/player/win', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              gameId: game.id,
-              sessionToken,
-              score,
-            }),
-          }).catch(() => {});
-        } catch {}
+        // Winnings strictly only submitted if player is logged in. Unknown guests never credit any account!
+        if (user) {
+          try {
+            fetch('/api/player/win', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                gameId: game.id,
+                sessionToken,
+                score,
+              }),
+            }).catch(() => {});
+          } catch {}
+        }
         setGameOverModal({ score, isVictory: true, playSeconds });
         sendToRunner('GV_PAUSE');
         return;
@@ -954,6 +958,25 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
                       Final Score: <span className="text-[#FFCC00] font-mono font-bold text-xl">{gameOverModal.score}</span>
                     </p>
                   </div>
+
+                  {/* Anonymous Guest Player Notice: Winnings are not attributed to any account */}
+                  {gameOverModal.isVictory && !user && (
+                    <div className="p-3.5 rounded-2xl bg-indigo-950/70 border border-indigo-500/40 text-center space-y-1.5">
+                      <div className="flex items-center justify-center gap-1.5 text-indigo-300 font-bold text-xs">
+                        <Info className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+                        <span>Playing as Guest (Unknown Player)</span>
+                      </div>
+                      <p className="text-[11px] text-slate-300 leading-snug">
+                        Winnings and victories are not credited to any account while playing without login.
+                      </p>
+                      <button
+                        onClick={() => openAuthModal && openAuthModal('LOGIN')}
+                        className="inline-flex items-center gap-1 text-[11px] font-bold text-cyan-400 hover:text-cyan-300 transition-colors cursor-pointer"
+                      >
+                        <span>Log in to save winnings & cash out payouts &rarr;</span>
+                      </button>
+                    </div>
+                  )}
 
                   <div className="space-y-3 pt-1">
                     {/* OPTION 1: REWARDED AD (NEXT LIFE - USER RULE: 1 TIME PER GAME LIMIT) */}

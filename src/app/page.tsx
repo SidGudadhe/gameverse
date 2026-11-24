@@ -29,7 +29,7 @@ export default function HomePage() {
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-8 space-y-6 sm:space-y-8">
       {/* 1. HOMEPAGE TOP BANNER AD (Placement: Website header ke neeche) */}
       <WebAdBanner placement="HOMEPAGE_TOP" />
 

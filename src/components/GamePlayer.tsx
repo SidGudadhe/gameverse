@@ -639,10 +639,14 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
         </div>
       )}
 
-      {/* ================= 16:9 VIEWPORT CONTAINER ================= */}
+      {/* ================= COMPACT VIEWPORT CONTAINER ================= */}
       <div
         className={`relative w-full ${
-          isFullscreen ? 'h-full flex items-center justify-center' : 'aspect-video'
+          isFullscreen
+            ? 'h-full flex items-center justify-center'
+            : isTheater
+            ? 'h-[75vh] max-h-[720px]'
+            : 'h-[360px] sm:h-[420px] lg:h-[460px] max-h-[55vh]'
         }`}
       >
         {/* Ad Overlay when active */}

@@ -199,4 +199,24 @@ describe('Veg & Non-Veg 2 Main Categories Architecture', () => {
     expect(gameContent).toContain("mainCategory={isNonVeg ? 'NON_VEG' : 'VEG'}");
     expect(gameContent).toContain("title={isNonVeg ? `More Non-Veg Games Like ${game.title}` : `More Veg Games Like ${game.title}`}");
   });
+
+  it('11. game detail page must feature compact player viewport and right-side suggested games column', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const gamePagePath = path.resolve(__dirname, '../src/app/game/[slug]/page.tsx');
+    const playerComponentPath = path.resolve(__dirname, '../src/components/GamePlayer.tsx');
+
+    const gameContent = fs.readFileSync(gamePagePath, 'utf-8');
+    const playerContent = fs.readFileSync(playerComponentPath, 'utf-8');
+
+    // Viewport must be compact (not full-height aspect-video) so bottom recommendations are visible
+    expect(playerContent).toContain('h-[360px] sm:h-[420px] lg:h-[460px] max-h-[55vh]');
+
+    // Must feature right-side suggested games column
+    expect(gameContent).toContain('Suggested Games');
+    expect(gameContent).toContain('sideRecommendations');
+    expect(gameContent).toContain('lg:grid-cols-12');
+    expect(gameContent).toContain('lg:col-span-8');
+    expect(gameContent).toContain('lg:col-span-4');
+  });
 });

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, Share2, Flag } from 'lucide-react';
 import SocialShareModal from './SocialShareModal';
+import GameReportModal from './GameReportModal';
 import { useAuth } from '@/context/AuthContext';
 
 interface GameActionBarProps {
@@ -22,6 +23,7 @@ export default function GameActionBar({
 }: GameActionBarProps) {
   const { isAuthenticated, openAuthModal } = useAuth();
   const [isShareOpen, setIsShareOpen] = useState(false);
+  const [isReportOpen, setIsReportOpen] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
   const [reported, setReported] = useState(false);
 
@@ -58,14 +60,9 @@ export default function GameActionBar({
           method: 'DELETE',
         });
       }
-    } catch (e) {
+    } catch {
       // Non-blocking
     }
-  };
-
-  const handleReport = () => {
-    setReported(true);
-    setTimeout(() => setReported(false), 3000);
   };
 
   return (
@@ -92,15 +89,17 @@ export default function GameActionBar({
         </button>
 
         <button
-          onClick={handleReport}
-          className={`p-2.5 rounded-xl border transition-colors cursor-pointer ${
+          onClick={() => setIsReportOpen(true)}
+          className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center gap-1.5 ${
             reported
-              ? 'bg-amber-50 text-amber-700 border-amber-200'
+              ? 'bg-rose-50 text-rose-700 border-rose-300'
               : 'bg-slate-100 hover:bg-rose-50 text-slate-500 hover:text-rose-600 border-slate-200'
           }`}
           title="Report build or content issue"
+          aria-label="Report Game Issue"
         >
-          <Flag className="w-4 h-4" />
+          <Flag className={`w-4 h-4 ${reported ? 'fill-rose-500 text-rose-600' : ''}`} />
+          {reported && <span className="text-[11px] font-bold text-rose-700">Reported</span>}
         </button>
       </div>
 
@@ -111,6 +110,18 @@ export default function GameActionBar({
         gameSlug={gameSlug}
         referralToken={referralToken}
         thumbnailUrl={thumbnailUrl}
+      />
+
+      <GameReportModal
+        isOpen={isReportOpen}
+        onClose={() => setIsReportOpen(false)}
+        gameTitle={gameTitle}
+        gameSlug={gameSlug}
+        gameId={gameId}
+        thumbnailUrl={thumbnailUrl}
+        onReportSubmitted={() => {
+          setReported(true);
+        }}
       />
     </>
   );

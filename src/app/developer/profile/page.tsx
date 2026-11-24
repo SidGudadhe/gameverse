@@ -573,7 +573,7 @@ export default function StudioProfilePage() {
             </p>
           </div>
           <Link
-            href="/creator-agreement"
+            href="/developer/agreement"
             className="text-xs font-bold text-purple-600 hover:text-purple-700 flex items-center gap-1"
           >
             <span>View Full Agreement</span>

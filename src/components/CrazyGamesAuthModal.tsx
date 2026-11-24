@@ -23,7 +23,7 @@ import DeveloperLogo from './ui/DeveloperLogo';
 export default function CrazyGamesAuthModal() {
   const router = useRouter();
   const pathname = usePathname();
-  const isDevPortal = pathname?.startsWith('/developer') || pathname === '/creator-agreement';
+  const isDevPortal = pathname?.startsWith('/developer');
   const {
     authModalOpen,
     authModalMode,
@@ -552,7 +552,35 @@ export default function CrazyGamesAuthModal() {
                   className="mt-0.5 w-3.5 h-3.5 rounded border-slate-300 text-indigo-600 focus:ring-0"
                 />
                 <span className="text-[10px] text-slate-600">
-                  I agree to the Terms of Service & Privacy Policy.
+                  {isDevPortal ? (
+                    <>
+                      I agree to the{' '}
+                      <Link href="/developer/terms" target="_blank" className="text-indigo-600 underline">
+                        Developer Terms
+                      </Link>
+                      ,{' '}
+                      <Link href="/developer/agreement" target="_blank" className="text-indigo-600 underline">
+                        Creator Agreement
+                      </Link>{' '}
+                      &{' '}
+                      <Link href="/developer/privacy" target="_blank" className="text-indigo-600 underline">
+                        Studio Privacy Policy
+                      </Link>
+                      .
+                    </>
+                  ) : (
+                    <>
+                      I agree to the{' '}
+                      <Link href="/terms" target="_blank" className="text-indigo-600 underline">
+                        Terms of Service
+                      </Link>{' '}
+                      &{' '}
+                      <Link href="/privacy" target="_blank" className="text-indigo-600 underline">
+                        Privacy Policy
+                      </Link>
+                      .
+                    </>
+                  )}
                 </span>
               </label>
             </div>

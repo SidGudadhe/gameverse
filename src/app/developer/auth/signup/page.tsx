@@ -244,13 +244,22 @@ export default function DeveloperSignupPage() {
                   <p>
                     All builds must be self-contained HTML5/WebGL packages. Malicious scripts, cryptocurrency miners, external redirection, or unauthorized data collection result in immediate quarantine and account termination.
                   </p>
-                  <div className="pt-1">
+                  <div className="pt-1 flex items-center gap-3">
                     <Link
-                      href="/creator-agreement"
+                      href="/developer/agreement"
                       target="_blank"
                       className="text-indigo-600 hover:underline flex items-center gap-1 font-sans font-semibold text-[11px]"
                     >
-                      <span>Read Full Legal Document in New Window</span>
+                      <span>Read Creator Agreement</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </Link>
+                    <span className="text-slate-300">•</span>
+                    <Link
+                      href="/developer/terms"
+                      target="_blank"
+                      className="text-indigo-600 hover:underline flex items-center gap-1 font-sans font-semibold text-[11px]"
+                    >
+                      <span>Developer Terms</span>
                       <ExternalLink className="w-3 h-3" />
                     </Link>
                   </div>

@@ -54,8 +54,14 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
     return <div className="min-h-screen bg-[#F8FAFC]">{children}</div>;
   }
 
-  // Public Developer Landing and Documentation are viewable before login
-  const isPublicDeveloperPage = pathname === '/developer' || pathname === '/developer/docs';
+  // Public Developer Studio pages: Landing, Docs, Creator Agreement, Developer Terms, Studio Privacy, Support
+  const isPublicDeveloperPage =
+    pathname === '/developer' ||
+    pathname.startsWith('/developer/docs') ||
+    pathname === '/developer/agreement' ||
+    pathname === '/developer/terms' ||
+    pathname === '/developer/privacy' ||
+    pathname === '/developer/support';
 
   if (!isAuthenticated) {
     if (isPublicDeveloperPage) {
@@ -88,6 +94,9 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
   const isAuthorized = role === 'DEVELOPER' || role === 'ADMIN' || role === 'SUPER_ADMIN';
 
   if (!isAuthorized) {
+    if (isPublicDeveloperPage) {
+      return <div className="min-h-screen bg-[#F8FAFC]">{children}</div>;
+    }
     return (
       <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-white border border-slate-200 rounded-3xl p-8 text-center shadow-xl">

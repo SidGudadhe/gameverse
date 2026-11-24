@@ -97,7 +97,7 @@ export default function MyGamesPage() {
 
   const handleCopyLink = (game: any) => {
     const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
-    const fullUrl = `${origin}/game/${game.slug}`;
+    const fullUrl = `${origin}/sandbox/${game.id}/${game.currentVersionId || 'v1'}`;
     navigator.clipboard.writeText(fullUrl);
     setCopiedId(game.id);
     setTimeout(() => {
@@ -470,7 +470,7 @@ export default function MyGamesPage() {
           {filteredGames.map((game) => {
             const hasCopied = copiedId === game.id;
             const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
-            const gameDirectUrl = `${origin}/game/${game.slug}`;
+            const gameDirectUrl = `${origin}/sandbox/${game.id}/${game.currentVersionId || 'v1'}`;
 
             return (
               <div
@@ -577,14 +577,14 @@ export default function MyGamesPage() {
                     <div className="p-3 rounded-xl bg-indigo-50/60 border border-indigo-100 flex items-center justify-between gap-3 text-xs">
                       <div className="min-w-0 flex-1">
                         <span className="text-[10px] font-bold text-indigo-700 uppercase tracking-wider block">
-                          Direct CDN Game URL:
+                          Direct Sandbox Test URL:
                         </span>
                         <a
-                          href={`/game/${game.slug}`}
+                          href={`/sandbox/${game.id}/${game.currentVersionId || 'v1'}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="font-mono text-indigo-600 hover:text-indigo-800 underline truncate block text-[11px]"
-                          title="Open directly on player site"
+                          title="Open directly in developer sandbox"
                         >
                           {gameDirectUrl}
                         </a>
@@ -635,12 +635,13 @@ export default function MyGamesPage() {
 
                   <div className="flex items-center gap-2">
                     <Link
-                      href={`/game/${game.slug}`}
+                      href={`/sandbox/${game.id}/${game.currentVersionId || 'v1'}`}
                       target="_blank"
                       className="bg-white hover:bg-slate-100 text-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 transition-colors flex items-center gap-1 font-semibold"
+                      title="Test build inside isolated developer sandbox runner"
                     >
                       <ExternalLink className="w-3 h-3" />
-                      <span>Play</span>
+                      <span>Sandbox Preview</span>
                     </Link>
 
                     <button

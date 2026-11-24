@@ -18,7 +18,7 @@ export default function FooterLegal() {
     return null;
   }
 
-  const isDevPortal = pathname.startsWith('/developer') || pathname === '/creator-agreement';
+  const isDevPortal = pathname.startsWith('/developer');
   const isAdminPortal = pathname.startsWith('/admin');
 
   const openCookiePreferences = () => {
@@ -60,12 +60,31 @@ export default function FooterLegal() {
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-6">
-          <Link href="/privacy" className="hover:text-slate-900 transition-colors">
-            Privacy Policy
-          </Link>
-          <Link href="/terms" className="hover:text-slate-900 transition-colors">
-            Terms of Service
-          </Link>
+          {isDevPortal ? (
+            <>
+              <Link href="/developer/terms" className="hover:text-slate-900 transition-colors">
+                Developer Terms
+              </Link>
+              <Link href="/developer/agreement" className="hover:text-slate-900 transition-colors">
+                Creator Agreement
+              </Link>
+              <Link href="/developer/privacy" className="hover:text-slate-900 transition-colors">
+                Studio Privacy
+              </Link>
+              <Link href="/developer/docs" className="hover:text-slate-900 transition-colors">
+                Docs & SDK
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href="/privacy" className="hover:text-slate-900 transition-colors">
+                Privacy Policy
+              </Link>
+              <Link href="/terms" className="hover:text-slate-900 transition-colors">
+                Terms of Service
+              </Link>
+            </>
+          )}
           <button
             onClick={openCookiePreferences}
             className="hover:text-indigo-600 transition-colors flex items-center gap-1 cursor-pointer"

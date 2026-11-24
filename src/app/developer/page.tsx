@@ -382,12 +382,13 @@ export default function DeveloperPage() {
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <Link
-                            href={`/game/${g.slug}`}
+                            href={`/sandbox/${g.id}/${g.currentVersionId || 'v1'}`}
                             target="_blank"
                             className="inline-flex items-center gap-1 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-200 transition-colors"
+                            title="Test build inside developer sandbox runner"
                           >
                             <ExternalLink className="w-3 h-3" />
-                            <span>Play Game</span>
+                            <span>Sandbox Preview</span>
                           </Link>
                           <Link
                             href={`/developer/submit?edit=${g.id}`}

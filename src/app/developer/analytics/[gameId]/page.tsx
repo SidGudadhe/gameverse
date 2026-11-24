@@ -106,13 +106,14 @@ export default function GameAnalyticsDeepDivePage({
         </div>
 
         <div className="flex items-center gap-3">
-          {targetGame?.slug && (
+          {targetGame?.id && (
             <Link
-              href={`/game/${targetGame.slug}`}
+              href={`/sandbox/${targetGame.id}/${targetGame.currentVersionId || 'v1'}`}
               target="_blank"
               className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold px-4 py-2.5 rounded-xl border border-slate-200 transition-colors"
+              title="Test build inside developer sandbox runner"
             >
-              <span>View Public Page</span>
+              <span>Sandbox Preview</span>
               <ExternalLink className="w-3.5 h-3.5" />
             </Link>
           )}

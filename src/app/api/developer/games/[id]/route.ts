@@ -81,6 +81,17 @@ export async function PATCH(
     if (categoryName) updates.categoryName = categoryName;
     if (body.mainCategory) updates.mainCategory = body.mainCategory;
     if (body.subCategory) updates.subCategory = body.subCategory;
+    if (body.playerMode && ['SINGLEPLAYER', 'MULTIPLAYER', 'BOTH'].includes(body.playerMode)) {
+      updates.playerMode = body.playerMode;
+    }
+    if (body.gameplayVideoUrl !== undefined) {
+      updates.gameplayVideoUrl = String(body.gameplayVideoUrl).trim();
+      updates.previewVideoUrl = String(body.gameplayVideoUrl).trim();
+    }
+    if (body.developedBy && ['AI Developed', 'Human Developed', 'AI + Human Developed'].includes(body.developedBy)) {
+      updates.developedBy = body.developedBy;
+      updates.developmentType = body.developedBy;
+    }
 
     const updated = gvDb.updateGame(game.id, updates);
 

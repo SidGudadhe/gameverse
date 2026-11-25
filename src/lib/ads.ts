@@ -12,6 +12,24 @@ export const AD_RATES: Record<AdFormat, { ecpm: number; ratePerImpression: numbe
   SPONSORED_LISTING: { ecpm: 3.0, ratePerImpression: 0.003 },
 };
 
+export const IN_GAME_AD_FORMATS: AdFormat[] = [
+  'PREROLL',
+  'INTERSTITIAL',
+  'REWARDED',
+  'BONUS_REWARD',
+  'BANNER',
+];
+
+export const WEBSITE_OUTER_AD_FORMATS: AdFormat[] = [
+  'NATIVE',
+  'DISPLAY',
+  'SPONSORED_LISTING',
+];
+
+export function isInGameAdFormat(format: AdFormat): boolean {
+  return IN_GAME_AD_FORMATS.includes(format);
+}
+
 export const AD_CONFIG = {
   NETWORK_FEE_RATE: 0.1, // 10% platform/network hosting & delivery fee
   STANDARD_CREATOR_SHARE_RATE: 0.5, // 50% net share for standard organic plays
@@ -215,12 +233,20 @@ export function calculateAdRevenue(
   creatorShareRate: number;
   creatorShareAmount: number;
 } {
+  // Developers ONLY earn revenue share % from In-Game Ads; website outer ads yield 0% creator share.
+  const eligibleForCreatorShare = isInGameAdFormat(format);
+  const baseShareRate = !eligibleForCreatorShare
+    ? 0
+    : isReferral
+    ? AD_CONFIG.REFERRAL_CREATOR_SHARE_RATE
+    : AD_CONFIG.STANDARD_CREATOR_SHARE_RATE;
+
   if (isIvt) {
     return {
       grossRevenue: 0,
       networkDeduction: 0,
       netRevenue: 0,
-      creatorShareRate: isReferral ? AD_CONFIG.REFERRAL_CREATOR_SHARE_RATE : AD_CONFIG.STANDARD_CREATOR_SHARE_RATE,
+      creatorShareRate: baseShareRate,
       creatorShareAmount: 0,
     };
   }
@@ -229,7 +255,7 @@ export function calculateAdRevenue(
   const grossRevenue = rateConfig.ratePerImpression;
   const networkDeduction = Math.round(grossRevenue * AD_CONFIG.NETWORK_FEE_RATE * 100000) / 100000;
   const netRevenue = Math.round((grossRevenue - networkDeduction) * 100000) / 100000;
-  const creatorShareRate = isReferral ? AD_CONFIG.REFERRAL_CREATOR_SHARE_RATE : AD_CONFIG.STANDARD_CREATOR_SHARE_RATE;
+  const creatorShareRate = baseShareRate;
   const creatorShareAmount = Math.round(netRevenue * creatorShareRate * 100000) / 100000;
 
   return {

@@ -722,7 +722,7 @@ export default function PayoutsPage() {
                 ? formatINR(timeframeRevenue.year * 1.1)
                 : formatINR(timeframeRevenue.total * 1.1)}
             </div>
-            <div className="text-[11px] text-slate-400 mt-1">Direct ad impressions & game plays</div>
+            <div className="text-[11px] text-slate-400 mt-1">Verified in-game ad impressions only</div>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
@@ -770,31 +770,36 @@ export default function PayoutsPage() {
 
         {/* Visual Revenue Streams Breakdown */}
         <div className="p-5 rounded-2xl bg-slate-50/70 border border-slate-200/80 space-y-3">
-          <div className="flex items-center justify-between text-xs font-bold text-slate-700">
-            <span>Revenue Stream Breakdown ({revenueTimeframe})</span>
-            <span className="font-mono text-purple-700">100% Reconciled</span>
+          <div className="flex items-center justify-between text-xs font-bold text-slate-700 flex-wrap gap-2">
+            <span>In-Game Ad Revenue Breakdown ({revenueTimeframe}) — In-Game Ads Share Only</span>
+            <span className="font-mono text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md text-[10px]">
+              100% In-Game Ads • Website Banners Excluded
+            </span>
           </div>
 
           <div className="w-full h-3 rounded-full bg-slate-200 overflow-hidden flex">
-            <div className="bg-purple-600 h-full" style={{ width: '68%' }} title="HTML5 Video Ads (68%)" />
-            <div className="bg-blue-500 h-full" style={{ width: '22%' }} title="Player Pass Revenue (22%)" />
-            <div className="bg-emerald-500 h-full" style={{ width: '10%' }} title="Community Pool (10%)" />
+            <div className="bg-purple-600 h-full" style={{ width: '48%' }} title="In-Game Rewarded Video Ads (48%)" />
+            <div className="bg-indigo-500 h-full" style={{ width: '34%' }} title="In-Game Preroll & Interstitial Ads (34%)" />
+            <div className="bg-emerald-500 h-full" style={{ width: '18%' }} title="In-Game Lobby Banners (18%)" />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 text-xs">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-purple-600 shrink-0" />
-              <span className="text-slate-600">Video Ads & Banners: <strong>68%</strong></span>
+              <span className="text-slate-600">In-Game Rewarded Ads: <strong>48%</strong></span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-blue-500 shrink-0" />
-              <span className="text-slate-600">Player Subscriptions: <strong>22%</strong></span>
+              <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 shrink-0" />
+              <span className="text-slate-600">In-Game Preroll & Interstitials: <strong>34%</strong></span>
             </div>
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0" />
-              <span className="text-slate-600">Reward Pool Share: <strong>10%</strong></span>
+              <span className="text-slate-600">In-Game Menu Banners: <strong>18%</strong></span>
             </div>
           </div>
+          <p className="text-[11px] text-slate-500 pt-1">
+            Developer revenue share (50% organic / 70% referral-attributed of Net In-Game Ad Revenue) applies strictly to verified ads played inside your game container. Platform website banners, native cards, and sponsored listings are platform-only.
+          </p>
         </div>
       </div>
 

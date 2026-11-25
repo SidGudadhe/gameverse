@@ -53,12 +53,12 @@ export default function DeveloperAgreementPage() {
             <span className="text-slate-900">Double-Entry Revenue Sharing Engine</span>
           </h2>
           <p>
-            Game monetization is powered by automated pre-roll, interstitial, and rewarded ad placements. Revenue is calculated on a transparent double-entry platform model:
+            Developer monetization is powered exclusively by verified <strong className="text-slate-900">In-Game Ad Placements</strong> (pre-roll, mid-game interstitial, rewarded revive, and in-game lobby ads). Platform website display banners, homepage native cards, and sponsored listings are platform-only and excluded from creator payouts. Revenue is calculated on a transparent double-entry model:
           </p>
           <div className="bg-slate-50 border border-emerald-200 rounded-xl p-4 font-mono text-xs space-y-2 text-emerald-800">
-            <div>Net Ad Revenue = Gross Ad Revenue − Operating Bandwidth & Ad Network Deductions</div>
-            <div>Standard Organic Creator Share = Competitive Tiered Net Revenue Share</div>
-            <div>Creator Referral Attributed Share = Enhanced Referral-Attributed Payout Bonus</div>
+            <div>Net In-Game Ad Revenue = Gross In-Game Ad Revenue − Operating Bandwidth & Ad Network Deductions</div>
+            <div>Standard Organic In-Game Share = 50% of Net In-Game Ad Revenue</div>
+            <div>Creator Referral Attributed Share = 70% of Net In-Game Ad Revenue</div>
           </div>
           <p className="text-xs text-slate-500">
             All ad impressions, eCPMs, and earnings are tracked in real-time in your Studio Analytics and Revenue Ledger.

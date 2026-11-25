@@ -35,6 +35,7 @@ import {
   Info,
   Sliders,
   Filter,
+  X,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/Button';
@@ -57,6 +58,7 @@ export default function DeveloperPage() {
   });
   const [activeTab, setActiveTab] = useState<'ALL' | 'NOTICES' | 'CHANGE_REQUESTS' | 'GROWTH'>('ALL');
   const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
+  const [readableNotice, setReadableNotice] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   // Load authenticated developer stats & notifications
@@ -89,7 +91,11 @@ export default function DeveloperPage() {
   }, [isAuthenticated]);
 
   const handleDismiss = (id: string) => {
-    setDismissedIds((prev) => new Set([...prev, id]));
+    setDismissedIds((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
   };
 
   // =========================================================================
@@ -298,7 +304,7 @@ export default function DeveloperPage() {
                     Total Revenue
                   </span>
                   <span className="text-[10px] text-emerald-700 font-semibold font-mono">
-                    Net Ad Revenue & Bonuses
+                    In-Game Ads Share Only (50% Organic / 70% Referral)
                   </span>
                 </div>
                 <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
@@ -311,7 +317,7 @@ export default function DeveloperPage() {
               </div>
 
               <p className="text-xs text-slate-600 leading-snug">
-                Accumulated creator earnings from rewarded and banner ad formats.
+                Developer earnings are derived exclusively from verified in-game video and interstitial ad impressions (preroll, midroll, rewarded). Website banners are excluded.
               </p>
             </div>
 
@@ -334,26 +340,28 @@ export default function DeveloperPage() {
             ========================================================================= */}
         <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs">
           {/* Header & Tabs */}
-          <div className="p-5 sm:p-6 border-b border-slate-200 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <Bell className="w-5 h-5 text-indigo-600" />
-                <h2 className="font-heading font-black text-xl text-slate-900">
-                  Studio Activity & Communication Streams
-                </h2>
-                {totalActiveNotifications > 0 && (
-                  <span className="bg-indigo-600 text-white text-[11px] font-mono font-bold px-2 py-0.5 rounded-full">
-                    {totalActiveNotifications} Active
-                  </span>
-                )}
+          <div className="p-5 sm:p-6 border-b border-slate-200 flex flex-col gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Bell className="w-5 h-5 text-indigo-600" />
+                  <h2 className="font-heading font-black text-xl text-slate-900">
+                    Studio Activity & Communication Streams
+                  </h2>
+                  {totalActiveNotifications > 0 && (
+                    <span className="bg-indigo-600 text-white text-[11px] font-mono font-bold px-2 py-0.5 rounded-full">
+                      {totalActiveNotifications} Active
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-slate-500">
+                  Official admin notices, game build change requests, and playtime/earnings milestone alerts.
+                </p>
               </div>
-              <p className="text-xs text-slate-500">
-                Official admin notices, game build change requests, and playtime/earnings milestone alerts.
-              </p>
             </div>
 
             {/* Navigation Tabs (Notice > change/update requist > growth ke notification) */}
-            <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl overflow-x-auto scrollbar-none text-xs font-semibold">
+            <div className="inline-flex flex-wrap items-center gap-1.5 p-1 bg-slate-100 rounded-xl text-xs font-semibold self-start">
               <button
                 type="button"
                 onClick={() => setActiveTab('ALL')}
@@ -421,12 +429,13 @@ export default function DeveloperPage() {
 
           {/* STREAM CONTENT AREA */}
           <div className="divide-y divide-slate-100">
-            {/* 1. ADMIN NOTICES STREAM ("Notice me jo admin Notice dalega") */}
+            {/* 1. ADMIN NOTICES STREAM (Read-only official notices from Admin, fully readable) */}
             {(activeTab === 'ALL' || activeTab === 'NOTICES') &&
               allNotices.map((notice) => (
                 <div
                   key={notice.id}
-                  className="p-5 sm:p-6 hover:bg-slate-50/60 transition-colors flex flex-col md:flex-row md:items-start justify-between gap-4"
+                  onClick={() => setReadableNotice(notice)}
+                  className="p-5 sm:p-6 hover:bg-slate-50/70 transition-colors flex flex-col md:flex-row md:items-start justify-between gap-4 cursor-pointer"
                 >
                   <div className="flex items-start gap-4 flex-1">
                     <div className="w-10 h-10 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-600 flex items-center justify-center shrink-0 mt-0.5">
@@ -452,17 +461,28 @@ export default function DeveloperPage() {
                         {notice.title}
                       </h3>
 
-                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-3xl">
+                      <p className="text-xs sm:text-sm text-slate-700 leading-relaxed max-w-3xl">
                         {notice.body}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 self-end md:self-start shrink-0 pt-2 md:pt-0">
+                  <div
+                    className="flex items-center gap-2 self-end md:self-start shrink-0 pt-2 md:pt-0"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setReadableNotice(notice)}
+                      className="px-3.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>Read Full Notice</span>
+                    </button>
                     {notice.actionUrl && (
                       <Link
                         href={notice.actionUrl}
-                        className="px-3.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-semibold transition-colors flex items-center gap-1.5"
+                        className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold transition-colors flex items-center gap-1.5"
                       >
                         <span>{notice.actionLabel || 'View Details'}</span>
                         <ArrowRight className="w-3 h-3" />
@@ -480,7 +500,7 @@ export default function DeveloperPage() {
                 </div>
               ))}
 
-            {/* 2. CHANGE / UPDATE REQUEST STREAM ("change/update requist me jab admin kisi game ko update ya kisi game ko publish karte time change karne ki requist dalega ya reject karega") */}
+            {/* 2. CHANGE / UPDATE REQUEST STREAM (Open that specific game's form to modify & resubmit to Admin) */}
             {(activeTab === 'ALL' || activeTab === 'CHANGE_REQUESTS') &&
               allChangeRequests.map((cr) => (
                 <div
@@ -490,6 +510,8 @@ export default function DeveloperPage() {
                       ? 'bg-rose-50/40 hover:bg-rose-50/70 border-l-4 border-rose-500'
                       : cr.type === 'APPROVAL_NOTICE'
                       ? 'bg-emerald-50/30 hover:bg-emerald-50/60 border-l-4 border-emerald-500'
+                      : cr.type === 'PENDING_ADMIN_REVIEW'
+                      ? 'bg-indigo-50/30 hover:bg-indigo-50/60 border-l-4 border-indigo-500'
                       : 'bg-amber-50/30 hover:bg-amber-50/60 border-l-4 border-amber-500'
                   }`}
                 >
@@ -500,6 +522,8 @@ export default function DeveloperPage() {
                           ? 'bg-rose-100 border-rose-200 text-rose-700'
                           : cr.type === 'APPROVAL_NOTICE'
                           ? 'bg-emerald-100 border-emerald-200 text-emerald-700'
+                          : cr.type === 'PENDING_ADMIN_REVIEW'
+                          ? 'bg-indigo-100 border-indigo-200 text-indigo-700'
                           : 'bg-amber-100 border-amber-200 text-amber-800'
                       }`}
                     >
@@ -507,6 +531,8 @@ export default function DeveloperPage() {
                         <AlertTriangle className="w-5 h-5" />
                       ) : cr.type === 'APPROVAL_NOTICE' ? (
                         <CheckCircle2 className="w-5 h-5" />
+                      ) : cr.type === 'PENDING_ADMIN_REVIEW' ? (
+                        <Clock className="w-5 h-5" />
                       ) : (
                         <RotateCcw className="w-5 h-5" />
                       )}
@@ -520,6 +546,8 @@ export default function DeveloperPage() {
                               ? 'bg-rose-100 text-rose-800 border-rose-200'
                               : cr.type === 'APPROVAL_NOTICE'
                               ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
+                              : cr.type === 'PENDING_ADMIN_REVIEW'
+                              ? 'bg-indigo-100 text-indigo-800 border-indigo-200'
                               : 'bg-amber-100 text-amber-800 border-amber-200'
                           }`}
                         >
@@ -530,7 +558,7 @@ export default function DeveloperPage() {
                         {cr.reviewedBy && (
                           <>
                             <span className="text-slate-400 text-xs font-mono">•</span>
-                            <span className="text-slate-500 text-xs font-medium">Reviewed by {cr.reviewedBy}</span>
+                            <span className="text-slate-500 text-xs font-medium">{cr.reviewedBy}</span>
                           </>
                         )}
                       </div>
@@ -567,18 +595,32 @@ export default function DeveloperPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 self-end md:self-start shrink-0 pt-2 md:pt-0">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 self-end md:self-start shrink-0 pt-2 md:pt-0">
+                    {cr.sandboxUrl && (
+                      <Link
+                        href={cr.sandboxUrl}
+                        target="_blank"
+                        className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold transition-colors flex items-center justify-center gap-1"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        <span>Sandbox</span>
+                      </Link>
+                    )}
                     <Link
-                      href={cr.actionUrl}
-                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center gap-1.5 ${
+                      href={`/developer/submit?edit=${cr.gameId}&requestRef=${cr.id}`}
+                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer ${
                         cr.type === 'BUILD_REJECTED'
                           ? 'bg-rose-600 hover:bg-rose-500 text-white'
                           : cr.type === 'APPROVAL_NOTICE'
                           ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                          : cr.type === 'PENDING_ADMIN_REVIEW'
+                          ? 'bg-indigo-600 hover:bg-indigo-500 text-white'
                           : 'bg-amber-600 hover:bg-amber-500 text-white'
                       }`}
+                      title={`Open game update form for ${cr.gameTitle} to change info, upload build, and resubmit to Admin`}
                     >
-                      <span>{cr.actionLabel}</span>
+                      <Sliders className="w-3.5 h-3.5" />
+                      <span>{cr.actionLabel || 'Open Game Form & Resubmit to Admin'}</span>
                       <ArrowRight className="w-3 h-3" />
                     </Link>
                     <button
@@ -708,7 +750,7 @@ export default function DeveloperPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 text-slate-700">
-                  {games.slice(0, 5).map((g) => (
+                  {games.slice(0, 10).map((g) => (
                     <tr key={g.id} className="hover:bg-slate-50 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
@@ -719,30 +761,41 @@ export default function DeveloperPage() {
                           />
                           <div>
                             <div className="font-semibold text-slate-900 text-sm">{g.title}</div>
-                            <div className="text-[11px] text-slate-500">{g.categoryName}</div>
+                            <div className="text-[11px] text-slate-500">
+                              {g.categoryName} • {g.playerMode === 'BOTH' ? 'Single + Multiplayer' : g.playerMode === 'MULTIPLAYER' ? 'Multiplayer' : 'Singleplayer'}
+                            </div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 font-mono text-slate-600">{g.engine}</td>
                       <td className="px-6 py-4">
-                        <span
-                          className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                            g.status === 'PUBLISHED'
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                              : g.status === 'QA_TESTING'
-                              ? 'bg-amber-50 text-amber-800 border-amber-200'
-                              : 'bg-slate-100 text-slate-700 border-slate-200'
-                          }`}
-                        >
-                          {g.status === 'PUBLISHED' && <CheckCircle2 className="w-3 h-3" />}
-                          {g.status}
-                        </span>
+                        <div className="flex flex-col gap-1 items-start">
+                          <span
+                            className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                              g.status === 'PUBLISHED'
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                : g.status === 'QA_TESTING' || g.status === 'SUBMITTED'
+                                ? 'bg-amber-50 text-amber-800 border-amber-200'
+                                : g.status === 'CHANGES_REQUESTED' || g.status === 'REJECTED'
+                                ? 'bg-rose-50 text-rose-800 border-rose-200'
+                                : 'bg-slate-100 text-slate-700 border-slate-200'
+                            }`}
+                          >
+                            {g.status === 'PUBLISHED' && <CheckCircle2 className="w-3 h-3" />}
+                            {g.status}
+                          </span>
+                          {g.status === 'PUBLISHED' && (
+                            <span className="text-[9px] text-emerald-600 font-semibold font-mono">
+                              Live on Website • Editable anytime
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="px-6 py-4 font-semibold text-slate-900 font-mono">
                         {(g.totalPlays || 0).toLocaleString()}
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
+                        <div className="flex items-center justify-end gap-2 flex-wrap">
                           <Link
                             href={`/sandbox/${g.id}/${g.currentVersionId || 'v1'}`}
                             target="_blank"
@@ -754,9 +807,15 @@ export default function DeveloperPage() {
                           </Link>
                           <Link
                             href={`/developer/submit?edit=${g.id}`}
-                            className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-3 py-1.5 rounded-lg transition-colors font-semibold"
+                            className="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-3.5 py-1.5 rounded-lg shadow-2xs transition-all active:scale-95 cursor-pointer"
+                            title={
+                              g.status === 'PUBLISHED'
+                                ? 'Change or update live game information, metadata, video preview, or upload a new build'
+                                : 'Open game form to modify details or upload new build'
+                            }
                           >
-                            Edit Build
+                            <Sliders className="w-3 h-3" />
+                            <span>Change / Update Info</span>
                           </Link>
                         </div>
                       </td>
@@ -770,7 +829,7 @@ export default function DeveloperPage() {
               <Gamepad2 className="w-10 h-10 text-slate-300 mx-auto" />
               <p className="text-sm font-semibold text-slate-700">No games uploaded yet</p>
               <p className="text-xs text-slate-400 max-w-sm mx-auto">
-                Upload your first HTML5 or WebGL game to start earning ad revenue and reaching players.
+                Upload your first HTML5 or WebGL game to start earning in-game ad revenue and reaching players.
               </p>
               <Link href="/developer/submit" className="inline-block mt-2">
                 <Button variant="primary" className="bg-indigo-600 hover:bg-indigo-500">
@@ -780,6 +839,98 @@ export default function DeveloperPage() {
             </div>
           )}
         </div>
+
+        {/* =========================================================================
+            READABLE OFFICIAL NOTICE MODAL ("notice readable rahegi")
+            ========================================================================= */}
+        {readableNotice && (
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="notice-reader-title"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in"
+            onClick={() => setReadableNotice(null)}
+          >
+            <div
+              className="w-full max-w-2xl bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden text-left"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-6 border-b border-slate-200 bg-slate-50/70 flex items-start justify-between gap-4">
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="bg-indigo-100 text-indigo-800 border border-indigo-200 text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-md uppercase tracking-wider">
+                      Official Admin Notice (Read-Only)
+                    </span>
+                    {readableNotice.pinned && (
+                      <span className="bg-purple-100 text-purple-800 text-[10px] font-bold px-2 py-0.5 rounded-md">
+                        PINNED
+                      </span>
+                    )}
+                    {readableNotice.priority && (
+                      <span className="bg-slate-200 text-slate-700 text-[10px] font-mono font-bold px-2 py-0.5 rounded-md">
+                        {readableNotice.priority}
+                      </span>
+                    )}
+                  </div>
+                  <h3 id="notice-reader-title" className="font-heading font-black text-xl text-slate-900">
+                    {readableNotice.title}
+                  </h3>
+                  <div className="flex items-center gap-2 text-xs text-slate-500">
+                    <span>From <strong className="text-slate-700">{readableNotice.author}</strong></span>
+                    <span>•</span>
+                    <span>{readableNotice.timeAgo}</span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setReadableNotice(null)}
+                  aria-label="Close notice reader"
+                  className="w-9 h-9 rounded-full bg-white hover:bg-slate-100 text-slate-500 hover:text-slate-800 border border-slate-200 flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="p-6 sm:p-8 space-y-5 text-sm text-slate-700 leading-relaxed max-h-[60vh] overflow-y-auto">
+                <p className="whitespace-pre-line text-slate-800 text-sm sm:text-base leading-relaxed">
+                  {readableNotice.body}
+                </p>
+
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-1 font-mono">
+                  <div className="font-bold text-slate-800 uppercase tracking-wider text-[10px]">
+                    Official Platform Communication Record
+                  </div>
+                  <div>Notice Reference: {readableNotice.id}</div>
+                  <div>Posted: {readableNotice.createdAt ? new Date(readableNotice.createdAt).toLocaleString() : readableNotice.timeAgo}</div>
+                </div>
+              </div>
+
+              <div className="p-5 border-t border-slate-200 bg-slate-50 flex items-center justify-between gap-3">
+                <span className="text-[11px] text-slate-500">
+                  Admin directives are read-only official communications.
+                </span>
+                <div className="flex items-center gap-2">
+                  {readableNotice.actionUrl && (
+                    <Link
+                      href={readableNotice.actionUrl}
+                      className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-colors flex items-center gap-1.5"
+                    >
+                      <span>{readableNotice.actionLabel || 'Open Reference'}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setReadableNotice(null)}
+                    className="px-4 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold transition-colors cursor-pointer"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -808,7 +959,7 @@ export default function DeveloperPage() {
             </h1>
 
             <p className="text-slate-600 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
-              Join thousands of indie developers and studios publishing HTML5, WebGL, and WASM games on GameVerse. Zero server costs, competitive ad revenue sharing, and direct instant payouts.
+              Join thousands of indie developers and studios publishing HTML5, WebGL, and WASM games on GameVerse. Zero server costs, transparent in-game ad revenue sharing, and direct instant payouts.
             </p>
 
             {/* CTA Group */}
@@ -838,9 +989,9 @@ export default function DeveloperPage() {
             <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
               <IndianRupee className="w-6 h-6" />
             </div>
-            <h3 className="font-heading font-bold text-lg text-slate-900">Double-Entry Revenue Share</h3>
+            <h3 className="font-heading font-bold text-lg text-slate-900">In-Game Ad Revenue Share</h3>
             <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-              Competitive Net Ad Revenue distribution from non-intrusive preroll, interstitial, and rewarded ad slots. Net-30 monthly bank wire and UPI disbursements.
+              Earn strictly from in-game preroll, interstitial, and rewarded ad placements (50% organic / 70% referral of net in-game ad revenue). Website outer banners are excluded. Net-30 bank wire and UPI payouts.
             </p>
           </div>
 

@@ -126,7 +126,10 @@ export async function POST(req: NextRequest) {
     }
 
     const semver = (versionNumber || '1.0.0').trim();
-    const versionId = `ver-${cleanSlug}-${semver.replace(/\./g, '_')}`;
+    const baseVersionId = `ver-${cleanSlug}-${semver.replace(/\./g, '_')}`;
+    const versionId = gvDb.getVersionById(baseVersionId)
+      ? `${baseVersionId}-${Date.now().toString(36).slice(-4)}`
+      : baseVersionId;
 
     // 4. Archive Ingestion & Destination Setup
     const targetDir = path.join(process.cwd(), '.data', 'games', gameId, versionId);
@@ -198,14 +201,26 @@ export async function POST(req: NextRequest) {
       // Extract to target
       extractArchiveSafely(buffer, targetDir);
     } else {
-      // Fallback: create mock runnable entry if test or mock submission without bundle
-      if (!fs.existsSync(targetDir)) {
-        fs.mkdirSync(targetDir, { recursive: true });
+      // Preserve existing runnable build if developer is updating metadata or responding without a new ZIP
+      const prevVersionId = existingGame?.currentVersionId;
+      const prevDir = prevVersionId
+        ? path.join(process.cwd(), '.data', 'games', gameId, prevVersionId)
+        : null;
+
+      if (prevDir && fs.existsSync(prevDir) && fs.existsSync(path.join(prevDir, 'index.html'))) {
+        if (prevDir !== targetDir && !fs.existsSync(targetDir)) {
+          fs.mkdirSync(targetDir, { recursive: true });
+          fs.cpSync(prevDir, targetDir, { recursive: true });
+        }
+      } else if (!fs.existsSync(path.join(targetDir, 'index.html'))) {
+        if (!fs.existsSync(targetDir)) {
+          fs.mkdirSync(targetDir, { recursive: true });
+        }
+        fs.writeFileSync(
+          path.join(targetDir, 'index.html'),
+          `<!DOCTYPE html><html><body><h1>${title}</h1><p>Engine: ${engine || 'HTML5'}</p></body></html>`
+        );
       }
-      fs.writeFileSync(
-        path.join(targetDir, 'index.html'),
-        `<!DOCTYPE html><html><body><h1>${title}</h1><p>Engine: ${engine || 'HTML5'}</p></body></html>`
-      );
     }
 
     // 5. Database Record Persistence
@@ -238,9 +253,8 @@ export async function POST(req: NextRequest) {
         previewVideoUrl: gameplayVideoUrl,
       });
     } else {
-      game = gvDb.updateGame(game.id, {
-        currentVersionId: versionId,
-        status: 'SUBMITTED',
+      const updates: any = {
+        title: title || game.title,
         shortDescription: shortDescription || game.shortDescription,
         fullDescription: fullDescription || game.fullDescription,
         controlsGuide: controlsGuide || game.controlsGuide,
@@ -249,7 +263,20 @@ export async function POST(req: NextRequest) {
         playerMode: playerMode || game.playerMode,
         gameplayVideoUrl: gameplayVideoUrl || game.gameplayVideoUrl,
         previewVideoUrl: gameplayVideoUrl || game.previewVideoUrl,
-      });
+        // Keep already live game PUBLISHED so players stay uninterrupted while Admin reviews the submitted update ticket
+        status: game.status === 'PUBLISHED' ? 'PUBLISHED' : 'SUBMITTED',
+      };
+      if (thumbnailUrl) updates.thumbnailUrl = thumbnailUrl;
+      if (bannerUrl) updates.bannerUrl = bannerUrl;
+      if (categoryId) updates.categoryId = categoryId;
+      if (categoryName) updates.categoryName = categoryName;
+      if (body.mainCategory) updates.mainCategory = body.mainCategory === 'NON_VEG' ? 'NON_VEG' : 'VEG';
+      if (orientation) updates.orientation = orientation;
+      if (engine) updates.engine = engine;
+      if (body.uploadSessionId || tempUploadId || fileBase64) {
+        updates.currentVersionId = versionId;
+      }
+      game = gvDb.updateGame(game.id, updates);
     }
 
     // Version Record
@@ -288,7 +315,9 @@ export async function POST(req: NextRequest) {
       gameId,
       gameTitle: title,
       developerName: user.name,
-      manualNotes: changelog || 'Initial QA build submission.',
+      manualNotes: body.requestRef
+        ? `Resubmitted in response to Admin Change Request (${body.requestRef}). Updated game information & assets.`
+        : (changelog || (existingGame ? 'Updated game details submitted for Admin review.' : 'Initial QA build submission.')),
       automatedChecks: {
         entryPageLoads: scanResults.hasEntryFile,
         consoleErrorsCount: 0,

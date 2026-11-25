@@ -142,20 +142,22 @@ describe('100x Deep Ads System & Placements Verification', () => {
     });
   });
 
-  describe('5. Website Outer Ad Formats & Revenue Calculation', () => {
-    const allFormats: AdFormat[] = [
+  describe('5. In-Game vs Website Outer Ad Formats & Revenue Calculation', () => {
+    const inGameFormats: AdFormat[] = [
       'PREROLL',
       'INTERSTITIAL',
       'REWARDED',
       'BONUS_REWARD',
       'BANNER',
+    ];
+    const websiteOuterFormats: AdFormat[] = [
       'NATIVE',
       'DISPLAY',
       'SPONSORED_LISTING',
     ];
 
-    it('should have valid ecpm and revenue rates configured for all ad placements', () => {
-      for (const fmt of allFormats) {
+    it('should grant creator revenue share ONLY for in-game ad formats and 0% for website outer ad placements', () => {
+      for (const fmt of inGameFormats) {
         expect(AD_RATES[fmt]).toBeDefined();
         expect(AD_RATES[fmt].ecpm).toBeGreaterThan(0);
         expect(AD_RATES[fmt].ratePerImpression).toBeGreaterThan(0);
@@ -164,7 +166,23 @@ describe('100x Deep Ads System & Placements Verification', () => {
         expect(rev.grossRevenue).toBeGreaterThan(0);
         expect(rev.netRevenue).toBeGreaterThan(0);
         expect(rev.creatorShareAmount).toBeGreaterThan(0);
-        expect(rev.creatorShareRate).toBe(0.5); // 50% standard share
+        expect(rev.creatorShareRate).toBe(0.5); // 50% standard share for in-game ads
+      }
+
+      for (const fmt of websiteOuterFormats) {
+        expect(AD_RATES[fmt]).toBeDefined();
+        expect(AD_RATES[fmt].ecpm).toBeGreaterThan(0);
+        expect(AD_RATES[fmt].ratePerImpression).toBeGreaterThan(0);
+
+        const rev = calculateAdRevenue(fmt, false, false);
+        expect(rev.grossRevenue).toBeGreaterThan(0);
+        expect(rev.netRevenue).toBeGreaterThan(0);
+        expect(rev.creatorShareAmount).toBe(0);
+        expect(rev.creatorShareRate).toBe(0); // 0% creator share on website outer ads
+
+        const revRef = calculateAdRevenue(fmt, true, false);
+        expect(revRef.creatorShareAmount).toBe(0);
+        expect(revRef.creatorShareRate).toBe(0);
       }
     });
 

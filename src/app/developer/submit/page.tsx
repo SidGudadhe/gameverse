@@ -24,6 +24,7 @@ import {
   Play,
   Video,
   Loader2,
+  Sliders,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -85,6 +86,8 @@ export default function GameSubmitPage() {
   const [showDraftBanner, setShowDraftBanner] = useState(false);
   const [activeTab, setActiveTab] = useState<'upload' | 'status'>('upload');
   const [statusGames, setStatusGames] = useState<any[]>([]);
+  const [editingGame, setEditingGame] = useState<any>(null);
+  const [requestRef, setRequestRef] = useState<string | null>(null);
 
   // Load existing draft and catalog status on mount
   React.useEffect(() => {
@@ -98,11 +101,15 @@ export default function GameSubmitPage() {
         if (typeof window !== 'undefined') {
           const params = new URLSearchParams(window.location.search);
           const editId = params.get('edit');
+          const reqRef = params.get('requestRef') || params.get('requestId');
+          if (reqRef) setRequestRef(reqRef);
           if (editId) {
             const target = games.find((g: any) => g.id === editId || g.slug === editId);
             if (target) {
+              setEditingGame(target);
               setTitle(target.title || '');
               setSlug(target.slug || '');
+              if (target.mainCategory) setMainCategory(target.mainCategory === 'NON_VEG' ? 'NON_VEG' : 'VEG');
               if (target.categoryId) setCategory(target.categoryId);
               if (target.categoryName) setCategoryName(target.categoryName);
               if (target.engine) setEngine(target.engine);
@@ -112,6 +119,11 @@ export default function GameSubmitPage() {
               if (target.controlsGuide) setControls(target.controlsGuide);
               if (target.thumbnailUrl) setThumbnailUrl(target.thumbnailUrl);
               if (target.bannerUrl) setBannerUrl(target.bannerUrl);
+              setChangelog(
+                reqRef
+                  ? 'Updated game details and build in response to Admin Change / Update Request.'
+                  : 'Updated game information and metadata.'
+              );
               if (target.developedBy) {
                 setDevelopedBy(target.developedBy);
                 if (target.developedBy === 'AI Developed') setAiDisclosure('AI_GENERATED');
@@ -427,6 +439,7 @@ export default function GameSubmitPage() {
         prohibitedContentConfirmed: true,
         tempUploadId: tempUploadId || undefined,
         uploadSessionId: uploadSessionId || undefined,
+        requestRef: requestRef || undefined,
       };
 
       const res = await fetch('/api/developer/submit', {
@@ -459,12 +472,14 @@ export default function GameSubmitPage() {
           <CheckCircle className="w-8 h-8" />
         </div>
         <div className="space-y-2">
-          <Badge variant="success">Build Queued for QA Review</Badge>
+          <Badge variant="success">
+            {editingGame ? 'Sent to Admin for Verification' : 'Build Queued for QA Review'}
+          </Badge>
           <h1 className="font-heading font-black text-3xl sm:text-4xl text-slate-900">
-            Submission Received!
+            {editingGame ? 'Update Submitted to Admin!' : 'Submission Received!'}
           </h1>
           <p className="text-slate-600 text-sm max-w-xl mx-auto leading-relaxed">
-            Your game <span className="font-semibold text-slate-900">{submittedData.game?.title || title}</span> (v{submittedData.version?.versionNumber || versionNumber}) has been stored in our isolated runtime directory and queued for QA review.
+            Your game <span className="font-semibold text-slate-900">{submittedData.game?.title || title}</span> (v{submittedData.version?.versionNumber || versionNumber}) has been stored cleanly and routed directly to the GameVerse Admin QA Queue for review.
           </p>
         </div>
 
@@ -751,6 +766,47 @@ export default function GameSubmitPage() {
 
       {activeTab === 'upload' && (
         <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Active Edit Mode Banner */}
+          {editingGame && (
+            <div className="p-5 rounded-2xl bg-indigo-50/90 border border-indigo-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-in fade-in">
+              <div className="flex items-start gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0 mt-0.5">
+                  <Sliders className="w-5 h-5" />
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-indigo-200/80 text-indigo-900 uppercase">
+                      Game Update Mode
+                    </span>
+                    {editingGame.status === 'PUBLISHED' ? (
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        Live on GameVerse • Editable Anytime
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-200">
+                        Status: {editingGame.status}
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="font-heading font-black text-base text-slate-900">
+                    Modifying Details & Assets for: {editingGame.title}
+                  </h3>
+                  <p className="text-xs text-slate-600 leading-relaxed max-w-2xl">
+                    {requestRef
+                      ? 'Admin requested adjustments for this title. Update required information, media preview, or build bundle below. Submitting will send your update directly to Admin for verification.'
+                      : 'You are modifying details for this title. You can update titles, descriptions, player modes, gameplay video, or upload an updated ZIP bundle. Submitting will route your updates directly to Admin for verification.'}
+                  </p>
+                </div>
+              </div>
+              <Link
+                href="/developer"
+                className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200 shrink-0 self-end sm:self-center transition-colors shadow-2xs"
+              >
+                Return to Studio
+              </Link>
+            </div>
+          )}
         {/* ================= SECTION 1: ARCHIVE UPLOAD ================= */}
         <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-6 shadow-xs">
           <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
@@ -1447,7 +1503,7 @@ export default function GameSubmitPage() {
                 className="mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
               />
               <span className="text-xs text-slate-700 leading-relaxed">
-                I agree to the <strong className="text-slate-900">Gameverse Creator Distribution Agreement v1.0-2026</strong> and the 50% net advertising revenue sharing model.
+                I agree to the <strong className="text-slate-900">Gameverse Creator Distribution Agreement v1.0-2026</strong> and the 50% organic / 70% referral net in-game advertising revenue sharing model (website outer banners excluded).
               </span>
             </label>
           </div>
@@ -1469,7 +1525,7 @@ export default function GameSubmitPage() {
             isLoading={submitting}
             disabled={submitting || uploading}
           >
-            Submit Build for QA Review
+            {editingGame ? 'Save Changes & Submit to Admin for Review' : 'Submit Build for QA Review'}
           </Button>
         </div>
       </form>

@@ -74,6 +74,8 @@ export default function MyGamesPage() {
   const [settingsControls, setSettingsControls] = useState('');
   const [settingsOrientation, setSettingsOrientation] = useState('LANDSCAPE');
   const [settingsMainCategory, setSettingsMainCategory] = useState<'VEG' | 'NON_VEG'>('VEG');
+  const [settingsPlayerMode, setSettingsPlayerMode] = useState<'SINGLEPLAYER' | 'MULTIPLAYER' | 'BOTH'>('SINGLEPLAYER');
+  const [settingsVideoUrl, setSettingsVideoUrl] = useState('');
   const [settingsSaving, setSettingsSaving] = useState(false);
   const [settingsFeedback, setSettingsFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -299,6 +301,8 @@ export default function MyGamesPage() {
     setSettingsControls(game.controlsGuide || 'Keyboard & Mouse');
     setSettingsOrientation(game.orientation || 'LANDSCAPE');
     setSettingsMainCategory(game.mainCategory || 'VEG');
+    setSettingsPlayerMode(game.playerMode || 'SINGLEPLAYER');
+    setSettingsVideoUrl(game.gameplayVideoUrl || game.previewVideoUrl || '');
     setSettingsFeedback(null);
   };
 
@@ -317,6 +321,8 @@ export default function MyGamesPage() {
           controlsGuide: settingsControls.trim(),
           orientation: settingsOrientation,
           mainCategory: settingsMainCategory,
+          playerMode: settingsPlayerMode,
+          gameplayVideoUrl: settingsVideoUrl.trim(),
         }),
       });
 
@@ -555,7 +561,7 @@ export default function MyGamesPage() {
                           ₹{Number(game.earnings ?? 120.5).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </div>
                         <span className="text-[10px] text-emerald-700 font-medium block">
-                          Ad Revenue
+                          In-Game Ad Revenue
                         </span>
                       </div>
 
@@ -633,7 +639,7 @@ export default function MyGamesPage() {
                     </button>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <Link
                       href={`/sandbox/${game.id}/${game.currentVersionId || 'v1'}`}
                       target="_blank"
@@ -642,6 +648,15 @@ export default function MyGamesPage() {
                     >
                       <ExternalLink className="w-3 h-3" />
                       <span>Sandbox Preview</span>
+                    </Link>
+
+                    <Link
+                      href={`/developer/submit?edit=${game.id}`}
+                      className="bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-1.5 rounded-xl shadow-xs transition-all flex items-center gap-1.5 font-semibold"
+                      title="Open full game form to change/update info, media preview, or resubmit to Admin (works even while live)"
+                    >
+                      <Sliders className="w-3.5 h-3.5" />
+                      <span>Change / Update Info</span>
                     </Link>
 
                     <button
@@ -1079,6 +1094,32 @@ export default function MyGamesPage() {
                     <option value="PORTRAIT">Portrait</option>
                     <option value="ANY">Any / Responsive</option>
                   </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Player Mode:</label>
+                  <select
+                    value={settingsPlayerMode}
+                    onChange={(e) => setSettingsPlayerMode(e.target.value as 'SINGLEPLAYER' | 'MULTIPLAYER' | 'BOTH')}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-semibold focus:outline-none focus:border-indigo-500"
+                  >
+                    <option value="SINGLEPLAYER">Singleplayer Only</option>
+                    <option value="MULTIPLAYER">Multiplayer Only</option>
+                    <option value="BOTH">Singleplayer + Multiplayer</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">30–50s Gameplay Video URL:</label>
+                  <input
+                    type="text"
+                    value={settingsVideoUrl}
+                    onChange={(e) => setSettingsVideoUrl(e.target.value)}
+                    placeholder="/videos/preview-gameplay.mp4"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500 font-mono"
+                  />
                 </div>
               </div>
 

@@ -80,12 +80,17 @@ describe('Developer vs Gamer Policy & Zero Cross-Portal Connection Verification 
     expect(content).not.toContain('/creator-agreement');
   });
 
-  // 6. Developer Profile Links Strictly to Developer Agreement
-  it('6. should verify Developer profile page links to /developer/agreement', () => {
-    const content = fs.readFileSync(path.join(rootDir, 'src/app/developer/profile/page.tsx'), 'utf8');
+  // 6. Creator Agreement Moved from Profile to Docs & SDK
+  it('6. should verify GameVerse Creator Agreement is in Docs & SDK and removed from Studio Profile', () => {
+    const profileContent = fs.readFileSync(path.join(rootDir, 'src/app/developer/profile/page.tsx'), 'utf8');
+    const docsContent = fs.readFileSync(path.join(rootDir, 'src/app/developer/docs/page.tsx'), 'utf8');
 
-    expect(content).toContain('/developer/agreement');
-    expect(content).not.toContain('/creator-agreement');
+    expect(profileContent).not.toContain('GameVerse Creator Agreement');
+    expect(profileContent).not.toContain('/developer/agreement');
+
+    expect(docsContent).toContain('GameVerse Creator Agreement');
+    expect(docsContent).toContain('/developer/agreement');
+    expect(docsContent).not.toContain('/creator-agreement');
   });
 
   // 7. Developer Auth Login Forgot Password

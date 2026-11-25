@@ -83,18 +83,14 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
   activeAdRef.current = activeAd;
   gameOverModalRef.current = gameOverModal;
 
-  // Resolved sandbox runner route with Direct CDN Delivery support (offloading application server)
-  const sandboxOrigin =
-    typeof window !== 'undefined' && window.location.hostname === 'localhost' && window.location.port === '3000'
-      ? ''
-      : process.env.NEXT_PUBLIC_SANDBOX_ORIGIN || '';
-
-  const cdnBase = process.env.NEXT_PUBLIC_CDN_ORIGIN || 'https://cdn.gameverse.com';
+  // Resolved sandbox runner route: uses configured CDN if set, otherwise serves directly from the sandbox file endpoint
+  const cdnBase = process.env.NEXT_PUBLIC_CDN_ORIGIN || '';
+  const localSandboxUrl = `/api/sandbox/files/${game.id}/${game.currentVersionId || 'v1'}/index.html`;
   const resolvedUrl =
     sandboxUrl ||
-    (game as any).cdnUrl ||
+    (game as any).playableUrl ||
     (cdnBase ? `${cdnBase}/games/${game.id}/versions/${game.currentVersionId || 'v1'}/index.html` : '') ||
-    `${sandboxOrigin}/api/sandbox/files/${game.id}/${game.currentVersionId || 'v1'}/index.html`;
+    localSandboxUrl;
 
   // ================= TELEMETRY PING PIPELINE =================
   const sendTelemetryPing = useCallback(
@@ -627,9 +623,11 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
         return;
       }
 
-      // Ad slot request from game SDK
+      // Ad slot request from game SDK (supports both `format` and `adType`)
       if (e.data.type === 'GV_REQUEST_AD') {
-        const format = (e.data.format as AdFormat) || 'INTERSTITIAL';
+        const rawAdType = String(e.data.format || e.data.adType || 'INTERSTITIAL').toUpperCase();
+        const format: AdFormat =
+          rawAdType === 'REWARDED' ? 'REWARDED' : rawAdType === 'BANNER' ? 'BANNER' : 'INTERSTITIAL';
         const sessionToken = sessionTokenRef.current;
         if (!sessionToken) return;
 

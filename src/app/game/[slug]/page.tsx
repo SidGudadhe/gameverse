@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { gvDb } from '@/lib/database';
-import { gameverseStorage } from '@/lib/storage';
+import { gameverseStorage, resolvePlayableGameUrl } from '@/lib/storage';
 import GameCard from '@/components/GameCard';
 import GameActionBar from '@/components/GameActionBar';
 import AdaptiveRecommendations from '@/components/AdaptiveRecommendations';
@@ -48,12 +48,21 @@ export default function GamePage({ params }: GamePageProps) {
   const version = game.currentVersionId ? gvDb.getVersionById(game.currentVersionId) : null;
   const rights = version ? gvDb.getRightsDeclarationByVersionId(version.id) : null;
 
-  // Resolve direct public CDN asset URL for isolated runtime delivery
+  const resolvedVersionId = version?.id || game.currentVersionId || 'v1';
+  const entryFile = version?.entryFile || 'index.html';
+
+  // Resolve direct CDN metadata URL (external CDN when configured) and live playable URL (local sandbox fallback when CDN domain isn't bound)
   const cdnUrl = version
     ? gameverseStorage.getPublicCdnUrl(
-        `games/${game.id}/versions/${version.versionNumber}/${version.entryFile || 'index.html'}`
+        `games/${game.id}/versions/${version.versionNumber}/${entryFile}`
       )
     : gameverseStorage.getPublicCdnUrl(`games/${game.id}/versions/v1/index.html`);
+  const playableUrl = resolvePlayableGameUrl(
+    game.id,
+    resolvedVersionId,
+    version?.versionNumber,
+    entryFile
+  );
 
   // Resolve Developed By choice (AI Developed | Human Developed | AI + Human Developed)
   let rawDevelopedBy = game.developedBy || (game as any).developmentType || rights?.developedBy;
@@ -126,7 +135,7 @@ export default function GamePage({ params }: GamePageProps) {
         <div className="lg:col-span-8 xl:col-span-9 space-y-5">
           {/* 1. Embedded Responsive Game Player Viewport (Compact Height) */}
           <div className="relative w-full rounded-3xl overflow-hidden shadow-xs">
-            <GamePlayer game={{ ...game, cdnUrl } as any} sandboxUrl={cdnUrl} />
+            <GamePlayer game={{ ...game, cdnUrl, playableUrl } as any} sandboxUrl={playableUrl} />
           </div>
 
           {/* 2. Game Title, Creator & Social Action Controls */}

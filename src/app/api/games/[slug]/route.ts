@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { gvDb } from '@/lib/database';
-import { gameverseStorage } from '@/lib/storage';
+import { gameverseStorage, resolvePlayableGameUrl } from '@/lib/storage';
 
 export async function GET(req: NextRequest, { params }: { params: { slug: string } }) {
   try {
@@ -18,12 +18,18 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
       ? gvDb.getVersionById(game.currentVersionId)
       : null;
 
-    // CDN Serving URLs (Direct CDN Delivery offloading backend application server)
+    // CDN Serving URLs + live playable fallback URL when external CDN isn't configured
     const cdnUrl = version
       ? gameverseStorage.getPublicCdnUrl(
           `games/${game.id}/versions/${version.versionNumber}/${version.entryFile || 'index.html'}`
         )
       : null;
+    const playableUrl = resolvePlayableGameUrl(
+      game.id,
+      version?.id || game.currentVersionId || 'v1',
+      version?.versionNumber,
+      version?.entryFile || 'index.html'
+    );
     const stableGameUrl = gameverseStorage.getStableGameUrl(game.slug);
 
     // Studio / Developer profile
@@ -45,6 +51,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
       game,
       version,
       cdnUrl,
+      playableUrl,
       stableGameUrl,
       developerProfile,
       rights,

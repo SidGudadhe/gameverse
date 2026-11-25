@@ -6,6 +6,10 @@ import {
   GameFileManifest,
 } from '@/types';
 import { resolveMimeType, getAssetCacheControl } from './index';
+import {
+  isSystemMetadataZipEntry,
+  detectCommonZipWrapperPrefix,
+} from '@/lib/security';
 
 export interface DeepScanResult {
   passed: boolean;
@@ -223,20 +227,8 @@ export function scanAndValidateGameZip(
     violations.push({ rule: 'MAX_FILES_EXCEEDED', message: errMsg });
   }
 
-  // Detect common single-directory wrapper (e.g. "MyGame/index.html")
-  const rootDirs = new Set<string>();
-  let hasDirectRootFiles = false;
-  for (const entry of entries) {
-    const normalizedName = entry.entryName.replace(/\\/g, '/').replace(/^\/+/, '');
-    if (!normalizedName) continue;
-    const parts = normalizedName.split('/').filter(Boolean);
-    if (parts.length > 1) {
-      rootDirs.add(parts[0]);
-    } else if (!entry.isDirectory) {
-      hasDirectRootFiles = true;
-    }
-  }
-  const commonPrefix = !hasDirectRootFiles && rootDirs.size === 1 ? Array.from(rootDirs)[0] + '/' : '';
+  // Detect common single-directory wrapper (e.g. "MyGame/index.html"), ignoring __MACOSX/.DS_Store
+  const commonPrefix = detectCommonZipWrapperPrefix(entries);
 
   let totalUncompressedBytes = 0;
   let entryFileBuffer: Buffer | null = null;
@@ -245,7 +237,7 @@ export function scanAndValidateGameZip(
   for (const entry of entries) {
     const rawName = entry.entryName;
 
-    // Check for directory traversal sequences (Zip Slip attack)
+    // Check for directory traversal sequences (Zip Slip attack) before metadata skip
     if (
       rawName.includes('..') ||
       rawName.startsWith('/') ||
@@ -256,6 +248,10 @@ export function scanAndValidateGameZip(
       suspiciousFilesDetected.push(msg);
       scanErrors.push(msg);
       violations.push({ rule: 'PATH_TRAVERSAL_DETECTED', message: msg, file: rawName });
+      continue;
+    }
+
+    if (isSystemMetadataZipEntry(rawName)) {
       continue;
     }
 

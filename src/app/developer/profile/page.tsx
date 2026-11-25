@@ -7,7 +7,6 @@ import {
   Globe,
   CheckCircle2,
   XCircle,
-  ShieldCheck,
   Building,
   Trash2,
   AlertTriangle,
@@ -22,16 +21,9 @@ import {
   Save,
   RefreshCw,
   X,
-  FileText,
 } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import DeveloperLogo from '@/components/ui/DeveloperLogo';
-
-interface AgreementData {
-  agreementVersion: string;
-  accountStatus: string;
-  acceptedAt?: string;
-}
 
 export default function StudioProfilePage() {
   // Real Profile States (Initialized empty - populated strictly with real account data)
@@ -45,7 +37,6 @@ export default function StudioProfilePage() {
   const [accountCreatedAt, setAccountCreatedAt] = useState('');
   const [studioVerified, setStudioVerified] = useState(true);
   const [totalTitles, setTotalTitles] = useState(0);
-  const [agreement, setAgreement] = useState<AgreementData | null>(null);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -85,9 +76,6 @@ export default function StudioProfilePage() {
           setAccountCreatedAt(prof.createdAt || data.user?.createdAt || '');
         }
 
-        if (data.agreement || data.data?.agreement) {
-          setAgreement(data.agreement || data.data?.agreement);
-        }
         if (data.studioVerified !== undefined) {
           setStudioVerified(Boolean(data.studioVerified));
         }
@@ -280,7 +268,7 @@ export default function StudioProfilePage() {
               </span>
             </h1>
             <p className="text-sm text-slate-500 mt-1">
-              Public studio metadata, developer contact credentials, and publishing agreement status.
+              Public studio metadata and developer contact credentials for your catalog identity.
             </p>
           </div>
         </div>
@@ -412,14 +400,6 @@ export default function StudioProfilePage() {
               <span>{totalTitles}</span>
             </div>
           </div>
-
-          <div className="text-center sm:text-left pl-4 border-l border-slate-100">
-            <div className="text-[11px] font-bold text-slate-400 uppercase font-mono">Agreement</div>
-            <div className="text-xs font-bold text-emerald-700 font-mono mt-1 flex items-center gap-1">
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span>{agreement ? agreement.agreementVersion : 'Active v2026.1'}</span>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -432,7 +412,7 @@ export default function StudioProfilePage() {
               <span>Studio Legal & Contact Information</span>
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              These details identify your studio in developer agreements, game catalog listings, and player notices.
+              These details identify your studio in game catalog listings and administrative notices.
             </p>
           </div>
 
@@ -559,50 +539,6 @@ export default function StudioProfilePage() {
           </div>
         </div>
       </form>
-
-      {/* COMPLIANCE & LEGAL AGREEMENT CARD */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
-          <div className="space-y-0.5">
-            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <FileText className="w-4 h-4 text-purple-600" />
-              <span>GameVerse Creator Agreement</span>
-            </h3>
-            <p className="text-xs text-slate-500">
-              Your binding terms governing game distribution, Net-30 settlements, and sandbox compliance.
-            </p>
-          </div>
-          <Link
-            href="/developer/agreement"
-            className="text-xs font-bold text-purple-600 hover:text-purple-700 flex items-center gap-1"
-          >
-            <span>View Full Agreement</span>
-            <ExternalLink className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-          <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
-            <div className="text-[11px] font-bold text-slate-400 uppercase font-mono">Agreement Version</div>
-            <div className="text-sm font-bold text-slate-900 mt-1 font-mono">
-              {agreement?.agreementVersion || 'v1.0-2026'}
-            </div>
-          </div>
-          <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
-            <div className="text-[11px] font-bold text-slate-400 uppercase font-mono">Account Status</div>
-            <div className="text-sm font-bold text-emerald-700 mt-1 flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-              <span>{agreement?.accountStatus || 'ACTIVE'}</span>
-            </div>
-          </div>
-          <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
-            <div className="text-[11px] font-bold text-slate-400 uppercase font-mono">Accepted Date</div>
-            <div className="text-sm font-bold text-slate-900 mt-1">
-              {agreement?.acceptedAt ? new Date(agreement.acceptedAt).toLocaleDateString() : 'Onboarding Complete'}
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* DANGER ZONE: ACCOUNT DELETION (30-DAY GRACE PERIOD) */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 border border-rose-200 shadow-sm space-y-4">

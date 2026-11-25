@@ -1,26 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server';
 import path from 'path';
 import fs from 'fs';
-import { gameverseStorage, getContentTypeForPath } from '@/lib/storage';
+import {
+  gameverseStorage,
+  resolveAssetServingHeaders,
+  getAssetCacheControl,
+} from '@/lib/storage';
 import { gvDb } from '@/lib/database';
 
-const MIME_TYPES: Record<string, string> = {
-  '.html': 'text/html; charset=utf-8',
-  '.js': 'application/javascript; charset=utf-8',
-  '.mjs': 'application/javascript; charset=utf-8',
-  '.wasm': 'application/wasm',
-  '.css': 'text/css; charset=utf-8',
-  '.json': 'application/json',
-  '.png': 'image/png',
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.gif': 'image/gif',
-  '.svg': 'image/svg+xml',
-  '.webp': 'image/webp',
-  '.mp3': 'audio/mpeg',
-  '.ogg': 'audio/ogg',
-  '.wav': 'audio/wav',
-};
+const SANDBOX_CSP =
+  "default-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' data: blob:; worker-src 'self' blob:; img-src 'self' data: blob: *; media-src 'self' data: blob: *; connect-src 'self' https: wss: data: blob: *; frame-ancestors *;";
+
+function buildSandboxAssetHeaders(
+  filePath: string,
+  options?: { contentTypeOverride?: string; cacheControlOverride?: string; etag?: string }
+): Headers {
+  const { contentType, contentEncoding } = resolveAssetServingHeaders(filePath);
+  const headers = new Headers();
+  // Prefer inner decoded MIME for .br / .gz Unity/Godot files so browser executes WASM/JS properly
+  headers.set(
+    'Content-Type',
+    contentEncoding ? contentType : options?.contentTypeOverride || contentType
+  );
+  if (contentEncoding) {
+    headers.set('Content-Encoding', contentEncoding);
+  }
+  headers.set('Content-Security-Policy', SANDBOX_CSP);
+  headers.set('X-Content-Type-Options', 'nosniff');
+  headers.set(
+    'Cache-Control',
+    options?.cacheControlOverride || getAssetCacheControl(filePath)
+  );
+  if (options?.etag) {
+    headers.set('ETag', options.etag);
+  }
+  return headers;
+}
 
 export async function GET(
   req: NextRequest,
@@ -38,10 +53,12 @@ export async function GET(
       return NextResponse.json({ error: 'Access denied: invalid file path.' }, { status: 403 });
     }
 
-    // If target file doesn't exist in baseDir, check if it's nested in a single top-level folder
+    // If target file doesn't exist in baseDir, check if it's nested in a single top-level game folder
     if (!fs.existsSync(targetFile) && fs.existsSync(baseDir)) {
       try {
-        const subdirs = fs.readdirSync(baseDir, { withFileTypes: true }).filter((d) => d.isDirectory());
+        const subdirs = fs
+          .readdirSync(baseDir, { withFileTypes: true })
+          .filter((d) => d.isDirectory() && d.name !== '__MACOSX');
         if (subdirs.length === 1) {
           const candidate = path.resolve(baseDir, subdirs[0].name, relativePath);
           if (fs.existsSync(candidate) && candidate.startsWith(baseDir + path.sep)) {
@@ -67,12 +84,10 @@ export async function GET(
         }
 
         if (cloudObj && cloudObj.body) {
-          const headers = new Headers();
-          headers.set('Content-Type', cloudObj.contentType || getContentTypeForPath(relativePath));
-          headers.set('Content-Security-Policy', "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:;");
-          headers.set('X-Content-Type-Options', 'nosniff');
-          headers.set('Cache-Control', 'public, max-age=3600');
-          if (cloudObj.etag) headers.set('ETag', cloudObj.etag);
+          const headers = buildSandboxAssetHeaders(relativePath, {
+            contentTypeOverride: cloudObj.contentType,
+            etag: cloudObj.etag,
+          });
           return new NextResponse(cloudObj.body as unknown as BodyInit, { status: 200, headers });
         }
       } catch {
@@ -159,32 +174,22 @@ export async function GET(
   </div>
 </body>
 </html>`;
-        const headers = new Headers();
-        headers.set('Content-Type', 'text/html; charset=utf-8');
-        headers.set('Cache-Control', 'no-store');
-        headers.set('Content-Security-Policy', "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:;");
-        headers.set('X-Content-Type-Options', 'nosniff');
+        const headers = buildSandboxAssetHeaders('index.html', {
+          cacheControlOverride: 'no-store',
+        });
         return new NextResponse(placeholderHtml, { status: 200, headers });
       }
 
       return NextResponse.json({ error: 'Requested build file not found.' }, { status: 404 });
     }
 
-    const ext = path.extname(targetFile).toLowerCase();
-    const contentType = MIME_TYPES[ext] || 'application/octet-stream';
     const fileBuffer = fs.readFileSync(targetFile);
+    const headers = buildSandboxAssetHeaders(targetFile);
 
-    const headers = new Headers();
-    headers.set('Content-Type', contentType);
-    // Hardened origin isolation sandbox CSP headers
-    headers.set(
-      'Content-Security-Policy',
-      "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:;"
-    );
-    headers.set('X-Content-Type-Options', 'nosniff');
-    headers.set('Cache-Control', 'public, max-age=3600');
-
-    return new NextResponse(fileBuffer, { status: 200, headers });
+    return new NextResponse(fileBuffer as unknown as BodyInit, {
+      status: 200,
+      headers,
+    });
   } catch (err: any) {
     return NextResponse.json({ error: `File serve failed: ${err.message}` }, { status: 500 });
   }

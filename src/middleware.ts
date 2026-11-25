@@ -215,7 +215,7 @@ export function middleware(request: NextRequest) {
     response.headers.delete('X-Frame-Options');
     response.headers.set(
       'Content-Security-Policy',
-      "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:; img-src 'self' data: blob: *; media-src 'self' data: blob: *; connect-src 'self' *; frame-ancestors *;"
+      "default-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' data: blob:; worker-src 'self' blob:; img-src 'self' data: blob: *; media-src 'self' data: blob: *; connect-src 'self' https: wss: data: blob: *; frame-ancestors *;"
     );
   } else {
     response.headers.set(

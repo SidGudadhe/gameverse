@@ -4,8 +4,15 @@ import fs from 'fs';
 import { requireRole } from '@/lib/security/middleware';
 import { gvDb } from '@/lib/database';
 import { validateAndScanZip, extractArchiveSafely, computeSha256 } from '@/lib/security';
-import { gameverseStorage } from '@/lib/storage';
-import { scanAndValidateGameZip } from '@/lib/storage/scanner';
+import {
+  gameverseStorage,
+  syncExtractedBuildToCloudStorage,
+} from '@/lib/storage';
+import {
+  scanAndValidateGameZip,
+  buildGameFileManifest,
+  UPLOAD_SECURITY_LIMITS,
+} from '@/lib/storage/scanner';
 import { AIDisclosure, Orientation } from '@/types';
 
 export async function POST(req: NextRequest) {
@@ -142,64 +149,77 @@ export async function POST(req: NextRequest) {
       hasEntryFile: true,
       suspiciousFilesDetected: [],
     };
+    const extractOptions = {
+      maxCompressedBytes: UPLOAD_SECURITY_LIMITS.MAX_ZIP_SIZE_BYTES,
+      maxUncompressedBytes: UPLOAD_SECURITY_LIMITS.MAX_UNCOMPRESSED_SIZE_BYTES,
+      maxFileCount: UPLOAD_SECURITY_LIMITS.MAX_FILE_COUNT,
+      customEntryPoint: 'index.html',
+    };
+
+    const ingestZipBuffer = async (rawBuffer: Buffer, errorLabel: string) => {
+      const scan = scanAndValidateGameZip(rawBuffer, { customEntryPoint: 'index.html' });
+      if (!scan.passed) {
+        return {
+          errorResponse: NextResponse.json(
+            { success: false, error: errorLabel, scanResults: scan },
+            { status: 422 }
+          ),
+        };
+      }
+      const extractRes = extractArchiveSafely(rawBuffer, targetDir, extractOptions);
+      if (!extractRes.success) {
+        return {
+          errorResponse: NextResponse.json(
+            {
+              success: false,
+              error: `Failed to unpack game archive: ${extractRes.error || 'Unknown error'}`,
+              scanResults: scan,
+            },
+            { status: 422 }
+          ),
+        };
+      }
+      await syncExtractedBuildToCloudStorage(targetDir, gameId, semver, versionId);
+      archiveChecksum = scan.sha256;
+      archiveSizeBytes = rawBuffer.length;
+      scanResults = scan;
+      return { errorResponse: null };
+    };
 
     if (body.uploadSessionId) {
       const session = gvDb.getUploadSession(body.uploadSessionId);
-      if (session) {
-        const storageObj = await gameverseStorage.getObject(session.storageKey);
-        if (storageObj && storageObj.body) {
-          const rawBuffer = storageObj.body;
-          archiveChecksum = computeSha256(rawBuffer);
-          archiveSizeBytes = rawBuffer.length;
-          const scan = scanAndValidateGameZip(rawBuffer, { customEntryPoint: 'index.html' });
-          if (!scan.passed) {
-            return NextResponse.json(
-              { success: false, error: 'Uploaded archive failed security validation.', scanResults: scan },
-              { status: 422 }
-            );
-          }
-          scanResults = scan;
-          extractArchiveSafely(rawBuffer, targetDir);
-        }
+      if (!session) {
+        return NextResponse.json(
+          { success: false, error: 'Upload session not found or expired. Please upload your ZIP bundle again.' },
+          { status: 404 }
+        );
       }
+      const storageObj = await gameverseStorage.getObject(session.storageKey);
+      if (!storageObj || !storageObj.body) {
+        return NextResponse.json(
+          { success: false, error: 'Uploaded ZIP archive missing from storage. Please upload your ZIP bundle again.' },
+          { status: 400 }
+        );
+      }
+      const ingested = await ingestZipBuffer(storageObj.body, 'Uploaded archive failed security validation.');
+      if (ingested.errorResponse) return ingested.errorResponse;
     } else if (tempUploadId) {
       const stagingDir = path.join(process.cwd(), '.data', 'staging', tempUploadId);
       const rawZipPath = path.join(stagingDir, '__raw_build.zip');
 
       if (fs.existsSync(rawZipPath)) {
         const rawBuffer = fs.readFileSync(rawZipPath);
-        archiveChecksum = computeSha256(rawBuffer);
-        archiveSizeBytes = rawBuffer.length;
-        const scan = validateAndScanZip(rawBuffer);
-        if (!scan.passed) {
-          return NextResponse.json(
-            { success: false, error: 'Staged archive failed validation.', scanResults: scan },
-            { status: 422 }
-          );
-        }
-        scanResults = scan;
-
-        // Extract directly into production destination
-        extractArchiveSafely(rawBuffer, targetDir);
+        const ingested = await ingestZipBuffer(rawBuffer, 'Staged archive failed validation.');
+        if (ingested.errorResponse) return ingested.errorResponse;
       } else if (fs.existsSync(stagingDir)) {
-        // Copy extracted files from staging
+        // Copy extracted files from staging and synchronize with cloud storage
         fs.cpSync(stagingDir, targetDir, { recursive: true });
+        await syncExtractedBuildToCloudStorage(targetDir, gameId, semver, versionId);
       }
     } else if (fileBase64) {
       const buffer = Buffer.from(fileBase64, 'base64');
-      const scan = validateAndScanZip(buffer);
-      if (!scan.passed) {
-        return NextResponse.json(
-          { success: false, error: 'Archive validation failed.', scanResults: scan },
-          { status: 422 }
-        );
-      }
-      scanResults = scan;
-      archiveChecksum = scan.sha256;
-      archiveSizeBytes = buffer.length;
-
-      // Extract to target
-      extractArchiveSafely(buffer, targetDir);
+      const ingested = await ingestZipBuffer(buffer, 'Archive validation failed.');
+      if (ingested.errorResponse) return ingested.errorResponse;
     } else {
       // Preserve existing runnable build if developer is updating metadata or responding without a new ZIP
       const prevVersionId = existingGame?.currentVersionId;
@@ -212,6 +232,7 @@ export async function POST(req: NextRequest) {
           fs.mkdirSync(targetDir, { recursive: true });
           fs.cpSync(prevDir, targetDir, { recursive: true });
         }
+        await syncExtractedBuildToCloudStorage(targetDir, gameId, semver, versionId);
       } else if (!fs.existsSync(path.join(targetDir, 'index.html'))) {
         if (!fs.existsSync(targetDir)) {
           fs.mkdirSync(targetDir, { recursive: true });
@@ -290,14 +311,25 @@ export async function POST(req: NextRequest) {
       archiveSizeBytes,
       status: 'SUBMITTED',
       scanResults: {
-        passed: scanResults.passed,
-        extractedFilesCount: scanResults.extractedFilesCount,
-        uncompressedSizeBytes: scanResults.uncompressedSizeBytes,
-        hasEntryFile: scanResults.hasEntryFile,
-        suspiciousFilesDetected: scanResults.suspiciousFilesDetected,
+        passed: Boolean(scanResults.passed),
+        extractedFilesCount: scanResults.extractedFilesCount ?? scanResults.totalFilesCount ?? 1,
+        uncompressedSizeBytes: scanResults.uncompressedSizeBytes ?? 0,
+        hasEntryFile: Boolean(scanResults.hasEntryFile),
+        suspiciousFilesDetected: scanResults.suspiciousFilesDetected || [],
         scanErrors: scanResults.scanErrors,
       },
     });
+
+    if (scanResults.filesList) {
+      const manifest = buildGameFileManifest({
+        gameId,
+        versionId,
+        cdnDomain: gameverseStorage.getConfig().publicCdnDomain,
+        storagePrefix: `games/${gameId}/versions/${semver}`,
+        scanResult: scanResults,
+      });
+      gvDb.createManifest(manifest);
+    }
 
     // Rights Declaration Record
     const rights = gvDb.saveRightsDeclaration({

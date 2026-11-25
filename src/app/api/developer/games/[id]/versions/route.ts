@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
+import path from 'path';
 import { requireRole } from '@/lib/security/middleware';
 import { gvDb } from '@/lib/database';
-import { gameverseStorage } from '@/lib/storage';
-import { scanAndValidateGameZip, buildGameFileManifest } from '@/lib/storage/scanner';
-import { computeSha256 } from '@/lib/security';
+import {
+  gameverseStorage,
+  syncExtractedBuildToCloudStorage,
+} from '@/lib/storage';
+import {
+  scanAndValidateGameZip,
+  buildGameFileManifest,
+  UPLOAD_SECURITY_LIMITS,
+} from '@/lib/storage/scanner';
+import { extractArchiveSafely } from '@/lib/security';
 
 export async function GET(
   req: NextRequest,
@@ -131,13 +139,27 @@ export async function POST(
 
     const versionId = `ver-${game.slug}-${cleanVer.replace(/\./g, '_')}`;
     const storagePrefix = `games/${game.id}/versions/${cleanVer}`;
+    const targetDir = path.join(process.cwd(), '.data', 'games', game.id, versionId);
 
-    // Upload extracted assets to immutable version-specific path in Cloudflare R2 / S3
-    for (const file of scanResult.filesList) {
-      const fileKey = `${storagePrefix}/${file.path}`;
-      // In local isolated driver, this writes to .data/cloud_storage_bucket/...
-      // In Cloudflare R2, this writes directly to R2 bucket with immutable CDN cache headers
+    // Extract archive safely into local sandbox directory (respecting wrapper unwrapping & ZIP limits)
+    const extractResult = extractArchiveSafely(storageObj.body, targetDir, {
+      maxCompressedBytes: UPLOAD_SECURITY_LIMITS.MAX_ZIP_SIZE_BYTES,
+      maxUncompressedBytes: UPLOAD_SECURITY_LIMITS.MAX_UNCOMPRESSED_SIZE_BYTES,
+      maxFileCount: UPLOAD_SECURITY_LIMITS.MAX_FILE_COUNT,
+      customEntryPoint: entryPoint || 'index.html',
+    });
+    if (!extractResult.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Archive extraction failed: ${extractResult.error || 'Unknown error'}`,
+        },
+        { status: 422 }
+      );
     }
+
+    // Upload extracted assets to immutable version-specific path in R2 / S3 / local storage
+    await syncExtractedBuildToCloudStorage(targetDir, game.id, cleanVer, versionId);
 
     // Generate manifest
     const manifest = buildGameFileManifest({

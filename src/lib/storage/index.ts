@@ -46,6 +46,9 @@ export const GAME_MIME_TYPES: Record<string, string> = {
   '.data': 'application/octet-stream',
   '.bin': 'application/octet-stream',
   '.pck': 'application/octet-stream',
+  '.unityweb': 'application/octet-stream',
+  '.mem': 'application/octet-stream',
+  '.symbols': 'application/json; charset=utf-8',
   '.txt': 'text/plain; charset=utf-8',
   '.xml': 'application/xml',
 };
@@ -56,6 +59,43 @@ export function resolveMimeType(filePath: string): string {
 }
 
 export const getContentTypeForPath = resolveMimeType;
+
+/**
+ * Resolves the underlying Content-Type and optional Content-Encoding for
+ * compressed web builds (e.g. Unity/Godot .wasm.br, .js.br, .data.br, .wasm.gz).
+ */
+export function resolveAssetServingHeaders(filePath: string): {
+  contentType: string;
+  contentEncoding?: 'br' | 'gzip';
+} {
+  const lower = filePath.toLowerCase();
+  if (lower.endsWith('.br')) {
+    const innerExt = path.extname(lower.slice(0, -3));
+    return {
+      contentType: GAME_MIME_TYPES[innerExt] || 'application/octet-stream',
+      contentEncoding: 'br',
+    };
+  }
+  if (lower.endsWith('.gz')) {
+    const innerExt = path.extname(lower.slice(0, -3));
+    return {
+      contentType: GAME_MIME_TYPES[innerExt] || 'application/octet-stream',
+      contentEncoding: 'gzip',
+    };
+  }
+  return { contentType: resolveMimeType(filePath) };
+}
+
+/**
+ * Returns true only when an external CDN origin is explicitly configured in the environment.
+ */
+export function hasConfiguredPublicCdn(): boolean {
+  return Boolean(
+    process.env.R2_PUBLIC_DOMAIN ||
+      process.env.CLOUDFRONT_DOMAIN ||
+      process.env.NEXT_PUBLIC_CDN_ORIGIN
+  );
+}
 
 /**
  * Returns the production HTTP caching header for game assets:
@@ -670,4 +710,59 @@ export async function verifyCloudflareR2Binding(options?: {
   bucket?: string;
 }) {
   return gameverseStorage.verifyCloudflareR2Binding(options);
+}
+
+/**
+ * Returns the live playable iframe URL for a game version:
+ * - Uses external CDN URL when R2_PUBLIC_DOMAIN / CLOUDFRONT_DOMAIN / NEXT_PUBLIC_CDN_ORIGIN is configured.
+ * - Otherwise routes to the local isolated sandbox file server so uploaded games play immediately.
+ */
+export function resolvePlayableGameUrl(
+  gameId: string,
+  versionId: string,
+  versionNumber?: string,
+  entryFile = 'index.html'
+): string {
+  const cleanEntry = (entryFile || 'index.html').replace(/^\/+/, '');
+  if (hasConfiguredPublicCdn()) {
+    return gameverseStorage.getPublicCdnUrl(
+      `games/${gameId}/versions/${versionNumber || versionId}/${cleanEntry}`
+    );
+  }
+  return `/api/sandbox/files/${gameId}/${versionId}/${cleanEntry}`;
+}
+
+/**
+ * Uploads every file extracted inside `localDir` into `gameverseStorage` under
+ * versioned key `games/<gameId>/versions/<versionNumber>/<relPath>` so both
+ * local disk serving and cloud storage backends stay synchronized.
+ */
+export async function syncExtractedBuildToCloudStorage(
+  localDir: string,
+  gameId: string,
+  versionNumber: string,
+  versionId: string
+): Promise<number> {
+  if (!fs.existsSync(localDir)) return 0;
+
+  let uploadedCount = 0;
+  const walkAndUpload = async (currentDir: string) => {
+    const entries = fs.readdirSync(currentDir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(currentDir, entry.name);
+      if (entry.isDirectory()) {
+        await walkAndUpload(fullPath);
+      } else {
+        const relPath = path.relative(localDir, fullPath).replace(/\\/g, '/');
+        const key = gameverseStorage.getGameAssetStorageKey(gameId, versionNumber, relPath);
+        const { contentType } = resolveAssetServingHeaders(relPath);
+        const fileBuffer = fs.readFileSync(fullPath);
+        await gameverseStorage.uploadObject(key, fileBuffer, contentType, { versionId });
+        uploadedCount++;
+      }
+    }
+  };
+
+  await walkAndUpload(localDir);
+  return uploadedCount;
 }

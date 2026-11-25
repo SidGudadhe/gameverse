@@ -28,17 +28,75 @@ export function computeSha256(buffer: Buffer): string {
   return crypto.createHash('sha256').update(buffer).digest('hex');
 }
 
-export function validateAndScanZip(buffer: Buffer): ArchiveScanResult {
+/**
+ * Identifies OS-generated archive metadata artifacts (__MACOSX, .DS_Store, Thumbs.db, ._*)
+ * so they never break single-wrapper root detection or pollute extracted game bundles.
+ */
+export function isSystemMetadataZipEntry(entryName: string): boolean {
+  const normalized = entryName.replace(/\\/g, '/').replace(/^\/+/, '');
+  if (!normalized) return true;
+  if (normalized === '__MACOSX' || normalized.startsWith('__MACOSX/')) return true;
+  const trimmed = normalized.replace(/\/+$/, '');
+  const baseName = path.posix.basename(trimmed);
+  return (
+    baseName === '.DS_Store' ||
+    baseName === 'Thumbs.db' ||
+    baseName.startsWith('._')
+  );
+}
+
+/**
+ * Detects a single top-level wrapper folder (e.g. "MyGame/index.html") while ignoring OS metadata folders.
+ */
+export function detectCommonZipWrapperPrefix(
+  entries: Array<{ entryName: string; isDirectory: boolean }>
+): string {
+  const rootDirs = new Set<string>();
+  let hasDirectRootFiles = false;
+
+  for (const entry of entries) {
+    if (isSystemMetadataZipEntry(entry.entryName)) continue;
+    const normalizedName = entry.entryName.replace(/\\/g, '/').replace(/^\/+/, '');
+    if (!normalizedName) continue;
+    const parts = normalizedName.split('/').filter(Boolean);
+    if (parts.length > 1) {
+      rootDirs.add(parts[0]);
+    } else if (!entry.isDirectory) {
+      hasDirectRootFiles = true;
+    }
+  }
+
+  return !hasDirectRootFiles && rootDirs.size === 1 ? `${Array.from(rootDirs)[0]}/` : '';
+}
+
+export interface ArchiveScanOptions {
+  maxCompressedBytes?: number;
+  maxUncompressedBytes?: number;
+  maxFileCount?: number;
+  customEntryPoint?: string;
+}
+
+export function validateAndScanZip(
+  buffer: Buffer,
+  options?: ArchiveScanOptions
+): ArchiveScanResult {
   const scanErrors: string[] = [];
   const suspiciousFilesDetected: string[] = [];
   let totalUncompressedBytes = 0;
   let hasEntryFile = false;
   let fileCount = 0;
 
+  const maxCompressed = options?.maxCompressedBytes || SECURITY_LIMITS.MAX_ARCHIVE_SIZE_BYTES;
+  const maxUncompressed = options?.maxUncompressedBytes || SECURITY_LIMITS.MAX_UNCOMPRESSED_SIZE_BYTES;
+  const maxFiles = options?.maxFileCount || SECURITY_LIMITS.MAX_FILE_COUNT;
+  const expectedEntry = (options?.customEntryPoint || 'index.html').replace(/^\/+/, '').toLowerCase();
+
   const sha256 = computeSha256(buffer);
 
-  if (buffer.length > SECURITY_LIMITS.MAX_ARCHIVE_SIZE_BYTES) {
-    scanErrors.push(`Archive compressed size (${(buffer.length / 1024 / 1024).toFixed(2)} MB) exceeds limit of 50 MB.`);
+  if (buffer.length > maxCompressed) {
+    scanErrors.push(
+      `Archive compressed size (${(buffer.length / 1024 / 1024).toFixed(2)} MB) exceeds limit of ${(maxCompressed / 1024 / 1024).toFixed(0)} MB.`
+    );
   }
 
   let zip: AdmZip;
@@ -57,42 +115,56 @@ export function validateAndScanZip(buffer: Buffer): ArchiveScanResult {
   }
 
   const entries = zip.getEntries();
-  fileCount = entries.length;
-
-  if (fileCount > SECURITY_LIMITS.MAX_FILE_COUNT) {
-    scanErrors.push(`File count (${fileCount}) exceeds safety threshold of ${SECURITY_LIMITS.MAX_FILE_COUNT} files.`);
-  }
+  const commonPrefix = detectCommonZipWrapperPrefix(entries);
+  fileCount = 0;
 
   for (const entry of entries) {
     const entryName = entry.entryName;
 
-    // Check for directory traversal attacks (e.g. ../ or absolute paths)
-    const normalized = path.normalize(entryName).replace(/^(\.\.[\/\\])+/, '');
-    if (entryName.includes('..') || entryName.startsWith('/') || entryName.startsWith('\\')) {
+    // Check for directory traversal attacks BEFORE metadata skipping (e.g. ../ or absolute paths)
+    if (entryName.includes('..') || entryName.startsWith('/') || entryName.startsWith('\\') || entryName.includes('\0')) {
       suspiciousFilesDetected.push(`Path traversal attempt detected in entry: ${entryName}`);
       scanErrors.push(`Path traversal detected: ${entryName}`);
+      continue;
     }
 
-    if (!entry.isDirectory) {
+    if (isSystemMetadataZipEntry(entryName)) {
+      continue;
+    }
+
+    fileCount++;
+
+    let relPath = entryName.replace(/\\/g, '/').replace(/^\/+/, '');
+    if (commonPrefix && relPath.startsWith(commonPrefix)) {
+      relPath = relPath.slice(commonPrefix.length);
+    }
+
+    if (!entry.isDirectory && relPath) {
       totalUncompressedBytes += entry.header.size;
 
       // Check for prohibited executable file types
-      const ext = path.extname(entryName).toLowerCase();
+      const ext = path.extname(relPath).toLowerCase();
       if (SECURITY_LIMITS.PROHIBITED_EXTENSIONS.includes(ext)) {
         suspiciousFilesDetected.push(`Prohibited executable detected: ${entryName}`);
         scanErrors.push(`Prohibited file type ${ext} found in ${entryName}`);
       }
 
-      // Check for root or top-level index.html
-      if (entryName.toLowerCase() === 'index.html' || entryName.toLowerCase().endsWith('/index.html')) {
+      // Check for root entry file (default index.html after unwrapping any single top-level game folder)
+      if (relPath.toLowerCase() === expectedEntry) {
         hasEntryFile = true;
       }
     }
   }
 
+  if (fileCount > maxFiles) {
+    scanErrors.push(`File count (${fileCount}) exceeds safety threshold of ${maxFiles} files.`);
+  }
+
   // Decompression bomb check
-  if (totalUncompressedBytes > SECURITY_LIMITS.MAX_UNCOMPRESSED_SIZE_BYTES) {
-    scanErrors.push(`Total uncompressed size (${(totalUncompressedBytes / 1024 / 1024).toFixed(2)} MB) exceeds 250 MB limit.`);
+  if (totalUncompressedBytes > maxUncompressed) {
+    scanErrors.push(
+      `Total uncompressed size (${(totalUncompressedBytes / 1024 / 1024).toFixed(2)} MB) exceeds ${(maxUncompressed / 1024 / 1024).toFixed(0)} MB limit.`
+    );
   }
 
   const compressionRatio = buffer.length > 0 ? totalUncompressedBytes / buffer.length : 1;
@@ -123,10 +195,11 @@ export function validateAndScanZip(buffer: Buffer): ArchiveScanResult {
  */
 export function extractArchiveSafely(
   buffer: Buffer,
-  targetDir: string
+  targetDir: string,
+  options?: ArchiveScanOptions
 ): { success: boolean; filesExtracted: number; error?: string } {
   try {
-    const scan = validateAndScanZip(buffer);
+    const scan = validateAndScanZip(buffer, options);
     if (!scan.passed) {
       return { success: false, filesExtracted: 0, error: scan.scanErrors.join('; ') };
     }
@@ -141,23 +214,12 @@ export function extractArchiveSafely(
     const entries = zip.getEntries();
     let count = 0;
 
-    // Detect if all non-empty entries share a single common directory prefix (e.g. "MyGame/")
-    const rootDirs = new Set<string>();
-    let hasDirectRootFiles = false;
-    for (const entry of entries) {
-      const normalizedName = entry.entryName.replace(/\\/g, '/').replace(/^\/+/, '');
-      if (!normalizedName) continue;
-      const parts = normalizedName.split('/').filter(Boolean);
-      if (parts.length > 1) {
-        rootDirs.add(parts[0]);
-      } else if (!entry.isDirectory) {
-        hasDirectRootFiles = true;
-      }
-    }
-    const commonPrefix = (!hasDirectRootFiles && rootDirs.size === 1) ? Array.from(rootDirs)[0] + '/' : '';
+    // Detect if all non-system entries share a single common directory prefix (e.g. "MyGame/")
+    const commonPrefix = detectCommonZipWrapperPrefix(entries);
 
     for (const entry of entries) {
-      let relativeEntryName = entry.entryName.replace(/\\/g, '/');
+      if (isSystemMetadataZipEntry(entry.entryName)) continue;
+      let relativeEntryName = entry.entryName.replace(/\\/g, '/').replace(/^\/+/, '');
       if (commonPrefix && relativeEntryName.startsWith(commonPrefix)) {
         relativeEntryName = relativeEntryName.slice(commonPrefix.length);
       }

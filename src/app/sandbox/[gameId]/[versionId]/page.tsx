@@ -1,9 +1,12 @@
 import { redirect } from 'next/navigation';
+import { gvDb } from '@/lib/database';
 
 export default function SandboxRedirectPage({
   params,
 }: {
   params: { gameId: string; versionId: string };
 }) {
-  redirect(`/api/sandbox/files/${params.gameId}/${params.versionId}/index.html`);
+  const version = gvDb.getVersionById(params.versionId);
+  const entryFile = (version?.entryFile || 'index.html').replace(/^\/+/, '');
+  redirect(`/api/sandbox/files/${params.gameId}/${params.versionId}/${entryFile}`);
 }

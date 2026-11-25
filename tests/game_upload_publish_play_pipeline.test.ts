@@ -15,6 +15,7 @@ import { POST as submitGame } from '../src/app/api/developer/submit/route';
 import { POST as reviewSubmission } from '../src/app/api/admin/submissions/[id]/review/route';
 import { POST as createGameVersion } from '../src/app/api/developer/games/[id]/versions/route';
 import { POST as publishGameVersion } from '../src/app/api/developer/games/[id]/publish/route';
+import { POST as rollbackGameVersion } from '../src/app/api/developer/games/[id]/rollback/route';
 import { GET as getPlayerGame } from '../src/app/api/games/[slug]/route';
 import { GET as serveSandboxFile } from '../src/app/api/sandbox/files/[gameId]/[versionId]/[...file]/route';
 
@@ -361,5 +362,213 @@ describe('E2E Game Format -> Upload -> Publish -> Sandbox Play Pipeline & Docs A
 
     expect(profilePage).not.toContain('GameVerse Creator Agreement');
     expect(profilePage).not.toContain('View Full Agreement');
+  });
+
+  it('5. keeps a live PUBLISHED game online on its verified build when editing title/uploading an update until Admin approves, and handles Admin REQUEST_CHANGES/REJECT without breaking live players', async () => {
+    const slug = `live-shield-${suffix}`;
+    const v1Zip = new AdmZip();
+    v1Zip.addFile('index.html', Buffer.from('<!DOCTYPE html><html><title>Live Shield v1.0.0</title></html>'));
+
+    // 1. Initial publish & Admin Approve
+    const initRes = await submitGame(
+      new NextRequest('http://localhost:3000/api/developer/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: devAuthHeader },
+        body: JSON.stringify({
+          title: 'Live Shield Original',
+          slug,
+          versionNumber: '1.0.0',
+          rightsConfirmed: true,
+          prohibitedContentConfirmed: true,
+          fileBase64: v1Zip.toBuffer().toString('base64'),
+        }),
+      })
+    );
+    expect(initRes.status).toBe(201);
+    const initData = await initRes.json();
+    const gameId = initData.game.id;
+    const v1Id = initData.version.id;
+    tempDirsToClean.push(path.join(process.cwd(), '.data', 'games', gameId));
+
+    const approve1 = await reviewSubmission(
+      new NextRequest(`http://localhost:3000/api/admin/submissions/${initData.submission.id}/review`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: adminAuthHeader },
+        body: JSON.stringify({ decision: 'APPROVE', notes: 'Live baseline approved' }),
+      }),
+      { params: { id: initData.submission.id } }
+    );
+    expect(approve1.status).toBe(200);
+
+    // 2. Developer edits title via editingGameId & uploads unreviewed v1.1.0 ZIP
+    const v2Zip = new AdmZip();
+    v2Zip.addFile('index.html', Buffer.from('<!DOCTYPE html><html><title>Unreviewed Candidate v1.1.0</title></html>'));
+
+    const editRes = await submitGame(
+      new NextRequest('http://localhost:3000/api/developer/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: devAuthHeader },
+        body: JSON.stringify({
+          editingGameId: gameId,
+          title: 'Live Shield Renamed Edition',
+          slug: 'live-shield-renamed-edition',
+          versionNumber: '1.1.0',
+          rightsConfirmed: true,
+          prohibitedContentConfirmed: true,
+          fileBase64: v2Zip.toBuffer().toString('base64'),
+        }),
+      })
+    );
+    expect(editRes.status).toBe(201);
+    const editData = await editRes.json();
+    // Canonical game ID & slug preserved; live currentVersionId STILL points to safe v1Id until QA!
+    expect(editData.game.id).toBe(gameId);
+    expect(editData.game.slug).toBe(slug);
+    expect(editData.game.title).toBe('Live Shield Renamed Edition');
+    expect(editData.game.status).toBe('PUBLISHED');
+    expect(editData.game.currentVersionId).toBe(v1Id);
+
+    // 3. Admin clicks REQUEST_CHANGES on candidate v1.1.0 -> Live v1.0.0 MUST stay PUBLISHED!
+    const crRes = await reviewSubmission(
+      new NextRequest(`http://localhost:3000/api/admin/submissions/${editData.submission.id}/review`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: adminAuthHeader },
+        body: JSON.stringify({ decision: 'REQUEST_CHANGES', notes: 'Fix mobile controls on v1.1.0' }),
+      }),
+      { params: { id: editData.submission.id } }
+    );
+    expect(crRes.status).toBe(200);
+    const crData = await crRes.json();
+    expect(crData.version.status).toBe('CHANGES_REQUESTED');
+    expect(crData.game.status).toBe('PUBLISHED');
+    expect(crData.game.currentVersionId).toBe(v1Id);
+
+    // Verify player API still returns PUBLISHED game cleanly on v1.0.0
+    const livePlayerRes = await getPlayerGame(
+      new NextRequest(`http://localhost:3000/api/games/${slug}`),
+      { params: { slug } }
+    );
+    expect(livePlayerRes.status).toBe(200);
+
+    // 4. Admin REJECT on another candidate version ALSO preserves live PUBLISHED game
+    const v3Zip = new AdmZip();
+    v3Zip.addFile('index.html', Buffer.from('<!DOCTYPE html><html><title>Rejected v1.2.0</title></html>'));
+    const editRes2 = await submitGame(
+      new NextRequest('http://localhost:3000/api/developer/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: devAuthHeader },
+        body: JSON.stringify({
+          editingGameId: gameId,
+          title: 'Live Shield Renamed Edition',
+          versionNumber: '1.2.0',
+          rightsConfirmed: true,
+          prohibitedContentConfirmed: true,
+          fileBase64: v3Zip.toBuffer().toString('base64'),
+        }),
+      })
+    );
+    const editData2 = await editRes2.json();
+    const rejRes = await reviewSubmission(
+      new NextRequest(`http://localhost:3000/api/admin/submissions/${editData2.submission.id}/review`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: adminAuthHeader },
+        body: JSON.stringify({ decision: 'REJECT', rejectionReason: 'Failed FPS target in v1.2.0' }),
+      }),
+      { params: { id: editData2.submission.id } }
+    );
+    expect(rejRes.status).toBe(200);
+    const rejData = await rejRes.json();
+    expect(rejData.version.status).toBe('REJECTED');
+    expect(rejData.game.status).toBe('PUBLISHED');
+    expect(rejData.game.currentVersionId).toBe(v1Id);
+  });
+
+  it('6. blocks developer rollback onto unapproved, rejected, or quarantined versions and suspended games', async () => {
+    const slug = `rollback-guard-${suffix}`;
+    const gameId = `game-${slug}`;
+
+    gvDb.createGame({
+      id: gameId,
+      developerId: devUserId,
+      developerName: 'Pipeline Studio',
+      categoryId: 'cat-action',
+      categoryName: 'Action',
+      slug,
+      title: 'Rollback Guard Game',
+      shortDescription: 'Security test',
+      fullDescription: 'Security test',
+      controlsGuide: 'Keyboard',
+      engine: 'HTML5',
+      orientation: 'LANDSCAPE',
+      thumbnailUrl: '/images/placeholders/thumb.png',
+      bannerUrl: '/images/placeholders/banner.png',
+      screenshots: [],
+      currentVersionId: `ver-${slug}-live`,
+      status: 'PUBLISHED',
+    });
+
+    gvDb.createVersion({
+      id: `ver-${slug}-live`,
+      gameId,
+      versionNumber: '2.0.0',
+      changelog: 'Live safe build',
+      entryFile: 'index.html',
+      archiveChecksum: 'sha-live',
+      archiveSizeBytes: 1024,
+      status: 'PUBLISHED',
+    });
+
+    const quarantinedVer = gvDb.createVersion({
+      id: `ver-${slug}-quar`,
+      gameId,
+      versionNumber: '1.0.0',
+      changelog: 'Quarantined unsafe build',
+      entryFile: 'index.html',
+      archiveChecksum: 'sha-bad',
+      archiveSizeBytes: 1024,
+      status: 'QUARANTINED',
+    });
+
+    const unapprovedVer = gvDb.createVersion({
+      id: `ver-${slug}-sub`,
+      gameId,
+      versionNumber: '2.1.0',
+      changelog: 'Pending QA',
+      entryFile: 'index.html',
+      archiveChecksum: 'sha-sub',
+      archiveSizeBytes: 1024,
+      status: 'SUBMITTED',
+    });
+
+    const quarRes = await rollbackGameVersion(
+      new NextRequest(`http://localhost:3000/api/developer/games/${gameId}/rollback`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: devAuthHeader },
+        body: JSON.stringify({ targetVersionId: quarantinedVer.id, reason: 'Try bypassing quarantine' }),
+      }),
+      { params: { id: gameId } }
+    );
+    expect(quarRes.status).toBe(403);
+
+    const subRes = await rollbackGameVersion(
+      new NextRequest(`http://localhost:3000/api/developer/games/${gameId}/rollback`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: devAuthHeader },
+        body: JSON.stringify({ targetVersionId: unapprovedVer.id, reason: 'Try pushing unreviewed build' }),
+      }),
+      { params: { id: gameId } }
+    );
+    expect(subRes.status).toBe(403);
+
+    gvDb.updateGame(gameId, { status: 'SUSPENDED' });
+    const suspRes = await rollbackGameVersion(
+      new NextRequest(`http://localhost:3000/api/developer/games/${gameId}/rollback`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: devAuthHeader },
+        body: JSON.stringify({ targetVersionId: quarantinedVer.id, reason: 'Try bypassing suspension' }),
+      }),
+      { params: { id: gameId } }
+    );
+    expect(suspRes.status).toBe(403);
   });
 });

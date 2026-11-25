@@ -92,6 +92,20 @@ export default function AdminReviewPage({ params }: { params: { id: string } }) 
     fetchSubmission();
   }, [params.id]);
 
+  useEffect(() => {
+    const onSandboxMessage = (e: MessageEvent) => {
+      if (!e.data || typeof e.data !== 'object' || !e.data.type) return;
+      if (String(e.data.type).startsWith('GV_')) {
+        setConsoleLogs((prev) => [
+          ...prev.slice(-19),
+          `[SDK ${new Date().toLocaleTimeString()}] ${JSON.stringify(e.data)}`,
+        ]);
+      }
+    };
+    window.addEventListener('message', onSandboxMessage);
+    return () => window.removeEventListener('message', onSandboxMessage);
+  }, []);
+
   const handleDecision = async (
     decision: 'APPROVE' | 'REQUEST_CHANGES' | 'REJECT' | 'QUARANTINE' | 'ADMIN_ROLLBACK',
     extra?: any
@@ -341,22 +355,42 @@ export default function AdminReviewPage({ params }: { params: { id: string } }) 
               <div className="space-y-3">
                 <div className="space-y-2 text-xs">
                   <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-100">
-                    <span className="text-slate-700">Root Entry (index.html)</span>
-                    <span className="text-emerald-700 font-semibold font-mono">VERIFIED</span>
+                    <span className="text-slate-700">Root Entry ({version?.entryFile || 'index.html'})</span>
+                    {version?.scanResults?.hasEntryFile === false ? (
+                      <span className="text-rose-700 font-semibold font-mono">MISSING</span>
+                    ) : (
+                      <span className="text-emerald-700 font-semibold font-mono">VERIFIED</span>
+                    )}
                   </div>
                   <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-100">
                     <span className="text-slate-700">Zip Slip / Path Traversal Defense</span>
-                    <span className="text-emerald-700 font-semibold font-mono">PASSED</span>
+                    {version?.scanResults?.passed === false ? (
+                      <span className="text-rose-700 font-semibold font-mono">FLAGGED</span>
+                    ) : (
+                      <span className="text-emerald-700 font-semibold font-mono">PASSED</span>
+                    )}
                   </div>
                   <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-100">
                     <span className="text-slate-700">Prohibited Executables (.exe/.sh/.dll)</span>
-                    <span className="text-emerald-700 font-semibold font-mono">ZERO DETECTED</span>
+                    {(version?.scanResults?.suspiciousFilesDetected?.length || 0) > 0 ? (
+                      <span className="text-rose-700 font-semibold font-mono">
+                        {version.scanResults.suspiciousFilesDetected.length} DETECTED
+                      </span>
+                    ) : (
+                      <span className="text-emerald-700 font-semibold font-mono">ZERO DETECTED</span>
+                    )}
                   </div>
                   <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-100">
-                    <span className="text-slate-700">Decompressed Size Limit (&lt;350MB)</span>
+                    <span className="text-slate-700">Bundle Archive / Uncompressed Size</span>
                     <span className="text-emerald-700 font-semibold font-mono">
-                      {version?.totalSizeBytes
-                        ? `${(version.totalSizeBytes / 1024 / 1024).toFixed(2)} MB (PASSED)`
+                      {(version?.scanResults?.uncompressedSizeBytes || version?.archiveSizeBytes || manifest?.totalSizeBytes)
+                        ? `${(
+                            (version?.scanResults?.uncompressedSizeBytes ||
+                              version?.archiveSizeBytes ||
+                              manifest?.totalSizeBytes) /
+                            1024 /
+                            1024
+                          ).toFixed(2)} MB (PASSED)`
                         : 'PASSED'}
                     </span>
                   </div>

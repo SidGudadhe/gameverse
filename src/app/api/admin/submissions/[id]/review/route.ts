@@ -78,13 +78,22 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         manualNotes: notes,
       });
 
-      // 2. Update Version & Game
+      // 2. Update candidate Version status; keep an already-PUBLISHED game online if another live version is active
       updatedVersion = gvDb.updateVersion(submission.versionId, {
         status: 'CHANGES_REQUESTED',
       });
-      updatedGame = gvDb.updateGame(submission.gameId, {
-        status: 'CHANGES_REQUESTED',
-      });
+      const existingGame = gvDb.getGameById(submission.gameId);
+      const hasDifferentLiveVersion = Boolean(
+        existingGame &&
+          existingGame.status === 'PUBLISHED' &&
+          existingGame.currentVersionId &&
+          existingGame.currentVersionId !== submission.versionId
+      );
+      updatedGame = hasDifferentLiveVersion
+        ? existingGame
+        : gvDb.updateGame(submission.gameId, {
+            status: 'CHANGES_REQUESTED',
+          });
 
       // 3. Audit Log
       gvDb.logAudit({
@@ -116,13 +125,22 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         manualNotes: notes,
       });
 
-      // 2. Update Version & Game
+      // 2. Update candidate Version status; keep an already-PUBLISHED game online if another live version is active
       updatedVersion = gvDb.updateVersion(submission.versionId, {
         status: 'REJECTED',
       });
-      updatedGame = gvDb.updateGame(submission.gameId, {
-        status: 'REJECTED',
-      });
+      const existingGame = gvDb.getGameById(submission.gameId);
+      const hasDifferentLiveVersion = Boolean(
+        existingGame &&
+          existingGame.status === 'PUBLISHED' &&
+          existingGame.currentVersionId &&
+          existingGame.currentVersionId !== submission.versionId
+      );
+      updatedGame = hasDifferentLiveVersion
+        ? existingGame
+        : gvDb.updateGame(submission.gameId, {
+            status: 'REJECTED',
+          });
 
       // 3. Audit Log
       gvDb.logAudit({

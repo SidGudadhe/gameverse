@@ -31,6 +31,7 @@ export default function AdOverlay({
   const [hasClicked, setHasClicked] = useState(false);
   const [showAdChoicesInfo, setShowAdChoicesInfo] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const completedRef = useRef(false);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const oscRef = useRef<OscillatorNode | null>(null);
 
@@ -78,12 +79,12 @@ export default function AdOverlay({
   }, [isMuted]);
 
   useEffect(() => {
+    completedRef.current = false;
     timerRef.current = setInterval(() => {
       setElapsedSeconds((prev) => {
         const next = prev + 1;
         if (next >= totalDuration) {
           if (timerRef.current) clearInterval(timerRef.current);
-          onAdComplete(totalDuration, false, ad.rewardType || 'EXTRA_LIFE');
           return totalDuration;
         }
         return next;
@@ -93,10 +94,18 @@ export default function AdOverlay({
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [totalDuration, onAdComplete, ad.rewardType]);
+  }, [totalDuration]);
+
+  useEffect(() => {
+    if (elapsedSeconds >= totalDuration && !completedRef.current) {
+      completedRef.current = true;
+      onAdComplete(totalDuration, false, ad.rewardType || 'EXTRA_LIFE');
+    }
+  }, [elapsedSeconds, totalDuration, onAdComplete, ad.rewardType]);
 
   const handleSkip = () => {
-    if (!canSkip) return;
+    if (!canSkip || completedRef.current) return;
+    completedRef.current = true;
     if (timerRef.current) clearInterval(timerRef.current);
     onAdComplete(elapsedSeconds, true);
   };

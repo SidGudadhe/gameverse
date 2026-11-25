@@ -34,11 +34,32 @@ export async function POST(
       );
     }
 
+    if (game.status === 'SUSPENDED' && user.role !== 'ADMIN') {
+      return NextResponse.json(
+        { success: false, error: 'Suspended games cannot be rolled back or republished without Admin review.' },
+        { status: 403 }
+      );
+    }
+
     const targetVersion = gvDb.getVersionById(targetVersionId);
     if (!targetVersion || targetVersion.gameId !== game.id) {
       return NextResponse.json(
         { success: false, error: 'Target rollback version not found for this game.' },
         { status: 404 }
+      );
+    }
+
+    if (
+      targetVersion.status !== 'APPROVED' &&
+      targetVersion.status !== 'PUBLISHED' &&
+      user.role !== 'ADMIN'
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Rollback denied: version ${targetVersion.versionNumber} is not QA-approved (status: ${targetVersion.status}).`,
+        },
+        { status: 403 }
       );
     }
 

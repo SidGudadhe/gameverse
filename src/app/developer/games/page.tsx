@@ -164,6 +164,34 @@ export default function MyGamesPage() {
     }
   };
 
+  const handlePublishApprovedVersion = async (ver: any) => {
+    if (!versionsModalGame || !ver) return;
+    setRollbackSubmitting(true);
+    setRollbackFeedback(null);
+    try {
+      const res = await fetch(`/api/developer/games/${versionsModalGame.id}/publish`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ versionId: ver.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setRollbackFeedback({ type: 'error', text: data.error || 'Failed to publish version.' });
+      } else {
+        setRollbackFeedback({
+          type: 'success',
+          text: `Version ${ver.versionNumber} is now live on GameVerse!`,
+        });
+        openVersionsModal(versionsModalGame);
+        loadGames();
+      }
+    } catch (err: any) {
+      setRollbackFeedback({ type: 'error', text: `Publish error: ${err.message}` });
+    } finally {
+      setRollbackSubmitting(false);
+    }
+  };
+
   // ================= UPDATE BUILD HANDLERS =================
   const openUpdateModal = (game: any) => {
     setUpdateModalGame(game);
@@ -882,7 +910,16 @@ export default function MyGamesPage() {
                               <CheckCircle2 className="w-4 h-4" />
                               <span>Active</span>
                             </span>
-                          ) : (
+                          ) : ver.status === 'APPROVED' ? (
+                            <button
+                              onClick={() => handlePublishApprovedVersion(ver)}
+                              disabled={rollbackSubmitting}
+                              className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1 cursor-pointer transition-colors shadow-2xs disabled:opacity-50"
+                            >
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              <span>Publish Approved</span>
+                            </button>
+                          ) : ver.status === 'PUBLISHED' ? (
                             <button
                               onClick={() => {
                                 setRollbackTarget(ver);
@@ -893,6 +930,14 @@ export default function MyGamesPage() {
                               <RotateCcw className="w-3.5 h-3.5" />
                               <span>Rollback to this</span>
                             </button>
+                          ) : (
+                            <span className="text-[11px] font-mono px-2.5 py-1 rounded-lg bg-slate-100 text-slate-500 border border-slate-200">
+                              {ver.status === 'QUARANTINED'
+                                ? 'Quarantined'
+                                : ver.status === 'REJECTED'
+                                ? 'Rejected'
+                                : 'Awaiting QA'}
+                            </span>
                           )}
                         </div>
                       </div>

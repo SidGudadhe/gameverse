@@ -122,18 +122,24 @@ export async function POST(req: NextRequest) {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)+/g, '');
 
-    // Check slug collision
-    const existingGame = gvDb.getGameBySlug(cleanSlug);
-    let gameId = existingGame ? existingGame.id : `game-${cleanSlug}`;
-    if (existingGame && existingGame.developerId !== user.userId && user.role !== 'ADMIN') {
+    // Check existing game (explicit edit ID first so title/slug edits don't create duplicates, then slug lookup)
+    const explicitEditGame = body.editingGameId ? gvDb.getGameById(body.editingGameId) : undefined;
+    const slugOwnerGame = gvDb.getGameBySlug(cleanSlug);
+    if (slugOwnerGame && slugOwnerGame.developerId !== user.userId && user.role !== 'ADMIN') {
       return NextResponse.json(
         { success: false, error: `Game URL slug "${cleanSlug}" is already claimed by another studio.` },
         { status: 409 }
       );
     }
+    const existingGame =
+      explicitEditGame && (explicitEditGame.developerId === user.userId || user.role === 'ADMIN')
+        ? explicitEditGame
+        : slugOwnerGame;
+    const effectiveSlug = existingGame ? existingGame.slug : cleanSlug;
+    let gameId = existingGame ? existingGame.id : `game-${effectiveSlug}`;
 
     const semver = (versionNumber || '1.0.0').trim();
-    const baseVersionId = `ver-${cleanSlug}-${semver.replace(/\./g, '_')}`;
+    const baseVersionId = `ver-${effectiveSlug}-${semver.replace(/\./g, '_')}`;
     const versionId = gvDb.getVersionById(baseVersionId)
       ? `${baseVersionId}-${Date.now().toString(36).slice(-4)}`
       : baseVersionId;
@@ -295,7 +301,10 @@ export async function POST(req: NextRequest) {
       if (orientation) updates.orientation = orientation;
       if (engine) updates.engine = engine;
       if (body.uploadSessionId || tempUploadId || fileBase64) {
-        updates.currentVersionId = versionId;
+        // Keep currently verified live build active for players until Admin QA approves the new candidate build
+        if (game.status !== 'PUBLISHED') {
+          updates.currentVersionId = versionId;
+        }
       }
       game = gvDb.updateGame(game.id, updates);
     }

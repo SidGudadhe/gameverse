@@ -104,7 +104,7 @@ const PLACEMENT_CONFIG: Record<
     badge: 'Featured Partner Game',
     cta: 'Play Now (Free)',
     ctaUrl: '/game/galaxy-odyssey-3d',
-    imageUrl: 'https://images.unsplash.com/photo-1614680376593-902f749f7ffc?auto=format&fit=crop&w=400&q=80',
+    imageUrl: '/images/placeholders/thumb.png',
   },
   GAME_DETAIL_BANNER: {
     format: 'Leaderboard',
@@ -128,7 +128,7 @@ const PLACEMENT_CONFIG: Record<
     badge: 'Gamer Essential',
     cta: 'Upgrade to Nitro',
     ctaUrl: 'https://discord.com',
-    imageUrl: 'https://images.unsplash.com/photo-1614680376593-902f749f7ffc?auto=format&fit=crop&w=400&q=80',
+    imageUrl: '/images/placeholders/banner.png',
   },
 };
 

@@ -160,7 +160,7 @@ export const MOCK_AD_CREATIVES: MockAdCreative[] = [
       'Level up your voice chat with custom animated emojis, custom profiles across servers, HD screen sharing, and 2 Free Server Boosts.',
     ctaText: 'Upgrade to Nitro',
     ctaUrl: 'https://discord.com',
-    imageUrl: 'https://images.unsplash.com/photo-1614680376593-902f749f7ffc?auto=format&fit=crop&w=800&q=80',
+    imageUrl: '/images/placeholders/banner.png',
     durationSeconds: 10,
     skipOffsetSeconds: 3,
   },

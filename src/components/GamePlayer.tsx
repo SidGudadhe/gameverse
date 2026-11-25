@@ -237,19 +237,7 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
 
       // Send revive signal to game runner with 3-second invulnerability
       sendToRunner('GV_REVIVE', { invulnerableSeconds: 3 });
-
-      setReviveCountdown(3);
-      if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
-      countdownIntervalRef.current = setInterval(() => {
-        setReviveCountdown((prev) => {
-          if (prev === null || prev <= 1) {
-            if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
-            sendToRunner('GV_RESUME');
-            return null;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+      startReviveCountdown();
     } else {
       sendToRunner('GV_RESUME');
     }
@@ -328,19 +316,7 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
     setRewardToast('💖 Next Life Activated! (3-Second Safe Shield)');
     setTimeout(() => setRewardToast(null), 4000);
     sendToRunner('GV_REVIVE', { invulnerableSeconds: 3 });
-
-    setReviveCountdown(3);
-    if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
-    countdownIntervalRef.current = setInterval(() => {
-      setReviveCountdown((prev) => {
-        if (prev === null || prev <= 1) {
-          if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
-          sendToRunner('GV_RESUME');
-          return null;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    startReviveCountdown();
   };
 
   // ================= POSTMESSAGE COMMUNICATION TO RUNNER =================
@@ -349,6 +325,27 @@ export default function GamePlayer({ game, sandboxUrl, onFullscreenChange }: Gam
       iframeRef.current.contentWindow.postMessage({ type: action, ...payload }, '*');
     }
   }, []);
+
+  const startReviveCountdown = useCallback(() => {
+    if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+    setReviveCountdown(3);
+    countdownIntervalRef.current = setInterval(() => {
+      setReviveCountdown((prev) => {
+        if (prev === null || prev <= 1) {
+          if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  }, []);
+
+  useEffect(() => {
+    if (reviveCountdown === 0) {
+      setReviveCountdown(null);
+      sendToRunner('GV_RESUME');
+    }
+  }, [reviveCountdown, sendToRunner]);
 
   // Handle Fullscreen Toggle
   const toggleFullscreen = async () => {

@@ -98,6 +98,7 @@ export default function GameSubmitPage() {
         setStatusGames(games);
 
         // Pre-fill form if URL includes edit parameter (?edit=game-id)
+        let isEditingExisting = false;
         if (typeof window !== 'undefined') {
           const params = new URLSearchParams(window.location.search);
           const editId = params.get('edit');
@@ -106,6 +107,8 @@ export default function GameSubmitPage() {
           if (editId) {
             const target = games.find((g: any) => g.id === editId || g.slug === editId);
             if (target) {
+              isEditingExisting = true;
+              setShowDraftBanner(false);
               setEditingGame(target);
               setTitle(target.title || '');
               setSlug(target.slug || '');
@@ -135,18 +138,20 @@ export default function GameSubmitPage() {
             }
           }
         }
+
+        if (!isEditingExisting) {
+          try {
+            const saved = localStorage.getItem('gv_pending_game_draft');
+            if (saved) {
+              const parsed = JSON.parse(saved);
+              if (parsed.title || parsed.shortDescription) {
+                setShowDraftBanner(true);
+              }
+            }
+          } catch {}
+        }
       })
       .catch(() => {});
-
-    try {
-      const saved = localStorage.getItem('gv_pending_game_draft');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed.title || parsed.shortDescription) {
-          setShowDraftBanner(true);
-        }
-      }
-    } catch {}
   }, []);
 
   // Auto-save draft whenever user fills information
@@ -235,14 +240,16 @@ export default function GameSubmitPage() {
     setShowDraftBanner(false);
   };
 
-  // Auto-generate slug from title
+  // Auto-generate slug from title (preserve existing canonical URL slug in edit mode)
   const handleTitleChange = (val: string) => {
     setTitle(val);
-    const generated = val
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)+/g, '');
-    setSlug(generated);
+    if (!editingGame) {
+      const generated = val
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '');
+      setSlug(generated);
+    }
   };
 
   // Real Presigned Direct Upload & Security Scanning Pipeline
@@ -439,6 +446,7 @@ export default function GameSubmitPage() {
         prohibitedContentConfirmed: true,
         tempUploadId: tempUploadId || undefined,
         uploadSessionId: uploadSessionId || undefined,
+        editingGameId: editingGame?.id || undefined,
         requestRef: requestRef || undefined,
       };
 
@@ -819,7 +827,7 @@ export default function GameSubmitPage() {
                 <span className="text-xs font-normal text-slate-500">(Required ZIP Bundle)</span>
               </h2>
               <p className="text-xs text-slate-500">
-                Must contain an <code className="text-indigo-700 bg-indigo-50 px-1 py-0.5 rounded border border-indigo-200">index.html</code> at the root or main folder. Limit 50MB (max 250MB uncompressed).
+                Must contain an <code className="text-indigo-700 bg-indigo-50 px-1 py-0.5 rounded border border-indigo-200">index.html</code> at the root or main folder. Limit 100MB (max 350MB uncompressed).
               </p>
             </div>
           </div>
@@ -964,7 +972,11 @@ export default function GameSubmitPage() {
                 onChange={(e) => setSlug(e.target.value)}
                 placeholder="neon-cyber-runner-2088"
                 required
-                className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-xs text-indigo-700 font-mono placeholder-slate-400 focus:outline-none focus:border-indigo-500 shadow-xs"
+                readOnly={Boolean(editingGame)}
+                title={editingGame ? 'Existing game URL slug is locked so player bookmarks and leaderboards stay intact' : undefined}
+                className={`w-full border border-slate-300 rounded-xl px-4 py-2.5 text-xs text-indigo-700 font-mono placeholder-slate-400 focus:outline-none focus:border-indigo-500 shadow-xs ${
+                  editingGame ? 'bg-slate-100 cursor-not-allowed' : 'bg-white'
+                }`}
               />
             </div>
           </div>

@@ -43,6 +43,7 @@ export default function MyGamesPage() {
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [showAvgBreakdown, setShowAvgBreakdown] = useState(true);
 
   // ================= MODAL STATE (IN-PAGE WORKFLOWS) =================
   // 1. Game Versions & Rollback Modal
@@ -351,6 +352,8 @@ export default function MyGamesPage() {
   });
 
   const totalCatalogEarnings = games.reduce((acc, g) => acc + (g.earnings || 0), 0);
+  const averageRevenueOfGame =
+    games.length > 0 ? Math.round((totalCatalogEarnings / games.length) * 100) / 100 : 0;
   const totalCatalogPlaytime = games.reduce((acc, g) => acc + (g.playtimeHours || 0), 0);
   const totalPlays = games.reduce((acc, g) => acc + (g.totalPlays || 0), 0);
 
@@ -418,15 +421,108 @@ export default function MyGamesPage() {
         </div>
 
         <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs space-y-1">
-          <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-            Total Catalog Revenue
-          </span>
-          <div className="font-heading font-black text-2xl text-emerald-600 font-mono">
-            ₹{totalCatalogEarnings.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+              Average Revenue of a Game
+            </span>
+            {games.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setShowAvgBreakdown((prev) => !prev)}
+                className="text-[10px] font-semibold text-emerald-700 hover:underline cursor-pointer shrink-0"
+              >
+                {showAvgBreakdown ? 'Hide' : 'Breakdown'}
+              </button>
+            )}
           </div>
-          <span className="text-[10px] text-slate-400">Net creator ad share</span>
+          <div className="font-heading font-black text-2xl text-emerald-600 font-mono">
+            ₹{averageRevenueOfGame.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </div>
+          <span className="text-[10px] text-slate-400 block">
+            Avg. in-game ad earning across {games.length} {games.length === 1 ? 'game' : 'games'}
+          </span>
         </div>
       </div>
+
+      {/* Average Revenue of a Game — Per-Game Player Earnings Section */}
+      {showAvgBreakdown && games.length > 0 && (
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+          <div className="px-5 py-3.5 border-b border-slate-200 bg-slate-50/70 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <IndianRupee className="w-4 h-4 text-emerald-600" />
+              <h2 className="font-heading font-bold text-sm text-slate-900">
+                Average Revenue of a Game — Per-Game Player Earnings
+              </h2>
+            </div>
+            <span className="text-[11px] font-mono text-slate-600 bg-white px-2.5 py-1 rounded-lg border border-slate-200">
+              ₹{totalCatalogEarnings.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} total in-game ads ÷ {games.length} {games.length === 1 ? 'game' : 'games'} ={' '}
+              <strong className="text-emerald-700">
+                ₹{averageRevenueOfGame.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} avg
+              </strong>
+            </span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-slate-50/60 border-b border-slate-200 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                <tr>
+                  <th className="px-5 py-2.5">Game Title</th>
+                  <th className="px-5 py-2.5 text-right">Player Plays</th>
+                  <th className="px-5 py-2.5 text-right">Avg / Play (In-Game Ads)</th>
+                  <th className="px-5 py-2.5 text-right">Game In-Game Ad Revenue</th>
+                  <th className="px-5 py-2.5 text-right">Vs. Studio Game Average</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-slate-700">
+                {games.map((g) => {
+                  const gEarnings = Number(g.earnings || 0);
+                  const gPlays = Number(g.totalPlays || 0);
+                  const perPlayAvg =
+                    g.avgEarningPerPlay !== undefined
+                      ? Number(g.avgEarningPerPlay)
+                      : gPlays > 0
+                      ? gEarnings / gPlays
+                      : 0;
+                  const diffPct =
+                    averageRevenueOfGame > 0
+                      ? Math.round(((gEarnings - averageRevenueOfGame) / averageRevenueOfGame) * 100)
+                      : 0;
+
+                  return (
+                    <tr key={`avg-row-${g.id}`} className="hover:bg-slate-50/70 transition-colors">
+                      <td className="px-5 py-2.5 font-semibold text-slate-900">
+                        {g.title}
+                      </td>
+                      <td className="px-5 py-2.5 text-right font-mono text-slate-600">
+                        {gPlays.toLocaleString()}
+                      </td>
+                      <td className="px-5 py-2.5 text-right font-mono text-slate-600">
+                        ₹{perPlayAvg.toFixed(3)} / play
+                      </td>
+                      <td className="px-5 py-2.5 text-right font-mono font-bold text-emerald-700">
+                        ₹{gEarnings.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </td>
+                      <td className="px-5 py-2.5 text-right font-mono text-[11px]">
+                        {averageRevenueOfGame === 0 ? (
+                          <span className="text-slate-400">—</span>
+                        ) : diffPct >= 0 ? (
+                          <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold">
+                            +{diffPct}% vs avg
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200 font-medium">
+                            {diffPct}% vs avg
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* Developer Portal Sponsored Hardware & Tools Display Banner */}
       <div className="w-full">
@@ -553,15 +649,15 @@ export default function MyGamesPage() {
                         </span>
                       </div>
 
-                      <div className="space-y-0.5 border-x border-slate-200">
+                      <div className="space-y-0.5 border-x border-slate-200 px-1">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                          Earnings
+                          In-Game Ad Revenue
                         </span>
                         <div className="font-heading font-bold text-base text-emerald-600 font-mono">
-                          ₹{Number(game.earnings ?? 120.5).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          ₹{Number(game.earnings ?? 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </div>
-                        <span className="text-[10px] text-emerald-700 font-medium block">
-                          In-Game Ad Revenue
+                        <span className="text-[10px] text-emerald-700 font-medium block font-mono">
+                          Avg ₹{(game.avgEarningPerPlay ?? (game.totalPlays > 0 ? Number(game.earnings || 0) / game.totalPlays : 0)).toFixed(3)}/play
                         </span>
                       </div>
 

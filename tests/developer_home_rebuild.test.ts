@@ -7,6 +7,7 @@ import { generateToken, hashPassword } from '../src/lib/auth';
 import { calculateAdRevenue, isInGameAdFormat } from '../src/lib/ads';
 import { POST as submitGame } from '../src/app/api/developer/submit/route';
 import { GET as getNotifications } from '../src/app/api/developer/notifications/route';
+import { GET as getDeveloperGames } from '../src/app/api/developer/games/route';
 import { PATCH as patchGameSettings } from '../src/app/api/developer/games/[id]/route';
 
 describe('Developer Homepage Rebuild, In-Game Ad Revenue Split & Studio Streams', () => {
@@ -97,6 +98,9 @@ describe('Developer Homepage Rebuild, In-Game Ad Revenue Split & Studio Streams'
     expect(devContent).toContain('/developer/submit?edit=${g.id}');
 
     expect(gamesContent).toContain('In-Game Ad Revenue');
+    expect(gamesContent).toContain('Average Revenue of a Game');
+    expect(gamesContent).toContain('Average Revenue of a Game — Per-Game Player Earnings');
+    expect(gamesContent).not.toContain('Total Catalog Revenue');
     expect(gamesContent).toContain('Change / Update Info');
     expect(gamesContent).toContain('/developer/submit?edit=${game.id}');
 
@@ -307,6 +311,98 @@ describe('Developer Homepage Rebuild, In-Game Ad Revenue Split & Studio Streams'
       // Cleanup seeded files on disk
       fs.rmSync(path.join(process.cwd(), '.data', 'games', liveGame.id), { recursive: true, force: true });
       fs.rmSync(path.join(process.cwd(), '.data', 'games', crGame.id), { recursive: true, force: true });
+    });
+
+    it('computes accurate averageRevenueOfGame and per-game avgEarningPerPlay across developer titles', async () => {
+      const slugA = `avg-alpha-${Date.now()}`;
+      const slugB = `avg-beta-${Date.now()}`;
+
+      const gameA = gvDb.createGame({
+        id: `game-${slugA}`,
+        developerId: devId,
+        developerName: 'Summit Studio',
+        categoryId: 'cat-action',
+        categoryName: 'Action',
+        mainCategory: 'VEG',
+        subCategory: 'action',
+        slug: slugA,
+        title: 'Alpha Flyer',
+        shortDescription: 'Desc A',
+        fullDescription: 'Full A',
+        controlsGuide: 'Space',
+        engine: 'HTML5 Canvas',
+        orientation: 'LANDSCAPE',
+        thumbnailUrl: '/images/test-thumb.jpg',
+        bannerUrl: '/images/test-banner.jpg',
+        screenshots: [],
+        currentVersionId: `ver-${slugA}-1_0_0`,
+        status: 'PUBLISHED',
+      });
+      gvDb.updateGame(gameA.id, { totalPlays: 1000 });
+
+      const gameB = gvDb.createGame({
+        id: `game-${slugB}`,
+        developerId: devId,
+        developerName: 'Summit Studio',
+        categoryId: 'cat-arcade',
+        categoryName: 'Arcade',
+        mainCategory: 'VEG',
+        subCategory: 'arcade',
+        slug: slugB,
+        title: 'Beta Runner',
+        shortDescription: 'Desc B',
+        fullDescription: 'Full B',
+        controlsGuide: 'WASD',
+        engine: 'HTML5 Canvas',
+        orientation: 'LANDSCAPE',
+        thumbnailUrl: '/images/test-thumb.jpg',
+        bannerUrl: '/images/test-banner.jpg',
+        screenshots: [],
+        currentVersionId: `ver-${slugB}-1_0_0`,
+        status: 'PUBLISHED',
+      });
+      gvDb.updateGame(gameB.id, { totalPlays: 500 });
+
+      gvDb.createFinancialRecord({
+        creatorId: devId,
+        gameId: gameA.id,
+        gameTitle: gameA.title,
+        grossRevenue: 1000,
+        deductions: 100,
+        netRevenue: 900,
+        creatorShare: 300,
+        status: 'FINALIZED',
+        period: '2026-11',
+      });
+      gvDb.createFinancialRecord({
+        creatorId: devId,
+        gameId: gameB.id,
+        gameTitle: gameB.title,
+        grossRevenue: 400,
+        deductions: 40,
+        netRevenue: 360,
+        creatorShare: 100,
+        status: 'FINALIZED',
+        period: '2026-11',
+      });
+
+      const req = new NextRequest('http://localhost:3000/api/developer/games', {
+        headers: { Authorization: authHeader },
+      });
+      const res = await getDeveloperGames(req);
+      expect(res.status).toBe(200);
+      const data = await res.json();
+
+      expect(data.count).toBe(2);
+      expect(data.totalCatalogEarnings).toBe(400);
+      expect(data.averageRevenueOfGame).toBe(200);
+
+      const retA = data.games.find((g: any) => g.id === gameA.id);
+      const retB = data.games.find((g: any) => g.id === gameB.id);
+      expect(retA.earnings).toBe(300);
+      expect(retA.avgEarningPerPlay).toBe(0.3);
+      expect(retB.earnings).toBe(100);
+      expect(retB.avgEarningPerPlay).toBe(0.2);
     });
   });
 });
